@@ -1,0 +1,187 @@
+#pragma once
+
+#include <stdint.h>
+
+namespace cube
+{
+	struct Viewport
+	{
+		float x;
+		float y;
+		float width;
+		float height;
+		float minDepth;
+		float maxDepth;
+	};
+
+	struct Rect2D
+	{
+		int x;
+		int y;
+		int width;
+		int height;
+	};
+
+	enum class PipelineType
+	{
+		Graphics, Compute
+	};
+
+	enum class ShaderType
+	{
+		GLSL_Vertex,
+		GLSL_Fragment
+	};
+
+	enum class DataFormat
+	{
+		R32G32B32A32_SFloat,
+		D16_Unorm
+	};
+
+	enum class VertexTopology
+	{
+		Point,
+		Line,
+		Triangle
+	};
+
+	enum class PolygonMode
+	{
+		Point,
+		Line,
+		Fill
+	};
+
+	enum class PolygonFrontFace
+	{
+		Clockwise,
+		CounterClockwise
+	};
+
+	enum class CullMode
+	{
+		None,
+		Front,
+		Back,
+		FrontBack
+	};
+
+	enum class CompareOperator
+	{
+		Never,
+		Always,
+		Equal,
+		NotEqual,
+		Less,
+		Greater,
+		LessOrEqual,
+		GreaterOrEqual
+	};
+
+	enum class StencilOperator
+	{
+		Keep,
+		Zero,
+		Replace,
+		IncrementAndClamp,
+		DecrementAndClamp,
+		Invert,
+		IncrementAndWrap,
+		DecrementAndWrap
+	};
+
+	struct StencilOperatorState
+	{
+		StencilOperator failOperator;
+		StencilOperator passOperator;
+		CompareOperator compareOperator;
+		uint32_t compareMask;
+		uint32_t reference;
+		StencilOperator depthFailOperator;
+		uint32_t writeMask;
+	};
+
+	// TODO: 나머지 Factor들은 Blend 알고 나서 추가
+	enum class BlendFactor
+	{
+		Zero,
+		One,
+		SourceColor,
+		OneMinusSourceColor,
+		DestinationColor,
+		OneMinusDestinationColor,
+		SourceAlpha,
+		OneMinusSourceAlpha,
+		DestinationAlpha,
+		OneMinusDestinationAlpha,
+		ConstantColor,
+		OneMinusConstantColor,
+		ConstantAlpha,
+		OneMinusConstantAlpha
+	};
+
+	enum class BlendOperator
+	{
+		Add,
+		Subtract,
+		ReverseSubtract,
+		Min,
+		Max
+	};
+
+	enum class LogicOperator
+	{
+		Clear,
+		And,
+		AndReverse,
+		Copy,
+		AndInverted,
+		NoOp,
+		Xor,
+		Or,
+		Nor,
+		Equivalent,
+		Invert,
+		OrReverse,
+		CopyInverted,
+		OrInverted,
+		Nand,
+		Set
+	};
+
+	union Color
+	{
+		struct Float32
+		{
+			float r;
+			float g;
+			float b;
+			float a;
+		};
+		struct Int32
+		{
+			int32_t r;
+			int32_t g;
+			int32_t b;
+			int32_t a;
+		};
+		struct Uint32
+		{
+			uint32_t r;
+			uint32_t g;
+			uint32_t b;
+			uint32_t a;
+		};
+
+		Float32 float32;
+		Int32 int32;
+		Uint32 uint32;
+	};
+
+	struct DepthStencilValue
+	{
+		float depth;
+		uint32_t stencil;
+	};
+}
