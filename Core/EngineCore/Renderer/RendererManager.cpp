@@ -61,6 +61,13 @@ namespace cube
 			mRenderPass->AddAttachment(mDepthBufferImageView, DataFormat::D16_Unorm, true,
 				LoadOperator::Clear, StoreOperator::DontCare, LoadOperator::DontCare, StoreOperator::DontCare,
 				c, ImageLayout::Undefined, ImageLayout::DepthStencilAttachmentOptimal, v);
+
+			BaseRenderSubpass subpass;
+			subpass.mInputs.push_back({0, ImageLayout::ColorAttachmentOptimal});
+			subpass.mDepthStencil.index = 1;
+			subpass.mDepthStencil.layout = ImageLayout::DepthStencilAttachmentOptimal;
+			mRenderPass->AddSubpass(subpass);
+
 			mRenderPass->Create();
 
 			// Get a vertex / fragment shader
