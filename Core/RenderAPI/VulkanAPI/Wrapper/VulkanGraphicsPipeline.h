@@ -64,7 +64,7 @@ namespace cube
 			VkPipelineLayout mPipelineLayout;
 
 			VkPipelineVertexInputStateCreateInfo mVertexInputStateCreateInfo;
-			Vector<VkVertexInputBindingDescription> mVertexInputBindingDescs;
+			VkVertexInputBindingDescription mVertexInputBindingDesc;
 			Vector<VkVertexInputAttributeDescription> mVertexInputAttributeDescs;
 
 			VkPipelineInputAssemblyStateCreateInfo mInputAssemblyStateCreateInfo;

@@ -77,7 +77,6 @@ namespace cube
 			vkDestroyPipelineLayout(*mDevice_ref, mPipelineLayout, nullptr);
 			vkDestroyPipeline(*mDevice_ref, mPipeline, nullptr);
 
-			mVertexInputBindingDescs.clear();
 			mVertexInputAttributeDescs.clear();
 			mViewports.clear();
 			mScissors.clear();
@@ -99,16 +98,15 @@ namespace cube
 		void VulkanGraphicsPipeline::SetVertexInput(uint32_t sizePerVertex)
 		{
 			// TODO: 일단 binding을 0만 설정 (차후 확장할수도?)
-			VkVertexInputBindingDescription bindingDesc;
-			bindingDesc.binding = 0;
-			bindingDesc.stride = sizePerVertex;
-			bindingDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+			mVertexInputBindingDesc.binding = 0;
+			mVertexInputBindingDesc.stride = sizePerVertex;
+			mVertexInputBindingDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 			mVertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 			mVertexInputStateCreateInfo.pNext = nullptr;
 			mVertexInputStateCreateInfo.flags = 0;
 			mVertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
-			mVertexInputStateCreateInfo.pVertexBindingDescriptions = &bindingDesc;
+			mVertexInputStateCreateInfo.pVertexBindingDescriptions = &mVertexInputBindingDesc;
 			mVertexInputStateCreateInfo.vertexAttributeDescriptionCount = SCast(uint32_t)(mVertexInputAttributeDescs.size());
 			mVertexInputStateCreateInfo.pVertexAttributeDescriptions = mVertexInputAttributeDescs.data();
 		}

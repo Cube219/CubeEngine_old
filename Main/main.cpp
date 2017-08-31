@@ -22,7 +22,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 {
 	SPtr<platform::BasePlatform> p = std::make_shared<platform::WinPlatform>(hInstance);
 
-	p->InitWindow(L"Test Title", 500, 400);
+	p->InitWindow(L"Test Title", 1024, 768);
 	p->ShowWindow();
 	
 	LoadEngine(p);

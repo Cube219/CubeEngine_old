@@ -130,7 +130,7 @@ namespace cube
 				buf[i] = *SPCast(VulkanBuffer)(buffers[i]);
 			}
 
-			vkCmdBindVertexBuffers(mCommandBuffer, 1, bufferNum, buf, bufferOffsets);
+			vkCmdBindVertexBuffers(mCommandBuffer, 0, bufferNum, buf, bufferOffsets);
 
 			delete[] buf;
 		}

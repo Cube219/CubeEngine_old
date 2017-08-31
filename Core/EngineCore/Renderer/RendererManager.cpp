@@ -4,8 +4,6 @@
 
 #include "Renderer3D.h"
 
-// #include "VulkanAPI\VulkanAPI.h"
-
 namespace cube
 {
 	namespace core
@@ -208,7 +206,7 @@ namespace cube
 			mGraphicsPipeline = mRenderAPI->CreateGraphicsPipeline();
 			// TODO: Vertex 구조체를 기반으로 다시 쓰기(sizeof...)
 			mGraphicsPipeline->AddVertexInputAttribute(0, DataFormat::R32G32B32A32_SFloat, 0);
-			mGraphicsPipeline->AddVertexInputAttribute(0, DataFormat::R32G32B32A32_SFloat, 16);
+			mGraphicsPipeline->AddVertexInputAttribute(1, DataFormat::R32G32B32A32_SFloat, 16);
 			mGraphicsPipeline->SetVertexInput(sizeof(Vertex));
 			mGraphicsPipeline->SetVertexTopology(VertexTopology::Triangle);
 

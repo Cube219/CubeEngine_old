@@ -94,11 +94,11 @@ namespace cube
 		SPtr<BaseRenderBuffer> VulkanAPI::CreateBuffer(uint64_t size, BufferTypeBits types)
 		{
 			VkBufferUsageFlags usageFlags = 0;
-			if(types == BufferTypeBits::Uniform)
+			if(SCast(int)(types | BufferTypeBits::Uniform) > 0)
 				usageFlags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-			if(types == BufferTypeBits::Vertex)
+			if(SCast(int)(types | BufferTypeBits::Vertex) > 0)
 				usageFlags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-			if(types == BufferTypeBits::Index)
+			if(SCast(int)(types | BufferTypeBits::Index) > 0)
 				usageFlags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
 
 			return std::make_shared<VulkanBuffer>(mDevice, usageFlags, size, nullptr, VK_SHARING_MODE_EXCLUSIVE);
