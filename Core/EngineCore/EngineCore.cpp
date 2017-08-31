@@ -111,6 +111,10 @@ namespace cube
 		{
 			mGo->Update();
 
+			auto currentRotation = mGo->GetRotation();
+			currentRotation.x += 0.5f;
+			mGo->SetRotation(currentRotation);
+
 			mRendererManager->DrawAll();
 		}
 

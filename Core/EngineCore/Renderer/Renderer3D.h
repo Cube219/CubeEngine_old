@@ -24,7 +24,7 @@ namespace cube
 			void SetIndex(const Vector<uint32_t>& indices);
 			void SetModelMatrix(glm::mat4 modelMatrix);
 
-			void Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer);
+			void Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
 
 			SPtr<BaseRenderBuffer> GetDataBuffer() const;
 			uint64_t GetUniformBufferOffset() const;

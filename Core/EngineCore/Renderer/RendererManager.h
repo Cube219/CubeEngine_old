@@ -32,6 +32,7 @@ namespace cube
 			~RendererManager();
 
 			SPtr<Renderer3D> CreateRenderer3D();
+			SPtr<CameraRenderer3D> GetCameraRenderer3D();
 
 			void DrawAll();
 
@@ -48,6 +49,7 @@ namespace cube
 
 			Vector<SPtr<Renderer3D>> mRenderers;
 			Vector<SPtr<BaseRenderDescriptorSet>> mDescriptorSets;
+			SPtr<CameraRenderer3D> mCameraRenderer;
 
 			SPtr<BaseRenderImage> mDepthBufferImage;
 			SPtr<BaseRenderImageView> mDepthBufferImageView;

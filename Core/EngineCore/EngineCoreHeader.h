@@ -12,6 +12,7 @@ namespace cube
 		class InputManager;
 
 		class Renderer3D;
+		class CameraRenderer3D;
 		enum class RenderType;
 		class RendererManager;
 

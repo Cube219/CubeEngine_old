@@ -19,6 +19,10 @@ namespace cube
 			void SetPosition(Vector3 position);
 			void SetRotation(Vector3 rotation);
 			void SetScale(Vector3 scale);
+			
+			Vector3 GetPosition() const;
+			Vector3 GetRotation() const;
+			Vector3 GetScale() const;
 
 			SPtr<Renderer3D> GetRenderer() const;
 
@@ -34,6 +38,21 @@ namespace cube
 			bool mIsTransformChanged;
 			glm::mat4 mModelMatrix;
 		};
+
+		inline Vector3 GameObject::GetPosition() const
+		{
+			return mPosition;
+		}
+
+		inline Vector3 GameObject::GetRotation() const
+		{
+			return mRotation;
+		}
+
+		inline Vector3 GameObject::GetScale() const
+		{
+			return mScale;
+		}
 
 		inline SPtr<Renderer3D> GameObject::GetRenderer() const
 		{

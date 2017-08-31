@@ -1,5 +1,9 @@
 #include "Renderer3D.h"
 
+#include "CameraRenderer3D.h"
+
+#include <gtc\matrix_transform.hpp>
+
 namespace cube
 {
 	namespace core
@@ -34,7 +38,7 @@ namespace cube
 			mIsMatrixUpdated = true;
 		}
 
-		void Renderer3D::Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer)
+		void Renderer3D::Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
 		{
 			if(mIsVerticesUpdated == true || mIsIndicesUpdated == true) {
 				uint64_t dataSize = sizeof(mModelMatrix) + mVertices.size() * sizeof(Vertex) + mIndices.size() * sizeof(uint32_t);
@@ -57,7 +61,8 @@ namespace cube
 			}
 
 			if(mIsMatrixUpdated == true) {
-				mDataBuffer->UpdateBufferData(&mModelMatrix, sizeof(mModelMatrix), mUniformOffset);
+				auto mvpMatrix = camera->GetViewProjectionMatrix() * mModelMatrix;
+				mDataBuffer->UpdateBufferData(&mvpMatrix, sizeof(mvpMatrix), mUniformOffset);
 
 				BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mUniformOffset, sizeof(mModelMatrix));
 				mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);

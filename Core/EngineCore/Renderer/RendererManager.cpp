@@ -3,6 +3,7 @@
 #include "BasePlatform\BasePlatformLogWriter.h"
 
 #include "Renderer3D.h"
+#include "CameraRenderer3D.h"
 
 namespace cube
 {
@@ -101,6 +102,10 @@ namespace cube
 
 			mGetImageSemaphore = mRenderAPI->CreateSemaphore();
 
+			// Create camera renderer
+			// TODO: multiple camera
+			mCameraRenderer = std::make_shared<CameraRenderer3D>();
+
 			mIsPrepared = true;
 		}
 
@@ -119,6 +124,11 @@ namespace cube
 			RecreatePipeline();
 
 			return r3d;
+		}
+
+		SPtr<CameraRenderer3D> RendererManager::GetCameraRenderer3D()
+		{
+			return mCameraRenderer;
 		}
 
 		void RendererManager::DrawAll()
@@ -194,7 +204,7 @@ namespace cube
 			mMainCommandBuffer->BindGraphicsPipeline(mGraphicsPipeline);
 
 			for(auto r : mRenderers) {
-				r->Draw(mMainCommandBuffer);
+				r->Draw(mMainCommandBuffer, mCameraRenderer);
 			}
 
 			mMainCommandBuffer->End();

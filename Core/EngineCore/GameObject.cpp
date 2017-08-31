@@ -12,10 +12,8 @@ namespace cube
 		{
 		}
 
-		GameObject::GameObject(SPtr<Renderer3D> renderer3D)
+		GameObject::GameObject(SPtr<Renderer3D> renderer3D) : GameObject()
 		{
-			GameObject();
-
 			mRenderer3D = renderer3D;
 		}
 
@@ -23,19 +21,19 @@ namespace cube
 		{
 		}
 
-		inline void GameObject::SetPosition(Vector3 position)
+		void GameObject::SetPosition(Vector3 position)
 		{
 			mPosition = position;
 			mIsTransformChanged = true;
 		}
 
-		inline void GameObject::SetRotation(Vector3 rotation)
+		void GameObject::SetRotation(Vector3 rotation)
 		{
 			mRotation = rotation;
 			mIsTransformChanged = true;
 		}
 
-		inline void GameObject::SetScale(Vector3 scale)
+		void GameObject::SetScale(Vector3 scale)
 		{
 			mScale = scale;
 			mIsTransformChanged = true;
