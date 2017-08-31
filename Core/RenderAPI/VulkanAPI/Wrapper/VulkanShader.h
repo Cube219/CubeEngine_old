@@ -28,6 +28,7 @@ namespace cube
 
 			VkShaderModule mShaderModule;
 			VkPipelineShaderStageCreateInfo mShaderStageInfo;
+			String mEntryName;
 
 			Vector<unsigned int> mSpvShader;
 

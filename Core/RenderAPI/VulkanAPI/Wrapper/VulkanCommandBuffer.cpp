@@ -32,6 +32,8 @@ namespace cube
 
 			res = vkResetCommandBuffer(mCommandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 			CheckVkResult(L"VulkanCommandBuffer", L"Cannot reset the command buffer", res);
+
+			mIsRenderPassStarted = false;
 		}
 
 		void VulkanCommandBuffer::Begin()

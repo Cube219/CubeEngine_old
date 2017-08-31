@@ -25,7 +25,7 @@ namespace cube
 					PrintlnLogWithSayer(L"VulkanImage", L"Unknown ImageType");
 					break;
 			}
-			return VkImageType();
+			return t;
 		}
 
 		VkImageUsageFlags GetVkImageUsageFlags(ImageUsageBits usage)

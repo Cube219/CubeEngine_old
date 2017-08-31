@@ -30,7 +30,7 @@ namespace cube
 				mForcedFeatures.SetFeature(feature, on);
 		}
 
-		void VulkanDevice::CreateDeviceQueue(VulkanQueueFamily queueFamily, int count, float priorities[])
+		void VulkanDevice::CreateDeviceQueue(VulkanQueueFamily queueFamily, int count)
 		{
 			VkDeviceQueueCreateInfo info;
 			info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -38,9 +38,13 @@ namespace cube
 			info.flags = 0;
 			info.queueFamilyIndex = queueFamily.mIndex;
 			info.queueCount = count;
-			info.pQueuePriorities = priorities;
+
+			Vector<float> priorities;
+			priorities.resize(count, 0.0f);
+			info.pQueuePriorities = priorities.data(); // TODO: 각 Queue마다 priority 지정하는 기능 추가
 
 			mDeviceQueueCreateInfos.push_back(info);
+			mDeviceQueuePriorities.push_back(std::move(priorities));
 
 			mQueueFamilies.push_back(queueFamily);
 		}

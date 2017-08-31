@@ -34,6 +34,8 @@ namespace cube
 			uint64_t GetIndexBufferOffset() const;
 			uint64_t GetIndexBufferSize() const;
 
+			SPtr<BaseRenderDescriptorSet> GetDescriptorSet() const;
+
 		private:
 			bool mIsVerticesUpdated = false;
 			Vector<Vertex> mVertices;
@@ -85,6 +87,11 @@ namespace cube
 		inline uint64_t Renderer3D::GetIndexBufferSize() const
 		{
 			return mIndices.size() * sizeof(uint32_t);
+		}
+
+		inline SPtr<BaseRenderDescriptorSet> Renderer3D::GetDescriptorSet() const
+		{
+			return mDescriptorSet;
 		}
 	}
 }

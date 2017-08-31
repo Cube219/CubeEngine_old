@@ -2,6 +2,7 @@
 #pragma warning(disable:4251)
 
 #include "Base\BaseTypes.h"
+#include "BasePlatform\BasePlatformLogWriter.h"
 
 namespace cube
 {

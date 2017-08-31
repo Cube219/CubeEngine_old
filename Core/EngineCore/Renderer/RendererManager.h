@@ -47,6 +47,7 @@ namespace cube
 			SPtr<BaseRenderAPI> mRenderAPI;
 
 			Vector<SPtr<Renderer3D>> mRenderers;
+			Vector<SPtr<BaseRenderDescriptorSet>> mDescriptorSets;
 
 			SPtr<BaseRenderImage> mDepthBufferImage;
 			SPtr<BaseRenderImageView> mDepthBufferImageView;
@@ -55,8 +56,7 @@ namespace cube
 
 			SPtr<BaseRenderRenderPass> mRenderPass;
 
-			SPtr<BaseRenderShader> mVertexShader;
-			SPtr<BaseRenderShader> mFragmentShader;
+			Vector<SPtr<BaseRenderShader>> mShaders;
 
 			SPtr<BaseRenderGraphicsPipeline> mGraphicsPipeline;
 

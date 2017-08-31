@@ -51,7 +51,7 @@ namespace cube
 			// RenderPass
 			mRenderPass = mRenderAPI->CreateRenderPass();
 			Color c;
-			c.float32 = {0, 0, 0, 0};
+			c.float32 = {0.3f, 0.3f, 0.3f, 0};
 			mRenderPass->SetSwapchain(mSwapchain, LoadOperator::Clear, StoreOperator::Store, c, ImageLayout::Undefined, ImageLayout::PresentSource);
 			
 			c.float32 = {0, 0, 0, 0};
@@ -63,7 +63,7 @@ namespace cube
 				c, ImageLayout::Undefined, ImageLayout::DepthStencilAttachmentOptimal, v);
 
 			BaseRenderSubpass subpass;
-			subpass.mInputs.push_back({0, ImageLayout::ColorAttachmentOptimal});
+			subpass.mColors.push_back({0, ImageLayout::ColorAttachmentOptimal});
 			subpass.mDepthStencil.index = 1;
 			subpass.mDepthStencil.layout = ImageLayout::DepthStencilAttachmentOptimal;
 			mRenderPass->AddSubpass(subpass);
@@ -94,9 +94,116 @@ namespace cube
 				"   outColor = color;\n"
 				"}\n";
 
-			mVertexShader = mRenderAPI->CreateShader(ShaderType::GLSL_Vertex, vertShaderText, String("main"));
-			mFragmentShader = mRenderAPI->CreateShader(ShaderType::GLSL_Fragment, fragShaderText, String("main"));
+			mShaders.push_back(mRenderAPI->CreateShader(ShaderType::GLSL_Vertex, vertShaderText, String("main")));
+			mShaders.push_back(mRenderAPI->CreateShader(ShaderType::GLSL_Fragment, fragShaderText, String("main")));
 
+			// Get a main command buffer
+			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
+			mMainCommandBufferSubmitFence = mRenderAPI->CreateFence();
+
+			mGetImageSemaphore = mRenderAPI->CreateSemaphore();
+
+			mIsPrepared = true;
+		}
+
+		RendererManager::~RendererManager()
+		{
+			mRenderers.clear();
+		}
+
+		SPtr<Renderer3D> RendererManager::CreateRenderer3D()
+		{
+			SPtr<Renderer3D> r3d = std::make_shared<Renderer3D>(mRenderAPI);
+			mRenderers.push_back(r3d);
+
+			mDescriptorSets.push_back(r3d->GetDescriptorSet());
+
+			RecreatePipeline();
+
+			return r3d;
+		}
+
+		void RendererManager::DrawAll()
+		{
+			if(mIsPrepared == false)
+				return;
+
+			mSwapchain->AcquireNextImageIndex(mGetImageSemaphore);
+
+			RewriteCommandBuffer(); // TODO: 이걸 필요할 때만 쓰도록
+
+			auto temp = std::make_pair(mGetImageSemaphore, PipelineStageBits::ColorAttachmentOutputBit);
+			mMainCommandBuffer->Submit(mGraphicsQueue, 1, &temp, 0, nullptr, mMainCommandBufferSubmitFence);
+			// TODO: 예외처리
+			bool r = mMainCommandBufferSubmitFence->Wait(100000000);
+
+			if(r == true)
+				mSwapchain->Present(0, nullptr);
+		}
+
+		void RendererManager::Resize(uint32_t width, uint32_t height)
+		{
+			mIsPrepared = false;
+
+			mWidth = width;
+			mHeight = height;
+
+			// Recreate a depth buffer
+			mDepthBufferImage = mRenderAPI->CreateImage(ImageType::Image2D, DataFormat::D16_Unorm,
+				width, height, 1, 1, ImageUsageBits::DepthStencilAttachmentBit);
+			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
+
+			mSwapchain->Recreate(2, width, height, mVsync);
+
+			mIsPrepared = true;
+		}
+
+		void RendererManager::SetVsync(bool vsync)
+		{
+			mVsync = vsync;
+
+			mSwapchain->Recreate(2, mWidth, mHeight, vsync);
+		}
+
+		void RendererManager::RewriteCommandBuffer()
+		{
+			mMainCommandBuffer->Reset();
+
+			mMainCommandBuffer->Begin();
+
+			Rect2D r;
+			r.x = 0;
+			r.y = 0;
+			r.width = mWidth;
+			r.height = mHeight;
+			mMainCommandBuffer->SetRenderPass(mRenderPass, r);
+
+			Viewport vp;
+			vp.width = SCast(float)(mWidth);
+			vp.height = SCast(float)(mHeight);
+			vp.minDepth = 0.0f;
+			vp.maxDepth = 1.0f;
+			vp.x = 0;
+			vp.y = 0;
+			mMainCommandBuffer->SetViewport(0, 1, &vp);
+			Rect2D scissor;
+			scissor.x = 0;
+			scissor.y = 0;
+			scissor.width = mWidth;
+			scissor.height = mHeight;
+			mMainCommandBuffer->SetScissor(0, 1, &scissor);
+
+			mMainCommandBuffer->BindGraphicsPipeline(mGraphicsPipeline);
+
+			for(auto r : mRenderers) {
+				r->Draw(mMainCommandBuffer);
+			}
+
+			mMainCommandBuffer->End();
+		}
+
+		void RendererManager::RecreatePipeline()
+		{
 			// Get a graphics pipeline
 			mGraphicsPipeline = mRenderAPI->CreateGraphicsPipeline();
 			// TODO: Vertex 구조체를 기반으로 다시 쓰기(sizeof...)
@@ -128,101 +235,15 @@ namespace cube
 
 			mGraphicsPipeline->SetMultisampler();
 
-			// Get a main command buffer
-			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
-			mMainCommandBufferSubmitFence = mRenderAPI->CreateFence();
-
-			mGetImageSemaphore = mRenderAPI->CreateSemaphore();
-
-			mIsPrepared = true;
-		}
-
-		RendererManager::~RendererManager()
-		{
-			mRenderers.clear();
-		}
-
-		SPtr<Renderer3D> RendererManager::CreateRenderer3D()
-		{
-			SPtr<Renderer3D> r3d = std::make_shared<Renderer3D>(mRenderAPI);
-			mRenderers.push_back(r3d);
-
-			return r3d;
-		}
-
-		void RendererManager::DrawAll()
-		{
-			mSwapchain->AcquireNextImageIndex(mGetImageSemaphore);
-
-			RewriteCommandBuffer(); // TODO: 이걸 필요할 때만 쓰도록
-
-			auto temp = std::make_pair(mGetImageSemaphore, PipelineStageBits::ColorAttachmentOutputBit);
-			mMainCommandBuffer->Submit(mGraphicsQueue, 1, &temp, 0, nullptr, mMainCommandBufferSubmitFence);
-			// TODO: 예외처리
-			bool r = mMainCommandBufferSubmitFence->Wait(100000000);
-
-			mSwapchain->Present(0, nullptr);
-		}
-
-		void RendererManager::Resize(uint32_t width, uint32_t height)
-		{
-			mWidth = width;
-			mHeight = height;
-
-			// Recreate a depth buffer
-			mDepthBufferImage = mRenderAPI->CreateImage(ImageType::Image2D, DataFormat::D16_Unorm,
-				width, height, 1, 1, ImageUsageBits::DepthStencilAttachmentBit);
-			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
-
-			mSwapchain->Recreate(2, width, height, mVsync);
-		}
-
-		void RendererManager::SetVsync(bool vsync)
-		{
-			mVsync = vsync;
-
-			mSwapchain->Recreate(2, mWidth, mHeight, vsync);
-		}
-
-		void RendererManager::RewriteCommandBuffer()
-		{
-			mMainCommandBuffer->Reset();
-
-			mMainCommandBuffer->Begin();
-
-			Rect2D r;
-			r.x = 0;
-			r.y = 0;
-			r.width = mPlatform_ref->GetWindowWidth();
-			r.height = mPlatform_ref->GetWindowHeight();
-			mMainCommandBuffer->SetRenderPass(mRenderPass, r);
-
-			Viewport vp;
-			vp.width = SCast(float)(mPlatform_ref->GetWindowWidth());
-			vp.height = SCast(float)(mPlatform_ref->GetWindowHeight());
-			vp.minDepth = 0.0f;
-			vp.maxDepth = 1.0f;
-			vp.x = 0;
-			vp.y = 0;
-			mMainCommandBuffer->SetViewport(0, 1, &vp);
-			Rect2D scissor;
-			scissor.x = 0;
-			scissor.y = 0;
-			scissor.width = mPlatform_ref->GetWindowWidth();
-			scissor.height = mPlatform_ref->GetWindowHeight();
-			mMainCommandBuffer->SetScissor(0, 1, &scissor);
-
-			mMainCommandBuffer->BindGraphicsPipeline(mGraphicsPipeline);
-
-			for(auto r : mRenderers) {
-				r->Draw(mMainCommandBuffer);
+			for(auto& shader : mShaders) {
+				mGraphicsPipeline->AddShader(shader);
 			}
 
-			mMainCommandBuffer->End();
-		}
+			for(auto& desc : mDescriptorSets) {
+				mGraphicsPipeline->AddDescriptorSet(desc);
+			}
 
-		void RendererManager::RecreatePipeline()
-		{
+			mGraphicsPipeline->Create(mRenderPass);
 		}
 	}
 }

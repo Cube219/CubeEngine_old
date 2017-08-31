@@ -77,13 +77,15 @@ namespace cube
 			res = vkCreateShaderModule(*device, &moduleInfo, nullptr, &mShaderModule);
 			CheckVkResult(L"VulkanShader", L"Cannot create a shader module", res);
 
+			mEntryName = entryName;
+
 			// Create stage info
 			mShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			mShaderStageInfo.pNext = nullptr;
 			mShaderStageInfo.flags = 0;
 			mShaderStageInfo.pSpecializationInfo = nullptr;
 			mShaderStageInfo.stage = stageFlagBits;
-			mShaderStageInfo.pName = entryName;
+			mShaderStageInfo.pName = mEntryName.c_str();
 			mShaderStageInfo.module = mShaderModule;
 		}
 

@@ -20,7 +20,7 @@ namespace cube
 			void AddExtension(const char* extensionName);
 
 			void SetFeatures(VulkanPhysicalDeviceFeature feature, bool on, bool isForced);
-			void CreateDeviceQueue(VulkanQueueFamily queueFamily, int count, float priorities[]);
+			void CreateDeviceQueue(VulkanQueueFamily queueFamily, int count);
 
 			void Create(const SPtr<VulkanPhysicalDevice>& physicalDevice);
 
@@ -36,6 +36,7 @@ namespace cube
 			VkDevice mDevice;
 
 			Vector<VkDeviceQueueCreateInfo> mDeviceQueueCreateInfos;
+			Vector<Vector<float>> mDeviceQueuePriorities;
 
 			VulkanPhysicalDeviceFeatures mEnabledFeatures;
 			VulkanPhysicalDeviceFeatures mForcedFeatures;

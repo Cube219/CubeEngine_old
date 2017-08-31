@@ -65,9 +65,9 @@ const wchar_t* _CheckVkResult(const wchar_t* sayer, const wchar_t* msg, VkResult
 			case VK_ERROR_OUT_OF_POOL_MEMORY_KHR:
 				errMsg = L"(VK_ERROR_OUT_OF_POOL_MEMORY_KHR)";
 				break;
-			case VK_ERROR_INVALID_EXTERNAL_HANDLE_KHX:
-				errMsg = L"(VK_ERROR_INVALID_EXTERNAL_HANDLE_KHX)";
-				break;
+	//		case VK_ERROR_INVALID_EXTERNAL_HANDLE_KHX:
+	//			errMsg = L"(VK_ERROR_INVALID_EXTERNAL_HANDLE_KHX)"; // TODO: 왜 지워졌지?
+	//			break;
 			default:
 				errMsg = L"(UNKNOWN)";
 				break;

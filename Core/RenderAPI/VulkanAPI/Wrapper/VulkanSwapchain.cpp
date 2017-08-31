@@ -154,6 +154,9 @@ namespace cube
 			}
 
 			delete[] imgs;
+
+			mWidth = width;
+			mHeight = height;
 		}
 	}
 }

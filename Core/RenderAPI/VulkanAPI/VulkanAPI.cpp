@@ -66,10 +66,9 @@ namespace cube
 
 			mDevice->AddExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
-			float queuePriority = 1.0f;
 			// TODO: ÀÏ´Ü GraphicsQueue¸¸...
 			auto graphicsQueueFamily = mMainPhysicalDevice->GetQueueFamily(VK_QUEUE_GRAPHICS_BIT);
-			mDevice->CreateDeviceQueue(graphicsQueueFamily, graphicsQueueFamily.mProperties.queueCount, &queuePriority);
+			mDevice->CreateDeviceQueue(graphicsQueueFamily, graphicsQueueFamily.mProperties.queueCount);
 
 			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::TessellationShader, true, true);
 			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::GeometryShader, true, true);
