@@ -1,6 +1,7 @@
 #include "EngineCore.h"
 
 #include "InputManager.h"
+#include "LogWriter.h"
 #include "Renderer\RendererManager.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
@@ -24,6 +25,8 @@ namespace cube
 
 			platform->SetLoopFunction(std::bind(&EngineCore::Loop, this));
 			platform->SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
+
+			LogWriter::Init(platform);
 		}
 
 		EngineCore::~EngineCore()

@@ -24,6 +24,8 @@
     <ClInclude Include="Renderer\Mesh.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Assertion.h" />
+    <ClInclude Include="LogWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -45,6 +47,7 @@
     <ClCompile Include="Renderer\Mesh.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="LogWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">

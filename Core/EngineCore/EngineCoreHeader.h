@@ -2,7 +2,7 @@
 #pragma warning(disable:4251)
 
 #include "Base\BaseTypes.h"
-#include "BasePlatform\BasePlatformLogWriter.h"
+#include "Assertion.h"
 
 namespace cube
 {
@@ -10,6 +10,7 @@ namespace cube
 	{
 		class EngineCore;
 		class InputManager;
+		class LogWriter;
 
 		class Renderer3D;
 		class CameraRenderer3D;

@@ -112,11 +112,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BaseTypes.h" />
+    <ClInclude Include="format.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />
+    <ClCompile Include="format.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -120,10 +120,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Assertion.h" />
     <ClInclude Include="EngineCore.h" />
     <ClInclude Include="EngineCoreHeader.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="LogWriter.h" />
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="Renderer\CameraRenderer3D.h" />
     <ClInclude Include="Renderer\Material.h" />
@@ -136,6 +138,7 @@
     <ClCompile Include="EngineCore.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="LogWriter.cpp" />
     <ClCompile Include="ModuleManager.cpp" />
     <ClCompile Include="Renderer\CameraRenderer3D.cpp" />
     <ClCompile Include="Renderer\Material.cpp" />

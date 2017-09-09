@@ -59,7 +59,7 @@ namespace cube
 			winClass.hIconSm = LoadIcon(nullptr, IDI_WINLOGO);
 
 			if(!RegisterClassEx(&winClass))
-				WriteErrorLog(L"Failed to registration while createing window");
+				std::wcout << L"WinPlatform: Failed to registration while createing window" << std::endl;
 		}
 
 		void WinPlatform::ShowWindow()
@@ -73,7 +73,7 @@ namespace cube
 				this); // Pass the class pointer to use member functions / variables
 
 			if(!mWindow) {
-				WriteErrorLog(L"Failed to create a window");
+				std::wcout << L"WinPlatform: Failed to create a window" << std::endl;
 			}
 		}
 

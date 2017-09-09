@@ -4,8 +4,10 @@
     <ClInclude Include="BaseTypes.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Vector.h" />
+    <ClInclude Include="format.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />
+    <ClCompile Include="format.cc" />
   </ItemGroup>
 </Project>

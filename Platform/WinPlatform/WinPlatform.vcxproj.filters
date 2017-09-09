@@ -7,7 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinPlatform.cpp" />
-    <ClCompile Include="WinLogWriter.cpp" />
     <ClCompile Include="WinDLib.cpp" />
   </ItemGroup>
 </Project>

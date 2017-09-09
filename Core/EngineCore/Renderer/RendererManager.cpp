@@ -1,7 +1,5 @@
 #include "RendererManager.h"
 
-#include "BasePlatform\BasePlatformLogWriter.h"
-
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
 
@@ -21,7 +19,7 @@ namespace cube
 					break;
 
 				default:
-					platform::WriteErrorLog(L"Unknown renderer type");
+					LogWriter::WriteLog(L"Unknown renderer type");
 					return;
 			}
 

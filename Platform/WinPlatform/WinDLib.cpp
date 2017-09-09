@@ -1,5 +1,7 @@
 #include "WinDLib.h"
 
+#include <iostream>
+
 namespace cube
 {
 	namespace platform
@@ -12,7 +14,7 @@ namespace cube
 			mDLib = LoadLibrary(path.c_str());
 
 			if(mDLib == NULL) {
-				WriteErrorLog(L"Cannot load a DLib. (" + path + L")");
+				std::wcout << L"WinDLib: Cannot load a DLib. (" << path << L")" << std::endl;
 			}
 		}
 
@@ -23,7 +25,7 @@ namespace cube
 
 			BOOL r = FreeLibrary(mDLib);
 			if(r == 0) {
-				WriteErrorLog(L"Failed to unload the DLib.");
+				std::wcout << L"WinDLib: Failed to unload the DLib." << std::endl;
 			}
 		}
 
@@ -34,9 +36,9 @@ namespace cube
 
 			auto pFunction = GetProcAddress(mDLib, name.c_str());
 			if(pFunction == NULL) {
-				WriteErrorLog(L"Failed to get the function.");
+				std::wcout << L"WinDLib: Failed to get the function." << std::endl;
 				auto err = GetLastError();
-				WriteErrorLog(std::to_wstring(err));
+				std::wcout << err << std::endl;
 				return nullptr;
 			}
 

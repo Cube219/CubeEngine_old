@@ -115,7 +115,6 @@
   <ItemGroup>
     <ClInclude Include="BasePlatform.h" />
     <ClInclude Include="BasePlatformDLib.h" />
-    <ClInclude Include="BasePlatformLogWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />

@@ -1,7 +1,5 @@
 #include "InputManager.h"
 
-#include "BasePlatform\BasePlatformLogWriter.h"
-
 namespace cube
 {
 	namespace core

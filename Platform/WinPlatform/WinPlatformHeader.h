@@ -4,8 +4,6 @@
 
 #include <Windows.h>
 
-#include "BasePlatform\BasePlatformLogWriter.h"
-
 namespace cube
 {
 	namespace platform
