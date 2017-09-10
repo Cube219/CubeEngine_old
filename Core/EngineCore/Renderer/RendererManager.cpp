@@ -138,6 +138,7 @@ namespace cube
 
 			RewriteCommandBuffer(); // TODO: 이걸 필요할 때만 쓰도록
 
+			mMainCommandBufferSubmitFence->Reset();
 			auto temp = std::make_pair(mGetImageSemaphore, PipelineStageBits::ColorAttachmentOutputBit);
 			mMainCommandBuffer->Submit(mGraphicsQueue, 1, &temp, 0, nullptr, mMainCommandBufferSubmitFence);
 			// TODO: 예외처리
