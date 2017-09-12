@@ -70,14 +70,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VK_SDK_PATH)\Include;$(SolutionDir)Dependencies\glslang\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(VK_SDK_PATH)\lib;$(SolutionDir)Dependencies\glslang\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(VK_SDK_PATH)\Source\loader;$(VK_SDK_PATH)\Source\layer;$(SourcePath)</SourcePath>
+    <IncludePath>$(SolutionDir)Dependencies\Vulkan\include;$(SolutionDir)Dependencies\glslang\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Dependencies\Vulkan\lib;$(SolutionDir)Dependencies\glslang\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VK_SDK_PATH)\Include;$(SolutionDir)Dependencies\glslang\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(VK_SDK_PATH)\lib;$(SolutionDir)Dependencies\glslang\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(VK_SDK_PATH)\Source\loader;$(VK_SDK_PATH)\Source\layer;$(SourcePath)</SourcePath>
+    <IncludePath>$(SolutionDir)Dependencies\Vulkan\include;$(SolutionDir)Dependencies\glslang\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Dependencies\Vulkan\lib;$(SolutionDir)Dependencies\glslang\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -91,7 +91,7 @@
       <AdditionalDependencies>OSDependentd.lib;SPVRemapperd.lib;SPIRVd.lib;OGLCompilerd.lib;HLSLd.lib;glslangd.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(VK_SDK_PATH)\Source\lib\vulkan-1.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -130,7 +130,7 @@
       <AdditionalDependencies>OSDependent.lib;SPVRemapper.lib;SPIRV.lib;OGLCompiler.lib;HLSL.lib;glslang.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(VK_SDK_PATH)\Source\lib\vulkan-1.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
