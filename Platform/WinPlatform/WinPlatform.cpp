@@ -95,6 +95,11 @@ namespace cube
 			}
 		}
 
+		void WinPlatform::Sleep(uint32_t time)
+		{
+			::Sleep(time);
+		}
+
 		LRESULT WinPlatform::WndProc_s(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			WinPlatform *pThis;

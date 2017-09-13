@@ -18,6 +18,10 @@ namespace cube
 
 			void Run();
 
+			float GetCurrentFPS();
+
+			void SetFPSLimit(int limit);
+
 		private:
 			void Loop();
 
@@ -38,6 +42,8 @@ namespace cube
 
 			//Vector<SPtr<GameObject>> mGameObjects;
 			SPtr<GameObject> mGo;
+
+			int mFPSLimit;
 		};
 	}
 }

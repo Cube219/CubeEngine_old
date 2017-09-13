@@ -15,7 +15,7 @@ namespace cube
 	namespace core
 	{
 		EngineCore::EngineCore(SPtr<platform::BasePlatform>& platform) :
-			mPlatform(platform)
+			mPlatform(platform), mFPSLimit(-1)
 		{
 			platform->SetKeyDownFunction(std::bind(&EngineCore::KeyDown, this, _1));
 			platform->SetKeyUpFunction(std::bind(&EngineCore::KeyUp, this, _1));
@@ -115,17 +115,47 @@ namespace cube
 			mPlatform->StartLoop();
 		}
 
+		float EngineCore::GetCurrentFPS()
+		{
+			// TODO: 더 좋은 방법으로 개선
+			return SCast(float)(1.0 / mTimeManager->GetDeltaTime());
+		}
+
+		void EngineCore::SetFPSLimit(int limit)
+		{
+			mFPSLimit = limit;
+		}
+
 		void EngineCore::Loop()
 		{
 			mTimeManager->Loop();
 
+			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
+
 			mGo->Update();
 
 			auto currentRotation = mGo->GetRotation();
-			currentRotation.x += 0.5f;
+			currentRotation.x += 5.0f;
 			mGo->SetRotation(currentRotation);
 
 			mRendererManager->DrawAll();
+
+			// Limit FPS
+			if(mFPSLimit > 0) {
+				double nextTime = currentTime + (1.0 / mFPSLimit);
+
+				currentTime = mTimeManager->GetSystemTime();
+
+				double waitTime = nextTime - currentTime;
+				
+				if(waitTime > 0.1) { // TODO: 적절한 수치를 찾기
+					mPlatform->Sleep(SCast(int)(waitTime * 1000));
+				} else if(waitTime > 0.0) {
+					while(nextTime > currentTime) {
+						currentTime = mTimeManager->GetSystemTime();
+					}
+				}
+			}
 		}
 
 		void EngineCore::Resize(uint32_t width, uint32_t height)

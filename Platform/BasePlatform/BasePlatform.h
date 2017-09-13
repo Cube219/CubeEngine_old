@@ -22,7 +22,9 @@ namespace cube
 
 			virtual void InitWindow(WString title, uint32_t width, uint32_t height) = 0;
 			virtual void ShowWindow() = 0;
+
 			virtual void StartLoop() = 0;
+			virtual void Sleep(uint32_t time) = 0;
 
 			uint32_t GetWindowWidth() const;
 			uint32_t GetWindowHeight() const;

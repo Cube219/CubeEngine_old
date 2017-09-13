@@ -14,15 +14,26 @@ namespace cube
 		{
 		}
 
-		double TimeManager::GetCurrentTime()
+		double TimeManager::GetSystemTime()
 		{
-			return mCurrentTime.count() / 1000000000.0;
+			return GetNow().time_since_epoch().count() / ToSecond;
+		}
+
+		double TimeManager::GetCurrentGameTime()
+		{
+			return mCurrentGameTime.count() / ToSecond;
+		}
+
+		double TimeManager::GetDeltaTime()
+		{
+			double d = (mCurrentTimePoint - mPreviousTimePoint).count() / ToSecond;
+			return d;
 		}
 
 		void TimeManager::Start()
 		{
 			mCurrentTimePoint = GetNow();
-			mCurrentTime = Duration::zero();
+			mCurrentGameTime = Duration::zero();
 
 			mIsPaused = false;
 		}
@@ -35,10 +46,8 @@ namespace cube
 			Duration deltaTime = mCurrentTimePoint - mPreviousTimePoint;
 
 			if(!mIsPaused) {
-				mCurrentTime += deltaTime;
+				mCurrentGameTime += deltaTime;
 			}
-
-			LogWriter::WriteLog(std::to_wstring(GetCurrentTime()));
 		}
 
 		void TimeManager::Pause()

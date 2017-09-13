@@ -10,6 +10,9 @@ void LoadEngine(std::shared_ptr<platform::BasePlatform>& platform)
 	auto core = std::make_unique<core::EngineCore>(platform);
 
 	core->Prepare();
+
+	core->SetFPSLimit(60);
+
 	core->Run();
 }
 

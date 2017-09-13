@@ -18,7 +18,9 @@ namespace cube
 
 			void InitWindow(WString title, uint32_t width, uint32_t height) override;
 			void ShowWindow() override;
+
 			void StartLoop() override;
+			void Sleep(uint32_t time) override;
 
 			HINSTANCE GetInstance() const
 			{
