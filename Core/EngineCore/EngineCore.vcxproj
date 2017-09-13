@@ -133,6 +133,10 @@
     <ClInclude Include="Renderer\Renderer3D.h" />
     <ClInclude Include="Renderer\RendererManager.h" />
     <ClInclude Include="Renderer\Vertex.h" />
+    <ClInclude Include="String\ImmutableString.h" />
+    <ClInclude Include="String\PathString.h" />
+    <ClInclude Include="String\BasicString.h" />
+    <ClInclude Include="String\StringManager.h" />
     <ClInclude Include="TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +150,10 @@
     <ClCompile Include="Renderer\Mesh.cpp" />
     <ClCompile Include="Renderer\Renderer3D.cpp" />
     <ClCompile Include="Renderer\RendererManager.cpp" />
+    <ClCompile Include="String\ImmutableString.cpp" />
+    <ClCompile Include="String\PathString.cpp" />
+    <ClCompile Include="String\BasicString.cpp" />
+    <ClCompile Include="String\StringManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>

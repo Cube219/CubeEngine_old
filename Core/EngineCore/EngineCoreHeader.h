@@ -13,6 +13,11 @@ namespace cube
 		class TimeManager;
 		class LogWriter;
 
+		class BasicString;
+		class PathString;
+		class ImmutableString;
+		class StringManager;
+
 		class Renderer3D;
 		class CameraRenderer3D;
 		enum class RenderType;
