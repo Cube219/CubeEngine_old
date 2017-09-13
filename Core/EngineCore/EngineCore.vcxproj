@@ -133,6 +133,7 @@
     <ClInclude Include="Renderer\Renderer3D.h" />
     <ClInclude Include="Renderer\RendererManager.h" />
     <ClInclude Include="Renderer\Vertex.h" />
+    <ClInclude Include="TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -145,6 +146,7 @@
     <ClCompile Include="Renderer\Mesh.cpp" />
     <ClCompile Include="Renderer\Renderer3D.cpp" />
     <ClCompile Include="Renderer\RendererManager.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Platform\BasePlatform\BasePlatform.vcxproj">

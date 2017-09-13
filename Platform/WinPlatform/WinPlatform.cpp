@@ -82,17 +82,16 @@ namespace cube
 			MSG msg;
 
 			while(1) {
-				PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE);
-				if(msg.message == WM_QUIT)
-					break;
-				else {
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
+				if(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+					if(msg.message == WM_QUIT)
+						break;
+					else {
+						TranslateMessage(&msg);
+						DispatchMessage(&msg);
+					}
+				} else {
+					mLoopFunction();
 				}
-
-				mLoopFunction();
-
-				RedrawWindow(mWindow, nullptr, nullptr, RDW_INTERNALPAINT);
 			}
 		}
 

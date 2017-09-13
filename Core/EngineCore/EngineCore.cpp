@@ -1,6 +1,7 @@
 #include "EngineCore.h"
 
 #include "InputManager.h"
+#include "TimeManager.h"
 #include "LogWriter.h"
 #include "Renderer\RendererManager.h"
 #include "ModuleManager.h"
@@ -27,6 +28,8 @@ namespace cube
 			platform->SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
 
 			LogWriter::Init(platform);
+
+			mTimeManager = std::make_unique<TimeManager>();
 		}
 
 		EngineCore::~EngineCore()
@@ -107,11 +110,15 @@ namespace cube
 
 		void EngineCore::Run()
 		{
+			mTimeManager->Start();
+
 			mPlatform->StartLoop();
 		}
 
 		void EngineCore::Loop()
 		{
+			mTimeManager->Loop();
+
 			mGo->Update();
 
 			auto currentRotation = mGo->GetRotation();

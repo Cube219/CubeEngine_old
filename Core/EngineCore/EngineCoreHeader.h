@@ -10,6 +10,7 @@ namespace cube
 	{
 		class EngineCore;
 		class InputManager;
+		class TimeManager;
 		class LogWriter;
 
 		class Renderer3D;

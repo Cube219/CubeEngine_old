@@ -26,6 +26,7 @@
     </ClInclude>
     <ClInclude Include="Assertion.h" />
     <ClInclude Include="LogWriter.h" />
+    <ClInclude Include="TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -48,6 +49,7 @@
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="LogWriter.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
