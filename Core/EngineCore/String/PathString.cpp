@@ -4,8 +4,9 @@ namespace cube
 {
 	namespace core
 	{
-		PathString::PathString()
+		PathString::PathString(WString& string)
 		{
+			mStringData = string;
 		}
 
 		PathString::~PathString()

@@ -9,8 +9,20 @@ namespace cube
 		class PathString
 		{
 		public:
-			PathString();
+			friend class StringManager;
+
+			PathString() = delete;
 			~PathString();
+
+			const WString& GetString() const
+			{
+				return mStringData;
+			};
+
+		private:
+			PathString(WString& string);
+
+			WString mStringData;
 		};
 	}
 }

@@ -37,6 +37,7 @@ namespace cube
 			SPtr<platform::BasePlatform> mPlatform;
 			UPtr<RendererManager> mRendererManager;
 			UPtr<TimeManager> mTimeManager;
+			UPtr<StringManager> mStringManager;
 
 			UPtr<ModuleManager> mModuleManager;
 

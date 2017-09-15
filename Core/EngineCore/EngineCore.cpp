@@ -2,6 +2,7 @@
 
 #include "InputManager.h"
 #include "TimeManager.h"
+#include "String\StringManager.h"
 #include "LogWriter.h"
 #include "Renderer\RendererManager.h"
 #include "ModuleManager.h"
@@ -26,10 +27,6 @@ namespace cube
 
 			platform->SetLoopFunction(std::bind(&EngineCore::Loop, this));
 			platform->SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
-
-			LogWriter::Init(platform);
-
-			mTimeManager = std::make_unique<TimeManager>();
 		}
 
 		EngineCore::~EngineCore()
@@ -38,6 +35,11 @@ namespace cube
 
 		void EngineCore::Prepare()
 		{
+			LogWriter::Init(mPlatform);
+
+			mTimeManager = std::make_unique<TimeManager>();
+			mStringManager = std::make_unique<StringManager>();
+
 			mRendererManager = std::make_unique<RendererManager>(mPlatform, RenderType::Vulkan);
 
 			mModuleManager = std::make_unique<ModuleManager>(mPlatform);

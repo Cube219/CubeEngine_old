@@ -44,6 +44,9 @@ using WString = std::wstring;
 template <typename T>
 using Vector = std::vector<T>;
 
+template <typename Type, size_t Size>
+using Array = std::array<Type, Size>;
+
 #define SET_ENUM_AS_FLAGS(type) \
 	inline type operator |(type a, type b)\
 	{\
