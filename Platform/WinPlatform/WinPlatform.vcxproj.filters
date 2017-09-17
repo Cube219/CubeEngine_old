@@ -4,9 +4,11 @@
     <ClInclude Include="WinPlatform.h" />
     <ClInclude Include="WinDLib.h" />
     <ClInclude Include="WinPlatformHeader.h" />
+    <ClInclude Include="WinFileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinPlatform.cpp" />
     <ClCompile Include="WinDLib.cpp" />
+    <ClCompile Include="WinFileSystem.cpp" />
   </ItemGroup>
 </Project>

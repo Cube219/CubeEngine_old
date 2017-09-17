@@ -337,3 +337,6 @@ __pycache__/
 
 #Except Dependencies folder
 !Dependencies/**
+
+#Ignore temporary folder
+[Tt]emp

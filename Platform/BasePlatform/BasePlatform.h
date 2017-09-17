@@ -4,6 +4,7 @@
 #include "Base\BaseTypes.h"
 
 #include "BasePlatformDLib.h"
+#include "BasePlatformFileSystem.h"
 
 #include <functional>
 using namespace std::placeholders;
@@ -29,6 +30,8 @@ namespace cube
 			uint32_t GetWindowWidth() const;
 			uint32_t GetWindowHeight() const;
 
+			SPtr<BasePlatformFileSystem> GetFileSystem();
+
 			void SetKeyDownFunction(std::function<void(KeyCode)> pFunction);
 			void SetKeyUpFunction(std::function<void(KeyCode)> pFunction);
 			void SetMouseDownFunction(std::function<void(MouseButtonType)> pFunction);
@@ -40,6 +43,8 @@ namespace cube
 			void SetResizeFunction(std::function<void(uint32_t, uint32_t)> pFunction);
 
 		protected:
+			SPtr<BasePlatformFileSystem> mFileSystem;
+
 			std::wstring mTitle;
 
 			uint32_t mWidth;
@@ -63,6 +68,11 @@ namespace cube
 		inline uint32_t BasePlatform::GetWindowHeight() const
 		{
 			return mHeight;
+		}
+
+		inline SPtr<BasePlatformFileSystem> BasePlatform::GetFileSystem()
+		{
+			return mFileSystem;
 		}
 
 		inline void BasePlatform::SetKeyDownFunction(std::function<void(KeyCode)> pFunction)

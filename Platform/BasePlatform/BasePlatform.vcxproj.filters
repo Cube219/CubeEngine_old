@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClInclude Include="BasePlatform.h" />
     <ClInclude Include="BasePlatformDLib.h" />
+    <ClInclude Include="BasePlatformFileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />

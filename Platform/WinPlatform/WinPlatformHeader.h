@@ -11,5 +11,8 @@ namespace cube
 		class WinPlatform;
 		
 		class WinDLib;
+
+		class WinFileSystem;
+		class WinFile;
 	}
 }

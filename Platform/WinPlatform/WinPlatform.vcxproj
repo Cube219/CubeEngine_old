@@ -120,11 +120,13 @@
   <ItemGroup>
     <ClInclude Include="WinDLib.h" />
     <ClInclude Include="WinPlatform.h" />
+    <ClInclude Include="WinFileSystem.h" />
     <ClInclude Include="WinPlatformHeader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinDLib.cpp" />
     <ClCompile Include="WinPlatform.cpp" />
+    <ClCompile Include="WinFileSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Base\Base\Base.vcxproj">

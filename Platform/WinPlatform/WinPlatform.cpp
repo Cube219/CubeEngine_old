@@ -1,6 +1,7 @@
 #include "WinPlatform.h"
 
 #include "WinDLib.h"
+#include "WinFileSystem.h"
 
 #include <iostream>
 
@@ -11,6 +12,7 @@ namespace cube
 		WinPlatform::WinPlatform(HINSTANCE instance) : 
 			mInstance(instance)
 		{
+			mFileSystem = std::make_shared<WinFileSystem>(mInstance);
 		}
 
 		WinPlatform::~WinPlatform()
