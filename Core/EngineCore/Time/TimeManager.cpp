@@ -1,6 +1,6 @@
 #include "TimeManager.h"
 
-#include "LogWriter.h"
+#include "../LogWriter.h"
 
 namespace cube
 {

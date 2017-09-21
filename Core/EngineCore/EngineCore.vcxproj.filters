@@ -26,7 +26,6 @@
     </ClInclude>
     <ClInclude Include="Assertion.h" />
     <ClInclude Include="LogWriter.h" />
-    <ClInclude Include="TimeManager.h" />
     <ClInclude Include="String\ImmutableString.h">
       <Filter>String</Filter>
     </ClInclude>
@@ -38,6 +37,9 @@
     </ClInclude>
     <ClInclude Include="String\BasicString.h">
       <Filter>String</Filter>
+    </ClInclude>
+    <ClInclude Include="Time\TimeManager.h">
+      <Filter>Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -61,7 +63,6 @@
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="LogWriter.cpp" />
-    <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="String\ImmutableString.cpp">
       <Filter>String</Filter>
     </ClCompile>
@@ -74,6 +75,9 @@
     <ClCompile Include="String\BasicString.cpp">
       <Filter>String</Filter>
     </ClCompile>
+    <ClCompile Include="Time\TimeManager.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
@@ -81,6 +85,9 @@
     </Filter>
     <Filter Include="String">
       <UniqueIdentifier>{532e1aba-c0f1-495a-9b14-6a51f9290cec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Time">
+      <UniqueIdentifier>{6af2d34e-6d2b-406a-87fc-e86f00dca2a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

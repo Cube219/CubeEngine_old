@@ -1,7 +1,7 @@
 #include "EngineCore.h"
 
 #include "InputManager.h"
-#include "TimeManager.h"
+#include "Time/TimeManager.h"
 #include "String\StringManager.h"
 #include "LogWriter.h"
 #include "Renderer\RendererManager.h"

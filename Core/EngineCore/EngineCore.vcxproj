@@ -137,7 +137,7 @@
     <ClInclude Include="String\PathString.h" />
     <ClInclude Include="String\BasicString.h" />
     <ClInclude Include="String\StringManager.h" />
-    <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="Time\TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -154,7 +154,7 @@
     <ClCompile Include="String\PathString.cpp" />
     <ClCompile Include="String\BasicString.cpp" />
     <ClCompile Include="String\StringManager.cpp" />
-    <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="Time\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Platform\BasePlatform\BasePlatform.vcxproj">
