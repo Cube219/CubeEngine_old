@@ -1,7 +1,7 @@
 #pragma once
 #pragma warning(disable:4251)
 
-#include "Base\BaseTypes.h"
+#include "Base/BaseTypes.h"
 #include "Assertion.h"
 
 namespace cube
@@ -9,8 +9,12 @@ namespace cube
 	namespace core
 	{
 		class EngineCore;
+		
 		class InputManager;
+		
 		class TimeManager;
+		class GameTime;
+
 		class LogWriter;
 
 		class BasicString;

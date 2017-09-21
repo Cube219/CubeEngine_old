@@ -2,12 +2,15 @@
 
 #include "../LogWriter.h"
 
+#include "GameTime.h"
+
 namespace cube
 {
 	namespace core
 	{
 		TimeManager::TimeManager()
 		{
+			mGlobalGameTime = std::make_shared<GameTime>();
 		}
 
 		TimeManager::~TimeManager()
@@ -16,53 +19,40 @@ namespace cube
 
 		double TimeManager::GetSystemTime()
 		{
-			return GetNow().time_since_epoch().count() / ToSecond;
+			return GetNow() / systemTimeRatio;
 		}
 
-		double TimeManager::GetCurrentGameTime()
+		SPtr<GameTime> TimeManager::CreateGameTime()
 		{
-			return mCurrentGameTime.count() / ToSecond;
-		}
+			auto g = std::make_shared<GameTime>();
+			mGameTimes.push_back(g);
 
-		double TimeManager::GetDeltaTime()
-		{
-			double d = (mCurrentTimePoint - mPreviousTimePoint).count() / ToSecond;
-			return d;
+			return g;
 		}
 
 		void TimeManager::Start()
 		{
-			mCurrentTimePoint = GetNow();
-			mCurrentGameTime = Duration::zero();
+			mCurrentSystemTimePoint = GetNow();
 
-			mIsPaused = false;
+			mGlobalGameTime->Start();
 		}
 
-		void TimeManager::Loop()
+		void TimeManager::Update()
 		{
-			mPreviousTimePoint = mCurrentTimePoint;
-			mCurrentTimePoint = GetNow();
+			mPreviousSystemTimePoint = mCurrentSystemTimePoint;
+			mCurrentSystemTimePoint = GetNow();
 
-			Duration deltaTime = mCurrentTimePoint - mPreviousTimePoint;
+			uint64_t systemDeltaTime = mCurrentSystemTimePoint - mPreviousSystemTimePoint;
 
-			if(!mIsPaused) {
-				mCurrentGameTime += deltaTime;
+			mGlobalGameTime->Update(systemDeltaTime);
+			for(auto& time : mGameTimes) {
+				time->Update(systemDeltaTime);
 			}
 		}
 
-		void TimeManager::Pause()
+		uint64_t TimeManager::GetNow() const
 		{
-			mIsPaused = true;
-		}
-
-		void TimeManager::Resume()
-		{
-			mIsPaused = false;
-		}
-
-		TimePoint TimeManager::GetNow()
-		{
-			return std::chrono::time_point_cast<Duration>(std::chrono::high_resolution_clock::now());
+			return std::chrono::time_point_cast<Duration>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
 		}
 	}
 }

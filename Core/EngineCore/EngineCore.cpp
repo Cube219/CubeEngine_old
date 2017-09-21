@@ -2,14 +2,15 @@
 
 #include "InputManager.h"
 #include "Time/TimeManager.h"
-#include "String\StringManager.h"
+#include "Time/GameTime.h"
+#include "String/StringManager.h"
 #include "LogWriter.h"
-#include "Renderer\RendererManager.h"
+#include "Renderer/RendererManager.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
-#include "Renderer\Renderer3D.h"
+#include "Renderer/Renderer3D.h"
 
-#include "Renderer\Vertex.h"
+#include "Renderer/Vertex.h"
 
 namespace cube
 {
@@ -113,14 +114,14 @@ namespace cube
 		void EngineCore::Run()
 		{
 			mTimeManager->Start();
-
+			
 			mPlatform->StartLoop();
 		}
 
 		float EngineCore::GetCurrentFPS()
 		{
 			// TODO: 더 좋은 방법으로 개선
-			return SCast(float)(1.0 / mTimeManager->GetDeltaTime());
+			return 1.0f / mTimeManager->GetGlobalGameTime()->GetDeltaTime();
 		}
 
 		void EngineCore::SetFPSLimit(int limit)
@@ -130,14 +131,14 @@ namespace cube
 
 		void EngineCore::Loop()
 		{
-			mTimeManager->Loop();
+			mTimeManager->Update();
 
 			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
 
 			mGo->Update();
 
 			auto currentRotation = mGo->GetRotation();
-			currentRotation.x += 5.0f;
+			currentRotation.x += 180.0f * mTimeManager->GetGlobalGameTime()->GetDeltaTime();
 			mGo->SetRotation(currentRotation);
 
 			mRendererManager->DrawAll();

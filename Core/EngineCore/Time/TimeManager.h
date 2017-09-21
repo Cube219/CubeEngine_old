@@ -11,7 +11,7 @@ namespace cube
 		using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>;
 		using Duration = std::chrono::nanoseconds;
 
-		constexpr double ToSecond = 1000000000.0;
+		constexpr double systemTimeRatio = 1000000000.0;
 
 		class TimeManager
 		{
@@ -21,24 +21,22 @@ namespace cube
 
 			double GetSystemTime();
 
-			double GetCurrentGameTime();
-			double GetDeltaTime();
+			SPtr<GameTime> GetGlobalGameTime() const { return mGlobalGameTime; };
+
+			SPtr<GameTime> CreateGameTime();
 
 			void Start();
-			void Loop();
 
-			void Pause();
-			void Resume();
+			void Update();
 
 		private:
-			TimePoint GetNow();
+			uint64_t GetNow() const;
 
-			Duration mCurrentGameTime;
-			
-			TimePoint mPreviousTimePoint;
-			TimePoint mCurrentTimePoint;
+			uint64_t mPreviousSystemTimePoint;
+			uint64_t mCurrentSystemTimePoint;
 
-			bool mIsPaused;
+			SPtr<GameTime> mGlobalGameTime;
+			Vector<SPtr<GameTime>> mGameTimes;
 		};
 	}
 }

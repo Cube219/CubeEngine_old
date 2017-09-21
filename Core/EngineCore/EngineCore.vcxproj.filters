@@ -41,6 +41,9 @@
     <ClInclude Include="Time\TimeManager.h">
       <Filter>Time</Filter>
     </ClInclude>
+    <ClInclude Include="Time\GameTime.h">
+      <Filter>Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -76,6 +79,9 @@
       <Filter>String</Filter>
     </ClCompile>
     <ClCompile Include="Time\TimeManager.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Time\GameTime.cpp">
       <Filter>Time</Filter>
     </ClCompile>
   </ItemGroup>
