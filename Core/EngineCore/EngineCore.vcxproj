@@ -137,6 +137,7 @@
     <ClInclude Include="String\PathString.h" />
     <ClInclude Include="String\BasicString.h" />
     <ClInclude Include="String\StringManager.h" />
+    <ClInclude Include="Thread\Thread.h" />
     <ClInclude Include="Time\GameTime.h" />
     <ClInclude Include="Time\TimeManager.h" />
   </ItemGroup>
@@ -155,6 +156,7 @@
     <ClCompile Include="String\PathString.cpp" />
     <ClCompile Include="String\BasicString.cpp" />
     <ClCompile Include="String\StringManager.cpp" />
+    <ClCompile Include="Thread\Thread.cpp" />
     <ClCompile Include="Time\GameTime.cpp" />
     <ClCompile Include="Time\TimeManager.cpp" />
   </ItemGroup>
