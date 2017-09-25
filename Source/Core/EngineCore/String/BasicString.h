@@ -6,7 +6,7 @@ namespace cube
 {
 	namespace core
 	{
-		class BasicString // TODO: 차후 String으로
+		class ENGINE_CORE_EXPORT BasicString // TODO: 차후 String으로
 		{
 		public:
 			BasicString();

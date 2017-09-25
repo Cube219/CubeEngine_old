@@ -8,7 +8,7 @@ namespace cube
 {
 	namespace core
 	{
-		class StringManager
+		class ENGINE_CORE_EXPORT StringManager
 		{
 		public:
 			StringManager();

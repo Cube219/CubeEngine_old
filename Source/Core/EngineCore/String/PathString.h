@@ -6,7 +6,7 @@ namespace cube
 {
 	namespace core
 	{
-		class PathString
+		class ENGINE_CORE_EXPORT PathString
 		{
 		public:
 			friend class StringManager;

@@ -6,7 +6,7 @@ namespace cube
 {
 	namespace core
 	{
-		class ImmutableString
+		class ENGINE_CORE_EXPORT ImmutableString
 		{
 		public:
 			ImmutableString();
