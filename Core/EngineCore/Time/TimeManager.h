@@ -13,7 +13,7 @@ namespace cube
 
 		constexpr double systemTimeRatio = 1000000000.0;
 
-		class TimeManager
+		class ENGINE_CORE_EXPORT TimeManager
 		{
 		public:
 			TimeManager();

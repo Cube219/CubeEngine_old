@@ -8,7 +8,7 @@ namespace cube
 	{
 		constexpr float timeRatio = 1000000000.0f;
 
-		class GameTime
+		class ENGINE_CORE_EXPORT GameTime
 		{
 		public:
 			friend class TimeManager;
