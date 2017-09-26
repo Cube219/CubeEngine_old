@@ -10,6 +10,7 @@ namespace cube
 	{
 		class EngineCore;
 		
+		class ThreadManager;
 		class Thread;
 
 		class InputManager;
