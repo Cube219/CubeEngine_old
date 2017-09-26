@@ -6,6 +6,7 @@
 #include "String/StringManager.h"
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
+#include "Renderer/Mesh.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
 #include "Renderer/Renderer3D.h"
@@ -107,8 +108,15 @@ namespace cube
 			mGo = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
 
 			auto renderer = mGo->GetRenderer();
-			renderer->SetVertex(vertices);
-			renderer->SetIndex(indices);
+
+			mMesh = std::make_shared<Mesh>();
+			mMesh->SetVertex(vertices);
+			mMesh->SetIndex(indices);
+
+			//renderer->SetVertex(vertices);
+			//renderer->SetIndex(indices);
+
+			renderer->SetMesh(mMesh);
 		}
 
 		void EngineCore::Run()

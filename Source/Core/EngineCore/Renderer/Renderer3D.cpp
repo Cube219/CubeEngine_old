@@ -1,5 +1,6 @@
 #include "Renderer3D.h"
 
+#include "Mesh.h"
 #include "CameraRenderer3D.h"
 
 #include <gtc\matrix_transform.hpp>
@@ -20,16 +21,10 @@ namespace cube
 		{
 		}
 
-		void Renderer3D::SetVertex(const Vector<Vertex>& vertices)
+		void Renderer3D::SetMesh(SPtr<Mesh>& mesh)
 		{
-			mVertices = vertices;
-			mIsVerticesUpdated = true;
-		}
-
-		void Renderer3D::SetIndex(const Vector<uint32_t>& indices)
-		{
-			mIndices = indices;
-			mIsIndicesUpdated = true;
+			mMesh = mesh;
+			mIsMeshUpdated = true;
 		}
 
 		void Renderer3D::SetModelMatrix(glm::mat4 modelMatrix)
@@ -40,21 +35,23 @@ namespace cube
 
 		void Renderer3D::Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
 		{
-			if(mIsVerticesUpdated == true || mIsIndicesUpdated == true) {
-				uint64_t dataSize = sizeof(mModelMatrix) + mVertices.size() * sizeof(Vertex) + mIndices.size() * sizeof(uint32_t);
+			auto vertices = mMesh->GetVertex();
+			auto indices = mMesh->GetIndex();
+
+			if(mIsMeshUpdated == true) {
+				uint64_t dataSize = sizeof(mModelMatrix) + vertices.size() * sizeof(Vertex) + indices.size() * sizeof(uint32_t);
 				
 				mUniformOffset = 0;
 				mVertexOffset = sizeof(mModelMatrix);
-				mIndexOffset = mVertexOffset + mVertices.size() * sizeof(Vertex);
+				mIndexOffset = mVertexOffset + vertices.size() * sizeof(Vertex);
 
 				mDataBuffer = mRenderAPI_ref->CreateBuffer(dataSize,
 					BufferTypeBits::Uniform | BufferTypeBits::Vertex | BufferTypeBits::Index);
 
-				mDataBuffer->UpdateBufferData(mVertices.data(), mVertices.size() * sizeof(Vertex), mVertexOffset);
-				mDataBuffer->UpdateBufferData(mIndices.data(), mIndices.size() * sizeof(uint32_t), mIndexOffset);
+				mDataBuffer->UpdateBufferData(vertices.data(), vertices.size() * sizeof(Vertex), mVertexOffset);
+				mDataBuffer->UpdateBufferData(indices.data(), indices.size() * sizeof(uint32_t), mIndexOffset);
 
-				mIsVerticesUpdated = false;
-				mIsIndicesUpdated = false;
+				mIsMeshUpdated = false;
 
 				// Uniform data must be written to the buffer because the buffer was newly created.
 				mIsMatrixUpdated = true;
@@ -75,7 +72,7 @@ namespace cube
 			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &mVertexOffset);
 			commandBuffer->BindIndexBuffer(mDataBuffer, mIndexOffset);
 
-			commandBuffer->DrawIndexed(SCast(uint32_t)(mIndices.size()), 0, 0, 1, 0);
+			commandBuffer->DrawIndexed(SCast(uint32_t)(indices.size()), 0, 0, 1, 0);
 		}
 	}
 }
