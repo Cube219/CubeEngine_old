@@ -73,18 +73,20 @@
     <IncludePath>$(SolutionDir)Dependencies\Vulkan\include;$(SolutionDir)Dependencies\glslang\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Dependencies\Vulkan\lib;$(SolutionDir)Dependencies\glslang\lib;$(LibraryPath)</LibraryPath>
     <SourcePath>$(SourcePath)</SourcePath>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)Dependencies\Vulkan\include;$(SolutionDir)Dependencies\glslang\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Dependencies\Vulkan\lib;$(SolutionDir)Dependencies\glslang\lib;$(LibraryPath)</LibraryPath>
     <SourcePath>$(SourcePath)</SourcePath>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Platform;$(SolutionDir)Core\RenderAPI;$(SolutionDir)Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -121,7 +123,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Platform;$(SolutionDir)Core\RenderAPI;$(SolutionDir)Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -175,9 +177,6 @@
     <ClCompile Include="Wrapper\VulkanWindowSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Platform\BasePlatform\BasePlatform.vcxproj">
-      <Project>{b7a93207-08d1-4caf-ae2a-686b64f67042}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\BaseRenderAPI\BaseRenderAPI.vcxproj">
       <Project>{b11ffb66-deb2-41ae-8b3c-1c9cfb2e2167}</Project>
     </ProjectReference>

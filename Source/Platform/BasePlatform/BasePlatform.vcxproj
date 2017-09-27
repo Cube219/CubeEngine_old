@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{79CD5EF1-C2FB-432B-A38E-3DB371C00C98}</ProjectGuid>
-    <RootNamespace>EngineCore</RootNamespace>
+    <ProjectGuid>{B7A93207-08D1-4CAF-AE2A-686B64F67042}</ProjectGuid>
+    <RootNamespace>BasePlatform</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -39,17 +39,17 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -70,10 +70,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -87,8 +87,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Core\RenderAPI;$(SolutionDir)Base;$(SolutionDir)Platform;$(SolutionDir)Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -111,8 +110,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Core\RenderAPI;$(SolutionDir)Base;$(SolutionDir)Platform;$(SolutionDir)Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -120,55 +118,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Assertion.h" />
-    <ClInclude Include="EngineCore.h" />
-    <ClInclude Include="EngineCoreHeader.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="InputManager.h" />
-    <ClInclude Include="LogWriter.h" />
-    <ClInclude Include="ModuleManager.h" />
-    <ClInclude Include="Renderer\CameraRenderer3D.h" />
-    <ClInclude Include="Renderer\Material.h" />
-    <ClInclude Include="Renderer\Mesh.h" />
-    <ClInclude Include="Renderer\Renderer3D.h" />
-    <ClInclude Include="Renderer\RendererManager.h" />
-    <ClInclude Include="Renderer\Vertex.h" />
-    <ClInclude Include="String\ImmutableString.h" />
-    <ClInclude Include="String\PathString.h" />
-    <ClInclude Include="String\BasicString.h" />
-    <ClInclude Include="String\StringManager.h" />
-    <ClInclude Include="Thread\MutexLock.h" />
-    <ClInclude Include="Thread\Thread.h" />
-    <ClInclude Include="Thread\ThreadManager.h" />
-    <ClInclude Include="Time\GameTime.h" />
-    <ClInclude Include="Time\TimeManager.h" />
+    <ClInclude Include="BasePlatform.h" />
+    <ClInclude Include="BasePlatformDLib.h" />
+    <ClInclude Include="BasePlatformFileSystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EngineCore.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="LogWriter.cpp" />
-    <ClCompile Include="ModuleManager.cpp" />
-    <ClCompile Include="Renderer\CameraRenderer3D.cpp" />
-    <ClCompile Include="Renderer\Material.cpp" />
-    <ClCompile Include="Renderer\Mesh.cpp" />
-    <ClCompile Include="Renderer\Renderer3D.cpp" />
-    <ClCompile Include="Renderer\RendererManager.cpp" />
-    <ClCompile Include="String\ImmutableString.cpp" />
-    <ClCompile Include="String\PathString.cpp" />
-    <ClCompile Include="String\BasicString.cpp" />
-    <ClCompile Include="String\StringManager.cpp" />
-    <ClCompile Include="Thread\Thread.cpp" />
-    <ClCompile Include="Thread\ThreadManager.cpp" />
-    <ClCompile Include="Time\GameTime.cpp" />
-    <ClCompile Include="Time\TimeManager.cpp" />
+    <ClCompile Include="a.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Platform\BasePlatform\BasePlatform.vcxproj">
-      <Project>{b7a93207-08d1-4caf-ae2a-686b64f67042}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Platform\WinPlatform\WinPlatform.vcxproj">
-      <Project>{6baedf33-d719-4a21-97e7-8c73dcdb9b4c}</Project>
+    <ProjectReference Include="..\..\Base\Base\Base.vcxproj">
+      <Project>{84d3a49e-2aef-4370-aa37-3d297a45fc91}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

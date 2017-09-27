@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{6BAEDF33-D719-4A21-97E7-8C73DCDB9B4C}</ProjectGuid>
-    <RootNamespace>WinPlatform</RootNamespace>
+    <ProjectGuid>{84D3A49E-2AEF-4370-AA37-3D297A45FC91}</ProjectGuid>
+    <RootNamespace>Base</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,17 +70,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetExt>.lib</TargetExt>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetExt>.lib</TargetExt>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -110,7 +109,6 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Base;$(SolutionDir)Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -118,20 +116,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="WinDLib.h" />
-    <ClInclude Include="WinPlatform.h" />
-    <ClInclude Include="WinFileSystem.h" />
-    <ClInclude Include="WinPlatformHeader.h" />
+    <ClInclude Include="BaseTypes.h" />
+    <ClInclude Include="format.h" />
+    <ClInclude Include="KeyCode.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WinDLib.cpp" />
-    <ClCompile Include="WinPlatform.cpp" />
-    <ClCompile Include="WinFileSystem.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Base\Base\Base.vcxproj">
-      <Project>{84d3a49e-2aef-4370-aa37-3d297a45fc91}</Project>
-    </ProjectReference>
+    <ClCompile Include="a.cpp" />
+    <ClCompile Include="format.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
