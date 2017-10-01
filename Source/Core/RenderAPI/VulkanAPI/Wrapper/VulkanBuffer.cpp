@@ -10,7 +10,7 @@ namespace cube
 	{
 		VulkanBuffer::VulkanBuffer(const SPtr<VulkanDevice>& device, VkBufferUsageFlags usage,
 			VkDeviceSize size, const void* data, VkSharingMode sharingMode) :
-			mDevice_ref(device)
+			mDevice_ref(device), mMappedData(nullptr)
 		{
 			VkResult res;
 
@@ -35,31 +35,54 @@ namespace cube
 			mAllocatedMemory = device->AllocateMemory(memRequire,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-			// Mapping Setup
-			res = vkMapMemory(*device, mAllocatedMemory, 0, memRequire.size, 0, &mMappedData);
-			CheckVkResult(L"VulkanBuffer", L"Cannot map to the memory", res);
-			mMappedSize = size;
+			mMappedSize = memRequire.size;
 
 			// Bind
 			res = vkBindBufferMemory(*device, mBuffer, mAllocatedMemory, 0);
 			CheckVkResult(L"VulkanBuffer", L"Cannot bind the memory", res);
 
-			if(data != nullptr)
+			if(data != nullptr) {
+				Map();
 				UpdateBufferData(data, mMappedSize, 0);
+				Unmap();
+			}
 		}
 
 		VulkanBuffer::~VulkanBuffer()
 		{
-			vkUnmapMemory(*mDevice_ref, mAllocatedMemory);
+			if(mMappedData != nullptr)
+				vkUnmapMemory(*mDevice_ref, mAllocatedMemory);
 
 			vkFreeMemory(*mDevice_ref, mAllocatedMemory, nullptr);
 			vkDestroyBuffer(*mDevice_ref, mBuffer, nullptr);
 		}
 
+		void VulkanBuffer::Map()
+		{
+			if(mMappedData != nullptr)
+				return;
+
+			VkResult res;
+
+			res = vkMapMemory(*mDevice_ref, mAllocatedMemory, 0, mMappedSize, 0, &mMappedData);
+			CheckVkResult(L"VulkanBuffer", L"Cannot map to the memory", res);
+		}
+
 		void VulkanBuffer::UpdateBufferData(const void* data, size_t size, uint64_t offset)
 		{
+			if(mMappedData == nullptr) {
+				PrintlnLogWithSayer(L"VulkanBuffer", L"Cannot update buffer data. It is not mapped.");
+				return;
+			}
+
 			char* p = (char*)mMappedData + offset;
 			memcpy(p, data, size);
+		}
+
+		void VulkanBuffer::Unmap()
+		{
+			vkUnmapMemory(*mDevice_ref, mAllocatedMemory);
+			mMappedData = nullptr;
 		}
 	}
 }

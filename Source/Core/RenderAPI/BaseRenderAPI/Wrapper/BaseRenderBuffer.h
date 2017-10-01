@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\BaseRenderAPIHeader.h"
+#include "../BaseRenderAPIHeader.h"
 
 namespace cube
 {
@@ -10,7 +10,8 @@ namespace cube
 		{
 			Uniform = 1,
 			Vertex = 2,
-			Index = 4
+			Index = 4,
+			TransferSource = 8
 		};
 		SET_ENUM_AS_FLAGS(BufferTypeBits)
 
@@ -21,7 +22,9 @@ namespace cube
 		public:
 			virtual ~BaseRenderBuffer(){ }
 
+			virtual void Map() = 0;
 			virtual void UpdateBufferData(const void* data, size_t size, uint64_t offset) = 0;
+			virtual void Unmap() = 0;
 
 			virtual BaseRenderBufferInfo GetInfo(uint64_t offset, uint64_t range) const;
 

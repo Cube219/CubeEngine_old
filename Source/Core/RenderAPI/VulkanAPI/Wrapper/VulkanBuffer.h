@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderBuffer.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
 
 namespace cube
 {
@@ -20,7 +20,9 @@ namespace cube
 				return mBuffer;
 			}
 
+			void Map() override;
 			void UpdateBufferData(const void* data, size_t size, uint64_t offset) override;
+			void Unmap() override;
 
 			const VkDescriptorBufferInfo GetVulkanInfo(uint64_t offset, uint64_t range) const;
 

@@ -48,6 +48,8 @@ namespace cube
 				mDataBuffer = mRenderAPI_ref->CreateBuffer(dataSize,
 					BufferTypeBits::Uniform | BufferTypeBits::Vertex | BufferTypeBits::Index);
 
+				mDataBuffer->Map();
+
 				mDataBuffer->UpdateBufferData(vertices.data(), vertices.size() * sizeof(Vertex), mVertexOffset);
 				mDataBuffer->UpdateBufferData(indices.data(), indices.size() * sizeof(uint32_t), mIndexOffset);
 
@@ -58,8 +60,12 @@ namespace cube
 			}
 
 			if(mIsMatrixUpdated == true) {
+				mDataBuffer->Map();
+
 				auto mvpMatrix = camera->GetViewProjectionMatrix() * mModelMatrix;
 				mDataBuffer->UpdateBufferData(&mvpMatrix, sizeof(mvpMatrix), mUniformOffset);
+
+				mDataBuffer->Unmap();
 
 				BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mUniformOffset, sizeof(mModelMatrix));
 				mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);

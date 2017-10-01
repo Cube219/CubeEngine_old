@@ -1,25 +1,25 @@
 #include "VulkanAPI.h"
 
-#include "Wrapper\VulkanInstance.h"
-#include "Wrapper\VulkanPhysicalDevice.h"
-#include "Wrapper\VulkanDevice.h"
-#include "Wrapper\VulkanCommandBuffer.h"
-#include "Wrapper\VulkanQueue.h"
-#include "Wrapper\VulkanWindowSurface.h"
-#include "Wrapper\VulkanSwapchain.h"
-#include "Wrapper\VulkanImage.h"
-#include "Wrapper\VulkanDescriptor.h"
-#include "Wrapper\VulkanRenderPass.h"
-#include "Wrapper\VulkanFramebuffer.h"
-#include "Wrapper\VulkanShader.h"
-#include "Wrapper\VulkanGraphicsPipeline.h"
-#include "Wrapper\VulkanBuffer.h"
-#include "Wrapper\VulkanRenderPass.h"
-#include "Wrapper\VulkanSwapchain.h"
-#include "Wrapper\VulkanFence.h"
-#include "Wrapper\VulkanSemaphore.h"
+#include "Wrapper/VulkanInstance.h"
+#include "Wrapper/VulkanPhysicalDevice.h"
+#include "Wrapper/VulkanDevice.h"
+#include "Wrapper/VulkanCommandBuffer.h"
+#include "Wrapper/VulkanQueue.h"
+#include "Wrapper/VulkanWindowSurface.h"
+#include "Wrapper/VulkanSwapchain.h"
+#include "Wrapper/VulkanImage.h"
+#include "Wrapper/VulkanDescriptor.h"
+#include "Wrapper/VulkanRenderPass.h"
+#include "Wrapper/VulkanFramebuffer.h"
+#include "Wrapper/VulkanShader.h"
+#include "Wrapper/VulkanGraphicsPipeline.h"
+#include "Wrapper/VulkanBuffer.h"
+#include "Wrapper/VulkanRenderPass.h"
+#include "Wrapper/VulkanSwapchain.h"
+#include "Wrapper/VulkanFence.h"
+#include "Wrapper/VulkanSemaphore.h"
 
-#include "WinPlatform\WinPlatform.h"
+#include "WinPlatform/WinPlatform.h"
 
 namespace cube
 {
@@ -100,6 +100,8 @@ namespace cube
 				usageFlags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 			if(SCast(int)(types | BufferTypeBits::Index) > 0)
 				usageFlags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+			if(SCast(int)(types | BufferTypeBits::TransferSource) > 0)
+				usageFlags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
 			return std::make_shared<VulkanBuffer>(mDevice, usageFlags, size, nullptr, VK_SHARING_MODE_EXCLUSIVE);
 		}
