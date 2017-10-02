@@ -10,7 +10,7 @@ namespace cube
 		class BaseRenderAPI
 		{
 		public:
-			BaseRenderAPI();
+			BaseRenderAPI() {};
 			virtual ~BaseRenderAPI() {}
 
 			virtual void Init(SPtr<platform::BasePlatform>& platform) = 0;

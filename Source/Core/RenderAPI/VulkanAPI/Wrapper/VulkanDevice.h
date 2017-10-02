@@ -27,6 +27,7 @@ namespace cube
 			VulkanQueueFamily GetGraphicsQueueFamily() const;
 			SPtr<VulkanQueue> GetQueue(VkQueueFlags type, uint32_t index);
 			SPtr<VulkanQueue> GetQueue(VulkanQueueFamily queueFamily, uint32_t index);
+			VulkanQueueFamily GetQueueFamily(VkQueueFlags type);
 
 			VkDeviceMemory AllocateMemory(VkMemoryRequirements require, VkMemoryPropertyFlags memoryPropertyFlags);
 

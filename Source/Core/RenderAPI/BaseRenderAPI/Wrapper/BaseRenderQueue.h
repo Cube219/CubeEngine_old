@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\BaseRenderAPIHeader.h"
+#include "../BaseRenderAPIHeader.h"
 
 namespace cube
 {
@@ -20,8 +20,14 @@ namespace cube
 		public:
 			virtual ~BaseRenderQueue(){ }
 
+			QueueTypeBits GetTypes() const { return mTypes; }
+			uint32_t GetIndex() const { return mIndex; }
+
 		protected:
 			BaseRenderQueue(){ }
+
+			QueueTypeBits mTypes;
+			uint32_t mIndex;
 		};
 	}
 }

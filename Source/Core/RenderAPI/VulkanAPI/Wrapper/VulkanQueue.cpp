@@ -23,9 +23,20 @@ namespace cube
 			return f;
 		}
 
-		VulkanQueue::VulkanQueue(VkQueue queue) :
+		VulkanQueue::VulkanQueue(VkQueue queue, VkQueueFlags types, uint32_t index) :
 			mQueue(queue)
 		{
+			mTypes = SCast(QueueTypeBits)(0);
+			if((types & VK_QUEUE_GRAPHICS_BIT) > 0)
+				mTypes |= QueueTypeBits::GraphicsBit;
+			if((types & VK_QUEUE_COMPUTE_BIT) > 0)
+				mTypes |= QueueTypeBits::ComputeBit;
+			if((types & VK_QUEUE_TRANSFER_BIT) > 0)
+				mTypes |= QueueTypeBits::TransferBit;
+			if((types & VK_QUEUE_SPARSE_BINDING_BIT) > 0)
+				mTypes |= QueueTypeBits::SparseBindingBit;
+
+			mIndex = index;
 		}
 
 		VulkanQueue::~VulkanQueue()

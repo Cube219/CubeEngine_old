@@ -45,7 +45,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseRenderAPI.cpp" />
     <ClCompile Include="Wrapper\BaseRenderBuffer.cpp">
       <Filter>Wrapper</Filter>
     </ClCompile>

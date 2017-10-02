@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderQueue.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderQueue.h"
 
 namespace cube
 {
@@ -30,7 +30,7 @@ namespace cube
 
 		private:
 			VulkanQueue(){ }
-			VulkanQueue(VkQueue queue);
+			VulkanQueue(VkQueue queue, VkQueueFlags types, uint32_t index);
 
 			VkQueue mQueue;
 		};

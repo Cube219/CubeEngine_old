@@ -80,19 +80,9 @@ namespace cube
 
 		SPtr<VulkanQueue> VulkanDevice::GetQueue(VkQueueFlags type, uint32_t index)
 		{
-			for(auto queueFamily : mQueueFamilies) {
-				if((queueFamily.mProperties.queueFlags & type) > 0) {
-					VkQueue q;
-					vkGetDeviceQueue(mDevice, queueFamily.mIndex, index, &q);
+			auto family = GetQueueFamily(type);
 
-					SPtr<VulkanQueue> queue(new VulkanQueue(q));
-					// TODO: index 넘어가는거 체크
-					return queue;
-				}
-			}
-
-			PrintlnLogWithSayer(L"VulkanDevice", L"Cannot get a queue");
-			return nullptr;
+			return GetQueue(family, index);
 		}
 
 		SPtr<VulkanQueue> VulkanDevice::GetQueue(VulkanQueueFamily queueFamily, uint32_t index)
@@ -100,8 +90,20 @@ namespace cube
 			VkQueue q;
 			vkGetDeviceQueue(mDevice, queueFamily.mIndex, index, &q);
 
-			SPtr<VulkanQueue> queue(new VulkanQueue(q));
+			SPtr<VulkanQueue> queue(new VulkanQueue(q, queueFamily.mProperties.queueFlags, index));
 			return queue;
+		}
+
+		VulkanQueueFamily VulkanDevice::GetQueueFamily(VkQueueFlags type)
+		{
+			for(size_t i = mQueueFamilies.size() - 1; i >= 0; i--) {
+				if((mQueueFamilies[i].mProperties.queueFlags & type) > 0) {
+					return mQueueFamilies[i];
+				}
+			}
+
+			PrintlnLogWithSayer(L"VulkanDevice", L"Cannot find a queueFamily");
+			return {};
 		}
 
 		VkDeviceMemory VulkanDevice::AllocateMemory(VkMemoryRequirements require, VkMemoryPropertyFlags memoryPropertyFlags)
