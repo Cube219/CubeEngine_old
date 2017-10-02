@@ -4,6 +4,7 @@
 
 #include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderImage.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderSampler.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderCommandBuffer.h"
 
 namespace cube
@@ -30,6 +31,8 @@ namespace cube
 
 			SPtr<BaseRenderBuffer> mStagingBuffer;
 			SPtr<BaseRenderImage> mImage;
+			SPtr<BaseRenderImageView> mImageView;
+			SPtr<BaseRenderSampler> mSampler;
 
 			UPtr<RendererManager>& mManager_ref;
 		};

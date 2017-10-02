@@ -8,6 +8,7 @@
 #include "Wrapper/VulkanWindowSurface.h"
 #include "Wrapper/VulkanSwapchain.h"
 #include "Wrapper/VulkanImage.h"
+#include "Wrapper/VulkanSampler.h"
 #include "Wrapper/VulkanDescriptor.h"
 #include "Wrapper/VulkanRenderPass.h"
 #include "Wrapper/VulkanFramebuffer.h"
@@ -72,6 +73,7 @@ namespace cube
 
 			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::TessellationShader, true, true);
 			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::GeometryShader, true, true);
+			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::SamplerAnisotropy, true, true);
 			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::MultiDrawIndirect, true, false);
 
 			mDevice->Create(mMainPhysicalDevice);
@@ -165,6 +167,11 @@ namespace cube
 				GetVkImageType(type), GetVkFormat(format), extent, mipLevels, 1,
 				VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_LAYOUT_UNDEFINED, GetVkImageUsageFlags(usage), VK_SHARING_MODE_EXCLUSIVE, optimal);
 		}
+		SPtr<BaseRenderSampler> VulkanAPI::CreateSampler()
+		{
+			return std::make_shared<VulkanSampler>(mDevice);
+		}
+
 		SPtr<BaseRenderFence> VulkanAPI::CreateFence()
 		{
 			return std::make_shared<VulkanFence>(mDevice);

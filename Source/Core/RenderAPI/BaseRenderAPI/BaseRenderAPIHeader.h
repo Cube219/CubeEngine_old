@@ -38,6 +38,8 @@ namespace cube
 		enum class ImageAspectBits;
 		enum class ImageLayout;
 
+		class BaseRenderSampler;
+
 		class BaseRenderQueue;
 		enum class QueueTypeBits;
 

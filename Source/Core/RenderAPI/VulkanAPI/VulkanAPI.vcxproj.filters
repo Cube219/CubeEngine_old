@@ -52,6 +52,9 @@
     <ClInclude Include="Wrapper\VulkanWindowSurface.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="Wrapper\VulkanSampler.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VulkanAPI.cpp" />
@@ -102,6 +105,9 @@
       <Filter>Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="Wrapper\VulkanWindowSurface.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanSampler.cpp">
       <Filter>Wrapper</Filter>
     </ClCompile>
   </ItemGroup>

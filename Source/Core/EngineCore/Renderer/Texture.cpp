@@ -39,6 +39,10 @@ namespace cube
 			auto graphicsQueue = renderAPI->GetQueue(QueueTypeBits::GraphicsBit, 0);
 			cmd->Submit(graphicsQueue, 0, nullptr, 0, nullptr, cmdSubmitFence);
 			cmdSubmitFence->Wait(100000000);
+
+			mImageView = mImage->GetImageView(DataFormat::R8G8B8A8_Unorm, ImageAspectBits::Color, ImageViewType::Image2D);
+
+			mSampler = renderAPI->CreateSampler();
 		}
 
 		Texture::~Texture()

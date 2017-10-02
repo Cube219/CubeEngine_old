@@ -130,6 +130,7 @@
     <ClInclude Include="Wrapper\BaseRenderImage.h" />
     <ClInclude Include="Wrapper\BaseRenderQueue.h" />
     <ClInclude Include="Wrapper\BaseRenderRenderPass.h" />
+    <ClInclude Include="Wrapper\BaseRenderSampler.h" />
     <ClInclude Include="Wrapper\BaseRenderSemaphore.h" />
     <ClInclude Include="Wrapper\BaseRenderShader.h" />
     <ClInclude Include="Wrapper\BaseRenderSwapchain.h" />
