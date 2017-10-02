@@ -77,18 +77,23 @@ namespace cube
 				"} myBufferVals;\n"
 				"layout (location = 0) in vec4 pos;\n"
 				"layout (location = 1) in vec4 inColor;\n"
+				"layout (location = 2) in vec2 inTexCoord;\n"
 				"layout (location = 0) out vec4 outColor;\n"
+				"layout (location = 1) out vec2 outTexCoord;\n"
 				"void main(void) {\n"
 				"   outColor = inColor;\n"
+				"   outTexCoord = inTexCoord;\n"
 				"   gl_Position = myBufferVals.mvp * pos;\n"
 				"}\n";
 
 			String fragShaderText =
 				"#version 440\n"
+				"layout (binding = 1) uniform sampler2D texSampler;\n"
 				"layout (location = 0) in vec4 color;\n"
+				"layout (location = 1) in vec2 texCoord;\n"
 				"layout (location = 0) out vec4 outColor;\n"
 				"void main(void) {\n"
-				"   outColor = color;\n"
+				"   outColor = texture(texSampler, texCoord);\n"
 				"}\n";
 
 			mShaders.push_back(mRenderAPI->CreateShader(ShaderType::GLSL_Vertex, vertShaderText, String("main")));
@@ -216,6 +221,7 @@ namespace cube
 			// TODO: Vertex 구조체를 기반으로 다시 쓰기(sizeof...)
 			mGraphicsPipeline->AddVertexInputAttribute(0, DataFormat::R32G32B32A32_SFloat, 0);
 			mGraphicsPipeline->AddVertexInputAttribute(1, DataFormat::R32G32B32A32_SFloat, 16);
+			mGraphicsPipeline->AddVertexInputAttribute(2, DataFormat::R32G32_SFloat, 32);
 			mGraphicsPipeline->SetVertexInput(sizeof(Vertex));
 			mGraphicsPipeline->SetVertexTopology(VertexTopology::Triangle);
 

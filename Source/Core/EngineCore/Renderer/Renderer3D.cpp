@@ -1,9 +1,10 @@
 #include "Renderer3D.h"
 
 #include "Mesh.h"
+#include "Texture.h"
 #include "CameraRenderer3D.h"
 
-#include <gtc\matrix_transform.hpp>
+#include <gtc/matrix_transform.hpp>
 
 namespace cube
 {
@@ -14,6 +15,7 @@ namespace cube
 		{
 			mDescriptorSet = renderAPI->CreateDescriptorSet();
 			mDescriptorSet->AddDescriptor(ShaderType::GLSL_Vertex, DescriptorType::UniformBuffer, 0, 1);
+			mDescriptorSet->AddDescriptor(ShaderType::GLSL_Fragment, DescriptorType::CombinedImageSampler, 1, 1);
 			mDescriptorSet->Create();
 		}
 
@@ -31,6 +33,12 @@ namespace cube
 		{
 			mModelMatrix = modelMatrix;
 			mIsMatrixUpdated = true;
+		}
+
+		void Renderer3D::SetTexture(SPtr<Texture>& texture)
+		{
+			mTexture = texture;
+			mIsTextureUpdated = true;
 		}
 
 		void Renderer3D::Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
@@ -71,6 +79,15 @@ namespace cube
 				mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
 
 				mIsMatrixUpdated = false;
+			}
+
+			if(mIsTextureUpdated == true) {
+				auto imageView = mTexture->GetImageView();
+				auto sampler = mTexture->GetSampler();
+
+				mDescriptorSet->WriteImagesInDescriptor(1, 1, &imageView, &sampler);
+
+				mIsTextureUpdated = false;
 			}
 
 			// Write

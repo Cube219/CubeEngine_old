@@ -19,6 +19,9 @@ namespace cube
 
 			void SendTextureData(SPtr<BaseRenderCommandBuffer>& commandBuffer);
 
+			SPtr<BaseRenderImageView> GetImageView() const { return mImageView; }
+			SPtr<BaseRenderSampler> GetSampler() const { return mSampler; }
+
 		private:
 
 			char* mData;

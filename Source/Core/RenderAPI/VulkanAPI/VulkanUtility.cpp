@@ -97,6 +97,9 @@ namespace cube
 				case DataFormat::R8G8B8A8_Unorm:
 					f = VK_FORMAT_R8G8B8A8_UNORM;
 					break;
+				case DataFormat::R32G32_SFloat:
+					f = VK_FORMAT_R32G32_SFLOAT;
+					break;
 				case DataFormat::R32G32B32A32_SFloat:
 					f = VK_FORMAT_R32G32B32A32_SFLOAT;
 					break;

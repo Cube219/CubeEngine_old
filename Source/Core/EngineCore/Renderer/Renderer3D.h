@@ -22,6 +22,7 @@ namespace cube
 
 			void SetMesh(SPtr<Mesh>& mesh);
 			void SetModelMatrix(glm::mat4 modelMatrix);
+			void SetTexture(SPtr<Texture>& texture);
 
 			void Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
 
@@ -38,6 +39,8 @@ namespace cube
 			bool mIsMatrixUpdated = false;
 			glm::mat4 mModelMatrix;
 			SPtr<BaseRenderDescriptorSet> mDescriptorSet; // TODO: 차후에 material쪽으로 옮김
+			bool mIsTextureUpdated = false;
+			SPtr<Texture> mTexture; // TODO: 차후에 material쪽으로 옮김
 
 			SPtr<BaseRenderBuffer> mDataBuffer; // Combine uniform / vertex / index
 			uint64_t mUniformOffset;

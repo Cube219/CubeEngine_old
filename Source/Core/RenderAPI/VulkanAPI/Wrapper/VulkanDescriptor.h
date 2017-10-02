@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderDescriptor.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
 
 namespace cube
 {
@@ -52,6 +52,8 @@ namespace cube
 			void Create() override;
 
 			void WriteBufferInDescriptor(uint32_t bindingIndex, uint32_t bufferNum, BaseRenderBufferInfo* buffers) override;
+			void WriteImagesInDescriptor(uint32_t bindingIndex, uint32_t imageNum, SPtr<BaseRenderImageView>* imageViews, SPtr<BaseRenderSampler>* samplers) override;
+
 			/*
 					void AddDescriptor(VkDescriptorType type, uint32_t binding, uint32_t count, VkShaderStageFlags stageFlags);
 

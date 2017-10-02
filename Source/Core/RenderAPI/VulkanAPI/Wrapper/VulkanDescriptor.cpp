@@ -2,6 +2,8 @@
 
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
+#include "VulkanImage.h"
+#include "VulkanSampler.h"
 
 namespace cube
 {
@@ -69,7 +71,7 @@ namespace cube
 		{
 			VkDescriptorSetLayoutBinding b;
 			b.binding = bindingIndex;
-			b.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			b.descriptorType = GetVkDescriptorType(descriptorType);
 			b.descriptorCount = count;
 			b.stageFlags = GetVkShaderStageFlags(shaderType);
 			b.pImmutableSamplers = nullptr;
@@ -130,6 +132,32 @@ namespace cube
 			delete[] bufInfos;
 		}
 
+		void VulkanDescriptorSet::WriteImagesInDescriptor(uint32_t bindingIndex, uint32_t imageNum, SPtr<BaseRenderImageView>* imageViews, SPtr<BaseRenderSampler>* samplers)
+		{
+			VkDescriptorImageInfo* imageInfos = new VkDescriptorImageInfo[imageNum];
+			for(uint32_t i = 0; i < imageNum; i++) {
+				imageInfos[i].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				imageInfos[i].imageView = *DPCast(VulkanImageView)(imageViews[i]);
+				imageInfos[i].sampler = *DPCast(VulkanSampler)(samplers[i]);
+			}
+
+			VkWriteDescriptorSet writeDescriptorSet = {};
+			writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			writeDescriptorSet.pNext = nullptr;
+			writeDescriptorSet.dstSet = mDescriptorSet;
+			writeDescriptorSet.dstBinding = bindingIndex;
+			writeDescriptorSet.dstArrayElement = 0;
+			writeDescriptorSet.descriptorType = mLayoutBindings[bindingIndex].descriptorType;
+			writeDescriptorSet.descriptorCount = imageNum;
+			writeDescriptorSet.pBufferInfo = nullptr;
+			writeDescriptorSet.pImageInfo = imageInfos;
+			writeDescriptorSet.pTexelBufferView = nullptr;
+
+			vkUpdateDescriptorSets(*mDevice_ref, 1, &writeDescriptorSet, 0, nullptr);
+
+			delete[] imageInfos;
+		}
+
 		VkShaderStageFlags VulkanDescriptorSet::GetVkShaderStageFlags(ShaderType shaderType)
 		{
 			VkShaderStageFlags shaderStageFlags;
@@ -155,12 +183,42 @@ namespace cube
 			VkDescriptorType t;
 
 			switch(descType) {
+				case DescriptorType::Sampler:
+					t = VK_DESCRIPTOR_TYPE_SAMPLER;
+					break;
+				case DescriptorType::CombinedImageSampler:
+					t = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					break;
+				case DescriptorType::SampledImage:
+					t = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+					break;
+				case DescriptorType::StorageImage:
+					t = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+					break;
+				case DescriptorType::UniformTexelBuffer:
+					t = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+					break;
+				case DescriptorType::StorageTexelBuffer:
+					t = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+					break;
 				case DescriptorType::UniformBuffer:
 					t = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 					break;
+				case DescriptorType::StorageBuffer:
+					t = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+					break;
+				case DescriptorType::UniformBufferDynamic:
+					t = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+					break;
+				case DescriptorType::StorageBufferDynamic:
+					t = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+					break;
+				case DescriptorType::InputAttachment:
+					t = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanDescriptorSet", L"Unknown DescriptorType");
+					PrintlnLogWithSayer(L"VulkanDescriptor", L"Unknown DescriptorType");
 					break;
 			}
 

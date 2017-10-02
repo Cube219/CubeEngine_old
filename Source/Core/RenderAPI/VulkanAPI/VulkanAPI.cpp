@@ -90,6 +90,7 @@ namespace cube
 			// Create a descriptor pool
 			mDescriptorPool = std::make_shared<VulkanDescriptorPool>();
 			mDescriptorPool->AddDescriptorTypeToAllocate(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10);
+			mDescriptorPool->AddDescriptorTypeToAllocate(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10);
 			mDescriptorPool->Create(mDevice);
 		}
 
