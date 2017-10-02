@@ -32,7 +32,7 @@ namespace cube
 			virtual SPtr<BaseRenderCommandBuffer> CreateCommandBuffer() = 0;
 
 			virtual SPtr<BaseRenderImage> CreateImage(ImageType type, DataFormat format,
-				uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, ImageUsageBits usage) = 0;
+				uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, ImageUsageBits usage, bool optimal = true) = 0;
 
 			virtual SPtr<BaseRenderFence> CreateFence() = 0;
 #undef CreateSemaphore // Disable the macro defined in synchapi.h (WinAPI)

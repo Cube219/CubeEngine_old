@@ -43,7 +43,7 @@ namespace cube
 			VulkanImage(const SPtr<VulkanDevice>& device, VkImage image);
 			VulkanImage(const SPtr<VulkanDevice>& device,
 				VkImageType type, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers,
-				VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageUsageFlags usage, VkSharingMode sharingMode);
+				VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageUsageFlags usage, VkSharingMode sharingMode, bool optimal);
 			virtual ~VulkanImage();
 
 			operator VkImage() const

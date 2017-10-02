@@ -36,7 +36,7 @@ namespace cube
 			SPtr<BaseRenderCommandBuffer> CreateCommandBuffer() override;
 
 			SPtr<BaseRenderImage> CreateImage(ImageType type, DataFormat format,
-				uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, ImageUsageBits usage) override;
+				uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, ImageUsageBits usage, bool optimal = true) override;
 
 			SPtr<BaseRenderFence> CreateFence() override;
 #undef CreateSemaphore // Disable the macro defined in synchapi.h (WinAPI)

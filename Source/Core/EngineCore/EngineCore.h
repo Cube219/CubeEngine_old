@@ -44,6 +44,7 @@ namespace cube
 			//Vector<SPtr<GameObject>> mGameObjects;
 			SPtr<GameObject> mGo;
 			SPtr<Mesh> mMesh;
+			SPtr<Texture> mTexture;
 
 			int mFPSLimit;
 		};

@@ -7,11 +7,15 @@
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
 #include "Renderer/Mesh.h"
+#include "Renderer/Texture.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
 #include "Renderer/Renderer3D.h"
 
 #include "Renderer/Vertex.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 namespace cube
 {
@@ -113,10 +117,13 @@ namespace cube
 			mMesh->SetVertex(vertices);
 			mMesh->SetIndex(indices);
 
-			//renderer->SetVertex(vertices);
-			//renderer->SetIndex(indices);
-
 			renderer->SetMesh(mMesh);
+
+			int width, height, channel;
+			stbi_uc* p = stbi_load("Data/TestTexture.png", &width, &height, &channel, STBI_rgb_alpha);
+			LogWriter::WriteLog(std::to_wstring((long long)p));
+			mTexture = std::make_shared<Texture>(mRendererManager, (char*)p, width * height * 4, width, height);
+			stbi_image_free(p);
 		}
 
 		void EngineCore::Run()

@@ -70,11 +70,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(SolutionDir)Dependencies\stb\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(SolutionDir)Dependencies\stb\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -130,10 +130,11 @@
     <ClInclude Include="LogWriter.h" />
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="Renderer\CameraRenderer3D.h" />
-    <ClInclude Include="Renderer\Material.h" />
+    <ClInclude Include="Renderer\Material\Material.h" />
     <ClInclude Include="Renderer\Mesh.h" />
     <ClInclude Include="Renderer\Renderer3D.h" />
     <ClInclude Include="Renderer\RendererManager.h" />
+    <ClInclude Include="Renderer\Texture.h" />
     <ClInclude Include="Renderer\Vertex.h" />
     <ClInclude Include="String\ImmutableString.h" />
     <ClInclude Include="String\PathString.h" />
@@ -152,10 +153,11 @@
     <ClCompile Include="LogWriter.cpp" />
     <ClCompile Include="ModuleManager.cpp" />
     <ClCompile Include="Renderer\CameraRenderer3D.cpp" />
-    <ClCompile Include="Renderer\Material.cpp" />
+    <ClCompile Include="Renderer\Material\Material.cpp" />
     <ClCompile Include="Renderer\Mesh.cpp" />
     <ClCompile Include="Renderer\Renderer3D.cpp" />
     <ClCompile Include="Renderer\RendererManager.cpp" />
+    <ClCompile Include="Renderer\Texture.cpp" />
     <ClCompile Include="String\ImmutableString.cpp" />
     <ClCompile Include="String\PathString.cpp" />
     <ClCompile Include="String\BasicString.cpp" />

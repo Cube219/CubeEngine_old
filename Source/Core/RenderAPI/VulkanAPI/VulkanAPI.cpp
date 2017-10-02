@@ -157,12 +157,13 @@ namespace cube
 		}
 
 		SPtr<BaseRenderImage> VulkanAPI::CreateImage(ImageType type, DataFormat format,
-			uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, ImageUsageBits usage)
+			uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, ImageUsageBits usage, bool optimal)
 		{
 			VkExtent3D extent = {width, height, depth};
 
-			return std::make_shared<VulkanImage>(mDevice, GetVkImageType(type), GetVkFormat(format),
-				extent, mipLevels, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_LAYOUT_UNDEFINED, GetVkImageUsageFlags(usage), VK_SHARING_MODE_EXCLUSIVE);
+			return std::make_shared<VulkanImage>(mDevice,
+				GetVkImageType(type), GetVkFormat(format), extent, mipLevels, 1,
+				VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_LAYOUT_UNDEFINED, GetVkImageUsageFlags(usage), VK_SHARING_MODE_EXCLUSIVE, optimal);
 		}
 		SPtr<BaseRenderFence> VulkanAPI::CreateFence()
 		{

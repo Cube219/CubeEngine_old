@@ -34,6 +34,8 @@ namespace cube
 
 		class Material;
 
+		class Texture;
+
 		class ModuleManager;
 
 		class GameObject;

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderCommandBuffer.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderCommandBuffer.h"
 
 namespace cube
 {
@@ -24,7 +24,19 @@ namespace cube
 
 			void Begin() override;
 
+			void CopyBuffer(SPtr<BaseRenderBuffer>& source, uint64_t sourceOffset,
+				SPtr<BaseRenderBuffer>& destination, uint64_t destinationOffset, uint64_t size) override;
+			void CopyBufferToImage(SPtr<BaseRenderBuffer>& buffer, uint64_t bufferOffset,
+				SPtr<BaseRenderImage>& image, int imageOffsetX, int imageOffsetY, int imageOffsetZ,
+				uint32_t imageWidth, uint32_t imageHeight, uint32_t imageDepth, ImageAspectBits aspectBits) override;
+
 			void SetRenderPass(SPtr<BaseRenderRenderPass>& renderPass, Rect2D renderArea) override;
+
+			void PipelineBufferMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
+				AccessBits srcAccess, AccessBits dstAccess, SPtr<BaseRenderBuffer>& buffer, uint64_t offset, uint64_t size) override;
+			void PipelineImageMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
+				AccessBits srcAccess, AccessBits dstAccess, ImageLayout oldLayout, ImageLayout newLayout,
+				SPtr<BaseRenderImage>& image) override;
 
 			void SetViewport(uint32_t firstViewport, uint32_t viewportCount, Viewport* pViewports) override;
 			void SetScissor(uint32_t firstScissor, uint32_t scissorCount, Rect2D* pScissors) override;
@@ -42,7 +54,7 @@ namespace cube
 			void End() override;
 			void Submit(SPtr<BaseRenderQueue>& queue,
 				uint32_t waitSemaphoreNum, std::pair<SPtr<BaseRenderSemaphore>, PipelineStageBits>* waitSemaphores,
-				uint32_t signalSemaphoreNum, SPtr<BaseRenderSemaphore>* signalSemaphores, SPtr<BaseRenderFence>& waitFence) override;
+				uint32_t signalSemaphoreNum, SPtr<BaseRenderSemaphore>* signalSemaphores, SPtr<BaseRenderFence> waitFence) override;
 
 		private:
 			VulkanCommandBuffer(){ }

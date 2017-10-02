@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\BaseRenderAPIHeader.h"
+#include "../BaseRenderAPIHeader.h"
 
 namespace cube
 {
@@ -15,7 +15,20 @@ namespace cube
 
 			virtual void Begin() = 0;
 
+			virtual void CopyBuffer(SPtr<BaseRenderBuffer>& source, uint64_t sourceOffset,
+				SPtr<BaseRenderBuffer>& destination, uint64_t destinationOffset, uint64_t size) = 0;
+			virtual void CopyBufferToImage(SPtr<BaseRenderBuffer>& buffer, uint64_t bufferOffset,
+				SPtr<BaseRenderImage>& image, int imageOffsetX, int imageOffsetY, int imageOffsetZ,
+				uint32_t imageWidth, uint32_t imageHeight, uint32_t imageDepth, ImageAspectBits aspectBits) = 0;
+
 			virtual void SetRenderPass(SPtr<BaseRenderRenderPass>& renderPass, Rect2D renderArea) = 0;
+
+			//virtual void PipelineMemoryBarrier() = 0;
+			virtual void PipelineBufferMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
+				AccessBits srcAccess, AccessBits dstAccess, SPtr<BaseRenderBuffer>& buffer, uint64_t offset, uint64_t size) = 0;
+			virtual void PipelineImageMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
+				AccessBits srcAccess, AccessBits dstAccess, ImageLayout oldLayout, ImageLayout newLayout,
+				SPtr<BaseRenderImage>& image) = 0;
 
 			virtual void SetViewport(uint32_t firstViewport, uint32_t viewportCount, Viewport* pViewports) = 0;
 			virtual void SetScissor(uint32_t firstScissor, uint32_t scissorCount, Rect2D* pScissors) = 0;
@@ -34,7 +47,7 @@ namespace cube
 
 			virtual void Submit(SPtr<BaseRenderQueue>& queue,
 				uint32_t waitSemaphoreNum, std::pair<SPtr<BaseRenderSemaphore>, PipelineStageBits>* waitSemaphores,
-				uint32_t signalSemaphoreNum, SPtr<BaseRenderSemaphore>* signalSemaphores, SPtr<BaseRenderFence>& waitFence) = 0;
+				uint32_t signalSemaphoreNum, SPtr<BaseRenderSemaphore>* signalSemaphores, SPtr<BaseRenderFence> waitFence) = 0;
 
 		protected:
 			BaseRenderCommandBuffer(){ }

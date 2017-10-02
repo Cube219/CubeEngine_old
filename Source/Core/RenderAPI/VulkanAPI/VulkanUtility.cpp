@@ -94,6 +94,9 @@ namespace cube
 			VkFormat f;
 
 			switch(format) {
+				case DataFormat::R8G8B8A8_Unorm:
+					f = VK_FORMAT_R8G8B8A8_UNORM;
+					break;
 				case DataFormat::R32G32B32A32_SFloat:
 					f = VK_FORMAT_R32G32B32A32_SFLOAT;
 					break;
@@ -479,6 +482,64 @@ namespace cube
 			v.stencil = value.stencil;
 
 			return v;
+		}
+
+		VkAccessFlags GetVkAccessFlags(AccessBits access)
+		{
+			VkAccessFlags f = 0;
+
+			if(static_cast<int>(access & AccessBits::IndirectCommandReadBit) > 0)
+				f |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::IndexReadBit) > 0)
+				f |= VK_ACCESS_INDEX_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::VertexAttributeReadBit) > 0)
+				f |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::UniformReadBit) > 0)
+				f |= VK_ACCESS_UNIFORM_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::InputAttachmentReadBit) > 0)
+				f |= VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::ShaderReadBit) > 0)
+				f |= VK_ACCESS_SHADER_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::ShaderWriteBit) > 0)
+				f |= VK_ACCESS_SHADER_WRITE_BIT;
+
+			if(static_cast<int>(access & AccessBits::ColorAttachmentReadBit) > 0)
+				f |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::ColorAttachmentWriteBit) > 0)
+				f |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+			if(static_cast<int>(access & AccessBits::DepthStencilAttachmentReadBit) > 0)
+				f |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::DepthStencilAttachmentWriteBit) > 0)
+				f |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+			if(static_cast<int>(access & AccessBits::TransferReadBit) > 0)
+				f |= VK_ACCESS_TRANSFER_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::TransferWriteBit) > 0)
+				f |= VK_ACCESS_TRANSFER_WRITE_BIT;
+
+			if(static_cast<int>(access & AccessBits::HostReadBit) > 0)
+				f |= VK_ACCESS_HOST_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::HostWriteBit) > 0)
+				f |= VK_ACCESS_HOST_WRITE_BIT;
+
+			if(static_cast<int>(access & AccessBits::MemoryReadBit) > 0)
+				f |= VK_ACCESS_MEMORY_READ_BIT;
+
+			if(static_cast<int>(access & AccessBits::MemoryWriteBit) > 0)
+				f |= VK_ACCESS_MEMORY_WRITE_BIT;
+
+			return f;
 		}
 	}
 }

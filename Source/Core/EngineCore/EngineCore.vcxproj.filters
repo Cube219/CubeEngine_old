@@ -18,9 +18,6 @@
     </ClInclude>
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Renderer\Material.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\Mesh.h">
       <Filter>Renderer</Filter>
     </ClInclude>
@@ -53,6 +50,12 @@
     <ClInclude Include="Thread\MutexLock.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\Material\Material.h">
+      <Filter>Renderer\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Texture.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -68,9 +71,6 @@
     </ClCompile>
     <ClCompile Include="ModuleManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Renderer\Material.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\Mesh.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
@@ -99,6 +99,12 @@
     <ClCompile Include="Thread\ThreadManager.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\Material\Material.cpp">
+      <Filter>Renderer\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Texture.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
@@ -112,6 +118,9 @@
     </Filter>
     <Filter Include="Thread">
       <UniqueIdentifier>{44830ff6-815c-4004-b565-5f41e3d364af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer\Material">
+      <UniqueIdentifier>{e70c8341-926f-47fb-b385-4b913002f1f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

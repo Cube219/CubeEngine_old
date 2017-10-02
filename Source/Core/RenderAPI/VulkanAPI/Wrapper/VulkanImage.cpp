@@ -201,7 +201,7 @@ namespace cube
 
 		VulkanImage::VulkanImage(const SPtr<VulkanDevice>& device,
 			VkImageType type, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers,
-			VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageUsageFlags usage, VkSharingMode sharingMode) :
+			VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageUsageFlags usage, VkSharingMode sharingMode, bool optimal) :
 			mDevice_ref(device)
 		{
 			VkResult res;
@@ -221,6 +221,11 @@ namespace cube
 			imageCreateInfo.queueFamilyIndexCount = 0;
 			imageCreateInfo.pQueueFamilyIndices = nullptr;
 			imageCreateInfo.sharingMode = sharingMode;
+
+			if(optimal == true)
+				imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+			else
+				imageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
 
 			res = vkCreateImage(*device, &imageCreateInfo, nullptr, &mImage);
 			CheckVkResult(L"VulkanImage", L"Cannot create VulkanImage", res);
