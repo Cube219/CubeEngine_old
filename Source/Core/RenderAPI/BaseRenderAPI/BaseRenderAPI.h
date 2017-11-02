@@ -17,7 +17,7 @@ namespace cube
 
 			virtual SPtr<BaseRenderBuffer> CreateBuffer(uint64_t size, BufferTypeBits types) = 0;
 
-			virtual SPtr<BaseRenderDescriptorSet> CreateDescriptorSet() = 0;
+			virtual SPtr<BaseRenderDescriptorSet> CreateDescriptorSet(BaseRenderDescriptorSetInitializer& initializer) = 0;
 
 			virtual SPtr<BaseRenderQueue> GetQueue(QueueTypeBits types, uint32_t index) = 0;
 

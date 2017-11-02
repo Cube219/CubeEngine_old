@@ -63,20 +63,16 @@ namespace cube
 			mMainPhysicalDevice = mPhysicalDevices[0];
 
 			// Create a device
-			mDevice = std::make_shared<VulkanDevice>();
+			VulkanDeviceInitializer deviceInitializer;
+			deviceInitializer.AddExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
-			mDevice->AddExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::TessellationShader, true, true);
+			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::GeometryShader, true, true);
+			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::SamplerAnisotropy, true, true);
+			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::MultiDrawIndirect, true, false);
 
-			// TODO: ÀÏ´Ü GraphicsQueue¸¸...
-			auto graphicsQueueFamily = mMainPhysicalDevice->GetQueueFamily(VK_QUEUE_GRAPHICS_BIT);
-			mDevice->CreateDeviceQueue(graphicsQueueFamily, graphicsQueueFamily.mProperties.queueCount);
+			mDevice = std::make_shared<VulkanDevice>(mMainPhysicalDevice, deviceInitializer);
 
-			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::TessellationShader, true, true);
-			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::GeometryShader, true, true);
-			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::SamplerAnisotropy, true, true);
-			mDevice->SetFeatures(VulkanPhysicalDeviceFeature::MultiDrawIndirect, true, false);
-
-			mDevice->Create(mMainPhysicalDevice);
 
 			// Create a command pool
 			mCommandPool = std::make_shared<VulkanCommandPool>(mDevice, mDevice->GetGraphicsQueueFamily());
@@ -84,14 +80,11 @@ namespace cube
 			// Create a surface
 #ifdef _WIN32
 			SPtr<platform::WinPlatform> win32Platform = DPCast(platform::WinPlatform)(platform);
-			mWindowSurface = std::make_shared<VulkanWindowSurface>(mInstance, mMainPhysicalDevice, win32Platform->GetInstance(), win32Platform->GetWindow());
+			mWindowSurface = std::make_shared<VulkanWindowSurface>(mInstance, mMainPhysicalDevice, mDevice, win32Platform->GetInstance(), win32Platform->GetWindow());
 #endif // _WIN32
 
 			// Create a descriptor pool
-			mDescriptorPool = std::make_shared<VulkanDescriptorPool>();
-			mDescriptorPool->AddDescriptorTypeToAllocate(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10);
-			mDescriptorPool->AddDescriptorTypeToAllocate(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10);
-			mDescriptorPool->Create(mDevice);
+			mDescriptorPool = std::make_shared<VulkanDescriptorPool>(mDevice);
 		}
 
 		SPtr<BaseRenderBuffer> VulkanAPI::CreateBuffer(uint64_t size, BufferTypeBits types)
@@ -109,9 +102,9 @@ namespace cube
 			return std::make_shared<VulkanBuffer>(mDevice, usageFlags, size, nullptr, VK_SHARING_MODE_EXCLUSIVE);
 		}
 
-		SPtr<BaseRenderDescriptorSet> VulkanAPI::CreateDescriptorSet()
+		SPtr<BaseRenderDescriptorSet> VulkanAPI::CreateDescriptorSet(BaseRenderDescriptorSetInitializer& initializer)
 		{
-			return std::make_shared<VulkanDescriptorSet>(mDevice, mDescriptorPool);
+			return std::make_shared<VulkanDescriptorSet>(mDevice, mDescriptorPool, initializer);
 		}
 
 		SPtr<BaseRenderQueue> VulkanAPI::GetQueue(QueueTypeBits types, uint32_t index)

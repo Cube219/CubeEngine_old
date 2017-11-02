@@ -23,6 +23,7 @@ namespace cube
 		
 		class VulkanDescriptorSet;
 		
+		class VulkanDeviceInitializer;
 		class VulkanDevice;
 		
 		class VulkanFence;

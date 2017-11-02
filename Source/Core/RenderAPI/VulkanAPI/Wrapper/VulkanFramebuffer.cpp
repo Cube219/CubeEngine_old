@@ -13,7 +13,7 @@ namespace cube
 
 		VulkanFramebuffer::~VulkanFramebuffer()
 		{
-			vkDestroyFramebuffer(*mDevice_ref, mFramebuffer, nullptr);
+			vkDestroyFramebuffer(mDevice_ref->GetHandle(), mFramebuffer, nullptr);
 		}
 
 		void VulkanFramebuffer::AddAttachment(VkImageView imageView)
@@ -39,7 +39,7 @@ namespace cube
 			info.height = height;
 			info.layers = layers;
 
-			res = vkCreateFramebuffer(*device, &info, nullptr, &mFramebuffer);
+			res = vkCreateFramebuffer(device->GetHandle(), &info, nullptr, &mFramebuffer);
 			CheckVkResult(L"VulkanFramebuffer", L"Cannot create a VulkanFramebuffer", res);
 		}
 	}

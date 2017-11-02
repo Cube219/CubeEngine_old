@@ -177,7 +177,7 @@ namespace cube
 			imageViewCreateinfo.subresourceRange = subresourceRange;
 			imageViewCreateinfo.viewType = viewType;
 
-			res = vkCreateImageView(*mDevice_ref, &imageViewCreateinfo, nullptr, &mImageView);
+			res = vkCreateImageView(mDevice_ref->GetHandle(), &imageViewCreateinfo, nullptr, &mImageView);
 			CheckVkResult(L"VulkanImageView", L"Cannot create a VulkanImageView", res);
 
 			mFormat = format;
@@ -185,7 +185,7 @@ namespace cube
 
 		VulkanImageView::~VulkanImageView()
 		{
-			vkDestroyImageView(*mDevice_ref, mImageView, nullptr);
+			vkDestroyImageView(mDevice_ref->GetHandle(), mImageView, nullptr);
 		}
 
 		VkFormat VulkanImageView::GetVkFormat() const
@@ -227,15 +227,15 @@ namespace cube
 			else
 				imageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
 
-			res = vkCreateImage(*device, &imageCreateInfo, nullptr, &mImage);
+			res = vkCreateImage(device->GetHandle(), &imageCreateInfo, nullptr, &mImage);
 			CheckVkResult(L"VulkanImage", L"Cannot create VulkanImage", res);
 
 			// Allocate memory and bind
 			VkMemoryRequirements memRequire;
-			vkGetImageMemoryRequirements(*device, mImage, &memRequire);
+			vkGetImageMemoryRequirements(device->GetHandle(), mImage, &memRequire);
 
 			mAllocatedMemory = device->AllocateMemory(memRequire, 0);
-			res = vkBindImageMemory(*device, mImage, mAllocatedMemory, 0);
+			res = vkBindImageMemory(device->GetHandle(), mImage, mAllocatedMemory, 0);
 			CheckVkResult(L"VulkanImage", L"Cannot bind memory to the image", res);
 		}
 
@@ -243,8 +243,8 @@ namespace cube
 		{
 			// Destroy image only if it is created by itself
 			if(mAllocatedMemory != NULL) {
-				vkDestroyImage(*mDevice_ref, mImage, nullptr);
-				vkFreeMemory(*mDevice_ref, mAllocatedMemory, nullptr);
+				vkDestroyImage(mDevice_ref->GetHandle(), mImage, nullptr);
+				vkFreeMemory(mDevice_ref->GetHandle(), mAllocatedMemory, nullptr);
 			}
 		}
 

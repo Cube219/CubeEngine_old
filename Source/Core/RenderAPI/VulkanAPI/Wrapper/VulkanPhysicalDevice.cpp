@@ -236,36 +236,10 @@ namespace cube
 		VulkanPhysicalDevice::VulkanPhysicalDevice(VkPhysicalDevice physicalDevice) :
 			mPhysicalDevice(physicalDevice)
 		{
-			vkGetPhysicalDeviceProperties(physicalDevice, &mProperties);
-			vkGetPhysicalDeviceFeatures(physicalDevice, &mFeatures);
-			vkGetPhysicalDeviceMemoryProperties(physicalDevice, &mMemProperties);
-
-			// Get queue families in the physical device
-			uint32_t queueFamilyNum = 0;
-			vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyNum, nullptr);
-
-			VkQueueFamilyProperties* props = new VkQueueFamilyProperties[queueFamilyNum];
-			vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyNum, props);
-
-			for(uint32_t i = 0; i < queueFamilyNum; i++) {
-				mQueueFamilies.push_back({props[i], i});
-			}
-
-			delete[] props;
 		}
 
 		VulkanPhysicalDevice::~VulkanPhysicalDevice()
 		{
-		}
-
-		VulkanQueueFamily VulkanPhysicalDevice::GetQueueFamily(VkQueueFlags type)
-		{
-			for(auto q : mQueueFamilies) {
-				if((q.mProperties.queueFlags & type) > 0)
-					return q;
-			}
-
-			return {}; // TODO: 예외처리 하기
 		}
 	}
 }

@@ -133,7 +133,7 @@ namespace cube
 
 		VulkanRenderPass::~VulkanRenderPass()
 		{
-			vkDestroyRenderPass(*mDevice_ref, mRenderPass, nullptr);
+			vkDestroyRenderPass(mDevice_ref->GetHandle(), mRenderPass, nullptr);
 
 			mFramebuffers.clear();
 			mAttachments.clear();
@@ -225,7 +225,7 @@ namespace cube
 			info.dependencyCount = 0;
 			info.pDependencies = nullptr;
 
-			res = vkCreateRenderPass(*mDevice_ref, &info, nullptr, &mRenderPass);
+			res = vkCreateRenderPass(mDevice_ref->GetHandle(), &info, nullptr, &mRenderPass);
 			CheckVkResult(L"VulkanRenderPass", L"Cannot create a VulkanRenderPass", res);
 
 			delete[] subpassDescriptions;

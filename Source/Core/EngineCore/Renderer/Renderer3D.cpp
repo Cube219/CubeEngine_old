@@ -13,10 +13,11 @@ namespace cube
 		Renderer3D::Renderer3D(SPtr<BaseRenderAPI>& renderAPI) : 
 			mRenderAPI_ref(renderAPI)
 		{
-			mDescriptorSet = renderAPI->CreateDescriptorSet();
-			mDescriptorSet->AddDescriptor(ShaderType::GLSL_Vertex, DescriptorType::UniformBuffer, 0, 1);
-			mDescriptorSet->AddDescriptor(ShaderType::GLSL_Fragment, DescriptorType::CombinedImageSampler, 1, 1);
-			mDescriptorSet->Create();
+			BaseRenderDescriptorSetInitializer descriptorSetInitializer;
+			descriptorSetInitializer.descriptors.push_back({ShaderType::GLSL_Vertex, DescriptorType::UniformBuffer, 0, 1});
+			descriptorSetInitializer.descriptors.push_back({ShaderType::GLSL_Fragment, DescriptorType::CombinedImageSampler, 1, 1});
+			
+			mDescriptorSet = renderAPI->CreateDescriptorSet(descriptorSetInitializer);
 		}
 
 		Renderer3D::~Renderer3D()

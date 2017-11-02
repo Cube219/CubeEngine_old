@@ -6,7 +6,7 @@ namespace cube
 	{
 		VkQueueFlags GetVkQueueFlags(QueueTypeBits type)
 		{
-			VkQueueFlags f;
+			VkQueueFlags f = 0;
 
 			if(static_cast<int>(type & QueueTypeBits::GraphicsBit) > 0)
 				f |= VK_QUEUE_GRAPHICS_BIT;

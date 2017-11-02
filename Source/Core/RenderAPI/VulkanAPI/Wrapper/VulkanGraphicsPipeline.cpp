@@ -74,8 +74,8 @@ namespace cube
 
 		VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
 		{
-			vkDestroyPipelineLayout(*mDevice_ref, mPipelineLayout, nullptr);
-			vkDestroyPipeline(*mDevice_ref, mPipeline, nullptr);
+			vkDestroyPipelineLayout(mDevice_ref->GetHandle(), mPipelineLayout, nullptr);
+			vkDestroyPipeline(mDevice_ref->GetHandle(), mPipeline, nullptr);
 
 			mVertexInputAttributeDescs.clear();
 			mViewports.clear();
@@ -275,7 +275,7 @@ namespace cube
 			pipelineLayoutCreateInfo.setLayoutCount = SCast(uint32_t)(mDescriptorSets.size());
 			pipelineLayoutCreateInfo.pSetLayouts = layouts;
 
-			res = vkCreatePipelineLayout(*mDevice_ref, &pipelineLayoutCreateInfo, nullptr, &mPipelineLayout);
+			res = vkCreatePipelineLayout(mDevice_ref->GetHandle(), &pipelineLayoutCreateInfo, nullptr, &mPipelineLayout);
 			CheckVkResult(L"VulkanPipeline", L"Cannot create a pipeline layout", res);
 
 			delete[] layouts;
@@ -302,7 +302,7 @@ namespace cube
 			pipelineCreateInfo.renderPass = *DPCast(VulkanRenderPass)(renderPass);
 			pipelineCreateInfo.subpass = 0;
 
-			res = vkCreateGraphicsPipelines(*mDevice_ref, nullptr, 1, &pipelineCreateInfo, nullptr, &mPipeline);
+			res = vkCreateGraphicsPipelines(mDevice_ref->GetHandle(), nullptr, 1, &pipelineCreateInfo, nullptr, &mPipeline);
 			CheckVkResult(L"VulkanPipeline", L"Cannot create a VulkanPipeline", res);
 		}
 	}

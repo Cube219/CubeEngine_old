@@ -74,7 +74,7 @@ namespace cube
 			moduleInfo.pCode = mSpvShader.data();
 
 			VkResult res;
-			res = vkCreateShaderModule(*device, &moduleInfo, nullptr, &mShaderModule);
+			res = vkCreateShaderModule(device->GetHandle(), &moduleInfo, nullptr, &mShaderModule);
 			CheckVkResult(L"VulkanShader", L"Cannot create a shader module", res);
 
 			mEntryName = entryName;
@@ -91,7 +91,7 @@ namespace cube
 
 		VulkanShader::~VulkanShader()
 		{
-			vkDestroyShaderModule(*mDevice_ref, mShaderModule, nullptr);
+			vkDestroyShaderModule(mDevice_ref->GetHandle(), mShaderModule, nullptr);
 
 			mSpvShader.clear();
 		}

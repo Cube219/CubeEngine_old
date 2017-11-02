@@ -31,13 +31,13 @@ namespace cube
 			info.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
 			info.unnormalizedCoordinates = VK_FALSE;
 
-			res = vkCreateSampler(*device, &info, nullptr, &mSampler);
+			res = vkCreateSampler(device->GetHandle(), &info, nullptr, &mSampler);
 			CheckVkResult(L"VulkanSampler", L"Cannot create a VulkanSampler", res);
 		}
 
 		VulkanSampler::~VulkanSampler()
 		{
-			vkDestroySampler(*mDevice_ref, mSampler, nullptr);
+			vkDestroySampler(mDevice_ref->GetHandle(), mSampler, nullptr);
 		}
 	}
 }

@@ -24,14 +24,14 @@ namespace cube
 			mImages.clear();
 			mImageViews.clear();
 
-			vkDestroySwapchainKHR(*mDevice_ref, mSwapchain, nullptr);
+			vkDestroySwapchainKHR(mDevice_ref->GetHandle(), mSwapchain, nullptr);
 		}
 
 		uint32_t VulkanSwapchain::AcquireNextImageIndex(SPtr<BaseRenderSemaphore>& signalSemaphore)
 		{
 			VkResult res;
 
-			res = vkAcquireNextImageKHR(*mDevice_ref, mSwapchain, UINT64_MAX, *DPCast(VulkanSemaphore)(signalSemaphore), VK_NULL_HANDLE, &mCurrentImageIndex);
+			res = vkAcquireNextImageKHR(mDevice_ref->GetHandle(), mSwapchain, UINT64_MAX, *DPCast(VulkanSemaphore)(signalSemaphore), VK_NULL_HANDLE, &mCurrentImageIndex);
 			CheckVkResult(L"VulkanSwapchain", L"Cannot get a next iamge", res);
 
 			return mCurrentImageIndex;
@@ -122,23 +122,23 @@ namespace cube
 				info.pQueueFamilyIndices = queueFamilyIndices;
 			}
 
-			res = vkCreateSwapchainKHR(*mDevice_ref, &info, nullptr, &mSwapchain);
+			res = vkCreateSwapchainKHR(mDevice_ref->GetHandle(), &info, nullptr, &mSwapchain);
 			CheckVkResult(L"VulkanSwapchain", L"Cannot create VulkanSwapchain", res);
 
 			// If this swapchain is recreated, destroy the old swapchain
 			if(isRecreated == true) {
 				mImages.clear();
 
-				vkDestroySwapchainKHR(*mDevice_ref, oldSwapchain, nullptr);
+				vkDestroySwapchainKHR(mDevice_ref->GetHandle(), oldSwapchain, nullptr);
 			}
 
 			// Get the swapchain imgaes
 			uint32_t swapchainImageCount = 0;
-			res = vkGetSwapchainImagesKHR(*mDevice_ref, mSwapchain, &swapchainImageCount, nullptr);
+			res = vkGetSwapchainImagesKHR(mDevice_ref->GetHandle(), mSwapchain, &swapchainImageCount, nullptr);
 			CheckVkResult(L"VulkanSwapchain", L"Cannt get image number in the swapchain", res);
 
 			VkImage* imgs = new VkImage[swapchainImageCount];
-			res = vkGetSwapchainImagesKHR(*mDevice_ref, mSwapchain, &swapchainImageCount, imgs);
+			res = vkGetSwapchainImagesKHR(mDevice_ref->GetHandle(), mSwapchain, &swapchainImageCount, imgs);
 			CheckVkResult(L"VulkanSwapchain", L"Cannt get images in the swapchain", res);
 
 			mImages.resize(swapchainImageCount);

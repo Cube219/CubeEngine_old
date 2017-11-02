@@ -20,6 +20,7 @@ namespace cube
 
 		class BaseRenderCommandBuffer;
 
+		struct BaseRenderDescriptorSetInitializer;
 		class BaseRenderDescriptorSet;
 		enum class DescriptorType;
 

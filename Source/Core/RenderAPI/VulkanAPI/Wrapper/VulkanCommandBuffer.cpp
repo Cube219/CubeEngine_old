@@ -24,7 +24,7 @@ namespace cube
 
 		VulkanCommandBuffer::~VulkanCommandBuffer()
 		{
-			vkFreeCommandBuffers(*mDevice_ref, *mCommandPool_ref, 1, &mCommandBuffer);
+			vkFreeCommandBuffers(mDevice_ref->GetHandle(), *mCommandPool_ref, 1, &mCommandBuffer);
 		}
 
 		void VulkanCommandBuffer::Reset()
@@ -189,7 +189,7 @@ namespace cube
 		{
 			VkDescriptorSet* sets = new VkDescriptorSet[descriptorSetNum];
 			for(uint32_t i = 0; i < descriptorSetNum; i++) {
-				sets[i] = *SPCast(VulkanDescriptorSet)(descriptorSets[i]);
+				sets[i] = SPCast(VulkanDescriptorSet)(descriptorSets[i])->GetHandle();
 			}
 
 			vkCmdBindDescriptorSets(mCommandBuffer, GetVkPipelineBindPoint(pipelineType), mGraphicsPipeline->GetLayout(), firstSet, descriptorSetNum, sets, 0, nullptr);
@@ -311,13 +311,13 @@ namespace cube
 			info.queueFamilyIndex = designatedQueueFamily.mIndex;
 
 			VkResult res;
-			res = vkCreateCommandPool(*device, &info, nullptr, &mCommandPool);
+			res = vkCreateCommandPool(device->GetHandle(), &info, nullptr, &mCommandPool);
 			CheckVkResult(L"VulkanCommandPool", L"Cannot create VulkanCommandPool", res);
 		}
 
 		VulkanCommandPool::~VulkanCommandPool()
 		{
-			vkDestroyCommandPool(*mDevice_ref, mCommandPool, nullptr);
+			vkDestroyCommandPool(mDevice_ref->GetHandle(), mCommandPool, nullptr);
 		}
 
 		SPtr<VulkanCommandBuffer> VulkanCommandPool::AllocateCommandBuffer(VkCommandBufferLevel level)
@@ -333,7 +333,7 @@ namespace cube
 			commandBufferAllocateInfo.commandPool = mCommandPool;
 			commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 			commandBufferAllocateInfo.commandBufferCount = 1;
-			res = vkAllocateCommandBuffers(*mDevice_ref, &commandBufferAllocateInfo, &cmd);
+			res = vkAllocateCommandBuffers(mDevice_ref->GetHandle(), &commandBufferAllocateInfo, &cmd);
 			CheckVkResult(L"VulkanCommandPool", L"Cannot allocate VulkanCommandBuffer", res);
 
 			SPtr<VulkanCommandBuffer> cmdBuffer(new VulkanCommandBuffer(mDevice_ref, shared_from_this(), cmd));

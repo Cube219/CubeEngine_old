@@ -25,12 +25,12 @@ namespace cube
 			bufferCreateInfo.pQueueFamilyIndices = nullptr;
 			bufferCreateInfo.sharingMode = sharingMode;
 
-			res = vkCreateBuffer(*device, &bufferCreateInfo, nullptr, &mBuffer);
+			res = vkCreateBuffer(device->GetHandle(), &bufferCreateInfo, nullptr, &mBuffer);
 			CheckVkResult(L"VulkanBuffer", L"Cannot create a VulkanBuffer", res);
 
 			// Allocate memory
 			VkMemoryRequirements memRequire;
-			vkGetBufferMemoryRequirements(*device, mBuffer, &memRequire);
+			vkGetBufferMemoryRequirements(device->GetHandle(), mBuffer, &memRequire);
 
 			mAllocatedMemory = device->AllocateMemory(memRequire,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
@@ -38,7 +38,7 @@ namespace cube
 			mMappedSize = memRequire.size;
 
 			// Bind
-			res = vkBindBufferMemory(*device, mBuffer, mAllocatedMemory, 0);
+			res = vkBindBufferMemory(device->GetHandle(), mBuffer, mAllocatedMemory, 0);
 			CheckVkResult(L"VulkanBuffer", L"Cannot bind the memory", res);
 
 			if(data != nullptr) {
@@ -51,10 +51,10 @@ namespace cube
 		VulkanBuffer::~VulkanBuffer()
 		{
 			if(mMappedData != nullptr)
-				vkUnmapMemory(*mDevice_ref, mAllocatedMemory);
+				vkUnmapMemory(mDevice_ref->GetHandle(), mAllocatedMemory);
 
-			vkFreeMemory(*mDevice_ref, mAllocatedMemory, nullptr);
-			vkDestroyBuffer(*mDevice_ref, mBuffer, nullptr);
+			vkFreeMemory(mDevice_ref->GetHandle(), mAllocatedMemory, nullptr);
+			vkDestroyBuffer(mDevice_ref->GetHandle(), mBuffer, nullptr);
 		}
 
 		void VulkanBuffer::Map()
@@ -64,7 +64,7 @@ namespace cube
 
 			VkResult res;
 
-			res = vkMapMemory(*mDevice_ref, mAllocatedMemory, 0, mMappedSize, 0, &mMappedData);
+			res = vkMapMemory(mDevice_ref->GetHandle(), mAllocatedMemory, 0, mMappedSize, 0, &mMappedData);
 			CheckVkResult(L"VulkanBuffer", L"Cannot map to the memory", res);
 		}
 
@@ -81,7 +81,7 @@ namespace cube
 
 		void VulkanBuffer::Unmap()
 		{
-			vkUnmapMemory(*mDevice_ref, mAllocatedMemory);
+			vkUnmapMemory(mDevice_ref->GetHandle(), mAllocatedMemory);
 			mMappedData = nullptr;
 		}
 	}
