@@ -31,7 +31,7 @@ namespace cube
 		{
 			VkResult res;
 
-			res = vkAcquireNextImageKHR(mDevice_ref->GetHandle(), mSwapchain, UINT64_MAX, *DPCast(VulkanSemaphore)(signalSemaphore), VK_NULL_HANDLE, &mCurrentImageIndex);
+			res = vkAcquireNextImageKHR(mDevice_ref->GetHandle(), mSwapchain, UINT64_MAX, DPCast(VulkanSemaphore)(signalSemaphore)->GetHandle(), VK_NULL_HANDLE, &mCurrentImageIndex);
 			CheckVkResult(L"VulkanSwapchain", L"Cannot get a next iamge", res);
 
 			return mCurrentImageIndex;
@@ -49,7 +49,7 @@ namespace cube
 			std::vector<VkSemaphore> wait;
 			wait.resize(waitSemaphoreNum);
 			for(uint32_t i = 0; i < waitSemaphoreNum; i++) {
-				wait[i] = *DPCast(VulkanSemaphore)(waitSemaphores[i]);
+				wait[i] = DPCast(VulkanSemaphore)(waitSemaphores[i])->GetHandle();
 			}
 
 			VkPresentInfoKHR info;
@@ -62,10 +62,10 @@ namespace cube
 			info.pWaitSemaphores = wait.data();
 			info.pResults = nullptr;
 
-			res = vkQueuePresentKHR(*mPresentQueue, &info);
+			res = vkQueuePresentKHR(mPresentQueue->GetHandle(), &info);
 			CheckVkResult(L"VulkanSwapchain", L"Cannot present", res);
 
-			res = vkQueueWaitIdle(*mPresentQueue);
+			res = vkQueueWaitIdle(mPresentQueue->GetHandle());
 			CheckVkResult(L"VulkanSwapchain", L"Cannot wait the present queue", res);
 		}
 
@@ -95,7 +95,7 @@ namespace cube
 			info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 			info.pNext = nullptr;
 			info.flags = 0;
-			info.surface = *mSurface_ref;
+			info.surface = mSurface_ref->GetHandle();
 			info.minImageCount = imageCount;
 			info.imageFormat = mSurface_ref->GetFormat();
 			info.imageColorSpace = mSurface_ref->GetColorSpace();

@@ -39,24 +39,23 @@ namespace cube
 		{
 		}
 
-		// TODO: 나중에 주석 정리 (좀 지우기)
 		void VulkanAPI::Init(SPtr<platform::BasePlatform>& platform)
 		{
 			// Init instance
-			mInstance = std::make_shared<VulkanInstance>();
-			mInstance->SetApplicationName("CubeEngine Application");
-			mInstance->SetApplicationVersion(1);
-			mInstance->SetEngineName("CubeEngine");
-			mInstance->SetEngineVersion(1);
-			mInstance->SetAPIVersion(VK_API_VERSION_1_0);
+			VulkanInstanceInitializer instanceInit;
+			instanceInit.appName = "CubeEngine Application";
+			instanceInit.appVersion = 1;
+			instanceInit.engineName = "CubeEngine";
+			instanceInit.engineVersion = 1;
+			instanceInit.apiVersion = VK_API_VERSION_1_0;
 #ifdef _DEBUG
-			mInstance->AddLayer("VK_LAYER_LUNARG_standard_validation");
+			instanceInit.layerNames.push_back("VK_LAYER_LUNARG_standard_validation");
 #endif // _DEBUG
-			mInstance->AddExtension(VK_KHR_SURFACE_EXTENSION_NAME);
+			instanceInit.extensionNames.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
 #ifdef _WIN32
-			mInstance->AddExtension(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+			instanceInit.extensionNames.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #endif // _WIN32
-			mInstance->Create();
+			mInstance = std::make_shared<VulkanInstance>(instanceInit);
 
 			// Enumerate physical devices
 			mPhysicalDevices = mInstance->EnumeratePhysicalDevices();
@@ -117,34 +116,19 @@ namespace cube
 			return std::make_shared<VulkanSwapchain>(mDevice, mWindowSurface, 2, 10, 10, false);
 		}
 
-		SPtr<BaseRenderRenderPass> VulkanAPI::CreateRenderPass()
+		SPtr<BaseRenderRenderPass> VulkanAPI::CreateRenderPass(BaseRenderRenderPassInitializer& initializer)
 		{
-			return std::make_shared<VulkanRenderPass>(mDevice);
+			return std::make_shared<VulkanRenderPass>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderShader> VulkanAPI::CreateShader(ShaderType type, String& code, String& entryPoint)
+		SPtr<BaseRenderShader> VulkanAPI::CreateShader(BaseRenderShaderInitializer& initializer)
 		{
-			VkShaderStageFlagBits shaderStageFlag;
-
-			switch(type) {
-				case ShaderType::GLSL_Vertex:
-					shaderStageFlag = VK_SHADER_STAGE_VERTEX_BIT;
-					break;
-				case ShaderType::GLSL_Fragment:
-					shaderStageFlag = VK_SHADER_STAGE_FRAGMENT_BIT;
-					break;
-
-				default:
-					PrintlnLogWithSayer(L"VulkanAPI", L"Unknown shader type");
-					break;
-			}
-
-			return std::make_shared<VulkanShader>(mDevice, shaderStageFlag, code.c_str(), entryPoint.c_str());
+			return std::make_shared<VulkanShader>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderGraphicsPipeline> VulkanAPI::CreateGraphicsPipeline()
+		SPtr<BaseRenderGraphicsPipeline> VulkanAPI::CreateGraphicsPipeline(BaseRenderGraphicsPipelineInitializer& initializer)
 		{
-			return std::make_shared<VulkanGraphicsPipeline>(mDevice);
+			return std::make_shared<VulkanGraphicsPipeline>(mDevice, initializer);
 		}
 
 		SPtr<BaseRenderCommandBuffer> VulkanAPI::CreateCommandBuffer()
@@ -152,14 +136,9 @@ namespace cube
 			return mCommandPool->AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 		}
 
-		SPtr<BaseRenderImage> VulkanAPI::CreateImage(ImageType type, DataFormat format,
-			uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, ImageUsageBits usage, bool optimal)
+		SPtr<BaseRenderImage> VulkanAPI::CreateImage(BaseRenderImageInitializer& initializer)
 		{
-			VkExtent3D extent = {width, height, depth};
-
-			return std::make_shared<VulkanImage>(mDevice,
-				GetVkImageType(type), GetVkFormat(format), extent, mipLevels, 1,
-				VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_LAYOUT_UNDEFINED, GetVkImageUsageFlags(usage), VK_SHARING_MODE_EXCLUSIVE, optimal);
+			return std::make_shared<VulkanImage>(mDevice, initializer);
 		}
 		SPtr<BaseRenderSampler> VulkanAPI::CreateSampler()
 		{

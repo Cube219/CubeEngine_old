@@ -126,7 +126,7 @@ namespace cube
 		//                      VulkanRenderPass
 		// -----------------------------------------------------------
 
-		VulkanRenderPass::VulkanRenderPass(const SPtr<VulkanDevice>& device) :
+		VulkanRenderPass::VulkanRenderPass(const SPtr<VulkanDevice>& device, BaseRenderRenderPassInitializer& initializer) :
 			mDevice_ref(device), mSwapchain_ref(nullptr)
 		{
 		}
@@ -240,17 +240,21 @@ namespace cube
 
 			mFramebuffers.resize(framebufferCount);
 			for(uint32_t i = 0; i < framebufferCount; i++) {
-				mFramebuffers[i] = std::make_shared<VulkanFramebuffer>();
-				mFramebuffers[i]->AddAttachment(*swapchainImageViews[i]);
+				VulkanFramebufferInitializer framebufferInit;
+				framebufferInit.renderPass = pThis;
+				framebufferInit.width = mSwapchain_ref->GetWidth();
+				framebufferInit.height = mSwapchain_ref->GetHeight();
+				framebufferInit.layers = 1;
 
+				framebufferInit.attachments.push_back(swapchainImageViews[i]->GetHandle());
 				for(uint32_t j = 0; j < mAttachments.size(); j++) {
-					mFramebuffers[i]->AddAttachment(*mAttachments[j]);
+					framebufferInit.attachments.push_back(mAttachments[j]->GetHandle());
 				}
-				mFramebuffers[i]->Create(mDevice_ref, pThis, mSwapchain_ref->GetWidth(), mSwapchain_ref->GetHeight(), 1);
+				mFramebuffers[i] = std::make_shared<VulkanFramebuffer>(mDevice_ref, framebufferInit);
 			}
 		}
 
-		std::shared_ptr<VulkanFramebuffer> VulkanRenderPass::GetFramebuffer()
+		SPtr<VulkanFramebuffer> VulkanRenderPass::GetFramebuffer()
 		{
 			if(mSwapchain_ref == nullptr)
 				return mFramebuffers[0];

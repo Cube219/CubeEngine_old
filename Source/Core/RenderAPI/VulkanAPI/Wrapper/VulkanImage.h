@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderImage.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderImage.h"
 
 namespace cube
 {
@@ -22,10 +22,7 @@ namespace cube
 				VkImageViewType viewType);
 			virtual ~VulkanImageView();
 
-			operator VkImageView() const
-			{
-				return mImageView;
-			}
+			VkImageView GetHandle() const { return mImageView; }
 
 			VkFormat GetVkFormat() const;
 
@@ -41,18 +38,12 @@ namespace cube
 		{
 		public:
 			VulkanImage(const SPtr<VulkanDevice>& device, VkImage image);
-			VulkanImage(const SPtr<VulkanDevice>& device,
-				VkImageType type, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers,
-				VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageUsageFlags usage, VkSharingMode sharingMode, bool optimal);
+			VulkanImage(const SPtr<VulkanDevice>& device, BaseRenderImageInitializer& initializer);
 			virtual ~VulkanImage();
 
-			operator VkImage() const
-			{
-				return mImage;
-			}
+			VkImage GetHandle() const { return mImage; }
 
-			SPtr<BaseRenderImageView> GetImageView(DataFormat format, ImageAspectBits aspectBits, ImageViewType type) override;
-			// SPtr<VulkanImage> GetImageView(VkFormat format, VkImageAspectFlags aspectFlags, VkImageViewType type);
+			SPtr<BaseRenderImageView> GetImageView(DataFormat format, ImageAspectBits aspectBits, ImageViewType type) final override;
 
 		private:
 			VkImage mImage;

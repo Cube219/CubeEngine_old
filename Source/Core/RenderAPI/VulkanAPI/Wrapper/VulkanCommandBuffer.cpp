@@ -24,7 +24,7 @@ namespace cube
 
 		VulkanCommandBuffer::~VulkanCommandBuffer()
 		{
-			vkFreeCommandBuffers(mDevice_ref->GetHandle(), *mCommandPool_ref, 1, &mCommandBuffer);
+			vkFreeCommandBuffers(mDevice_ref->GetHandle(), mCommandPool_ref->GetHandle(), 1, &mCommandBuffer);
 		}
 
 		void VulkanCommandBuffer::Reset()
@@ -59,7 +59,7 @@ namespace cube
 			copy.dstOffset = destinationOffset;
 			copy.size = size;
 
-			vkCmdCopyBuffer(mCommandBuffer, *SPCast(VulkanBuffer)(source), *SPCast(VulkanBuffer)(destination), 1, &copy);
+			vkCmdCopyBuffer(mCommandBuffer, DPCast(VulkanBuffer)(source)->GetHandle(), DPCast(VulkanBuffer)(destination)->GetHandle(), 1, &copy);
 		}
 
 		void VulkanCommandBuffer::CopyBufferToImage(SPtr<BaseRenderBuffer>& buffer, uint64_t bufferOffset,
@@ -79,7 +79,7 @@ namespace cube
 			region.imageOffset = {imageOffsetX, imageOffsetY, imageOffsetZ};
 			region.imageExtent = {imageWidth, imageHeight, imageDepth};
 
-			vkCmdCopyBufferToImage(mCommandBuffer, *SPCast(VulkanBuffer)(buffer), *SPCast(VulkanImage)(image),
+			vkCmdCopyBufferToImage(mCommandBuffer, DPCast(VulkanBuffer)(buffer)->GetHandle(), DPCast(VulkanImage)(image)->GetHandle(),
 				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 		}
 
@@ -94,7 +94,7 @@ namespace cube
 			info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			info.pNext = nullptr;
 			info.renderPass = *vkRenderPass;
-			info.framebuffer = *(vkRenderPass->GetFramebuffer());
+			info.framebuffer = vkRenderPass->GetFramebuffer()->GetHandle();
 			info.renderArea = GetVkRect2D(renderArea);
 			info.clearValueCount = SCast(uint32_t)(vkRenderPass->mAttachmentClearValues.size());
 			info.pClearValues = vkRenderPass->mAttachmentClearValues.data();
@@ -114,7 +114,7 @@ namespace cube
 			barrier.dstAccessMask = GetVkAccessFlags(dstAccess);
 			barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 			barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			barrier.buffer = *SPCast(VulkanBuffer)(buffer);
+			barrier.buffer = SPCast(VulkanBuffer)(buffer)->GetHandle();
 			barrier.offset = offset;
 			barrier.size = size;
 
@@ -134,7 +134,7 @@ namespace cube
 			barrier.newLayout = GetVkImageLayout(newLayout);
 			barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 			barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			barrier.image = *SPCast(VulkanImage)(image);
+			barrier.image = DPCast(VulkanImage)(image)->GetHandle();
 
 			barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // TODO: 차후 수정
 			barrier.subresourceRange.baseMipLevel = 0;
@@ -181,7 +181,7 @@ namespace cube
 		{
 			mGraphicsPipeline = DPCast(VulkanGraphicsPipeline)(graphicsPipeline);
 
-			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *mGraphicsPipeline);
+			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mGraphicsPipeline->GetHandle());
 		}
 
 		void VulkanCommandBuffer::BindDescriptorSets(PipelineType pipelineType, uint32_t firstSet,
@@ -201,7 +201,7 @@ namespace cube
 		{
 			VkBuffer* buf = new VkBuffer[bufferNum];
 			for(uint32_t i = 0; i < bufferNum; i++) {
-				buf[i] = *SPCast(VulkanBuffer)(buffers[i]);
+				buf[i] = SPCast(VulkanBuffer)(buffers[i])->GetHandle();
 			}
 
 			vkCmdBindVertexBuffers(mCommandBuffer, 0, bufferNum, buf, bufferOffsets);
@@ -211,7 +211,7 @@ namespace cube
 
 		void VulkanCommandBuffer::BindIndexBuffer(SPtr<BaseRenderBuffer> buffer, uint64_t bufferOffset)
 		{
-			vkCmdBindIndexBuffer(mCommandBuffer, *SPCast(VulkanBuffer)(buffer), bufferOffset, VK_INDEX_TYPE_UINT32);
+			vkCmdBindIndexBuffer(mCommandBuffer, SPCast(VulkanBuffer)(buffer)->GetHandle(), bufferOffset, VK_INDEX_TYPE_UINT32);
 		}
 
 		void VulkanCommandBuffer::Draw(uint32_t vertexCount, uint32_t vertexOffset, uint32_t instanceCount, uint32_t firstInstance)
@@ -248,12 +248,12 @@ namespace cube
 			wait.resize(waitSemaphoreNum);
 			waitStage.resize(waitSemaphoreNum);
 			for(uint32_t i = 0; i < waitSemaphoreNum; i++) {
-				wait[i] = *DPCast(VulkanSemaphore)(waitSemaphores[i].first);
+				wait[i] = DPCast(VulkanSemaphore)(waitSemaphores[i].first)->GetHandle();
 				waitStage[i] = GetVkPipelineStageFlags(waitSemaphores[i].second);
 			}
 			signal.resize(signalSemaphoreNum);
 			for(uint32_t i = 0; i < signalSemaphoreNum; i++) {
-				signal[i] = *DPCast(VulkanSemaphore)(signalSemaphores[i]);
+				signal[i] = DPCast(VulkanSemaphore)(signalSemaphores[i])->GetHandle();
 			}
 
 			VkSubmitInfo submitInfo = {};
@@ -270,9 +270,9 @@ namespace cube
 
 			VkFence f = NULL;
 			if(waitFence != nullptr)
-				f = *DPCast(VulkanFence)(waitFence);
+				f = DPCast(VulkanFence)(waitFence)->GetHandle();
 
-			res = vkQueueSubmit(*DPCast(VulkanQueue)(queue), 1, &submitInfo, f);
+			res = vkQueueSubmit(DPCast(VulkanQueue)(queue)->GetHandle(), 1, &submitInfo, f);
 			CheckVkResult(L"VulkanCommandBuffer", L"Cannot submit the command buffer", res);
 		}
 

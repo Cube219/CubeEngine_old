@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderSemaphore.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderSemaphore.h"
 
 namespace cube
 {
@@ -14,10 +14,7 @@ namespace cube
 			VulkanSemaphore(SPtr<VulkanDevice>& device);
 			virtual ~VulkanSemaphore();
 
-			operator VkSemaphore() const
-			{
-				return mSemaphore;
-			}
+			VkSemaphore GetHandle() const { return mSemaphore; }
 
 		private:
 			VkSemaphore mSemaphore;

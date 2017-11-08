@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\BaseRenderAPIHeader.h"
+#include "../BaseRenderAPIHeader.h"
 
 namespace cube
 {
@@ -24,6 +24,40 @@ namespace cube
 		// ----------------------------------------------------
 		//                 BaseRenderRenderPass
 		// ----------------------------------------------------
+		
+		struct BaseRenderRenderPassInitializer
+		{
+			struct Attachment
+			{
+				SPtr<BaseRenderImageView> imageView;
+				DataFormat format;
+				LoadOperator loadOp;
+				StoreOperator storeOp;
+				Color clearColor;
+				ImageLayout initialLayout;
+				ImageLayout finalLayout;
+
+				bool isDepthStencil;
+				LoadOperator stencilLoadOp;
+				StoreOperator stencilStoreOp;
+				DepthStencilValue clearDepthStencil;
+			};
+			Vector<Attachment> attachments;
+
+			struct SwapchainAttachment
+			{
+				SPtr<BaseRenderSwapchain> swapchain;
+				LoadOperator loadOp;
+				StoreOperator storeOp;
+				Color clearColor;
+				ImageLayout initialLayout;
+				ImageLayout finalLayout;
+			};
+			bool hasSwapchain;
+			SwapchainAttachment swapchainAttachment;
+
+			Vector<BaseRenderSubpass> subpasses;
+		};
 
 		class BaseRenderRenderPass
 		{

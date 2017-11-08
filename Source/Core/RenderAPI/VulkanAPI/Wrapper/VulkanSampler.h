@@ -14,10 +14,7 @@ namespace cube
 			VulkanSampler(const SPtr<VulkanDevice>& device);
 			~VulkanSampler();
 
-			operator VkSampler() const
-			{
-				return mSampler;
-			}
+			VkSampler GetHandle() const { return mSampler; }
 
 		private:
 			VkSampler mSampler;

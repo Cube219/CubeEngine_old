@@ -1,10 +1,10 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include <SPIRV\GlslangToSpv.h>
+#include <SPIRV/GlslangToSpv.h>
 
-#include "BaseRenderAPI\Wrapper\BaseRenderShader.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderShader.h"
 
 namespace cube
 {
@@ -13,15 +13,12 @@ namespace cube
 		class VULKAN_API_EXPORT VulkanShader : public BaseRenderShader
 		{
 		public:
-			VulkanShader(const SPtr<VulkanDevice>& device, VkShaderStageFlagBits stageFlagBits, const char* GLSLText, const char* entryName);
+			VulkanShader(const SPtr<VulkanDevice>& device, BaseRenderShaderInitializer& initializer);
 			virtual ~VulkanShader();
 
-			operator VkShaderModule() const
-			{
-				return mShaderModule;
-			}
+			VkShaderModule GetHandle() const { return mShaderModule; }
 
-			const VkPipelineShaderStageCreateInfo GetStageInfo() const;
+			const VkPipelineShaderStageCreateInfo GetStageInfo() const { return mShaderStageInfo; }
 
 		private:
 			TBuiltInResource InitResource();
@@ -34,10 +31,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-
-		inline const VkPipelineShaderStageCreateInfo VulkanShader::GetStageInfo() const
-		{
-			return mShaderStageInfo;
-		}
 	}
 }

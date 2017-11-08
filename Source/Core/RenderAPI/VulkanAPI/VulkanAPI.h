@@ -27,16 +27,15 @@ namespace cube
 
 			SPtr<BaseRenderSwapchain> CreateSwapchain() final override;
 
-			SPtr<BaseRenderRenderPass> CreateRenderPass() final override;
+			SPtr<BaseRenderRenderPass> CreateRenderPass(BaseRenderRenderPassInitializer& initializer) final override;
 
-			SPtr<BaseRenderShader> CreateShader(ShaderType type, String& code, String& entryPoint) final override;
+			SPtr<BaseRenderShader> CreateShader(BaseRenderShaderInitializer& initializer) final override;
 
-			SPtr<BaseRenderGraphicsPipeline> CreateGraphicsPipeline() final override;
+			SPtr<BaseRenderGraphicsPipeline> CreateGraphicsPipeline(BaseRenderGraphicsPipelineInitializer& initializer) final override;
 
 			SPtr<BaseRenderCommandBuffer> CreateCommandBuffer() final override;
 
-			SPtr<BaseRenderImage> CreateImage(ImageType type, DataFormat format,
-				uint32_t width, uint32_t height, uint32_t depth, uint32_t mipLevels, ImageUsageBits usage, bool optimal = true) final override;
+			SPtr<BaseRenderImage> CreateImage(BaseRenderImageInitializer& initializer) final override;
 
 			SPtr<BaseRenderSampler> CreateSampler() final override;
 

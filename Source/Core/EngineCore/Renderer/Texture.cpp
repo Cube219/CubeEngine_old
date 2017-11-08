@@ -19,9 +19,15 @@ namespace cube
 			mStagingBuffer->UpdateBufferData(data, size, 0);
 			mStagingBuffer->Unmap();
 
-			mImage = renderAPI->CreateImage(ImageType::Image2D, DataFormat::R8G8B8A8_Unorm,
-				width, height, 1, 1,
-				ImageUsageBits::TransferDestinationBit | ImageUsageBits::SampledBit);
+			BaseRenderImageInitializer init;
+			init.type = ImageType::Image2D;
+			init.format = DataFormat::R8G8B8A8_Unorm;
+			init.width = width;
+			init.height = height;
+			init.depth = 1;
+			init.mipLevels = 1;
+			init.usage = ImageUsageBits::TransferDestinationBit | ImageUsageBits::SampledBit;
+			mImage = renderAPI->CreateImage(init);
 
 			// Copy buffer to image
 			auto cmd = renderAPI->CreateCommandBuffer();

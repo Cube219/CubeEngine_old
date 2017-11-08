@@ -17,15 +17,12 @@ namespace cube
 #endif // WIN32
 			virtual ~VulkanWindowSurface();
 
-			operator VkSurfaceKHR() const
-			{
-				return mSurface;
-			}
+			VkSurfaceKHR GetHandle() const { return mSurface; }
 
-			VkFormat GetFormat() const;
-			VkColorSpaceKHR GetColorSpace() const;
+			VkFormat GetFormat() const { return mFormat; }
+			VkColorSpaceKHR GetColorSpace() const { return mColorSpace; }
 			const VkSurfaceCapabilitiesKHR GetCapabilities() const;
-			VulkanQueueFamily GetPresentQueueFamily() const;
+			VulkanQueueFamily GetPresentQueueFamily() const { return mPresentQueueFamily; }
 
 		private:
 			void GetProperties();
@@ -40,20 +37,5 @@ namespace cube
 			SPtr<VulkanPhysicalDevice> mPhysicalDevice_ref;
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-
-		inline VkFormat VulkanWindowSurface::GetFormat() const
-		{
-			return mFormat;
-		}
-
-		inline VkColorSpaceKHR VulkanWindowSurface::GetColorSpace() const
-		{
-			return mColorSpace;
-		}
-
-		inline VulkanQueueFamily VulkanWindowSurface::GetPresentQueueFamily() const
-		{
-			return mPresentQueueFamily;
-		}
 	}
 }

@@ -206,7 +206,7 @@ namespace cube
 		{
 			VkDescriptorBufferInfo* bufInfos = new VkDescriptorBufferInfo[bufferNum];
 			for(uint32_t i = 0; i < bufferNum; i++) {
-				bufInfos[i].buffer = *SPCast(VulkanBuffer)(buffers[i].buffer.lock());
+				bufInfos[i].buffer = SPCast(VulkanBuffer)(buffers[i].buffer.lock())->GetHandle();
 				bufInfos[i].offset = buffers[i].offset;
 				bufInfos[i].range = buffers[i].range;
 			}
@@ -233,8 +233,8 @@ namespace cube
 			VkDescriptorImageInfo* imageInfos = new VkDescriptorImageInfo[imageNum];
 			for(uint32_t i = 0; i < imageNum; i++) {
 				imageInfos[i].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-				imageInfos[i].imageView = *DPCast(VulkanImageView)(imageViews[i]);
-				imageInfos[i].sampler = *DPCast(VulkanSampler)(samplers[i]);
+				imageInfos[i].imageView = DPCast(VulkanImageView)(imageViews[i])->GetHandle();
+				imageInfos[i].sampler = DPCast(VulkanSampler)(samplers[i])->GetHandle();
 			}
 
 			VkWriteDescriptorSet writeDescriptorSet = {};

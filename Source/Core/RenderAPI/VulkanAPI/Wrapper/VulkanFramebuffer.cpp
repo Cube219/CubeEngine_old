@@ -7,40 +7,29 @@ namespace cube
 {
 	namespace core
 	{
-		VulkanFramebuffer::VulkanFramebuffer()
+		VulkanFramebuffer::VulkanFramebuffer(const SPtr<VulkanDevice>& device, VulkanFramebufferInitializer& initializer) : 
+			mDevice_ref(device)
 		{
-		}
-
-		VulkanFramebuffer::~VulkanFramebuffer()
-		{
-			vkDestroyFramebuffer(mDevice_ref->GetHandle(), mFramebuffer, nullptr);
-		}
-
-		void VulkanFramebuffer::AddAttachment(VkImageView imageView)
-		{
-			mAttachments.push_back(imageView);
-		}
-
-		void VulkanFramebuffer::Create(const SPtr<VulkanDevice>& device, const SPtr<VulkanRenderPass>& renderPass,
-			uint32_t width, uint32_t height, uint32_t layers)
-		{
-			mDevice_ref = device;
-
 			VkResult res;
 
 			VkFramebufferCreateInfo info = {};
 			info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			info.pNext = nullptr;
 			info.flags = 0;
-			info.renderPass = *renderPass;
-			info.attachmentCount = SCast(uint32_t)(mAttachments.size());
-			info.pAttachments = mAttachments.data();
-			info.width = width;
-			info.height = height;
-			info.layers = layers;
+			info.renderPass = *initializer.renderPass;
+			info.attachmentCount = SCast(uint32_t)(initializer.attachments.size());
+			info.pAttachments = initializer.attachments.data();
+			info.width = initializer.width;
+			info.height = initializer.height;
+			info.layers = initializer.layers;
 
 			res = vkCreateFramebuffer(device->GetHandle(), &info, nullptr, &mFramebuffer);
 			CheckVkResult(L"VulkanFramebuffer", L"Cannot create a VulkanFramebuffer", res);
+		}
+
+		VulkanFramebuffer::~VulkanFramebuffer()
+		{
+			vkDestroyFramebuffer(mDevice_ref->GetHandle(), mFramebuffer, nullptr);
 		}
 	}
 }

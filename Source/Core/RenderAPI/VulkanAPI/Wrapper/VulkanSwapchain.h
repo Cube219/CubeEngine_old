@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderSwapchain.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderSwapchain.h"
 
 namespace cube
 {
@@ -17,18 +17,18 @@ namespace cube
 				uint32_t imageCount, uint32_t width, uint32_t height, bool vsync);
 			virtual ~VulkanSwapchain();
 
-			const uint32_t GetImageCount() const;
-			const Vector<SPtr<VulkanImageView>>& GetImageViews() const;
-			uint32_t GetWidth() const;
-			uint32_t GetHeight() const;
+			const uint32_t GetImageCount() const { return SCast(uint32_t)(mImages.size()); }
+			const Vector<SPtr<VulkanImageView>>& GetImageViews() const { return mImageViews; }
+			uint32_t GetWidth() const { return mWidth; }
+			uint32_t GetHeight() const { return mHeight; }
 
-			uint32_t GetCurrentImageIndex() const;
+			uint32_t GetCurrentImageIndex() const { return mCurrentImageIndex; }
 
-			uint32_t AcquireNextImageIndex(SPtr<BaseRenderSemaphore>& signalSemaphore) override;
+			uint32_t AcquireNextImageIndex(SPtr<BaseRenderSemaphore>& signalSemaphore) final override;
 
-			void Recreate(uint32_t imageCount, uint32_t width, uint32_t height, bool vsync) override;
+			void Recreate(uint32_t imageCount, uint32_t width, uint32_t height, bool vsync) final override;
 
-			void Present(uint32_t waitSemaphoreNum, SPtr<BaseRenderSemaphore>* waitSemaphores) override;
+			void Present(uint32_t waitSemaphoreNum, SPtr<BaseRenderSemaphore>* waitSemaphores) final override;
 		private:
 			void CreateSwapchain(bool isRecreated, uint32_t imageCount, uint32_t width, uint32_t height, bool vsync);
 
@@ -46,30 +46,5 @@ namespace cube
 			SPtr<VulkanDevice> mDevice_ref;
 			SPtr<VulkanWindowSurface> mSurface_ref;
 		};
-
-		inline const uint32_t VulkanSwapchain::GetImageCount() const
-		{
-			return SCast(uint32_t)(mImages.size());
-		}
-
-		inline const Vector<SPtr<VulkanImageView>>& VulkanSwapchain::GetImageViews() const
-		{
-			return mImageViews;
-		}
-
-		inline uint32_t VulkanSwapchain::GetWidth() const
-		{
-			return mWidth;
-		}
-
-		inline uint32_t VulkanSwapchain::GetHeight() const
-		{
-			return mHeight;
-		}
-
-		inline uint32_t VulkanSwapchain::GetCurrentImageIndex() const
-		{
-			return mCurrentImageIndex;
-		}
 	}
 }

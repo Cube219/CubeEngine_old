@@ -28,6 +28,7 @@ namespace cube
 		
 		class VulkanFence;
 		
+		struct VulkanFramebufferInitializer;
 		class VulkanFramebuffer;
 		
 		class VulkanGraphicsPipeline;
@@ -38,6 +39,7 @@ namespace cube
 
 		class VulkanSampler;
 		
+		struct VulkanInstanceInitializer;
 		class VulkanInstance;
 		
 		enum class VulkanPhysicalDeviceFeature;

@@ -15,16 +15,21 @@ namespace cube
 				VkDeviceSize size, const void* data, VkSharingMode sharingMode);
 			virtual ~VulkanBuffer();
 
-			operator VkBuffer() const
+			VkBuffer GetHandle() const { return mBuffer; }
+
+			void Map() final override;
+			void UpdateBufferData(const void* data, size_t size, uint64_t offset) final override;
+			void Unmap() final override;
+
+			const VkDescriptorBufferInfo GetVulkanInfo(uint64_t offset, uint64_t range) const
 			{
-				return mBuffer;
+				VkDescriptorBufferInfo info;
+				info.buffer = mBuffer;
+				info.offset = offset;
+				info.range = range;
+
+				return info;
 			}
-
-			void Map() override;
-			void UpdateBufferData(const void* data, size_t size, uint64_t offset) override;
-			void Unmap() override;
-
-			const VkDescriptorBufferInfo GetVulkanInfo(uint64_t offset, uint64_t range) const;
 
 		private:
 			VkBuffer mBuffer;
@@ -35,15 +40,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-
-		inline const VkDescriptorBufferInfo VulkanBuffer::GetVulkanInfo(uint64_t offset, uint64_t range) const
-		{
-			VkDescriptorBufferInfo info;
-			info.buffer = mBuffer;
-			info.offset = offset;
-			info.range = range;
-
-			return info;
-		}
 	}
 }

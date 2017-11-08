@@ -23,10 +23,7 @@ namespace cube
 		public:
 			~VulkanQueue();
 
-			operator VkQueue() const
-			{
-				return mQueue;
-			}
+			VkQueue GetHandle() const { return mQueue; }
 
 		private:
 			VulkanQueue(){ }

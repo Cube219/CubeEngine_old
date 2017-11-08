@@ -37,8 +37,15 @@ namespace cube
 			mGraphicsQueue = mRenderAPI->GetQueue(QueueTypeBits::GraphicsBit, 0);
 
 			// Depth buffer
-			mDepthBufferImage = mRenderAPI->CreateImage(ImageType::Image2D, DataFormat::D16_Unorm,
-				platform->GetWindowWidth(), platform->GetWindowHeight(), 1, 1, ImageUsageBits::DepthStencilAttachmentBit);
+			BaseRenderImageInitializer imageInit;
+			imageInit.type = ImageType::Image2D;
+			imageInit.format = DataFormat::D16_Unorm;
+			imageInit.width = platform->GetWindowWidth();
+			imageInit.height = platform->GetWindowHeight();
+			imageInit.depth = 1;
+			imageInit.mipLevels = 1;
+			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
+			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
 			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
 
 			// Swapchain
@@ -46,7 +53,8 @@ namespace cube
 			mSwapchain->Recreate(2, platform->GetWindowWidth(), platform->GetWindowHeight(), true);
 
 			// RenderPass
-			mRenderPass = mRenderAPI->CreateRenderPass();
+			BaseRenderRenderPassInitializer renderPassInit;
+			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
 			Color c;
 			c.float32 = {0.3f, 0.3f, 0.3f, 0};
 			mRenderPass->SetSwapchain(mSwapchain, LoadOperator::Clear, StoreOperator::Store, c, ImageLayout::Undefined, ImageLayout::PresentSource);
@@ -96,8 +104,16 @@ namespace cube
 				"   outColor = texture(texSampler, texCoord);\n"
 				"}\n";
 
-			mShaders.push_back(mRenderAPI->CreateShader(ShaderType::GLSL_Vertex, vertShaderText, String("main")));
-			mShaders.push_back(mRenderAPI->CreateShader(ShaderType::GLSL_Fragment, fragShaderText, String("main")));
+			BaseRenderShaderInitializer shaderInit;
+			shaderInit.type = ShaderType::GLSL_Vertex;
+			shaderInit.code = vertShaderText.c_str();
+			shaderInit.entryPoint = "main";
+			mShaders.push_back(mRenderAPI->CreateShader(shaderInit));
+
+			shaderInit.type = ShaderType::GLSL_Fragment;
+			shaderInit.code = fragShaderText.c_str();
+			shaderInit.entryPoint = "main";
+			mShaders.push_back(mRenderAPI->CreateShader(shaderInit));
 
 			// Get a main command buffer
 			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
@@ -161,8 +177,15 @@ namespace cube
 			mHeight = height;
 
 			// Recreate a depth buffer
-			mDepthBufferImage = mRenderAPI->CreateImage(ImageType::Image2D, DataFormat::D16_Unorm,
-				width, height, 1, 1, ImageUsageBits::DepthStencilAttachmentBit);
+			BaseRenderImageInitializer imageInit;
+			imageInit.type = ImageType::Image2D;
+			imageInit.format = DataFormat::D16_Unorm;
+			imageInit.width = width;
+			imageInit.height = height;
+			imageInit.depth = 1;
+			imageInit.mipLevels = 1;
+			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
+			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
 			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
 
 			mSwapchain->Recreate(2, width, height, mVsync);
@@ -216,26 +239,51 @@ namespace cube
 
 		void RendererManager::RecreatePipeline()
 		{
-			// Get a graphics pipeline
-			mGraphicsPipeline = mRenderAPI->CreateGraphicsPipeline();
-			// TODO: Vertex 구조체를 기반으로 다시 쓰기(sizeof...)
-			mGraphicsPipeline->AddVertexInputAttribute(0, DataFormat::R32G32B32A32_SFloat, 0);
-			mGraphicsPipeline->AddVertexInputAttribute(1, DataFormat::R32G32B32A32_SFloat, 16);
-			mGraphicsPipeline->AddVertexInputAttribute(2, DataFormat::R32G32_SFloat, 32);
-			mGraphicsPipeline->SetVertexInput(sizeof(Vertex));
-			mGraphicsPipeline->SetVertexTopology(VertexTopology::Triangle);
+			BaseRenderGraphicsPipelineInitializer initializer;
 
-			mGraphicsPipeline->SetRasterizer(PolygonMode::Fill, PolygonFrontFace::Clockwise, CullMode::Back);
+			BaseRenderGraphicsPipelineInitializer::VertexInputAttribute attr;
+			attr.location = 0;
+			attr.format = DataFormat::R32G32B32A32_SFloat;
+			attr.offset = 0;
+			initializer.vertexInputAttributes.push_back(attr);
+			
+			attr.location = 1;
+			attr.format = DataFormat::R32G32B32A32_SFloat;
+			attr.offset = 16;
+			initializer.vertexInputAttributes.push_back(attr);
+			
+			attr.location = 2;
+			attr.format = DataFormat::R32G32_SFloat;
+			attr.offset = 32;
+			initializer.vertexInputAttributes.push_back(attr);
 
-			mGraphicsPipeline->AddColorBlendAttachment(false,
-				BlendFactor::Zero, BlendFactor::Zero, BlendOperator::Add,
-				BlendFactor::Zero, BlendFactor::Zero, BlendOperator::Add);
-			mGraphicsPipeline->SetColorBlend(false, LogicOperator::NoOp, 1.0f, 1.0f, 1.0f, 1.0f);
+			initializer.vertexSize = sizeof(Vertex);
+			initializer.vertexTopology = VertexTopology::Triangle;
 
-			mGraphicsPipeline->AddViewport({}, true);
-			mGraphicsPipeline->AddScissor({}, true);
-			mGraphicsPipeline->SetViewportState();
+			initializer.rasterizer = {PolygonMode::Fill, PolygonFrontFace::Clockwise, CullMode::Back};
 
+			BaseRenderGraphicsPipelineInitializer::ColorBlendAttachment colorAttr;
+			colorAttr.blendEnable = false;
+			colorAttr.srcColorBlendFactor = BlendFactor::Zero;
+			colorAttr.dstColorBlendFactor = BlendFactor::Zero;
+			colorAttr.colorBlendOp = BlendOperator::Add;
+			colorAttr.srcAlphaBlendFactor = BlendFactor::Zero;
+			colorAttr.dstAlphaBlendFactor = BlendFactor::Zero;
+			colorAttr.alphaBlendOp = BlendOperator::Add;
+
+			initializer.colorBlendAttachments.push_back(colorAttr);
+			
+			initializer.isScissorDynamic = true;
+			initializer.isViewportDynamic = true;
+
+			initializer.depthStencil.depthTestEnable = true;
+			initializer.depthStencil.depthBoundsTestEnable = false;
+			initializer.depthStencil.depthWriteEnable = true;
+			initializer.depthStencil.depthCompareOperator = CompareOperator::Always;
+			initializer.depthStencil.minDepthBounds = 0;
+			initializer.depthStencil.maxDepthBounds = 0;
+			
+			initializer.depthStencil.stencilTestEnable = false;
 			StencilOperatorState stencilOpState;
 			stencilOpState.failOperator = StencilOperator::Keep;
 			stencilOpState.passOperator = StencilOperator::Keep;
@@ -244,19 +292,21 @@ namespace cube
 			stencilOpState.reference = 0;
 			stencilOpState.depthFailOperator = StencilOperator::Keep;
 			stencilOpState.writeMask = 0;
-			mGraphicsPipeline->SetDepthStencil(true, false, true, CompareOperator::Always, false, stencilOpState, stencilOpState, 0, 0);
-
-			mGraphicsPipeline->SetMultisampler();
+			
+			initializer.depthStencil.front = stencilOpState;
+			initializer.depthStencil.back = stencilOpState;
 
 			for(auto& shader : mShaders) {
-				mGraphicsPipeline->AddShader(shader);
+				initializer.shaders.push_back(shader);
 			}
 
 			for(auto& desc : mDescriptorSets) {
-				mGraphicsPipeline->AddDescriptorSet(desc);
+				initializer.descSets.push_back(desc);
 			}
 
-			mGraphicsPipeline->Create(mRenderPass);
+			initializer.renderPass = mRenderPass;
+
+			mGraphicsPipeline = mRenderAPI->CreateGraphicsPipeline(initializer);
 		}
 	}
 }

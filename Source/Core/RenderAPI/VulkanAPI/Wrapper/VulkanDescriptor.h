@@ -39,11 +39,11 @@ namespace cube
 
 			VkDescriptorSet GetHandle() const { return mDescriptorSet; }
 
-			void WriteBufferInDescriptor(uint32_t bindingIndex, uint32_t bufferNum, BaseRenderBufferInfo* buffers) override;
-			void WriteImagesInDescriptor(uint32_t bindingIndex, uint32_t imageNum, SPtr<BaseRenderImageView>* imageViews, SPtr<BaseRenderSampler>* samplers) override;
+			void WriteBufferInDescriptor(uint32_t bindingIndex, uint32_t bufferNum, BaseRenderBufferInfo* buffers) final override;
+			void WriteImagesInDescriptor(uint32_t bindingIndex, uint32_t imageNum, SPtr<BaseRenderImageView>* imageViews, SPtr<BaseRenderSampler>* samplers) final override;
 
-			const VkDescriptorSetLayout GetLayout() const;
-			const Vector<VkDescriptorSetLayoutBinding>& GetLayoutBindings() const;
+			const VkDescriptorSetLayout GetLayout() const { return mLayout; }
+			const Vector<VkDescriptorSetLayoutBinding>& GetLayoutBindings() const { return mLayoutBindings; }
 
 		private:
 			VkDescriptorSet mDescriptorSet;
@@ -54,15 +54,5 @@ namespace cube
 			SPtr<VulkanDevice> mDevice_ref;
 			SPtr<VulkanDescriptorPool> mDescriptorPool_ref;
 		};
-
-		inline const VkDescriptorSetLayout VulkanDescriptorSet::GetLayout() const
-		{
-			return mLayout;
-		}
-
-		inline const Vector<VkDescriptorSetLayoutBinding>& VulkanDescriptorSet::GetLayoutBindings() const
-		{
-			return mLayoutBindings;
-		}
 	}
 }

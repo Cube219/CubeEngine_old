@@ -40,7 +40,7 @@ namespace cube
 			friend VulkanCommandBuffer;
 
 		public:
-			VulkanRenderPass(const SPtr<VulkanDevice>& device);
+			VulkanRenderPass(const SPtr<VulkanDevice>& device, BaseRenderRenderPassInitializer& initializer);
 			virtual ~VulkanRenderPass();
 			VulkanRenderPass(VulkanRenderPass& rhs) = delete;
 			VulkanRenderPass& operator=(VulkanRenderPass& rhs) = delete;

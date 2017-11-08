@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\BaseRenderAPIHeader.h"
+#include "../BaseRenderAPIHeader.h"
 
 namespace cube
 {
@@ -29,46 +29,73 @@ namespace cube
 		};
 		SET_ENUM_AS_FLAGS(PipelineStageBits)
 
+		struct BaseRenderGraphicsPipelineInitializer
+		{
+			struct VertexInputAttribute
+			{
+				uint32_t location;
+				DataFormat format;
+				uint32_t offset;
+			};
+			Vector<VertexInputAttribute> vertexInputAttributes;
+			uint32_t vertexSize;
+
+			VertexTopology vertexTopology;
+
+			bool isViewportDynamic = false;
+			Viewport viewport;
+			bool isScissorDynamic = false;
+			Rect2D scissor;
+
+			struct Rasterizer
+			{
+				PolygonMode polygonMode;
+				PolygonFrontFace polygonFrontFace;
+				CullMode cullMode;
+			};
+			Rasterizer rasterizer;
+
+			struct DepthStencil
+			{
+				bool depthTestEnable;
+				bool depthBoundsTestEnable;
+				bool depthWriteEnable;
+				CompareOperator depthCompareOperator;
+
+				bool stencilTestEnable;
+				StencilOperatorState front;
+				StencilOperatorState back;
+				float minDepthBounds;
+				float maxDepthBounds;
+			};
+			DepthStencil depthStencil;
+
+			struct ColorBlendAttachment
+			{
+				bool blendEnable;
+				BlendFactor srcColorBlendFactor;
+				BlendFactor dstColorBlendFactor;
+				BlendOperator colorBlendOp;
+				BlendFactor srcAlphaBlendFactor;
+				BlendFactor dstAlphaBlendFactor;
+				BlendOperator alphaBlendOp;
+			};
+			Vector<ColorBlendAttachment> colorBlendAttachments;
+
+			Vector<SPtr<BaseRenderShader>> shaders;
+			
+			Vector<SPtr<BaseRenderDescriptorSet>> descSets;
+
+			SPtr<BaseRenderRenderPass> renderPass;
+		};
+
 		class BaseRenderGraphicsPipeline
 		{
 		public:
 			virtual ~BaseRenderGraphicsPipeline(){ }
 
-			// TODO: binding으로 여러 vertex정보를 추가...? (지금은 0번만 씀)
-			virtual void AddVertexInputAttribute(uint32_t location, DataFormat format, uint32_t offset) = 0;
-			virtual void SetVertexInput(uint32_t sizePerVertex) = 0;
-
-			virtual void SetVertexTopology(VertexTopology topology) = 0;
-
-			virtual void AddViewport(Viewport viewport, bool isDynamic) = 0;
-			virtual void AddScissor(Rect2D scissor, bool isDynamic) = 0;
-			virtual void SetViewportState() = 0;
-
-			virtual void SetRasterizer(PolygonMode polygonMode, PolygonFrontFace polygonFrontFace, CullMode cullMode) = 0;
-
-			// TODO: Multisample구현시 구현
-			virtual void SetMultisampler() = 0;
-
-			virtual void SetDepthStencil(bool depthTestEnable, bool depthBoundsTestEnable, bool depthWriteEnable, CompareOperator depthCompareOperator,
-				bool stencilTestEnable, StencilOperatorState front, StencilOperatorState back, float minDepthBounds, float maxDepthBounds) = 0;
-
-			virtual void AddColorBlendAttachment(bool blendEnable,
-				BlendFactor srcColorBlendFactor, BlendFactor dstColorBlendFactor, BlendOperator colorBlendOp,
-				BlendFactor srcAlphaBlendFactor, BlendFactor dstAlphaBlendFactor, BlendOperator alphaBlendOp) = 0;
-			virtual void SetColorBlend(bool logicOpEnable, LogicOperator logicOp,
-				float blendConstant1, float blendConstant2, float blendConstant3, float blendConstant4) = 0;
-
-			virtual void AddShader(SPtr<BaseRenderShader>& shader) = 0;
-
-			virtual void AddDescriptorSet(SPtr<BaseRenderDescriptorSet>& descSet) = 0;
-
-			virtual void Create(SPtr<BaseRenderRenderPass>& renderPass) = 0;
-
 		protected:
 			BaseRenderGraphicsPipeline(){ }
-
-			//std::vector<SPtr<BaseRenderShader>> mShaders;
-			//std::vector<SPtr<BaseRenderDescriptorSet>> mDescriptorSets;
 		};
 	}
 }

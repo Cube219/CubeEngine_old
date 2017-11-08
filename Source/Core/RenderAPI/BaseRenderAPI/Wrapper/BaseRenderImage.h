@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\BaseRenderAPIHeader.h"
+#include "../BaseRenderAPIHeader.h"
 
 namespace cube
 {
@@ -65,6 +65,17 @@ namespace cube
 		protected:
 			BaseRenderImageView(){ }
 
+		};
+
+		struct BaseRenderImageInitializer
+		{
+			ImageType type;
+			DataFormat format;
+			uint32_t width;
+			uint32_t height;
+			uint32_t depth;
+			uint32_t mipLevels;
+			ImageUsageBits usage;
 		};
 
 		class BaseRenderImage

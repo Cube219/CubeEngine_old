@@ -23,7 +23,6 @@ namespace cube
 
 			virtual void SetRenderPass(SPtr<BaseRenderRenderPass>& renderPass, Rect2D renderArea) = 0;
 
-			//virtual void PipelineMemoryBarrier() = 0;
 			virtual void PipelineBufferMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
 				AccessBits srcAccess, AccessBits dstAccess, SPtr<BaseRenderBuffer>& buffer, uint64_t offset, uint64_t size) = 0;
 			virtual void PipelineImageMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,

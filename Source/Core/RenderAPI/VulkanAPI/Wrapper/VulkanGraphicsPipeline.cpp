@@ -67,203 +67,30 @@ namespace cube
 			return f;
 		}
 
-		VulkanGraphicsPipeline::VulkanGraphicsPipeline(const SPtr<VulkanDevice> device) :
+		VulkanGraphicsPipeline::VulkanGraphicsPipeline(const SPtr<VulkanDevice> device, BaseRenderGraphicsPipelineInitializer& initializer) :
 			mDevice_ref(device)
-		{
-		}
-
-		VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
-		{
-			vkDestroyPipelineLayout(mDevice_ref->GetHandle(), mPipelineLayout, nullptr);
-			vkDestroyPipeline(mDevice_ref->GetHandle(), mPipeline, nullptr);
-
-			mVertexInputAttributeDescs.clear();
-			mViewports.clear();
-			mScissors.clear();
-			mDynamicStates.clear();
-			mShaderStages.clear();
-		}
-
-		void VulkanGraphicsPipeline::AddVertexInputAttribute(uint32_t location, DataFormat format, uint32_t offset)
-		{
-			VkVertexInputAttributeDescription attributeDesc;
-			attributeDesc.location = location;
-			attributeDesc.binding = 0;
-			attributeDesc.format = GetVkFormat(format);
-			attributeDesc.offset = offset;
-
-			mVertexInputAttributeDescs.push_back(attributeDesc);
-		}
-
-		void VulkanGraphicsPipeline::SetVertexInput(uint32_t sizePerVertex)
-		{
-			// TODO: 일단 binding을 0만 설정 (차후 확장할수도?)
-			mVertexInputBindingDesc.binding = 0;
-			mVertexInputBindingDesc.stride = sizePerVertex;
-			mVertexInputBindingDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-			mVertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-			mVertexInputStateCreateInfo.pNext = nullptr;
-			mVertexInputStateCreateInfo.flags = 0;
-			mVertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
-			mVertexInputStateCreateInfo.pVertexBindingDescriptions = &mVertexInputBindingDesc;
-			mVertexInputStateCreateInfo.vertexAttributeDescriptionCount = SCast(uint32_t)(mVertexInputAttributeDescs.size());
-			mVertexInputStateCreateInfo.pVertexAttributeDescriptions = mVertexInputAttributeDescs.data();
-		}
-
-		void VulkanGraphicsPipeline::SetVertexTopology(VertexTopology topology)
-		{
-			mInputAssemblyStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-			mInputAssemblyStateCreateInfo.pNext = nullptr;
-			mInputAssemblyStateCreateInfo.flags = 0;
-			mInputAssemblyStateCreateInfo.topology = GetVkPrimitiveTopology(topology);
-			mInputAssemblyStateCreateInfo.primitiveRestartEnable = VK_FALSE;
-		}
-
-		void VulkanGraphicsPipeline::AddViewport(Viewport viewport, bool isDynamic)
-		{
-			if(isDynamic == true) {
-				AddDynamicState(VK_DYNAMIC_STATE_VIEWPORT);
-			} else {
-				mViewports.push_back(GetVkViewport(viewport));
-			}
-		}
-
-		void VulkanGraphicsPipeline::AddScissor(Rect2D scissor, bool isDynamic)
-		{
-			if(isDynamic == true) {
-				AddDynamicState(VK_DYNAMIC_STATE_SCISSOR);
-			} else {
-				mScissors.push_back(GetVkRect2D(scissor));
-			}
-		}
-
-		void VulkanGraphicsPipeline::SetViewportState()
-		{
-			mViewportStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-			mViewportStateCreateInfo.pNext = nullptr;
-			mViewportStateCreateInfo.flags = 0;
-			mViewportStateCreateInfo.viewportCount = SCast(uint32_t)(mViewports.size());
-			mViewportStateCreateInfo.pViewports = mViewports.data();
-			mViewportStateCreateInfo.scissorCount = SCast(uint32_t)(mScissors.size());
-			mViewportStateCreateInfo.pScissors = mScissors.data();
-		}
-
-		void VulkanGraphicsPipeline::SetRasterizer(PolygonMode polygonMode, PolygonFrontFace polygonFrontFace, CullMode cullMode)
-		{
-			mRasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-			mRasterizationStateCreateInfo.pNext = nullptr;
-			mRasterizationStateCreateInfo.flags = 0;
-			mRasterizationStateCreateInfo.polygonMode = GetVkPolygonMode(polygonMode);
-			mRasterizationStateCreateInfo.cullMode = GetVkCullModeFlags(cullMode);
-			mRasterizationStateCreateInfo.frontFace = GetVkFrontFace(polygonFrontFace);
-			mRasterizationStateCreateInfo.depthClampEnable = VK_TRUE;
-			mRasterizationStateCreateInfo.rasterizerDiscardEnable = VK_FALSE;
-			mRasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;
-			mRasterizationStateCreateInfo.depthBiasConstantFactor = 0;
-			mRasterizationStateCreateInfo.depthBiasClamp = 0;
-			mRasterizationStateCreateInfo.depthBiasSlopeFactor = 0;
-			mRasterizationStateCreateInfo.lineWidth = 1.0f;
-		}
-
-		void VulkanGraphicsPipeline::SetMultisampler()
-		{
-			mMultisampleStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-			mMultisampleStateCreateInfo.pNext = nullptr;
-			mMultisampleStateCreateInfo.flags = 0;
-			mMultisampleStateCreateInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-			mMultisampleStateCreateInfo.sampleShadingEnable = VK_FALSE;
-			mMultisampleStateCreateInfo.minSampleShading = 0.0f;
-			mMultisampleStateCreateInfo.pSampleMask = nullptr;
-			mMultisampleStateCreateInfo.alphaToCoverageEnable = VK_FALSE;
-			mMultisampleStateCreateInfo.alphaToOneEnable = VK_FALSE;
-		}
-
-		void VulkanGraphicsPipeline::SetDepthStencil(bool depthTestEnable, bool depthBoundsTestEnable, bool depthWriteEnable, CompareOperator depthCompareOperator,
-			bool stencilTestEnable, StencilOperatorState front, StencilOperatorState back, float minDepthBounds, float maxDepthBounds)
-		{
-			mDepthStencilStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-			mDepthStencilStateCreateInfo.pNext = nullptr;
-			mDepthStencilStateCreateInfo.flags = 0;
-			mDepthStencilStateCreateInfo.depthTestEnable = depthTestEnable;
-			mDepthStencilStateCreateInfo.depthWriteEnable = depthWriteEnable;
-			mDepthStencilStateCreateInfo.depthCompareOp = GetVkCompareOp(depthCompareOperator);
-			mDepthStencilStateCreateInfo.depthBoundsTestEnable = depthBoundsTestEnable;
-			mDepthStencilStateCreateInfo.stencilTestEnable = stencilTestEnable;
-			mDepthStencilStateCreateInfo.back = GetVkStencilOpState(back);
-			mDepthStencilStateCreateInfo.front = GetVkStencilOpState(front);
-			mDepthStencilStateCreateInfo.minDepthBounds = minDepthBounds;
-			mDepthStencilStateCreateInfo.maxDepthBounds = maxDepthBounds;
-		}
-
-		void VulkanGraphicsPipeline::AddColorBlendAttachment(bool blendEnable,
-			BlendFactor srcColorBlendFactor, BlendFactor dstColorBlendFactor, BlendOperator colorBlendOp,
-			BlendFactor srcAlphaBlendFactor, BlendFactor dstAlphaBlendFactor, BlendOperator alphaBlendOp)
-		{
-			VkPipelineColorBlendAttachmentState attachment;
-			attachment.blendEnable = blendEnable;
-			attachment.srcColorBlendFactor = GetVkBlendFactor(srcColorBlendFactor);
-			attachment.dstColorBlendFactor = GetVkBlendFactor(dstColorBlendFactor);
-			attachment.colorBlendOp = GetVkBlendOp(colorBlendOp);
-			attachment.srcAlphaBlendFactor = GetVkBlendFactor(srcAlphaBlendFactor);
-			attachment.dstAlphaBlendFactor = GetVkBlendFactor(dstAlphaBlendFactor);
-			attachment.alphaBlendOp = GetVkBlendOp(alphaBlendOp);
-			attachment.colorWriteMask = 0xf; // TODO: 일단 RGBA 전체
-
-			mColorBlendAttachments.push_back(attachment);
-		}
-
-		void VulkanGraphicsPipeline::SetColorBlend(bool logicOpEnable, LogicOperator logicOp,
-			float blendConstant1, float blendConstant2, float blendConstant3, float blendConstant4)
-		{
-			mColorBlendStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-			mColorBlendStateCreateInfo.pNext = nullptr;
-			mColorBlendStateCreateInfo.flags = 0;
-			mColorBlendStateCreateInfo.logicOpEnable = logicOpEnable;
-			mColorBlendStateCreateInfo.logicOp = GetVkLogicOp(logicOp);
-			mColorBlendStateCreateInfo.attachmentCount = SCast(uint32_t)(mColorBlendAttachments.size());
-			mColorBlendStateCreateInfo.pAttachments = mColorBlendAttachments.data();
-			mColorBlendStateCreateInfo.blendConstants[0] = blendConstant1;
-			mColorBlendStateCreateInfo.blendConstants[1] = blendConstant2;
-			mColorBlendStateCreateInfo.blendConstants[2] = blendConstant3;
-			mColorBlendStateCreateInfo.blendConstants[3] = blendConstant4;
-		}
-
-		void VulkanGraphicsPipeline::AddDynamicState(VkDynamicState state)
-		{
-			if(mDynamicStates.size() >= VK_DYNAMIC_STATE_RANGE_SIZE) {
-				PrintLogWithSayer(L"VulkanPipeline", L"Cannot add more dynamic state");
-				return;
-			}
-
-			mDynamicStates.push_back(state);
-		}
-
-		void VulkanGraphicsPipeline::AddShader(SPtr<BaseRenderShader>& shader)
-		{
-			mShaderStages.push_back(SPCast(VulkanShader)(shader)->GetStageInfo());
-		}
-
-		void VulkanGraphicsPipeline::AddDescriptorSet(SPtr<BaseRenderDescriptorSet>& descSet)
-		{
-			mDescriptorSets.push_back(SPCast(VulkanDescriptorSet)(descSet));
-		}
-
-		void VulkanGraphicsPipeline::Create(SPtr<BaseRenderRenderPass>& renderPass)
 		{
 			VkResult res;
 
-			// Set dynamic state
-			mDynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-			mDynamicStateCreateInfo.pNext = nullptr;
-			mDynamicStateCreateInfo.flags = 0;
-			mDynamicStateCreateInfo.dynamicStateCount = SCast(uint32_t)(mDynamicStates.size());
-			mDynamicStateCreateInfo.pDynamicStates = mDynamicStates.data();
+			// Set dynamic states
+			Vector<VkDynamicState> dynamicState;
+			if(initializer.isViewportDynamic == true)
+				dynamicState.push_back(VK_DYNAMIC_STATE_VIEWPORT);
+			if(initializer.isScissorDynamic == true)
+				dynamicState.push_back(VK_DYNAMIC_STATE_SCISSOR);
+
+			VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo;
+			dynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+			dynamicStateCreateInfo.pNext = nullptr;
+			dynamicStateCreateInfo.flags = 0;
+			dynamicStateCreateInfo.dynamicStateCount = SCast(uint32_t)(dynamicState.size());
+			dynamicStateCreateInfo.pDynamicStates = dynamicState.data();
 
 			// Create pipeline layout
-			VkDescriptorSetLayout* layouts = new VkDescriptorSetLayout[mDescriptorSets.size()];
-			for(int i = 0; i < mDescriptorSets.size(); i++) {
-				layouts[i] = mDescriptorSets[i]->GetLayout();
+			Vector<VkDescriptorSetLayout> layouts;
+			layouts.resize(initializer.descSets.size());
+			for(int i = 0; i < initializer.descSets.size(); i++) {
+				layouts[i] = SPCast(VulkanDescriptorSet)(initializer.descSets[i])->GetLayout();
 			}
 
 			VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
@@ -272,13 +99,143 @@ namespace cube
 			pipelineLayoutCreateInfo.flags = 0;
 			pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
 			pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
-			pipelineLayoutCreateInfo.setLayoutCount = SCast(uint32_t)(mDescriptorSets.size());
-			pipelineLayoutCreateInfo.pSetLayouts = layouts;
+			pipelineLayoutCreateInfo.setLayoutCount = SCast(uint32_t)(layouts.size());
+			pipelineLayoutCreateInfo.pSetLayouts = layouts.data();
 
 			res = vkCreatePipelineLayout(mDevice_ref->GetHandle(), &pipelineLayoutCreateInfo, nullptr, &mPipelineLayout);
 			CheckVkResult(L"VulkanPipeline", L"Cannot create a pipeline layout", res);
 
-			delete[] layouts;
+			// Vertex input
+			Vector<VkVertexInputAttributeDescription> vertexInputAttributes;
+			vertexInputAttributes.resize(initializer.vertexInputAttributes.size());
+			for(uint64_t i = 0; i < initializer.vertexInputAttributes.size(); i++) {
+				auto attr = initializer.vertexInputAttributes[i];
+
+				vertexInputAttributes[i].location = attr.location;
+				vertexInputAttributes[i].binding = 0;
+				vertexInputAttributes[i].format = GetVkFormat(attr.format);
+				vertexInputAttributes[i].offset = attr.offset;
+			}
+
+			VkVertexInputBindingDescription bindingDesc;
+			bindingDesc.binding = 0;
+			bindingDesc.stride = initializer.vertexSize;
+			bindingDesc.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo;
+			vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+			vertexInputCreateInfo.pNext = nullptr;
+			vertexInputCreateInfo.flags = 0;
+			vertexInputCreateInfo.vertexBindingDescriptionCount = 1;
+			vertexInputCreateInfo.pVertexBindingDescriptions = &bindingDesc;
+			vertexInputCreateInfo.vertexAttributeDescriptionCount = SCast(uint32_t)(vertexInputAttributes.size());
+			vertexInputCreateInfo.pVertexAttributeDescriptions = vertexInputAttributes.data();
+
+			// Vertex topology
+			VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo;
+			inputAssemblyStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+			inputAssemblyStateCreateInfo.pNext = nullptr;
+			inputAssemblyStateCreateInfo.flags = 0;
+			inputAssemblyStateCreateInfo.topology = GetVkPrimitiveTopology(initializer.vertexTopology);
+			inputAssemblyStateCreateInfo.primitiveRestartEnable = VK_FALSE;
+
+			// Viewport / Scissor
+			VkViewport viewport = {};
+			if(initializer.isViewportDynamic == false) {
+				viewport = GetVkViewport(initializer.viewport);
+			}
+			
+			VkRect2D scissor = {};
+			if(initializer.isScissorDynamic == false) {
+				scissor = GetVkRect2D(initializer.scissor);
+			}
+
+			VkPipelineViewportStateCreateInfo viewportStateCreateInfo;
+			viewportStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+			viewportStateCreateInfo.pNext = nullptr;
+			viewportStateCreateInfo.flags = 0;
+			viewportStateCreateInfo.viewportCount = 1;
+			viewportStateCreateInfo.pViewports = &viewport;
+			viewportStateCreateInfo.scissorCount = 1;
+			viewportStateCreateInfo.pScissors = &scissor;
+
+			// Rasterizer
+			VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo;
+			rasterizationStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+			rasterizationStateCreateInfo.pNext = nullptr;
+			rasterizationStateCreateInfo.flags = 0;
+			rasterizationStateCreateInfo.polygonMode = GetVkPolygonMode(initializer.rasterizer.polygonMode);
+			rasterizationStateCreateInfo.cullMode = GetVkCullModeFlags(initializer.rasterizer.cullMode);
+			rasterizationStateCreateInfo.frontFace = GetVkFrontFace(initializer.rasterizer.polygonFrontFace);
+			rasterizationStateCreateInfo.depthClampEnable = VK_FALSE;
+			rasterizationStateCreateInfo.rasterizerDiscardEnable = VK_FALSE;
+			rasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;
+			rasterizationStateCreateInfo.depthBiasConstantFactor = 0;
+			rasterizationStateCreateInfo.depthBiasClamp = 0;
+			rasterizationStateCreateInfo.depthBiasSlopeFactor = 0;
+			rasterizationStateCreateInfo.lineWidth = 1.0f;
+
+			// Multisampler (TODO: 차후 구현)
+			VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo;
+			multisampleStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+			multisampleStateCreateInfo.pNext = nullptr;
+			multisampleStateCreateInfo.flags = 0;
+			multisampleStateCreateInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+			multisampleStateCreateInfo.sampleShadingEnable = VK_FALSE;
+			multisampleStateCreateInfo.minSampleShading = 0.0f;
+			multisampleStateCreateInfo.pSampleMask = nullptr;
+			multisampleStateCreateInfo.alphaToCoverageEnable = VK_FALSE;
+			multisampleStateCreateInfo.alphaToOneEnable = VK_FALSE;
+
+			// Depth/Stencil
+			VkPipelineDepthStencilStateCreateInfo depthStencilStateCreateInfo;
+			depthStencilStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+			depthStencilStateCreateInfo.pNext = nullptr;
+			depthStencilStateCreateInfo.flags = 0;
+			depthStencilStateCreateInfo.depthTestEnable = initializer.depthStencil.depthTestEnable;
+			depthStencilStateCreateInfo.depthWriteEnable = initializer.depthStencil.depthWriteEnable;
+			depthStencilStateCreateInfo.depthCompareOp = GetVkCompareOp(initializer.depthStencil.depthCompareOperator);
+			depthStencilStateCreateInfo.depthBoundsTestEnable = initializer.depthStencil.depthBoundsTestEnable;
+			depthStencilStateCreateInfo.stencilTestEnable = initializer.depthStencil.stencilTestEnable;
+			depthStencilStateCreateInfo.back = GetVkStencilOpState(initializer.depthStencil.back);
+			depthStencilStateCreateInfo.front = GetVkStencilOpState(initializer.depthStencil.front);
+			depthStencilStateCreateInfo.minDepthBounds = initializer.depthStencil.minDepthBounds;
+			depthStencilStateCreateInfo.maxDepthBounds = initializer.depthStencil.maxDepthBounds;
+
+			// Color blend
+			Vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+			colorBlendAttachments.resize(initializer.colorBlendAttachments.size());
+			for(uint64_t i = 0; i < initializer.colorBlendAttachments.size(); i++) {
+				auto attachment = initializer.colorBlendAttachments[i];
+
+				colorBlendAttachments[i].blendEnable = attachment.blendEnable;
+				colorBlendAttachments[i].srcColorBlendFactor = GetVkBlendFactor(attachment.srcColorBlendFactor);
+				colorBlendAttachments[i].dstColorBlendFactor = GetVkBlendFactor(attachment.dstColorBlendFactor);
+				colorBlendAttachments[i].colorBlendOp = GetVkBlendOp(attachment.colorBlendOp);
+				colorBlendAttachments[i].srcAlphaBlendFactor = GetVkBlendFactor(attachment.srcAlphaBlendFactor);
+				colorBlendAttachments[i].dstAlphaBlendFactor = GetVkBlendFactor(attachment.dstAlphaBlendFactor);
+				colorBlendAttachments[i].alphaBlendOp = GetVkBlendOp(attachment.alphaBlendOp);
+				colorBlendAttachments[i].colorWriteMask = 0xf; // TODO: 일단 RGBA 전체
+			}
+
+			VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo;
+			colorBlendStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+			colorBlendStateCreateInfo.pNext = nullptr;
+			colorBlendStateCreateInfo.flags = 0;
+			colorBlendStateCreateInfo.logicOpEnable = false;
+			colorBlendStateCreateInfo.logicOp = VK_LOGIC_OP_NO_OP;
+			colorBlendStateCreateInfo.attachmentCount = SCast(uint32_t)(colorBlendAttachments.size());
+			colorBlendStateCreateInfo.pAttachments = colorBlendAttachments.data();
+			colorBlendStateCreateInfo.blendConstants[0] = 1.0f;
+			colorBlendStateCreateInfo.blendConstants[1] = 1.0f;
+			colorBlendStateCreateInfo.blendConstants[2] = 1.0f;
+			colorBlendStateCreateInfo.blendConstants[3] = 1.0f;
+
+			// Shader
+			Vector<VkPipelineShaderStageCreateInfo> shaderStages;
+			for(uint64_t i = 0; i < initializer.shaders.size(); i++) {
+				shaderStages.push_back(DPCast(VulkanShader)(initializer.shaders[i])->GetStageInfo());
+			}
 
 			// Creat pipeline
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
@@ -288,22 +245,28 @@ namespace cube
 			pipelineCreateInfo.layout = mPipelineLayout;
 			pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
 			pipelineCreateInfo.basePipelineIndex = 0;
-			pipelineCreateInfo.pVertexInputState = &mVertexInputStateCreateInfo;
-			pipelineCreateInfo.pInputAssemblyState = &mInputAssemblyStateCreateInfo;
-			pipelineCreateInfo.pRasterizationState = &mRasterizationStateCreateInfo;
-			pipelineCreateInfo.pColorBlendState = &mColorBlendStateCreateInfo;
+			pipelineCreateInfo.pVertexInputState = &vertexInputCreateInfo;
+			pipelineCreateInfo.pInputAssemblyState = &inputAssemblyStateCreateInfo;
+			pipelineCreateInfo.pRasterizationState = &rasterizationStateCreateInfo;
+			pipelineCreateInfo.pColorBlendState = &colorBlendStateCreateInfo;
 			pipelineCreateInfo.pTessellationState = nullptr;
-			pipelineCreateInfo.pMultisampleState = &mMultisampleStateCreateInfo;
-			pipelineCreateInfo.pDynamicState = &mDynamicStateCreateInfo;
-			pipelineCreateInfo.pViewportState = &mViewportStateCreateInfo;
-			pipelineCreateInfo.pDepthStencilState = &mDepthStencilStateCreateInfo;
-			pipelineCreateInfo.stageCount = SCast(uint32_t)(mShaderStages.size());
-			pipelineCreateInfo.pStages = mShaderStages.data();
-			pipelineCreateInfo.renderPass = *DPCast(VulkanRenderPass)(renderPass);
+			pipelineCreateInfo.pMultisampleState = &multisampleStateCreateInfo;
+			pipelineCreateInfo.pDynamicState = &dynamicStateCreateInfo;
+			pipelineCreateInfo.pViewportState = &viewportStateCreateInfo;
+			pipelineCreateInfo.pDepthStencilState = &depthStencilStateCreateInfo;
+			pipelineCreateInfo.stageCount = SCast(uint32_t)(shaderStages.size());
+			pipelineCreateInfo.pStages = shaderStages.data();
+			pipelineCreateInfo.renderPass = *DPCast(VulkanRenderPass)(initializer.renderPass);
 			pipelineCreateInfo.subpass = 0;
 
 			res = vkCreateGraphicsPipelines(mDevice_ref->GetHandle(), nullptr, 1, &pipelineCreateInfo, nullptr, &mPipeline);
 			CheckVkResult(L"VulkanPipeline", L"Cannot create a VulkanPipeline", res);
+		}
+
+		VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
+		{
+			vkDestroyPipelineLayout(mDevice_ref->GetHandle(), mPipelineLayout, nullptr);
+			vkDestroyPipeline(mDevice_ref->GetHandle(), mPipeline, nullptr);
 		}
 	}
 }

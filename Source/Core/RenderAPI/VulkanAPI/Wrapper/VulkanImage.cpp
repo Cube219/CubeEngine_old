@@ -171,7 +171,7 @@ namespace cube
 			imageViewCreateinfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 			imageViewCreateinfo.pNext = nullptr;
 			imageViewCreateinfo.flags = 0;
-			imageViewCreateinfo.image = *image;
+			imageViewCreateinfo.image = image->GetHandle();
 			imageViewCreateinfo.format = format;
 			imageViewCreateinfo.components = components;
 			imageViewCreateinfo.subresourceRange = subresourceRange;
@@ -199,9 +199,7 @@ namespace cube
 			mImage = image;
 		}
 
-		VulkanImage::VulkanImage(const SPtr<VulkanDevice>& device,
-			VkImageType type, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers,
-			VkSampleCountFlagBits samples, VkImageLayout initialLayout, VkImageUsageFlags usage, VkSharingMode sharingMode, bool optimal) :
+		VulkanImage::VulkanImage(const SPtr<VulkanDevice>& device, BaseRenderImageInitializer& initializer) :
 			mDevice_ref(device)
 		{
 			VkResult res;
@@ -210,23 +208,19 @@ namespace cube
 			imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 			imageCreateInfo.pNext = nullptr;
 			imageCreateInfo.flags = 0;
-			imageCreateInfo.imageType = type;
-			imageCreateInfo.format = format;
-			imageCreateInfo.extent = extent;
-			imageCreateInfo.mipLevels = mipLevels;
-			imageCreateInfo.arrayLayers = arrayLayers;
-			imageCreateInfo.samples = samples;
-			imageCreateInfo.initialLayout = initialLayout;
-			imageCreateInfo.usage = usage;
+			imageCreateInfo.imageType = GetVkImageType(initializer.type);
+			imageCreateInfo.format = GetVkFormat(initializer.format);
+			imageCreateInfo.extent = {initializer.width, initializer.height, initializer.depth};
+			imageCreateInfo.mipLevels = initializer.mipLevels;
+			imageCreateInfo.arrayLayers = 1;
+			imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+			imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			imageCreateInfo.usage = GetVkImageUsageFlags(initializer.usage);
 			imageCreateInfo.queueFamilyIndexCount = 0;
 			imageCreateInfo.pQueueFamilyIndices = nullptr;
-			imageCreateInfo.sharingMode = sharingMode;
-
-			if(optimal == true)
-				imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-			else
-				imageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
-
+			imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+			
 			res = vkCreateImage(device->GetHandle(), &imageCreateInfo, nullptr, &mImage);
 			CheckVkResult(L"VulkanImage", L"Cannot create VulkanImage", res);
 

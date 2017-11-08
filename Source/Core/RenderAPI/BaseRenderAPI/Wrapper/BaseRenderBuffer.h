@@ -15,7 +15,12 @@ namespace cube
 		};
 		SET_ENUM_AS_FLAGS(BufferTypeBits)
 
-		struct BaseRenderBufferInfo; // Defined at BaseRenderAPIHeader.h
+		struct BaseRenderBufferInfo
+		{
+			WPtr<BaseRenderBuffer> buffer;
+			uint64_t offset;
+			uint64_t range;
+		};
 
 		class BaseRenderBuffer : public std::enable_shared_from_this<BaseRenderBuffer>
 		{

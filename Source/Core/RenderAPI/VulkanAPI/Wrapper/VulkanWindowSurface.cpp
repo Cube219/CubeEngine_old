@@ -22,7 +22,7 @@ namespace cube
 			info.hwnd = win32Window;
 
 			VkResult res;
-			res = vkCreateWin32SurfaceKHR(*instance, &info, nullptr, &mSurface);
+			res = vkCreateWin32SurfaceKHR(instance->GetHandle(), &info, nullptr, &mSurface);
 			CheckVkResult(L"VulkanSurface", L"Cannot create VulkanWindowSurface for win32", res);
 
 			GetProperties();
@@ -31,7 +31,7 @@ namespace cube
 
 		VulkanWindowSurface::~VulkanWindowSurface()
 		{
-			vkDestroySurfaceKHR(*mInstance_ref, mSurface, nullptr);
+			vkDestroySurfaceKHR(mInstance_ref->GetHandle(), mSurface, nullptr);
 		}
 
 		const VkSurfaceCapabilitiesKHR VulkanWindowSurface::GetCapabilities() const

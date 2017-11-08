@@ -6,29 +6,7 @@ namespace cube
 {
 	namespace core
 	{
-		VulkanInstance::VulkanInstance()
-		{
-		}
-
-		VulkanInstance::~VulkanInstance()
-		{
-			mLayerNames.clear();
-			mExtensionNames.clear();
-
-			vkDestroyInstance(mInstance, nullptr);
-		}
-
-		void VulkanInstance::AddLayer(const char* layerName)
-		{
-			mLayerNames.push_back(layerName);
-		}
-
-		void VulkanInstance::AddExtension(const char* extensionName)
-		{
-			mExtensionNames.push_back(extensionName);
-		}
-
-		void VulkanInstance::Create()
+		VulkanInstance::VulkanInstance(VulkanInstanceInitializer& initializer)
 		{
 			VkResult res;
 
@@ -36,11 +14,11 @@ namespace cube
 			VkApplicationInfo appInfo = {};
 			appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 			appInfo.pNext = nullptr;
-			appInfo.pApplicationName = mApplicationName;
-			appInfo.applicationVersion = mApplicationVersion;
-			appInfo.pEngineName = mEngineName;
-			appInfo.engineVersion = mEngineVersion;
-			appInfo.apiVersion = mApiVersion;
+			appInfo.pApplicationName = initializer.appName;
+			appInfo.applicationVersion = initializer.appVersion;
+			appInfo.pEngineName = initializer.engineName;
+			appInfo.engineVersion = initializer.engineVersion;
+			appInfo.apiVersion = initializer.apiVersion;
 
 			// Set instance create info
 			VkInstanceCreateInfo instanceCreateInfo = {};
@@ -48,13 +26,18 @@ namespace cube
 			instanceCreateInfo.pNext = nullptr;
 			instanceCreateInfo.flags = 0;
 			instanceCreateInfo.pApplicationInfo = &appInfo;
-			instanceCreateInfo.enabledExtensionCount = SCast(uint32_t)(mExtensionNames.size());
-			instanceCreateInfo.ppEnabledExtensionNames = mExtensionNames.data();
-			instanceCreateInfo.enabledLayerCount = SCast(uint32_t)(mLayerNames.size());
-			instanceCreateInfo.ppEnabledLayerNames = mLayerNames.data();
+			instanceCreateInfo.enabledExtensionCount = SCast(uint32_t)(initializer.extensionNames.size());
+			instanceCreateInfo.ppEnabledExtensionNames = initializer.extensionNames.data();
+			instanceCreateInfo.enabledLayerCount = SCast(uint32_t)(initializer.layerNames.size());
+			instanceCreateInfo.ppEnabledLayerNames = initializer.layerNames.data();
 
 			res = vkCreateInstance(&instanceCreateInfo, nullptr, &mInstance);
 			CheckVkResult(L"VulkanInstance", L"Cannot create VulkanInstance", res);
+		}
+
+		VulkanInstance::~VulkanInstance()
+		{
+			vkDestroyInstance(mInstance, nullptr);
 		}
 
 		const Vector<SPtr<VulkanPhysicalDevice>> VulkanInstance::EnumeratePhysicalDevices() const
