@@ -16,20 +16,20 @@ namespace cube
 			info.pNext = nullptr;
 			info.flags = 0;
 
-			res = vkCreateFence(*device, &info, nullptr, &mFence);
+			res = vkCreateFence(device->GetHandle(), &info, nullptr, &mFence);
 			CheckVkResult(L"VulkanFence", L"Cannot create a VulkanFence", res);
 		}
 
 		VulkanFence::~VulkanFence()
 		{
-			vkDestroyFence(*mDevice_ref, mFence, nullptr);
+			vkDestroyFence(mDevice_ref->GetHandle(), mFence, nullptr);
 		}
 
 		bool VulkanFence::Wait(uint64_t timeout)
 		{
 			VkResult res;
 
-			res = vkWaitForFences(*mDevice_ref, 1, &mFence, VK_TRUE, timeout);
+			res = vkWaitForFences(mDevice_ref->GetHandle(), 1, &mFence, VK_TRUE, timeout);
 
 			if(res == VK_TIMEOUT) {
 				return false;
@@ -42,7 +42,7 @@ namespace cube
 
 		void VulkanFence::Reset()
 		{
-			vkResetFences(*mDevice_ref, 1, &mFence);
+			vkResetFences(mDevice_ref->GetHandle(), 1, &mFence);
 		}
 	}
 }

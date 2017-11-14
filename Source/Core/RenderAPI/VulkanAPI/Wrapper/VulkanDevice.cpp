@@ -7,9 +7,78 @@ namespace cube
 {
 	namespace core
 	{
-		VulkanDevice::VulkanDevice()
+		VulkanDevice::VulkanDevice(const SPtr<VulkanPhysicalDevice>& physicalDevice, VulkanDeviceInitializer& initializer) :
+			mPhysicalDevice_ref(physicalDevice)
 		{
+			VkResult res;
 
+			// Feature
+			VkPhysicalDeviceFeatures tempVkFeatures;
+			vkGetPhysicalDeviceFeatures(physicalDevice->GetHandle(), &tempVkFeatures);
+			VulkanPhysicalDeviceFeatures supportedFeatures = VulkanPhysicalDeviceFeatures(tempVkFeatures);
+
+			VulkanPhysicalDeviceFeatures features = (initializer.mEnabledFeatures & supportedFeatures) | initializer.mForcedFeatures;
+
+			// Properties
+			vkGetPhysicalDeviceProperties(physicalDevice->GetHandle(), &mProperties);
+			vkGetPhysicalDeviceMemoryProperties(physicalDevice->GetHandle(), &mMemProperties);
+
+			// Get queue families of the physical device
+			uint32_t physicalQueueFamilyNum = 0;
+			vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice->GetHandle(), &physicalQueueFamilyNum, nullptr);
+
+			Vector<VkQueueFamilyProperties> physicalQueueFamilyProps;
+			physicalQueueFamilyProps.resize(physicalQueueFamilyNum);
+			vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice->GetHandle(), &physicalQueueFamilyNum, physicalQueueFamilyProps.data());
+
+			// Put all queue familiy of the physical device into device queue
+			Vector<VkDeviceQueueCreateInfo> deviceQueueCreateInfos;
+			deviceQueueCreateInfos.resize(physicalQueueFamilyNum);
+
+			uint64_t prioritiesNum = 0;
+			for(uint32_t i = 0; i < physicalQueueFamilyNum; i++) {
+				VulkanQueueFamily f;
+				f.mIndex = i;
+				f.mProperties = physicalQueueFamilyProps[i];
+				mQueueFamilies.push_back(f);
+
+				VkDeviceQueueCreateInfo info;
+				info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				info.pNext = nullptr;
+				info.flags = 0;
+				info.queueFamilyIndex = i;
+				info.queueCount = physicalQueueFamilyProps[i].queueCount;
+
+				deviceQueueCreateInfos[i] = info;
+
+				prioritiesNum += info.queueCount;
+			}
+
+			Vector<float> priorities;
+			priorities.resize(prioritiesNum, 1.0f);
+			float* prioritiesPtr = priorities.data();
+			for(auto& info : deviceQueueCreateInfos) {
+				info.pQueuePriorities = prioritiesPtr;
+				prioritiesPtr += info.queueCount;
+			}
+
+			VkDeviceCreateInfo info;
+			info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+			info.pNext = nullptr;
+			info.flags = 0;
+			info.queueCreateInfoCount = SCast(uint32_t)(deviceQueueCreateInfos.size());
+			info.pQueueCreateInfos = deviceQueueCreateInfos.data();
+			info.enabledLayerCount = 0; // Deprecated
+			info.ppEnabledLayerNames = nullptr; // Deprecated
+			info.enabledExtensionCount = SCast(uint32_t)(initializer.mExtensionNames.size());
+			info.ppEnabledExtensionNames = initializer.mExtensionNames.data();
+			info.pEnabledFeatures = &SCast(VkPhysicalDeviceFeatures)(features);
+
+			res = vkCreateDevice(physicalDevice->GetHandle(), &info, nullptr, &mDevice);
+			CheckVkResult(L"VulkanDevice", L"Cannot create VulkanDevice", res);
+
+			// Get a graphics queue family
+			mGraphicsQueueFamily = GetQueueFamily(VK_QUEUE_GRAPHICS_BIT);
 		}
 
 		VulkanDevice::~VulkanDevice()
@@ -17,82 +86,11 @@ namespace cube
 			vkDestroyDevice(mDevice, nullptr);
 		}
 
-		void VulkanDevice::AddExtension(const char* extensionName)
-		{
-			mExtensionNames.push_back(extensionName);
-		}
-
-		void VulkanDevice::SetFeatures(VulkanPhysicalDeviceFeature feature, bool on, bool isForced)
-		{
-			if(isForced == false)
-				mEnabledFeatures.SetFeature(feature, on);
-			else
-				mForcedFeatures.SetFeature(feature, on);
-		}
-
-		void VulkanDevice::CreateDeviceQueue(VulkanQueueFamily queueFamily, int count)
-		{
-			VkDeviceQueueCreateInfo info;
-			info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			info.pNext = nullptr;
-			info.flags = 0;
-			info.queueFamilyIndex = queueFamily.mIndex;
-			info.queueCount = count;
-
-			Vector<float> priorities;
-			priorities.resize(count, 0.0f);
-			info.pQueuePriorities = priorities.data(); // TODO: 각 Queue마다 priority 지정하는 기능 추가
-
-			mDeviceQueueCreateInfos.push_back(info);
-			mDeviceQueuePriorities.push_back(std::move(priorities));
-
-			mQueueFamilies.push_back(queueFamily);
-		}
-
-		void VulkanDevice::Create(const SPtr<VulkanPhysicalDevice>& physicalDevice)
-		{
-			mPhysicalDevice_ref = physicalDevice;
-
-			VkResult res;
-
-			VulkanPhysicalDeviceFeatures supportedFeatures(physicalDevice->GetFeatures());
-
-			VulkanPhysicalDeviceFeatures features = (mEnabledFeatures & supportedFeatures) | mForcedFeatures;
-
-			VkDeviceCreateInfo info;
-			info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-			info.pNext = nullptr;
-			info.flags = 0;
-			info.queueCreateInfoCount = SCast(uint32_t)(mDeviceQueueCreateInfos.size());
-			info.pQueueCreateInfos = mDeviceQueueCreateInfos.data();
-			info.enabledLayerCount = 0; // Deprecated
-			info.ppEnabledLayerNames = nullptr; // Deprecated
-			info.enabledExtensionCount = SCast(uint32_t)(mExtensionNames.size());
-			info.ppEnabledExtensionNames = mExtensionNames.data();
-			info.pEnabledFeatures = &SCast(VkPhysicalDeviceFeatures)(features);
-
-			res = vkCreateDevice(*physicalDevice, &info, nullptr, &mDevice);
-			CheckVkResult(L"VulkanDevice", L"Cannot create VulkanDevice", res);
-
-			// Get a graphics queue family
-			mGraphicsQueueFamily = physicalDevice->GetQueueFamily(VK_QUEUE_GRAPHICS_BIT);
-		}
-
 		SPtr<VulkanQueue> VulkanDevice::GetQueue(VkQueueFlags type, uint32_t index)
 		{
-			for(auto queueFamily : mQueueFamilies) {
-				if((queueFamily.mProperties.queueFlags & type) > 0) {
-					VkQueue q;
-					vkGetDeviceQueue(mDevice, queueFamily.mIndex, index, &q);
+			auto family = GetQueueFamily(type);
 
-					SPtr<VulkanQueue> queue(new VulkanQueue(q));
-					// TODO: index 넘어가는거 체크
-					return queue;
-				}
-			}
-
-			PrintlnLogWithSayer(L"VulkanDevice", L"Cannot get a queue");
-			return nullptr;
+			return GetQueue(family, index);
 		}
 
 		SPtr<VulkanQueue> VulkanDevice::GetQueue(VulkanQueueFamily queueFamily, uint32_t index)
@@ -100,8 +98,20 @@ namespace cube
 			VkQueue q;
 			vkGetDeviceQueue(mDevice, queueFamily.mIndex, index, &q);
 
-			SPtr<VulkanQueue> queue(new VulkanQueue(q));
+			SPtr<VulkanQueue> queue(new VulkanQueue(q, queueFamily.mProperties.queueFlags, index));
 			return queue;
+		}
+
+		VulkanQueueFamily VulkanDevice::GetQueueFamily(VkQueueFlags type)
+		{
+			for(size_t i = mQueueFamilies.size() - 1; i >= 0; i--) {
+				if((mQueueFamilies[i].mProperties.queueFlags & type) > 0) {
+					return mQueueFamilies[i];
+				}
+			}
+
+			PrintlnLogWithSayer(L"VulkanDevice", L"Cannot find a queueFamily");
+			return {};
 		}
 
 		VkDeviceMemory VulkanDevice::AllocateMemory(VkMemoryRequirements require, VkMemoryPropertyFlags memoryPropertyFlags)
@@ -126,10 +136,9 @@ namespace cube
 
 		uint32_t VulkanDevice::GetMemoryTypeIndex(uint32_t memoryTypeBits, VkMemoryPropertyFlags requirmentFlags)
 		{
-			VkPhysicalDeviceMemoryProperties memProperties = mPhysicalDevice_ref->GetMemProperties();
-			for(uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+			for(uint32_t i = 0; i < mMemProperties.memoryTypeCount; i++) {
 				if((memoryTypeBits & 1) == 1) {
-					if((memProperties.memoryTypes[i].propertyFlags & requirmentFlags) == requirmentFlags) {
+					if((mMemProperties.memoryTypes[i].propertyFlags & requirmentFlags) == requirmentFlags) {
 						return i;
 					}
 				}

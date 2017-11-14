@@ -10,6 +10,7 @@
 #include "VulkanSemaphore.h"
 #include "VulkanFence.h"
 #include "VulkanGraphicsPipeline.h"
+#include "VulkanImage.h"
 
 namespace cube
 {
@@ -23,7 +24,7 @@ namespace cube
 
 		VulkanCommandBuffer::~VulkanCommandBuffer()
 		{
-			vkFreeCommandBuffers(*mDevice_ref, *mCommandPool_ref, 1, &mCommandBuffer);
+			vkFreeCommandBuffers(mDevice_ref->GetHandle(), mCommandPool_ref->GetHandle(), 1, &mCommandBuffer);
 		}
 
 		void VulkanCommandBuffer::Reset()
@@ -50,6 +51,38 @@ namespace cube
 			CheckVkResult(L"VulkanCommandBuffer", L"Cannot begin the command buffer", res);
 		}
 
+		void VulkanCommandBuffer::CopyBuffer(SPtr<BaseRenderBuffer>& source, uint64_t sourceOffset,
+			SPtr<BaseRenderBuffer>& destination, uint64_t destinationOffset, uint64_t size)
+		{
+			VkBufferCopy copy;
+			copy.srcOffset = sourceOffset;
+			copy.dstOffset = destinationOffset;
+			copy.size = size;
+
+			vkCmdCopyBuffer(mCommandBuffer, DPCast(VulkanBuffer)(source)->GetHandle(), DPCast(VulkanBuffer)(destination)->GetHandle(), 1, &copy);
+		}
+
+		void VulkanCommandBuffer::CopyBufferToImage(SPtr<BaseRenderBuffer>& buffer, uint64_t bufferOffset,
+			SPtr<BaseRenderImage>& image, int imageOffsetX, int imageOffsetY, int imageOffsetZ,
+			uint32_t imageWidth, uint32_t imageHeight, uint32_t imageDepth, ImageAspectBits aspectBits)
+		{
+			VkBufferImageCopy region;
+			region.bufferOffset = bufferOffset;
+			region.bufferRowLength = 0;
+			region.bufferImageHeight = 0;
+
+			region.imageSubresource.aspectMask = GetVkImageAspectFlags(aspectBits);
+			region.imageSubresource.mipLevel = 0; // TODO: 차후 구현
+			region.imageSubresource.baseArrayLayer = 0;
+			region.imageSubresource.layerCount = 1;
+
+			region.imageOffset = {imageOffsetX, imageOffsetY, imageOffsetZ};
+			region.imageExtent = {imageWidth, imageHeight, imageDepth};
+
+			vkCmdCopyBufferToImage(mCommandBuffer, DPCast(VulkanBuffer)(buffer)->GetHandle(), DPCast(VulkanImage)(image)->GetHandle(),
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+		}
+
 		void VulkanCommandBuffer::SetRenderPass(SPtr<BaseRenderRenderPass>& renderPass, Rect2D renderArea)
 		{
 			if(mIsRenderPassStarted == true)
@@ -60,8 +93,8 @@ namespace cube
 			VkRenderPassBeginInfo info;
 			info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			info.pNext = nullptr;
-			info.renderPass = *vkRenderPass;
-			info.framebuffer = *(vkRenderPass->GetFramebuffer());
+			info.renderPass = vkRenderPass->GetHandle();
+			info.framebuffer = vkRenderPass->GetFramebuffer()->GetHandle();
 			info.renderArea = GetVkRect2D(renderArea);
 			info.clearValueCount = SCast(uint32_t)(vkRenderPass->mAttachmentClearValues.size());
 			info.pClearValues = vkRenderPass->mAttachmentClearValues.data();
@@ -69,6 +102,47 @@ namespace cube
 			vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE); // TODO: Secondary command buffer인경우 처리 (VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS)
 
 			mIsRenderPassStarted = true;
+		}
+
+		void VulkanCommandBuffer::PipelineBufferMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
+			AccessBits srcAccess, AccessBits dstAccess, SPtr<BaseRenderBuffer>& buffer, uint64_t offset, uint64_t size)
+		{
+			VkBufferMemoryBarrier barrier;
+			barrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+			barrier.pNext = nullptr;
+			barrier.srcAccessMask = GetVkAccessFlags(srcAccess);
+			barrier.dstAccessMask = GetVkAccessFlags(dstAccess);
+			barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			barrier.buffer = SPCast(VulkanBuffer)(buffer)->GetHandle();
+			barrier.offset = offset;
+			barrier.size = size;
+
+			vkCmdPipelineBarrier(mCommandBuffer, GetVkPipelineStageFlags(srcStage), GetVkPipelineStageFlags(dstStage), 0, 0, nullptr, 1, &barrier, 0, nullptr);
+		}
+
+		void VulkanCommandBuffer::PipelineImageMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
+			AccessBits srcAccess, AccessBits dstAccess, ImageLayout oldLayout, ImageLayout newLayout,
+			SPtr<BaseRenderImage>& image)
+		{
+			VkImageMemoryBarrier barrier;
+			barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			barrier.pNext = nullptr;
+			barrier.srcAccessMask = GetVkAccessFlags(srcAccess);
+			barrier.dstAccessMask = GetVkAccessFlags(dstAccess);
+			barrier.oldLayout = GetVkImageLayout(oldLayout);
+			barrier.newLayout = GetVkImageLayout(newLayout);
+			barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+			barrier.image = DPCast(VulkanImage)(image)->GetHandle();
+
+			barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // TODO: 차후 수정
+			barrier.subresourceRange.baseMipLevel = 0;
+			barrier.subresourceRange.levelCount = 1;
+			barrier.subresourceRange.baseArrayLayer = 0;
+			barrier.subresourceRange.layerCount = 1;
+
+			vkCmdPipelineBarrier(mCommandBuffer, GetVkPipelineStageFlags(srcStage), GetVkPipelineStageFlags(dstStage), 0, 0, nullptr, 0, nullptr, 1, &barrier);
 		}
 
 		void VulkanCommandBuffer::SetViewport(uint32_t firstViewport, uint32_t viewportCount, Viewport* pViewports)
@@ -107,7 +181,7 @@ namespace cube
 		{
 			mGraphicsPipeline = DPCast(VulkanGraphicsPipeline)(graphicsPipeline);
 
-			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *mGraphicsPipeline);
+			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mGraphicsPipeline->GetHandle());
 		}
 
 		void VulkanCommandBuffer::BindDescriptorSets(PipelineType pipelineType, uint32_t firstSet,
@@ -115,7 +189,7 @@ namespace cube
 		{
 			VkDescriptorSet* sets = new VkDescriptorSet[descriptorSetNum];
 			for(uint32_t i = 0; i < descriptorSetNum; i++) {
-				sets[i] = *SPCast(VulkanDescriptorSet)(descriptorSets[i]);
+				sets[i] = SPCast(VulkanDescriptorSet)(descriptorSets[i])->GetHandle();
 			}
 
 			vkCmdBindDescriptorSets(mCommandBuffer, GetVkPipelineBindPoint(pipelineType), mGraphicsPipeline->GetLayout(), firstSet, descriptorSetNum, sets, 0, nullptr);
@@ -127,7 +201,7 @@ namespace cube
 		{
 			VkBuffer* buf = new VkBuffer[bufferNum];
 			for(uint32_t i = 0; i < bufferNum; i++) {
-				buf[i] = *SPCast(VulkanBuffer)(buffers[i]);
+				buf[i] = SPCast(VulkanBuffer)(buffers[i])->GetHandle();
 			}
 
 			vkCmdBindVertexBuffers(mCommandBuffer, 0, bufferNum, buf, bufferOffsets);
@@ -137,7 +211,7 @@ namespace cube
 
 		void VulkanCommandBuffer::BindIndexBuffer(SPtr<BaseRenderBuffer> buffer, uint64_t bufferOffset)
 		{
-			vkCmdBindIndexBuffer(mCommandBuffer, *SPCast(VulkanBuffer)(buffer), bufferOffset, VK_INDEX_TYPE_UINT32);
+			vkCmdBindIndexBuffer(mCommandBuffer, SPCast(VulkanBuffer)(buffer)->GetHandle(), bufferOffset, VK_INDEX_TYPE_UINT32);
 		}
 
 		void VulkanCommandBuffer::Draw(uint32_t vertexCount, uint32_t vertexOffset, uint32_t instanceCount, uint32_t firstInstance)
@@ -163,7 +237,7 @@ namespace cube
 
 		void VulkanCommandBuffer::Submit(SPtr<BaseRenderQueue>& queue,
 			uint32_t waitSemaphoreNum, std::pair<SPtr<BaseRenderSemaphore>, PipelineStageBits>* waitSemaphores,
-			uint32_t signalSemaphoreNum, SPtr<BaseRenderSemaphore>* signalSemaphores, SPtr<BaseRenderFence>& waitFence)
+			uint32_t signalSemaphoreNum, SPtr<BaseRenderSemaphore>* signalSemaphores, SPtr<BaseRenderFence> waitFence)
 		{
 			VkResult res;
 
@@ -174,12 +248,12 @@ namespace cube
 			wait.resize(waitSemaphoreNum);
 			waitStage.resize(waitSemaphoreNum);
 			for(uint32_t i = 0; i < waitSemaphoreNum; i++) {
-				wait[i] = *DPCast(VulkanSemaphore)(waitSemaphores[i].first);
+				wait[i] = DPCast(VulkanSemaphore)(waitSemaphores[i].first)->GetHandle();
 				waitStage[i] = GetVkPipelineStageFlags(waitSemaphores[i].second);
 			}
 			signal.resize(signalSemaphoreNum);
 			for(uint32_t i = 0; i < signalSemaphoreNum; i++) {
-				signal[i] = *DPCast(VulkanSemaphore)(signalSemaphores[i]);
+				signal[i] = DPCast(VulkanSemaphore)(signalSemaphores[i])->GetHandle();
 			}
 
 			VkSubmitInfo submitInfo = {};
@@ -194,7 +268,11 @@ namespace cube
 			submitInfo.signalSemaphoreCount = signalSemaphoreNum;
 			submitInfo.pSignalSemaphores = signal.data();
 
-			res = vkQueueSubmit(*DPCast(VulkanQueue)(queue), 1, &submitInfo, *DPCast(VulkanFence)(waitFence));
+			VkFence f = NULL;
+			if(waitFence != nullptr)
+				f = DPCast(VulkanFence)(waitFence)->GetHandle();
+
+			res = vkQueueSubmit(DPCast(VulkanQueue)(queue)->GetHandle(), 1, &submitInfo, f);
 			CheckVkResult(L"VulkanCommandBuffer", L"Cannot submit the command buffer", res);
 		}
 
@@ -233,13 +311,13 @@ namespace cube
 			info.queueFamilyIndex = designatedQueueFamily.mIndex;
 
 			VkResult res;
-			res = vkCreateCommandPool(*device, &info, nullptr, &mCommandPool);
+			res = vkCreateCommandPool(device->GetHandle(), &info, nullptr, &mCommandPool);
 			CheckVkResult(L"VulkanCommandPool", L"Cannot create VulkanCommandPool", res);
 		}
 
 		VulkanCommandPool::~VulkanCommandPool()
 		{
-			vkDestroyCommandPool(*mDevice_ref, mCommandPool, nullptr);
+			vkDestroyCommandPool(mDevice_ref->GetHandle(), mCommandPool, nullptr);
 		}
 
 		SPtr<VulkanCommandBuffer> VulkanCommandPool::AllocateCommandBuffer(VkCommandBufferLevel level)
@@ -255,7 +333,7 @@ namespace cube
 			commandBufferAllocateInfo.commandPool = mCommandPool;
 			commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 			commandBufferAllocateInfo.commandBufferCount = 1;
-			res = vkAllocateCommandBuffers(*mDevice_ref, &commandBufferAllocateInfo, &cmd);
+			res = vkAllocateCommandBuffers(mDevice_ref->GetHandle(), &commandBufferAllocateInfo, &cmd);
 			CheckVkResult(L"VulkanCommandPool", L"Cannot allocate VulkanCommandBuffer", res);
 
 			SPtr<VulkanCommandBuffer> cmdBuffer(new VulkanCommandBuffer(mDevice_ref, shared_from_this(), cmd));

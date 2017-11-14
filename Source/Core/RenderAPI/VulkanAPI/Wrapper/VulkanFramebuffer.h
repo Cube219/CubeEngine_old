@@ -1,31 +1,32 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
 namespace cube
 {
 	namespace core
 	{
+		struct VulkanFramebufferInitializer
+		{
+			Vector<VkImageView> attachments;
+			
+			// Not use SPtr because the framebuffer is created in renderPass constructor
+			VulkanRenderPass* renderPass;
+			uint32_t width;
+			uint32_t height;
+			uint32_t layers;
+		};
+
 		class VulkanFramebuffer
 		{
 		public:
-			VulkanFramebuffer();
+			VulkanFramebuffer(const SPtr<VulkanDevice>& device, VulkanFramebufferInitializer& initializer);
 			~VulkanFramebuffer();
 
-			operator VkFramebuffer() const
-			{
-				return mFramebuffer;
-			}
-
-			void AddAttachment(VkImageView imageView);
-
-			void Create(const SPtr<VulkanDevice>& device, const SPtr<VulkanRenderPass>& renderPass,
-				uint32_t width, uint32_t height, uint32_t layers);
+			VkFramebuffer GetHandle() const	{ return mFramebuffer; }
 
 		private:
 			VkFramebuffer mFramebuffer;
-
-			Vector<VkImageView> mAttachments;
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};

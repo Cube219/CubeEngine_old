@@ -43,9 +43,11 @@
     <ClInclude Include="Wrapper\BaseRenderWindowSurface.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="Wrapper\BaseRenderSampler.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseRenderAPI.cpp" />
     <ClCompile Include="Wrapper\BaseRenderBuffer.cpp">
       <Filter>Wrapper</Filter>
     </ClCompile>

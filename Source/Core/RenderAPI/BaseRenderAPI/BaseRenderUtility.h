@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "Base/BaseTypes.h"
 
 namespace cube
 {
@@ -35,6 +36,8 @@ namespace cube
 
 	enum class DataFormat
 	{
+		R8G8B8A8_Unorm,
+		R32G32_SFloat,
 		R32G32B32A32_SFloat,
 		D16_Unorm
 	};
@@ -184,4 +187,27 @@ namespace cube
 		float depth;
 		uint32_t stencil;
 	};
+
+	enum class AccessBits
+	{
+		None = 0,
+		IndirectCommandReadBit = 1,
+		IndexReadBit = 1 << 1,
+		VertexAttributeReadBit = 1 << 2,
+		UniformReadBit = 1 << 3,
+		InputAttachmentReadBit = 1 << 4,
+		ShaderReadBit = 1 << 5,
+		ShaderWriteBit = 1 << 6,
+		ColorAttachmentReadBit = 1 << 7,
+		ColorAttachmentWriteBit = 1 << 8,
+		DepthStencilAttachmentReadBit = 1 << 9,
+		DepthStencilAttachmentWriteBit = 1<< 10,
+		TransferReadBit = 1 << 11,
+		TransferWriteBit = 1 << 12,
+		HostReadBit = 1 << 13,
+		HostWriteBit = 1 << 14,
+		MemoryReadBit = 1 << 15,
+		MemoryWriteBit = 1 << 16
+	};
+	SET_ENUM_AS_FLAGS(AccessBits)
 }

@@ -6,11 +6,16 @@
 #include "String/StringManager.h"
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
+#include "Renderer/Mesh.h"
+#include "Renderer/Texture.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
 #include "Renderer/Renderer3D.h"
 
 #include "Renderer/Vertex.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 namespace cube
 {
@@ -46,14 +51,14 @@ namespace cube
 			mModuleManager = std::make_unique<ModuleManager>(mPlatform);
 
 			Vector<Vertex> vertices;
-			vertices.push_back({XYZ1(-1, -1, -1), XYZ1(1.0f, 0.0f, 0.0f)});
-			vertices.push_back({XYZ1(-1, 1, -1), XYZ1(0.0f, 1.0f, 0.0f)});
-			vertices.push_back({XYZ1(1, -1, -1), XYZ1(0.0f, 0.0f, 1.0f)});
-			vertices.push_back({XYZ1(1, 1, -1), XYZ1(1.0f, 1.0f, 0.0f)});
-			vertices.push_back({XYZ1(1, -1, 1), XYZ1(1.0f, 0.0f, 1.0f)});
-			vertices.push_back({XYZ1(1, 1, 1), XYZ1(0.0f, 1.0f, 1.0f)});
-			vertices.push_back({XYZ1(-1, -1, 1), XYZ1(1.0f, 1.0f, 1.0f)});
-			vertices.push_back({XYZ1(-1, 1, 1), XYZ1(0.0f, 0.0f, 0.0f)});
+			vertices.push_back({XYZ1(-1, -1, -1), XYZ1(1.0f, 0.0f, 0.0f), {0.0f, 0.0f}});
+			vertices.push_back({XYZ1(-1, 1, -1), XYZ1(0.0f, 1.0f, 0.0f), {1.0f, 0.0f}});
+			vertices.push_back({XYZ1(1, -1, -1), XYZ1(0.0f, 0.0f, 1.0f), {0.0f, 1.0f}});
+			vertices.push_back({XYZ1(1, 1, -1), XYZ1(1.0f, 1.0f, 0.0f), {1.0f, 1.0f}});
+			vertices.push_back({XYZ1(1, -1, 1), XYZ1(1.0f, 0.0f, 1.0f), {0.0f, 0.0f}});
+			vertices.push_back({XYZ1(1, 1, 1), XYZ1(0.0f, 1.0f, 1.0f), {1.0f, 0.0f}});
+			vertices.push_back({XYZ1(-1, -1, 1), XYZ1(1.0f, 1.0f, 1.0f), {0.0f, 1.0f}});
+			vertices.push_back({XYZ1(-1, 1, 1), XYZ1(0.0f, 0.0f, 0.0f), {1.0f, 1.0f}});
 
 			Vector<uint32_t> indices;
 			indices.push_back(0);
@@ -96,19 +101,30 @@ namespace cube
 			indices.push_back(4);
 			indices.push_back(6);
 
-			indices.push_back(7);
-			indices.push_back(5);
-			indices.push_back(3);
-
-			indices.push_back(7);
 			indices.push_back(3);
 			indices.push_back(1);
+			indices.push_back(5);
+
+			indices.push_back(5);
+			indices.push_back(1);
+			indices.push_back(7);
 
 			mGo = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
 
 			auto renderer = mGo->GetRenderer();
-			renderer->SetVertex(vertices);
-			renderer->SetIndex(indices);
+
+			mMesh = std::make_shared<Mesh>();
+			mMesh->SetVertex(vertices);
+			mMesh->SetIndex(indices);
+
+			renderer->SetMesh(mMesh);
+
+			int width, height, channel;
+			stbi_uc* p = stbi_load("Data/TestTexture.png", &width, &height, &channel, STBI_rgb_alpha);
+			mTexture = std::make_shared<Texture>(mRendererManager, (char*)p, width * height * 4, width, height);
+			stbi_image_free(p);
+
+			renderer->SetTexture(mTexture);
 		}
 
 		void EngineCore::Run()

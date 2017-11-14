@@ -6,13 +6,28 @@ namespace cube
 {
 	namespace core
 	{
-		VulkanShader::VulkanShader(const SPtr<VulkanDevice>& device, VkShaderStageFlagBits stageFlagBits, const char* GLSLText, const char* entryName) :
+		VulkanShader::VulkanShader(const SPtr<VulkanDevice>& device, BaseRenderShaderInitializer& initializer) : 
 			mDevice_ref(device)
 		{
+			VkShaderStageFlagBits stageFlagBits;
+			switch(initializer.type) {
+				case ShaderType::GLSL_Vertex:
+					stageFlagBits = VK_SHADER_STAGE_VERTEX_BIT;
+					break;
+				case ShaderType::GLSL_Fragment:
+					stageFlagBits = VK_SHADER_STAGE_FRAGMENT_BIT;
+					break;
+
+				default:
+					PrintlnLogWithSayer(L"VulkanShader", L"Unknown shader type");
+					break;
+			}
+
 			// GLSL -> SPIR-V
 			TBuiltInResource resources = InitResource();
 
 			EShLanguage type;
+			
 			switch(stageFlagBits) {
 				case VK_SHADER_STAGE_VERTEX_BIT:
 					type = EShLangVertex;
@@ -37,13 +52,12 @@ namespace cube
 					type = EShLangVertex;
 					break;
 			}
-
 			glslang::InitializeProcess();
 
 			glslang::TProgram program;
 			glslang::TShader shader(type);
-			shader.setStrings(&GLSLText, 1);
-			shader.setEntryPoint(entryName);
+			shader.setStrings(&initializer.code, 1);
+			shader.setEntryPoint(initializer.entryPoint);
 
 			EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
 			if(!shader.parse(&resources, 100, false, messages)) {
@@ -74,10 +88,10 @@ namespace cube
 			moduleInfo.pCode = mSpvShader.data();
 
 			VkResult res;
-			res = vkCreateShaderModule(*device, &moduleInfo, nullptr, &mShaderModule);
+			res = vkCreateShaderModule(device->GetHandle(), &moduleInfo, nullptr, &mShaderModule);
 			CheckVkResult(L"VulkanShader", L"Cannot create a shader module", res);
 
-			mEntryName = entryName;
+			mEntryName = initializer.entryPoint;
 
 			// Create stage info
 			mShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -91,7 +105,7 @@ namespace cube
 
 		VulkanShader::~VulkanShader()
 		{
-			vkDestroyShaderModule(*mDevice_ref, mShaderModule, nullptr);
+			vkDestroyShaderModule(mDevice_ref->GetHandle(), mShaderModule, nullptr);
 
 			mSpvShader.clear();
 		}

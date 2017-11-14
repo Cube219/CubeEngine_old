@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Base\BaseTypes.h"
+#include "Base/BaseTypes.h"
 #include "BaseRenderUtility.h"
 
 namespace cube
@@ -10,16 +10,12 @@ namespace cube
 		class BaseRenderAPI;
 
 		class BaseRenderBuffer;
-		struct BaseRenderBufferInfo
-		{
-			WPtr<BaseRenderBuffer> buffer;
-			uint64_t offset;
-			uint64_t range;
-		};
+		struct BaseRenderBufferInfo;
 		enum class BufferTypeBits;
 
 		class BaseRenderCommandBuffer;
 
+		struct BaseRenderDescriptorSetInitializer;
 		class BaseRenderDescriptorSet;
 		enum class DescriptorType;
 
@@ -27,10 +23,12 @@ namespace cube
 
 		class BaseRenderFramebuffer;
 
+		struct BaseRenderGraphicsPipelineInitializer;
 		class BaseRenderGraphicsPipeline;
 		enum class PipelineStageBits;
 
 		class BaseRenderImageView;
+		struct BaseRenderImageInitializer;
 		class BaseRenderImage;
 		enum class ImageType;
 		enum class ImageViewType;
@@ -38,26 +36,21 @@ namespace cube
 		enum class ImageAspectBits;
 		enum class ImageLayout;
 
+		class BaseRenderSampler;
+
 		class BaseRenderQueue;
 		enum class QueueTypeBits;
 
+		struct BaseRenderRenderPassInitializer;
 		class BaseRenderRenderPass;
 		enum class LoadOperator;
 		enum class StoreOperator;
-		struct BaseRenderSubpass
-		{
-			struct AttachmentRef
-			{
-				uint32_t index;
-				ImageLayout layout;
-			};
-			Vector<AttachmentRef> mInputs;
-			Vector<AttachmentRef> mColors;
-			AttachmentRef mDepthStencil;
-		};
+		struct BaseRenderSubpass;
+		struct BaseRenderSubpassDependency;
 
 		class BaseRenderSemaphore;
 
+		struct BaseRenderShaderInitializer;
 		class BaseRenderShader;
 
 		class BaseRenderSwapchain;

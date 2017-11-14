@@ -151,6 +151,7 @@
     <ClInclude Include="Wrapper\VulkanPhysicalDevice.h" />
     <ClInclude Include="Wrapper\VulkanQueue.h" />
     <ClInclude Include="Wrapper\VulkanRenderPass.h" />
+    <ClInclude Include="Wrapper\VulkanSampler.h" />
     <ClInclude Include="Wrapper\VulkanSemaphore.h" />
     <ClInclude Include="Wrapper\VulkanShader.h" />
     <ClInclude Include="Wrapper\VulkanSwapchain.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Wrapper\VulkanPhysicalDevice.cpp" />
     <ClCompile Include="Wrapper\VulkanQueue.cpp" />
     <ClCompile Include="Wrapper\VulkanRenderPass.cpp" />
+    <ClCompile Include="Wrapper\VulkanSampler.cpp" />
     <ClCompile Include="Wrapper\VulkanSemaphore.cpp" />
     <ClCompile Include="Wrapper\VulkanShader.cpp" />
     <ClCompile Include="Wrapper\VulkanSwapchain.cpp" />

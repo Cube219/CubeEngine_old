@@ -34,6 +34,8 @@ namespace cube
 			SPtr<Renderer3D> CreateRenderer3D();
 			SPtr<CameraRenderer3D> GetCameraRenderer3D();
 
+			SPtr<BaseRenderAPI> GetRenderAPI() const { return mRenderAPI; }
+
 			void DrawAll();
 
 			void Resize(uint32_t width, uint32_t height);

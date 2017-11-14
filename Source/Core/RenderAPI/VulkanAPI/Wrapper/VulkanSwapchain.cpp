@@ -24,14 +24,14 @@ namespace cube
 			mImages.clear();
 			mImageViews.clear();
 
-			vkDestroySwapchainKHR(*mDevice_ref, mSwapchain, nullptr);
+			vkDestroySwapchainKHR(mDevice_ref->GetHandle(), mSwapchain, nullptr);
 		}
 
 		uint32_t VulkanSwapchain::AcquireNextImageIndex(SPtr<BaseRenderSemaphore>& signalSemaphore)
 		{
 			VkResult res;
 
-			res = vkAcquireNextImageKHR(*mDevice_ref, mSwapchain, UINT64_MAX, *DPCast(VulkanSemaphore)(signalSemaphore), VK_NULL_HANDLE, &mCurrentImageIndex);
+			res = vkAcquireNextImageKHR(mDevice_ref->GetHandle(), mSwapchain, UINT64_MAX, DPCast(VulkanSemaphore)(signalSemaphore)->GetHandle(), VK_NULL_HANDLE, &mCurrentImageIndex);
 			CheckVkResult(L"VulkanSwapchain", L"Cannot get a next iamge", res);
 
 			return mCurrentImageIndex;
@@ -49,7 +49,7 @@ namespace cube
 			std::vector<VkSemaphore> wait;
 			wait.resize(waitSemaphoreNum);
 			for(uint32_t i = 0; i < waitSemaphoreNum; i++) {
-				wait[i] = *DPCast(VulkanSemaphore)(waitSemaphores[i]);
+				wait[i] = DPCast(VulkanSemaphore)(waitSemaphores[i])->GetHandle();
 			}
 
 			VkPresentInfoKHR info;
@@ -62,10 +62,10 @@ namespace cube
 			info.pWaitSemaphores = wait.data();
 			info.pResults = nullptr;
 
-			res = vkQueuePresentKHR(*mPresentQueue, &info);
+			res = vkQueuePresentKHR(mPresentQueue->GetHandle(), &info);
 			CheckVkResult(L"VulkanSwapchain", L"Cannot present", res);
 
-			res = vkQueueWaitIdle(*mPresentQueue);
+			res = vkQueueWaitIdle(mPresentQueue->GetHandle());
 			CheckVkResult(L"VulkanSwapchain", L"Cannot wait the present queue", res);
 		}
 
@@ -95,7 +95,7 @@ namespace cube
 			info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 			info.pNext = nullptr;
 			info.flags = 0;
-			info.surface = *mSurface_ref;
+			info.surface = mSurface_ref->GetHandle();
 			info.minImageCount = imageCount;
 			info.imageFormat = mSurface_ref->GetFormat();
 			info.imageColorSpace = mSurface_ref->GetColorSpace();
@@ -122,23 +122,23 @@ namespace cube
 				info.pQueueFamilyIndices = queueFamilyIndices;
 			}
 
-			res = vkCreateSwapchainKHR(*mDevice_ref, &info, nullptr, &mSwapchain);
+			res = vkCreateSwapchainKHR(mDevice_ref->GetHandle(), &info, nullptr, &mSwapchain);
 			CheckVkResult(L"VulkanSwapchain", L"Cannot create VulkanSwapchain", res);
 
 			// If this swapchain is recreated, destroy the old swapchain
 			if(isRecreated == true) {
 				mImages.clear();
 
-				vkDestroySwapchainKHR(*mDevice_ref, oldSwapchain, nullptr);
+				vkDestroySwapchainKHR(mDevice_ref->GetHandle(), oldSwapchain, nullptr);
 			}
 
 			// Get the swapchain imgaes
 			uint32_t swapchainImageCount = 0;
-			res = vkGetSwapchainImagesKHR(*mDevice_ref, mSwapchain, &swapchainImageCount, nullptr);
+			res = vkGetSwapchainImagesKHR(mDevice_ref->GetHandle(), mSwapchain, &swapchainImageCount, nullptr);
 			CheckVkResult(L"VulkanSwapchain", L"Cannt get image number in the swapchain", res);
 
 			VkImage* imgs = new VkImage[swapchainImageCount];
-			res = vkGetSwapchainImagesKHR(*mDevice_ref, mSwapchain, &swapchainImageCount, imgs);
+			res = vkGetSwapchainImagesKHR(mDevice_ref->GetHandle(), mSwapchain, &swapchainImageCount, imgs);
 			CheckVkResult(L"VulkanSwapchain", L"Cannt get images in the swapchain", res);
 
 			mImages.resize(swapchainImageCount);

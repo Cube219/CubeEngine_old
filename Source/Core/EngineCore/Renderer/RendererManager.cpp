@@ -37,8 +37,15 @@ namespace cube
 			mGraphicsQueue = mRenderAPI->GetQueue(QueueTypeBits::GraphicsBit, 0);
 
 			// Depth buffer
-			mDepthBufferImage = mRenderAPI->CreateImage(ImageType::Image2D, DataFormat::D16_Unorm,
-				platform->GetWindowWidth(), platform->GetWindowHeight(), 1, 1, ImageUsageBits::DepthStencilAttachmentBit);
+			BaseRenderImageInitializer imageInit;
+			imageInit.type = ImageType::Image2D;
+			imageInit.format = DataFormat::D16_Unorm;
+			imageInit.width = platform->GetWindowWidth();
+			imageInit.height = platform->GetWindowHeight();
+			imageInit.depth = 1;
+			imageInit.mipLevels = 1;
+			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
+			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
 			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
 
 			// Swapchain
@@ -46,26 +53,49 @@ namespace cube
 			mSwapchain->Recreate(2, platform->GetWindowWidth(), platform->GetWindowHeight(), true);
 
 			// RenderPass
-			mRenderPass = mRenderAPI->CreateRenderPass();
 			Color c;
-			c.float32 = {0.3f, 0.3f, 0.3f, 0};
-			mRenderPass->SetSwapchain(mSwapchain, LoadOperator::Clear, StoreOperator::Store, c, ImageLayout::Undefined, ImageLayout::PresentSource);
-			
-			c.float32 = {0, 0, 0, 0};
 			DepthStencilValue v;
+
+			BaseRenderRenderPassInitializer renderPassInit;
+			// Depth buffer attachment
+			BaseRenderRenderPassInitializer::Attachment att;
+			att.imageView = mDepthBufferImageView;
+			att.format = DataFormat::D16_Unorm;
+			att.loadOp = LoadOperator::Clear;
+			att.storeOp = StoreOperator::DontCare;
+			c.float32 = {0, 0, 0, 0};
+			att.clearColor = c;
+			att.initialLayout = ImageLayout::Undefined;
+			att.finalLayout = ImageLayout::DepthStencilAttachmentOptimal;
+
+			att.isDepthStencil = true;
+			att.stencilLoadOp = LoadOperator::DontCare;
+			att.stencilStoreOp = StoreOperator::DontCare;
 			v.depth = 1.0f;
 			v.stencil = 0;
-			mRenderPass->AddAttachment(mDepthBufferImageView, DataFormat::D16_Unorm, true,
-				LoadOperator::Clear, StoreOperator::DontCare, LoadOperator::DontCare, StoreOperator::DontCare,
-				c, ImageLayout::Undefined, ImageLayout::DepthStencilAttachmentOptimal, v);
+			att.clearDepthStencil = v;
+			renderPassInit.attachments.push_back(att);
 
+			// Swapchain attachment
+			BaseRenderRenderPassInitializer::SwapchainAttachment swapAtt;
+			swapAtt.swapchain = mSwapchain;
+			swapAtt.loadOp = LoadOperator::Clear;
+			swapAtt.storeOp = StoreOperator::Store;
+			c.float32 = {0.3f, 0.3f, 0.3f, 0};
+			swapAtt.clearColor = c;
+			swapAtt.initialLayout = ImageLayout::Undefined;
+			swapAtt.finalLayout = ImageLayout::PresentSource;
+			renderPassInit.hasSwapchain = true;
+			renderPassInit.swapchainAttachment = swapAtt;
+
+			// Subpass
 			BaseRenderSubpass subpass;
-			subpass.mColors.push_back({0, ImageLayout::ColorAttachmentOptimal});
-			subpass.mDepthStencil.index = 1;
+			subpass.mColors.push_back({1, ImageLayout::ColorAttachmentOptimal});
+			subpass.mDepthStencil.index = 0;
 			subpass.mDepthStencil.layout = ImageLayout::DepthStencilAttachmentOptimal;
-			mRenderPass->AddSubpass(subpass);
+			renderPassInit.subpasses.push_back(subpass);
 
-			mRenderPass->Create();
+			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
 
 			// Get a vertex / fragment shader
 			String vertShaderText =
@@ -77,22 +107,35 @@ namespace cube
 				"} myBufferVals;\n"
 				"layout (location = 0) in vec4 pos;\n"
 				"layout (location = 1) in vec4 inColor;\n"
+				"layout (location = 2) in vec2 inTexCoord;\n"
 				"layout (location = 0) out vec4 outColor;\n"
+				"layout (location = 1) out vec2 outTexCoord;\n"
 				"void main(void) {\n"
 				"   outColor = inColor;\n"
+				"   outTexCoord = inTexCoord;\n"
 				"   gl_Position = myBufferVals.mvp * pos;\n"
 				"}\n";
 
 			String fragShaderText =
 				"#version 440\n"
+				"layout (binding = 1) uniform sampler2D texSampler;\n"
 				"layout (location = 0) in vec4 color;\n"
+				"layout (location = 1) in vec2 texCoord;\n"
 				"layout (location = 0) out vec4 outColor;\n"
 				"void main(void) {\n"
-				"   outColor = color;\n"
+				"   outColor = texture(texSampler, texCoord);\n"
 				"}\n";
 
-			mShaders.push_back(mRenderAPI->CreateShader(ShaderType::GLSL_Vertex, vertShaderText, String("main")));
-			mShaders.push_back(mRenderAPI->CreateShader(ShaderType::GLSL_Fragment, fragShaderText, String("main")));
+			BaseRenderShaderInitializer shaderInit;
+			shaderInit.type = ShaderType::GLSL_Vertex;
+			shaderInit.code = vertShaderText.c_str();
+			shaderInit.entryPoint = "main";
+			mShaders.push_back(mRenderAPI->CreateShader(shaderInit));
+
+			shaderInit.type = ShaderType::GLSL_Fragment;
+			shaderInit.code = fragShaderText.c_str();
+			shaderInit.entryPoint = "main";
+			mShaders.push_back(mRenderAPI->CreateShader(shaderInit));
 
 			// Get a main command buffer
 			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
@@ -156,8 +199,15 @@ namespace cube
 			mHeight = height;
 
 			// Recreate a depth buffer
-			mDepthBufferImage = mRenderAPI->CreateImage(ImageType::Image2D, DataFormat::D16_Unorm,
-				width, height, 1, 1, ImageUsageBits::DepthStencilAttachmentBit);
+			BaseRenderImageInitializer imageInit;
+			imageInit.type = ImageType::Image2D;
+			imageInit.format = DataFormat::D16_Unorm;
+			imageInit.width = width;
+			imageInit.height = height;
+			imageInit.depth = 1;
+			imageInit.mipLevels = 1;
+			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
+			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
 			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
 
 			mSwapchain->Recreate(2, width, height, mVsync);
@@ -211,25 +261,51 @@ namespace cube
 
 		void RendererManager::RecreatePipeline()
 		{
-			// Get a graphics pipeline
-			mGraphicsPipeline = mRenderAPI->CreateGraphicsPipeline();
-			// TODO: Vertex 구조체를 기반으로 다시 쓰기(sizeof...)
-			mGraphicsPipeline->AddVertexInputAttribute(0, DataFormat::R32G32B32A32_SFloat, 0);
-			mGraphicsPipeline->AddVertexInputAttribute(1, DataFormat::R32G32B32A32_SFloat, 16);
-			mGraphicsPipeline->SetVertexInput(sizeof(Vertex));
-			mGraphicsPipeline->SetVertexTopology(VertexTopology::Triangle);
+			BaseRenderGraphicsPipelineInitializer initializer;
 
-			mGraphicsPipeline->SetRasterizer(PolygonMode::Fill, PolygonFrontFace::Clockwise, CullMode::Back);
+			BaseRenderGraphicsPipelineInitializer::VertexInputAttribute attr;
+			attr.location = 0;
+			attr.format = DataFormat::R32G32B32A32_SFloat;
+			attr.offset = 0;
+			initializer.vertexInputAttributes.push_back(attr);
+			
+			attr.location = 1;
+			attr.format = DataFormat::R32G32B32A32_SFloat;
+			attr.offset = 16;
+			initializer.vertexInputAttributes.push_back(attr);
+			
+			attr.location = 2;
+			attr.format = DataFormat::R32G32_SFloat;
+			attr.offset = 32;
+			initializer.vertexInputAttributes.push_back(attr);
 
-			mGraphicsPipeline->AddColorBlendAttachment(false,
-				BlendFactor::Zero, BlendFactor::Zero, BlendOperator::Add,
-				BlendFactor::Zero, BlendFactor::Zero, BlendOperator::Add);
-			mGraphicsPipeline->SetColorBlend(false, LogicOperator::NoOp, 1.0f, 1.0f, 1.0f, 1.0f);
+			initializer.vertexSize = sizeof(Vertex);
+			initializer.vertexTopology = VertexTopology::Triangle;
 
-			mGraphicsPipeline->AddViewport({}, true);
-			mGraphicsPipeline->AddScissor({}, true);
-			mGraphicsPipeline->SetViewportState();
+			initializer.rasterizer = {PolygonMode::Fill, PolygonFrontFace::Clockwise, CullMode::Back};
 
+			BaseRenderGraphicsPipelineInitializer::ColorBlendAttachment colorAttr;
+			colorAttr.blendEnable = false;
+			colorAttr.srcColorBlendFactor = BlendFactor::Zero;
+			colorAttr.dstColorBlendFactor = BlendFactor::Zero;
+			colorAttr.colorBlendOp = BlendOperator::Add;
+			colorAttr.srcAlphaBlendFactor = BlendFactor::Zero;
+			colorAttr.dstAlphaBlendFactor = BlendFactor::Zero;
+			colorAttr.alphaBlendOp = BlendOperator::Add;
+
+			initializer.colorBlendAttachments.push_back(colorAttr);
+			
+			initializer.isScissorDynamic = true;
+			initializer.isViewportDynamic = true;
+
+			initializer.depthStencil.depthTestEnable = true;
+			initializer.depthStencil.depthBoundsTestEnable = false;
+			initializer.depthStencil.depthWriteEnable = true;
+			initializer.depthStencil.depthCompareOperator = CompareOperator::Always;
+			initializer.depthStencil.minDepthBounds = 0;
+			initializer.depthStencil.maxDepthBounds = 0;
+			
+			initializer.depthStencil.stencilTestEnable = false;
 			StencilOperatorState stencilOpState;
 			stencilOpState.failOperator = StencilOperator::Keep;
 			stencilOpState.passOperator = StencilOperator::Keep;
@@ -238,19 +314,21 @@ namespace cube
 			stencilOpState.reference = 0;
 			stencilOpState.depthFailOperator = StencilOperator::Keep;
 			stencilOpState.writeMask = 0;
-			mGraphicsPipeline->SetDepthStencil(true, false, true, CompareOperator::Always, false, stencilOpState, stencilOpState, 0, 0);
-
-			mGraphicsPipeline->SetMultisampler();
+			
+			initializer.depthStencil.front = stencilOpState;
+			initializer.depthStencil.back = stencilOpState;
 
 			for(auto& shader : mShaders) {
-				mGraphicsPipeline->AddShader(shader);
+				initializer.shaders.push_back(shader);
 			}
 
 			for(auto& desc : mDescriptorSets) {
-				mGraphicsPipeline->AddDescriptorSet(desc);
+				initializer.descSets.push_back(desc);
 			}
 
-			mGraphicsPipeline->Create(mRenderPass);
+			initializer.renderPass = mRenderPass;
+
+			mGraphicsPipeline = mRenderAPI->CreateGraphicsPipeline(initializer);
 		}
 	}
 }

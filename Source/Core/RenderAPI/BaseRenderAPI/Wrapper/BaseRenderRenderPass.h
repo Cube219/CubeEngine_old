@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\BaseRenderAPIHeader.h"
+#include "../BaseRenderAPIHeader.h"
 
 namespace cube
 {
@@ -19,29 +19,70 @@ namespace cube
 			DontCare
 		};
 
-		struct BaseRenderSubpass; // Defined at BaseRenderAPIHeader.h
+		struct BaseRenderSubpass
+		{
+			struct AttachmentRef
+			{
+				uint32_t index;
+				ImageLayout layout;
+			};
+			Vector<AttachmentRef> mInputs;
+			Vector<AttachmentRef> mColors;
+			AttachmentRef mDepthStencil;
+		};
+		struct BaseRenderSubpassDependency
+		{
+			uint32_t srcIndex;
+			uint32_t dstIndex;
+			PipelineStageBits srcStageMask;
+			PipelineStageBits dstStageMask;
+			AccessBits srcAccessMask;
+			AccessBits dstAccessMask;
+		};
 
 		// ----------------------------------------------------
 		//                 BaseRenderRenderPass
 		// ----------------------------------------------------
+		
+		struct BaseRenderRenderPassInitializer
+		{
+			struct Attachment
+			{
+				SPtr<BaseRenderImageView> imageView;
+				DataFormat format;
+				LoadOperator loadOp;
+				StoreOperator storeOp;
+				Color clearColor;
+				ImageLayout initialLayout;
+				ImageLayout finalLayout;
+
+				bool isDepthStencil;
+				LoadOperator stencilLoadOp;
+				StoreOperator stencilStoreOp;
+				DepthStencilValue clearDepthStencil;
+			};
+			Vector<Attachment> attachments;
+
+			struct SwapchainAttachment
+			{
+				SPtr<BaseRenderSwapchain> swapchain;
+				LoadOperator loadOp;
+				StoreOperator storeOp;
+				Color clearColor;
+				ImageLayout initialLayout;
+				ImageLayout finalLayout;
+			};
+			bool hasSwapchain;
+			SwapchainAttachment swapchainAttachment;
+
+			Vector<BaseRenderSubpass> subpasses;
+			Vector<BaseRenderSubpassDependency> subpassDependencies;
+		};
 
 		class BaseRenderRenderPass
 		{
 		public:
 			virtual ~BaseRenderRenderPass(){ }
-
-			virtual void AddAttachment(SPtr<BaseRenderImageView>& imageView, DataFormat format, bool isDepthStencil,
-				LoadOperator loadOp, StoreOperator storeOp,
-				LoadOperator stencilLoadOp, StoreOperator stencilStoreOp, Color clearColor,
-				ImageLayout initialLayout, ImageLayout finalLayout, DepthStencilValue clearDepthStencil) = 0;
-
-			virtual void SetSwapchain(SPtr<BaseRenderSwapchain>& swapchain,
-				LoadOperator loadOp, StoreOperator storeOp, Color clearColor,
-				ImageLayout initialLayout, ImageLayout finalLayout) = 0;
-
-			virtual void AddSubpass(BaseRenderSubpass subpass) = 0;
-
-			virtual void Create() = 0;
 
 		protected:
 			BaseRenderRenderPass(){ }

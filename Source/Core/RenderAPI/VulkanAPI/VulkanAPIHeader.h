@@ -2,9 +2,9 @@
 #pragma warning(disable:4251)
 #pragma warning(disable:4275)
 
-#include "Base\BaseTypes.h"
+#include "Base/BaseTypes.h"
 
-#include <vulkan\vulkan.h>
+#include <vulkan/vulkan.h>
 #include "VulkanUtility.h"
 
 namespace cube
@@ -23,10 +23,12 @@ namespace cube
 		
 		class VulkanDescriptorSet;
 		
+		class VulkanDeviceInitializer;
 		class VulkanDevice;
 		
 		class VulkanFence;
 		
+		struct VulkanFramebufferInitializer;
 		class VulkanFramebuffer;
 		
 		class VulkanGraphicsPipeline;
@@ -34,7 +36,10 @@ namespace cube
 		class VulkanImageView;
 		
 		class VulkanImage;
+
+		class VulkanSampler;
 		
+		struct VulkanInstanceInitializer;
 		class VulkanInstance;
 		
 		enum class VulkanPhysicalDeviceFeature;

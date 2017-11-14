@@ -47,5 +47,6 @@ namespace cube
 		VkLogicOp GetVkLogicOp(LogicOperator logicOperator);
 		VkClearColorValue GetVkClearColorValue(Color color);
 		VkClearDepthStencilValue GetVkClearDepthStencilValue(DepthStencilValue value);
+		VkAccessFlags GetVkAccessFlags(AccessBits access);
 	}
 }

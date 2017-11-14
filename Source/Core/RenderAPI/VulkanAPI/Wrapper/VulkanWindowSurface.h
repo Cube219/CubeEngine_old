@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderWindowSurface.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderWindowSurface.h"
 
 namespace cube
 {
@@ -12,20 +12,17 @@ namespace cube
 		{
 		public:
 #ifdef _WIN32
-			VulkanWindowSurface(const SPtr<VulkanInstance>& instance, const SPtr<VulkanPhysicalDevice>& physicalDevice,
+			VulkanWindowSurface(const SPtr<VulkanInstance>& instance, const SPtr<VulkanPhysicalDevice>& physicalDevice, const SPtr<VulkanDevice>& device,
 				HINSTANCE win32Instance, HWND win32Window);
 #endif // WIN32
 			virtual ~VulkanWindowSurface();
 
-			operator VkSurfaceKHR() const
-			{
-				return mSurface;
-			}
+			VkSurfaceKHR GetHandle() const { return mSurface; }
 
-			VkFormat GetFormat() const;
-			VkColorSpaceKHR GetColorSpace() const;
+			VkFormat GetFormat() const { return mFormat; }
+			VkColorSpaceKHR GetColorSpace() const { return mColorSpace; }
 			const VkSurfaceCapabilitiesKHR GetCapabilities() const;
-			VulkanQueueFamily GetPresentQueueFamily() const;
+			VulkanQueueFamily GetPresentQueueFamily() const { return mPresentQueueFamily; }
 
 		private:
 			void GetProperties();
@@ -38,21 +35,7 @@ namespace cube
 
 			SPtr<VulkanInstance> mInstance_ref;
 			SPtr<VulkanPhysicalDevice> mPhysicalDevice_ref;
+			SPtr<VulkanDevice> mDevice_ref;
 		};
-
-		inline VkFormat VulkanWindowSurface::GetFormat() const
-		{
-			return mFormat;
-		}
-
-		inline VkColorSpaceKHR VulkanWindowSurface::GetColorSpace() const
-		{
-			return mColorSpace;
-		}
-
-		inline VulkanQueueFamily VulkanWindowSurface::GetPresentQueueFamily() const
-		{
-			return mPresentQueueFamily;
-		}
 	}
 }

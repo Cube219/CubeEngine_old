@@ -1,32 +1,27 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderDescriptor.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
 
 namespace cube
 {
 	namespace core
 	{
+		VkShaderStageFlags GetVkShaderStageFlags(ShaderType shaderType);
+		VkDescriptorType GetVkDescriptorType(DescriptorType descType);
+
 		class VulkanDescriptorPool
 		{
 		public:
-			VulkanDescriptorPool();
+			VulkanDescriptorPool(const SPtr<VulkanDevice>& device);
 			~VulkanDescriptorPool();
 
-			operator VkDescriptorPool() const
-			{
-				return mDescriptorPool;
-			}
-
-			void AddDescriptorTypeToAllocate(VkDescriptorType type, uint32_t count);
-
-			void Create(const SPtr<VulkanDevice>& device);
+			VkDescriptorPool GetHandle() const { return mDescriptorPool; }
 
 		private:
 			VkDescriptorPool mDescriptorPool;
 
-			Vector<VkDescriptorPoolSize> mDescriptorPoolSizes;
 			uint32_t mDescriptorMaxSize;
 
 			SPtr<VulkanDevice> mDevice_ref;
@@ -39,33 +34,18 @@ namespace cube
 		class VULKAN_API_EXPORT VulkanDescriptorSet : public BaseRenderDescriptorSet
 		{
 		public:
-			VulkanDescriptorSet(const SPtr<VulkanDevice>& device, const SPtr<VulkanDescriptorPool>& pool);
+			VulkanDescriptorSet(const SPtr<VulkanDevice>& device, const SPtr<VulkanDescriptorPool>& pool, BaseRenderDescriptorSetInitializer& initializer);
 			virtual ~VulkanDescriptorSet();
 
-			operator VkDescriptorSet() const
-			{
-				return mDescriptorSet;
-			}
+			VkDescriptorSet GetHandle() const { return mDescriptorSet; }
 
-			void AddDescriptor(ShaderType shaderType, DescriptorType descriptorType, uint32_t bindingIndex, uint32_t count) override;
+			void WriteBufferInDescriptor(uint32_t bindingIndex, uint32_t bufferNum, BaseRenderBufferInfo* buffers) final override;
+			void WriteImagesInDescriptor(uint32_t bindingIndex, uint32_t imageNum, SPtr<BaseRenderImageView>* imageViews, SPtr<BaseRenderSampler>* samplers) final override;
 
-			void Create() override;
-
-			void WriteBufferInDescriptor(uint32_t bindingIndex, uint32_t bufferNum, BaseRenderBufferInfo* buffers) override;
-			/*
-					void AddDescriptor(VkDescriptorType type, uint32_t binding, uint32_t count, VkShaderStageFlags stageFlags);
-
-					void WriteBuffer(uint32_t bindingIndex, uint32_t count, const VkDescriptorBufferInfo* pBufferInfos);
-					void WriteImage(uint32_t bindingIndex, uint32_t count, const VkDescriptorImageInfo* pImageInfos);
-					void WriteTexel(uint32_t bindingIndex, uint32_t count, const VkBufferView* pTexelBufferViews);*/
-
-			const VkDescriptorSetLayout GetLayout() const;
-			const Vector<VkDescriptorSetLayoutBinding>& GetLayoutBindings() const;
+			const VkDescriptorSetLayout GetLayout() const { return mLayout; }
+			const Vector<VkDescriptorSetLayoutBinding>& GetLayoutBindings() const { return mLayoutBindings; }
 
 		private:
-			VkShaderStageFlags GetVkShaderStageFlags(ShaderType shaderType);
-			VkDescriptorType GetVkDescriptorType(DescriptorType descType);
-
 			VkDescriptorSet mDescriptorSet;
 
 			Vector<VkDescriptorSetLayoutBinding> mLayoutBindings;
@@ -74,15 +54,5 @@ namespace cube
 			SPtr<VulkanDevice> mDevice_ref;
 			SPtr<VulkanDescriptorPool> mDescriptorPool_ref;
 		};
-
-		inline const VkDescriptorSetLayout VulkanDescriptorSet::GetLayout() const
-		{
-			return mLayout;
-		}
-
-		inline const Vector<VkDescriptorSetLayoutBinding>& VulkanDescriptorSet::GetLayoutBindings() const
-		{
-			return mLayoutBindings;
-		}
 	}
 }

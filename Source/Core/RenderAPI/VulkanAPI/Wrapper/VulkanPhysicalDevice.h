@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
 namespace cube
 {
@@ -74,48 +74,11 @@ namespace cube
 		public:
 			~VulkanPhysicalDevice();
 
-			operator VkPhysicalDevice() const
-			{
-				return mPhysicalDevice;
-			}
-
-			const VkPhysicalDeviceProperties GetProperties() const;
-			const VkPhysicalDeviceFeatures GetFeatures() const;
-			const VkPhysicalDeviceMemoryProperties GetMemProperties() const;
-
-			const Vector<VulkanQueueFamily>& GetAllQueueFamily();
-			VulkanQueueFamily GetQueueFamily(VkQueueFlags type);
+			VkPhysicalDevice GetHandle() const { return mPhysicalDevice; }
 
 		private:
-			VulkanPhysicalDevice(){ }
 			VulkanPhysicalDevice(VkPhysicalDevice physicalDevice);
 			VkPhysicalDevice mPhysicalDevice;
-
-			VkPhysicalDeviceProperties mProperties;
-			VkPhysicalDeviceFeatures mFeatures;
-			VkPhysicalDeviceMemoryProperties mMemProperties;
-
-			Vector<VulkanQueueFamily> mQueueFamilies;
 		};
-
-		inline const Vector<VulkanQueueFamily>& VulkanPhysicalDevice::GetAllQueueFamily()
-		{
-			return mQueueFamilies;
-		}
-
-		inline const VkPhysicalDeviceProperties VulkanPhysicalDevice::GetProperties() const
-		{
-			return mProperties;
-		}
-
-		inline const VkPhysicalDeviceFeatures VulkanPhysicalDevice::GetFeatures() const
-		{
-			return mFeatures;
-		}
-
-		inline const VkPhysicalDeviceMemoryProperties VulkanPhysicalDevice::GetMemProperties() const
-		{
-			return mMemProperties;
-		}
 	}
 }

@@ -14,12 +14,12 @@ namespace cube
 			info.pNext = nullptr;
 			info.flags = 0;
 
-			vkCreateSemaphore(*device, &info, nullptr, &mSemaphore);
+			vkCreateSemaphore(device->GetHandle(), &info, nullptr, &mSemaphore);
 		}
 
 		VulkanSemaphore::~VulkanSemaphore()
 		{
-			vkDestroySemaphore(*mDevice_ref, mSemaphore, nullptr);
+			vkDestroySemaphore(mDevice_ref->GetHandle(), mSemaphore, nullptr);
 		}
 	}
 }
