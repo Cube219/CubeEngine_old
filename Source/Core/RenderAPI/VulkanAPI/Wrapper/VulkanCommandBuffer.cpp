@@ -93,7 +93,7 @@ namespace cube
 			VkRenderPassBeginInfo info;
 			info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			info.pNext = nullptr;
-			info.renderPass = *vkRenderPass;
+			info.renderPass = vkRenderPass->GetHandle();
 			info.framebuffer = vkRenderPass->GetFramebuffer()->GetHandle();
 			info.renderArea = GetVkRect2D(renderArea);
 			info.clearValueCount = SCast(uint32_t)(vkRenderPass->mAttachmentClearValues.size());

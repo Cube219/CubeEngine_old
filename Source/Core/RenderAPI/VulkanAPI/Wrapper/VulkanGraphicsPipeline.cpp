@@ -256,7 +256,7 @@ namespace cube
 			pipelineCreateInfo.pDepthStencilState = &depthStencilStateCreateInfo;
 			pipelineCreateInfo.stageCount = SCast(uint32_t)(shaderStages.size());
 			pipelineCreateInfo.pStages = shaderStages.data();
-			pipelineCreateInfo.renderPass = *DPCast(VulkanRenderPass)(initializer.renderPass);
+			pipelineCreateInfo.renderPass = DPCast(VulkanRenderPass)(initializer.renderPass)->GetHandle();
 			pipelineCreateInfo.subpass = 0;
 
 			res = vkCreateGraphicsPipelines(mDevice_ref->GetHandle(), nullptr, 1, &pipelineCreateInfo, nullptr, &mPipeline);

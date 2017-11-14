@@ -45,17 +45,8 @@ namespace cube
 		class BaseRenderRenderPass;
 		enum class LoadOperator;
 		enum class StoreOperator;
-		struct BaseRenderSubpass
-		{
-			struct AttachmentRef
-			{
-				uint32_t index;
-				ImageLayout layout;
-			};
-			Vector<AttachmentRef> mInputs;
-			Vector<AttachmentRef> mColors;
-			AttachmentRef mDepthStencil;
-		};
+		struct BaseRenderSubpass;
+		struct BaseRenderSubpassDependency;
 
 		class BaseRenderSemaphore;
 

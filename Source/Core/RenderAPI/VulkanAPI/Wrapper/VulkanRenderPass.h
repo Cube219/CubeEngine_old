@@ -1,8 +1,8 @@
 #pragma once
 
-#include "..\VulkanAPIHeader.h"
+#include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI\Wrapper\BaseRenderRenderPass.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderRenderPass.h"
 
 namespace cube
 {
@@ -45,25 +45,7 @@ namespace cube
 			VulkanRenderPass(VulkanRenderPass& rhs) = delete;
 			VulkanRenderPass& operator=(VulkanRenderPass& rhs) = delete;
 
-			operator VkRenderPass() const
-			{
-				return mRenderPass;
-			}
-
-			void AddAttachment(SPtr<BaseRenderImageView>& imageView, DataFormat format, bool isDepthStencil,
-				LoadOperator loadOp, StoreOperator storeOp,
-				LoadOperator stencilLoadOp, StoreOperator stencilStoreOp, Color clearColor,
-				ImageLayout initialLayout, ImageLayout finalLayout, DepthStencilValue clearDepthStencil) override;
-
-			void SetSwapchain(SPtr<BaseRenderSwapchain>& swapchain,
-				LoadOperator loadOp, StoreOperator storeOp, Color clearColor,
-				ImageLayout initialLayout, ImageLayout finalLayout) override;
-
-			void AddSubpass(BaseRenderSubpass subpass) override;
-
-			//void SetSwapchain(SPtr<VulkanSwapchain>& swapchain);
-
-			void Create() override;
+			VkRenderPass GetHandle() const { return mRenderPass; }
 
 			SPtr<VulkanFramebuffer> GetFramebuffer();
 
@@ -72,11 +54,7 @@ namespace cube
 
 			Vector<SPtr<VulkanFramebuffer>> mFramebuffers;
 
-			Vector<SPtr<VulkanImageView>> mAttachments;
-			Vector<VkAttachmentDescription> mAttachmentDescs;
 			Vector<VkClearValue> mAttachmentClearValues;
-			
-			Vector<UPtr<VulkanSubpass>> mSubpasses;
 
 			SPtr<VulkanDevice> mDevice_ref;
 			SPtr<VulkanSwapchain> mSwapchain_ref;

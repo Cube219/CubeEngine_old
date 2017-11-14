@@ -10,7 +10,8 @@ namespace cube
 		{
 			Vector<VkImageView> attachments;
 			
-			SPtr<VulkanRenderPass> renderPass;
+			// Not use SPtr because the framebuffer is created in renderPass constructor
+			VulkanRenderPass* renderPass;
 			uint32_t width;
 			uint32_t height;
 			uint32_t layers;

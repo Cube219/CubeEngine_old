@@ -16,7 +16,7 @@ namespace cube
 			info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			info.pNext = nullptr;
 			info.flags = 0;
-			info.renderPass = *initializer.renderPass;
+			info.renderPass = initializer.renderPass->GetHandle();
 			info.attachmentCount = SCast(uint32_t)(initializer.attachments.size());
 			info.pAttachments = initializer.attachments.data();
 			info.width = initializer.width;

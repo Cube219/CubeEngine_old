@@ -53,27 +53,49 @@ namespace cube
 			mSwapchain->Recreate(2, platform->GetWindowWidth(), platform->GetWindowHeight(), true);
 
 			// RenderPass
-			BaseRenderRenderPassInitializer renderPassInit;
-			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
 			Color c;
-			c.float32 = {0.3f, 0.3f, 0.3f, 0};
-			mRenderPass->SetSwapchain(mSwapchain, LoadOperator::Clear, StoreOperator::Store, c, ImageLayout::Undefined, ImageLayout::PresentSource);
-			
-			c.float32 = {0, 0, 0, 0};
 			DepthStencilValue v;
+
+			BaseRenderRenderPassInitializer renderPassInit;
+			// Depth buffer attachment
+			BaseRenderRenderPassInitializer::Attachment att;
+			att.imageView = mDepthBufferImageView;
+			att.format = DataFormat::D16_Unorm;
+			att.loadOp = LoadOperator::Clear;
+			att.storeOp = StoreOperator::DontCare;
+			c.float32 = {0, 0, 0, 0};
+			att.clearColor = c;
+			att.initialLayout = ImageLayout::Undefined;
+			att.finalLayout = ImageLayout::DepthStencilAttachmentOptimal;
+
+			att.isDepthStencil = true;
+			att.stencilLoadOp = LoadOperator::DontCare;
+			att.stencilStoreOp = StoreOperator::DontCare;
 			v.depth = 1.0f;
 			v.stencil = 0;
-			mRenderPass->AddAttachment(mDepthBufferImageView, DataFormat::D16_Unorm, true,
-				LoadOperator::Clear, StoreOperator::DontCare, LoadOperator::DontCare, StoreOperator::DontCare,
-				c, ImageLayout::Undefined, ImageLayout::DepthStencilAttachmentOptimal, v);
+			att.clearDepthStencil = v;
+			renderPassInit.attachments.push_back(att);
 
+			// Swapchain attachment
+			BaseRenderRenderPassInitializer::SwapchainAttachment swapAtt;
+			swapAtt.swapchain = mSwapchain;
+			swapAtt.loadOp = LoadOperator::Clear;
+			swapAtt.storeOp = StoreOperator::Store;
+			c.float32 = {0.3f, 0.3f, 0.3f, 0};
+			swapAtt.clearColor = c;
+			swapAtt.initialLayout = ImageLayout::Undefined;
+			swapAtt.finalLayout = ImageLayout::PresentSource;
+			renderPassInit.hasSwapchain = true;
+			renderPassInit.swapchainAttachment = swapAtt;
+
+			// Subpass
 			BaseRenderSubpass subpass;
-			subpass.mColors.push_back({0, ImageLayout::ColorAttachmentOptimal});
-			subpass.mDepthStencil.index = 1;
+			subpass.mColors.push_back({1, ImageLayout::ColorAttachmentOptimal});
+			subpass.mDepthStencil.index = 0;
 			subpass.mDepthStencil.layout = ImageLayout::DepthStencilAttachmentOptimal;
-			mRenderPass->AddSubpass(subpass);
+			renderPassInit.subpasses.push_back(subpass);
 
-			mRenderPass->Create();
+			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
 
 			// Get a vertex / fragment shader
 			String vertShaderText =
