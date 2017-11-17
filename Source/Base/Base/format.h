@@ -28,7 +28,6 @@
 #ifndef FMT_FORMAT_H_
 #define FMT_FORMAT_H_
 
-#define FMT_INCLUDE
 #include <cassert>
 #include <clocale>
 #include <cmath>
@@ -40,12 +39,11 @@
 #include <string>
 #include <vector>
 #include <utility>  // for std::pair
-#undef FMT_INCLUDE
 
 // The fmt library version in the form major * 10000 + minor * 100 + patch.
-#define FMT_VERSION 40001
+#define FMT_VERSION 40000
 
-#if defined _SECURE_SCL && _SECURE_SCL
+#ifdef _SECURE_SCL
 # define FMT_SECURE_SCL _SECURE_SCL
 #else
 # define FMT_SECURE_SCL 0
@@ -99,9 +97,7 @@ typedef __int64          intmax_t;
 #  define FMT_HAS_GXX_CXX11 1
 # endif
 #else
-# define FMT_GCC_VERSION 0
 # define FMT_GCC_EXTENSION
-# define FMT_HAS_GXX_CXX11 0
 #endif
 
 #if defined(__INTEL_COMPILER)
@@ -137,15 +133,6 @@ typedef __int64          intmax_t;
 # define FMT_HAS_CPP_ATTRIBUTE(x) __has_cpp_attribute(x)
 #else
 # define FMT_HAS_CPP_ATTRIBUTE(x) 0
-#endif
-
-// Use the compiler's attribute noreturn
-#if defined(__MINGW32__) || defined(__MINGW64__)
-# define FMT_NORETURN __attribute__((noreturn))
-#elif FMT_HAS_CPP_ATTRIBUTE(noreturn) && __cplusplus >= 201103L
-# define FMT_NORETURN [[noreturn]]
-#else
-# define FMT_NORETURN
 #endif
 
 #ifndef FMT_USE_VARIADIC_TEMPLATES
@@ -275,14 +262,11 @@ typedef __int64          intmax_t;
 // makes the fmt::literals implementation easier. However, an explicit check
 // for variadic templates is added here just in case.
 // For Intel's compiler both it and the system gcc/msc must support UDLs.
-# if FMT_USE_VARIADIC_TEMPLATES && FMT_USE_RVALUE_REFERENCES && \
+# define FMT_USE_USER_DEFINED_LITERALS \
+   FMT_USE_VARIADIC_TEMPLATES && FMT_USE_RVALUE_REFERENCES && \
    (FMT_HAS_FEATURE(cxx_user_literals) || \
      (FMT_GCC_VERSION >= 407 && FMT_HAS_GXX_CXX11) || FMT_MSC_VER >= 1900) && \
    (!defined(FMT_ICC_VERSION) || FMT_ICC_VERSION >= 1500)
-#  define FMT_USE_USER_DEFINED_LITERALS 1
-# else
-#  define FMT_USE_USER_DEFINED_LITERALS 0
-# endif
 #endif
 
 #ifndef FMT_USE_EXTERN_TEMPLATES
@@ -742,7 +726,7 @@ template <typename T>
 template <typename U>
 void Buffer<T>::append(const U *begin, const U *end) {
   FMT_ASSERT(end >= begin, "negative value");
-  std::size_t new_size = size_ + static_cast<std::size_t>(end - begin);
+  std::size_t new_size = size_ + (end - begin);
   if (new_size > capacity_)
     grow(new_size);
   std::uninitialized_copy(begin, end,
@@ -932,7 +916,7 @@ struct IntTraits {
     TypeSelector<std::numeric_limits<T>::digits <= 32>::Type MainType;
 };
 
-FMT_API FMT_NORETURN void report_unknown_type(char code, const char *type);
+FMT_API void report_unknown_type(char code, const char *type);
 
 // Static data is placed in this class template to allow header-only
 // configuration.
@@ -1171,17 +1155,17 @@ T &get();
 Yes &convert(fmt::ULongLong);
 No &convert(...);
 
-template <typename T, bool ENABLE_CONVERSION>
+template<typename T, bool ENABLE_CONVERSION>
 struct ConvertToIntImpl {
   enum { value = ENABLE_CONVERSION };
 };
 
-template <typename T, bool ENABLE_CONVERSION>
+template<typename T, bool ENABLE_CONVERSION>
 struct ConvertToIntImpl2 {
   enum { value = false };
 };
 
-template <typename T>
+template<typename T>
 struct ConvertToIntImpl2<T, true> {
   enum {
     // Don't convert numeric types.
@@ -1189,7 +1173,7 @@ struct ConvertToIntImpl2<T, true> {
   };
 };
 
-template <typename T>
+template<typename T>
 struct ConvertToInt {
   enum {
     enable_conversion = sizeof(fmt::internal::convert(get<T>())) == sizeof(Yes)
@@ -1206,16 +1190,16 @@ FMT_DISABLE_CONVERSION_TO_INT(float);
 FMT_DISABLE_CONVERSION_TO_INT(double);
 FMT_DISABLE_CONVERSION_TO_INT(long double);
 
-template <bool B, class T = void>
+template<bool B, class T = void>
 struct EnableIf {};
 
-template <class T>
+template<class T>
 struct EnableIf<true, T> { typedef T type; };
 
-template <bool B, class T, class F>
+template<bool B, class T, class F>
 struct Conditional { typedef T type; };
 
-template <class T, class F>
+template<class T, class F>
 struct Conditional<false, T, F> { typedef F type; };
 
 // For bcc32 which doesn't understand ! in template arguments.
@@ -1264,9 +1248,9 @@ inline fmt::StringRef thousands_sep(...) { return ""; }
   typedef int FMT_CONCAT_(Assert, __LINE__)[(cond) ? 1 : -1] FMT_UNUSED
 #endif
 
-template <typename Formatter>
-void format_arg(Formatter&, ...) {
-  FMT_STATIC_ASSERT(FalseType<Formatter>::value,
+template <typename Formatter, typename Char, typename T>
+void format_arg(Formatter &, const Char *, const T &) {
+  FMT_STATIC_ASSERT(FalseType<T>::value,
                     "Cannot format argument. To enable the use of ostream "
                     "operator<< include fmt/ostream.h. Otherwise provide "
                     "an overload of format_arg.");
@@ -1937,7 +1921,7 @@ class ArgMap {
   MapType map_;
 
  public:
-  void init(const ArgList &args);
+  FMT_API void init(const ArgList &args);
 
   const internal::Arg *find(const fmt::BasicStringRef<Char> &name) const {
     // The list is unsorted, so just return the first matching name.
@@ -1949,51 +1933,6 @@ class ArgMap {
     return FMT_NULL;
   }
 };
-
-template <typename Char>
-void ArgMap<Char>::init(const ArgList &args) {
-  if (!map_.empty())
-    return;
-  typedef internal::NamedArg<Char> NamedArg;
-  const NamedArg *named_arg = FMT_NULL;
-  bool use_values =
-      args.type(ArgList::MAX_PACKED_ARGS - 1) == internal::Arg::NONE;
-  if (use_values) {
-    for (unsigned i = 0;/*nothing*/; ++i) {
-      internal::Arg::Type arg_type = args.type(i);
-      switch (arg_type) {
-      case internal::Arg::NONE:
-        return;
-      case internal::Arg::NAMED_ARG:
-        named_arg = static_cast<const NamedArg*>(args.values_[i].pointer);
-        map_.push_back(Pair(named_arg->name, *named_arg));
-        break;
-      default:
-        /*nothing*/;
-      }
-    }
-    return;
-  }
-  for (unsigned i = 0; i != ArgList::MAX_PACKED_ARGS; ++i) {
-    internal::Arg::Type arg_type = args.type(i);
-    if (arg_type == internal::Arg::NAMED_ARG) {
-      named_arg = static_cast<const NamedArg*>(args.args_[i].pointer);
-      map_.push_back(Pair(named_arg->name, *named_arg));
-    }
-  }
-  for (unsigned i = ArgList::MAX_PACKED_ARGS;/*nothing*/; ++i) {
-    switch (args.args_[i].type) {
-    case internal::Arg::NONE:
-      return;
-    case internal::Arg::NAMED_ARG:
-      named_arg = static_cast<const NamedArg*>(args.args_[i].pointer);
-      map_.push_back(Pair(named_arg->name, *named_arg));
-      break;
-    default:
-      /*nothing*/;
-    }
-  }
-}
 
 template <typename Impl, typename Char, typename Spec = fmt::FormatSpec>
 class ArgFormatterBase : public ArgVisitor<Impl, void> {
