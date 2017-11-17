@@ -45,6 +45,7 @@ namespace cube
 			SPtr<GameObject> mGo;
 			SPtr<Mesh> mMesh;
 			SPtr<Texture> mTexture;
+			SPtr<Material> mMaterial;
 
 			int mFPSLimit;
 		};

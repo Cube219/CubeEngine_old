@@ -15,7 +15,7 @@ namespace cube
 
 			virtual void Init(SPtr<platform::BasePlatform>& platform) = 0;
 
-			virtual SPtr<BaseRenderBuffer> CreateBuffer(uint64_t size, BufferTypeBits types) = 0;
+			virtual SPtr<BaseRenderBuffer> CreateBuffer(BaseRenderBufferInitializer& initializer) = 0;
 
 			virtual SPtr<BaseRenderDescriptorSet> CreateDescriptorSet(BaseRenderDescriptorSetInitializer& initializer) = 0;
 

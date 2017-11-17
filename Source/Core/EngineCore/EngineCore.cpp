@@ -8,6 +8,7 @@
 #include "Renderer/RendererManager.h"
 #include "Renderer/Mesh.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Material/Material.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
 #include "Renderer/Renderer3D.h"
@@ -119,12 +120,19 @@ namespace cube
 
 			renderer->SetMesh(mMesh);
 
+			Vector<MaterialParameterInfo> paramInfos;
+			paramInfos.push_back({"Texture", MaterialParameterType::Texture, 0});
+			mMaterial = std::make_shared<Material>(paramInfos);
+
+			renderer->SetMaterial(mMaterial);
+
 			int width, height, channel;
 			stbi_uc* p = stbi_load("Data/TestTexture.png", &width, &height, &channel, STBI_rgb_alpha);
 			mTexture = std::make_shared<Texture>(mRendererManager, (char*)p, width * height * 4, width, height);
 			stbi_image_free(p);
 
-			renderer->SetTexture(mTexture);
+			String t = "Texture";
+			mMaterial->SetParameterData<SPtr<Texture>>(t, mTexture);
 		}
 
 		void EngineCore::Run()

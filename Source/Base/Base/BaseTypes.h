@@ -35,17 +35,19 @@ enum class MouseButtonType
 };
 
 #include <string>
-
 using String = std::string;
 using WString = std::wstring;
 
 #include <vector>
-
 template <typename T>
 using Vector = std::vector<T>;
 
 template <typename Type, size_t Size>
 using Array = std::array<Type, Size>;
+
+#include <unordered_map>
+template <typename Key, typename Value>
+using HashMap = std::unordered_map<Key, Value>;
 
 #define SET_ENUM_AS_FLAGS(type) \
 	inline type operator |(type a, type b)\

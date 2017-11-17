@@ -5,21 +5,24 @@
 #include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
 
 namespace cube
-{
+{	
 	namespace core
 	{
-		class VULKAN_API_EXPORT VulkanBuffer : public BaseRenderBuffer
+		VkBufferUsageFlags GetVkBufferUsageFlags(BufferTypeBits typeBits);
+
+		class VULKAN_API_EXPORT VulkanBuffer : public BaseRenderBuffer, public std::enable_shared_from_this<VulkanBuffer>
 		{
 		public:
-			VulkanBuffer(const SPtr<VulkanDevice>& device, VkBufferUsageFlags usage,
-				VkDeviceSize size, const void* data, VkSharingMode sharingMode);
+			VulkanBuffer(const SPtr<VulkanDevice>& device, BaseRenderBufferInitializer& initializer);
 			virtual ~VulkanBuffer();
 
 			VkBuffer GetHandle() const { return mBuffer; }
 
 			void Map() final override;
-			void UpdateBufferData(const void* data, size_t size, uint64_t offset) final override;
+			void UpdateBufferData(uint64_t index, const void* data, size_t size) final override;
 			void Unmap() final override;
+
+			BaseRenderBufferInfo GetInfo(uint64_t index) const final override;
 
 			const VkDescriptorBufferInfo GetVulkanInfo(uint64_t offset, uint64_t range) const
 			{
@@ -37,6 +40,10 @@ namespace cube
 
 			void* mMappedData;
 			VkDeviceSize mMappedSize;
+			Vector<uint64_t> mDataOffsets;
+#ifdef _DEBUG
+			Vector<uint64_t> mDataSizes;
+#endif // _DEBUG
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};

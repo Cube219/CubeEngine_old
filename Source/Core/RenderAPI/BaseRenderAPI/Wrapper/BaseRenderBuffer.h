@@ -22,19 +22,35 @@ namespace cube
 			uint64_t range;
 		};
 
-		class BaseRenderBuffer : public std::enable_shared_from_this<BaseRenderBuffer>
+		struct BaseRenderBufferInitializer
+		{
+			BufferTypeBits type;
+
+			struct BufferData
+			{
+				const void* data;
+				uint64_t size;
+			};
+			Vector<BufferData> bufferDatas;
+		};
+
+		class BaseRenderBuffer
 		{
 		public:
 			virtual ~BaseRenderBuffer(){ }
 
 			virtual void Map() = 0;
-			virtual void UpdateBufferData(const void* data, size_t size, uint64_t offset) = 0;
+			virtual void UpdateBufferData(uint64_t index, const void* data, size_t size) = 0;
 			virtual void Unmap() = 0;
 
-			virtual BaseRenderBufferInfo GetInfo(uint64_t offset, uint64_t range) const;
+			virtual BaseRenderBufferInfo GetInfo(uint64_t index) const = 0;
+
+			size_t GetSize() const { return mSize; }
 
 		protected:
 			BaseRenderBuffer(){ }
+
+			size_t mSize;
 		};
 	}
 }

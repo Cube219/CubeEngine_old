@@ -9,6 +9,7 @@ namespace cube
 	{
 		class BaseRenderAPI;
 
+		struct BaseRenderBufferInitializer;
 		class BaseRenderBuffer;
 		struct BaseRenderBufferInfo;
 		enum class BufferTypeBits;
