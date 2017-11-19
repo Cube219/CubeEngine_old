@@ -129,6 +129,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LogWriter.h" />
     <ClInclude Include="ModuleManager.h" />
+    <ClInclude Include="Renderer\BaseMeshGenerator.h" />
     <ClInclude Include="Renderer\CameraRenderer3D.h" />
     <ClInclude Include="Renderer\Material\Material.h" />
     <ClInclude Include="Renderer\Mesh.h" />
@@ -152,6 +153,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="LogWriter.cpp" />
     <ClCompile Include="ModuleManager.cpp" />
+    <ClCompile Include="Renderer\BaseMeshGenerator.cpp" />
     <ClCompile Include="Renderer\CameraRenderer3D.cpp" />
     <ClCompile Include="Renderer\Material\Material.cpp" />
     <ClCompile Include="Renderer\Mesh.cpp" />

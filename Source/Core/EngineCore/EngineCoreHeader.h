@@ -32,6 +32,8 @@ namespace cube
 
 		class Mesh;
 
+		class BaseMeshGenerator;
+
 		class Material;
 
 		class Texture;

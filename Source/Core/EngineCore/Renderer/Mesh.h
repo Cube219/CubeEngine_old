@@ -8,6 +8,8 @@ namespace cube
 {
 	namespace core
 	{
+		using Index = uint32_t;
+
 		class ENGINE_CORE_EXPORT Mesh
 		{
 		public:

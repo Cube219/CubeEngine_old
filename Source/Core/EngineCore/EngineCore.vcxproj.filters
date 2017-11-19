@@ -56,6 +56,9 @@
     <ClInclude Include="Renderer\Texture.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\BaseMeshGenerator.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -103,6 +106,9 @@
       <Filter>Renderer\Material</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Texture.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\BaseMeshGenerator.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
