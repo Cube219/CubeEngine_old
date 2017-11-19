@@ -160,9 +160,7 @@ namespace cube
 			SPtr<Renderer3D> r3d = std::make_shared<Renderer3D>(mRenderAPI);
 			mRenderers.push_back(r3d);
 
-			mDescriptorSets.push_back(r3d->GetDescriptorSet());
-
-			RecreatePipeline();
+			mIsPipelineDirty = true;
 
 			return r3d;
 		}
@@ -176,6 +174,12 @@ namespace cube
 		{
 			if(mIsPrepared == false)
 				return;
+
+			if(mIsPipelineDirty == true) {
+				RecreatePipeline();
+
+				mIsPipelineDirty = false;
+			}
 
 			mSwapchain->AcquireNextImageIndex(mGetImageSemaphore);
 
@@ -252,7 +256,7 @@ namespace cube
 
 			mMainCommandBuffer->BindGraphicsPipeline(mGraphicsPipeline);
 
-			for(auto r : mRenderers) {
+			for(auto& r : mRenderers) {
 				r->Draw(mMainCommandBuffer, mCameraRenderer);
 			}
 
@@ -322,8 +326,8 @@ namespace cube
 				initializer.shaders.push_back(shader);
 			}
 
-			for(auto& desc : mDescriptorSets) {
-				initializer.descSets.push_back(desc);
+			for(auto& r3d : mRenderers) {
+				initializer.descSets.push_back(r3d->GetDescriptorSet());
 			}
 
 			initializer.renderPass = mRenderPass;

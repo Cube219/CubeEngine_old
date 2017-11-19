@@ -36,7 +36,7 @@ namespace cube
 			mMaterial = material;
 			mMaterial->SetUpdateBool(&mIsMaterialDataUpdated);
 
-			//RecreateDescriptorSet();
+			RecreateDescriptorSet();
 
 			mIsMaterialUpdated = true;
 		}
