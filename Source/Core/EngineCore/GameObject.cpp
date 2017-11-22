@@ -1,14 +1,15 @@
 #include "GameObject.h"
 
 #include "Renderer\Renderer3D.h"
-
+#include <iostream>
+#include <gtc\matrix_transform.hpp>
 namespace cube
 {
 	namespace core
 	{
 		GameObject::GameObject() :
 			mPosition({0.0f, 0.0f, 0.0f}), mRotation({0.0f, 0.0f, 0.0f}), mScale({1.0f, 1.0f, 1.0f}),
-			mIsTransformChanged(true)
+			mIsTransformChanged(true), mScaleMatrix(1.0f), mModelMatrix(1.0f)
 		{
 		}
 
@@ -43,16 +44,17 @@ namespace cube
 		{
 			// Update model matrix
 			if(mIsTransformChanged == true) {
-				mModelMatrix[0][3] = mPosition.x;
-				mModelMatrix[1][3] = mPosition.y;
-				mModelMatrix[2][3] = mPosition.z;
+				// Position
+				mModelMatrix[3][0] = mPosition.x;
+				mModelMatrix[3][1] = -mPosition.y;
+				mModelMatrix[3][2] = -mPosition.z; // Convert to left-hand coordinate
 
 				// (          cosYcosZ                  -cosYsinZ             sinY   )
 				// (  sinXsinYcosZ + cosXsinZ   -sinXsinYsinZ + cosXcosZ   -sinXcosY )
 				// ( -cosXsinYcosZ + sinXsinZ    cosXsinYsinZ + sinXcosZ    cosXcosY )
 				float radX = glm::radians(mRotation.x);
-				float radY = glm::radians(mRotation.y);
-				float radZ = glm::radians(mRotation.z);
+				float radY = glm::radians(-mRotation.y);
+				float radZ = glm::radians(-mRotation.z); // Convert to left-hand coordinate
 
 				float sinX = glm::sin(radX);
 				float cosX = glm::cos(radX);
@@ -62,14 +64,21 @@ namespace cube
 				float cosZ = glm::cos(radZ);
 
 				mModelMatrix[0][0] = cosY * cosZ;
-				mModelMatrix[0][1] = -cosY * sinZ;
-				mModelMatrix[0][2] = sinY;
-				mModelMatrix[1][0] = (sinX * sinY * cosZ) + (cosX * sinZ);
+				mModelMatrix[1][0] = -cosY * sinZ;
+				mModelMatrix[2][0] = sinY;
+				mModelMatrix[0][1] = (sinX * sinY * cosZ) + (cosX * sinZ);
 				mModelMatrix[1][1] = (-sinX * sinY * sinZ) + (cosX * cosZ);
-				mModelMatrix[1][2] = -sinX * cosY;
-				mModelMatrix[2][0] = (-cosX * sinY * cosZ) + (sinX * sinZ);
-				mModelMatrix[2][1] = (cosX * sinY * sinZ) + (sinX * cosZ);
+				mModelMatrix[2][1] = -sinX * cosY;
+				mModelMatrix[0][2] = (-cosX * sinY * cosZ) + (sinX * sinZ);
+				mModelMatrix[1][2] = (cosX * sinY * sinZ) + (sinX * cosZ);
 				mModelMatrix[2][2] = cosX * cosY;
+
+				// Scale
+				mScaleMatrix[0][0] = mScale.x;
+				mScaleMatrix[1][1] = mScale.y;
+				mScaleMatrix[2][2] = mScale.z;
+
+				mModelMatrix *= mScaleMatrix;
 
 				mRenderer3D->SetModelMatrix(mModelMatrix);
 

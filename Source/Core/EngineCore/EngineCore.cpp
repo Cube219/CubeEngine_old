@@ -99,11 +99,11 @@ namespace cube
 
 			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
 
-			mGo->Update();
+			auto pos = mGo->GetRotation();
+			pos.x += 200.0f * mTimeManager->GetGlobalGameTime()->GetDeltaTime();
+			mGo->SetRotation(pos);
 
-			auto currentRotation = mGo->GetRotation();
-			currentRotation.x += 180.0f * mTimeManager->GetGlobalGameTime()->GetDeltaTime();
-			mGo->SetRotation(currentRotation);
+			mGo->Update();
 
 			mRendererManager->DrawAll();
 

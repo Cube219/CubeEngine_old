@@ -57,19 +57,21 @@ namespace cube
 
 			if(mIsMeshUpdated == true || mIsMaterialUpdated == true) {
 				RecreateDataBuffer();
+
+				// DescriptorSet data(mvpMatrix + material) must be rewritten to the buffer because the buffer was newly created
+				mIsMatrixUpdated = true;
+				mIsMaterialDataUpdated = true;
+
+				mIsMaterialUpdated = false;
 			}
 
 			if(mIsMeshUpdated == true) {
 				mDataBuffer->Map();
 
 				mDataBuffer->UpdateBufferData(mVertexIndex, vertices.data(), vertices.size() * sizeof(Vertex));
-				mDataBuffer->UpdateBufferData(mIndexIndex, indices.data(), indices.size() * sizeof(uint32_t));
+				mDataBuffer->UpdateBufferData(mIndexIndex, indices.data(), indices.size() * sizeof(Index));
 
 				mIsMeshUpdated = false;
-
-				// DescriptorSet data(modelMatrix + material) must be rewritten to the buffer because the buffer was newly created.
-				mIsMatrixUpdated = true;
-				mIsMaterialUpdated = true;
 			}
 
 			if(mIsMatrixUpdated == true) {
@@ -97,7 +99,7 @@ namespace cube
 					if(params[i].type == MaterialParameterType::Data) {
 						mDataBuffer->UpdateBufferData(mMaterialParamIndex + currentIndex, params[i].data, params[i].size);
 
-						BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mMaterialParamIndex + i);
+						BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mMaterialParamIndex + currentIndex);
 						mDescriptorSet->WriteBufferInDescriptor((uint32_t)i + 1, 1, &bufInfo);
 
 						currentIndex++;
@@ -111,6 +113,7 @@ namespace cube
 
 				mDataBuffer->Unmap();
 
+				mIsMaterialDataUpdated = false;
 				mIsMaterialUpdated = false;
 			}
 
@@ -171,7 +174,7 @@ namespace cube
 			mVertexIndex = 0;
 
 			// 1. Index
-			bufData.size = mMesh->GetIndex().size() * sizeof(uint32_t);
+			bufData.size = mMesh->GetIndex().size() * sizeof(Index);
 			init.bufferDatas.push_back(bufData);
 			mIndexIndex = 1;
 
