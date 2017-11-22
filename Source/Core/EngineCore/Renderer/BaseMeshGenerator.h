@@ -21,6 +21,8 @@ namespace cube
 
 		private:
 			static void SubDivide(SPtr<Mesh>& mesh);
+
+			static void SetNormalVector(SPtr<Mesh>& mesh);
 		};
 	}
 }

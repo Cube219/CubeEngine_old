@@ -100,6 +100,9 @@ namespace cube
 				case DataFormat::R32G32_SFloat:
 					f = VK_FORMAT_R32G32_SFLOAT;
 					break;
+				case DataFormat::R32G32B32_SFloat:
+					f = VK_FORMAT_R32G32B32_SFLOAT;
+					break;
 				case DataFormat::R32G32B32A32_SFloat:
 					f = VK_FORMAT_R32G32B32A32_SFLOAT;
 					break;

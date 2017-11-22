@@ -107,7 +107,8 @@ namespace cube
 				"} myBufferVals;\n"
 				"layout (location = 0) in vec4 pos;\n"
 				"layout (location = 1) in vec4 inColor;\n"
-				"layout (location = 2) in vec2 inTexCoord;\n"
+				"layout (location = 2) in vec3 inNormal;\n"
+				"layout (location = 3) in vec2 inTexCoord;\n"
 				"layout (location = 0) out vec4 outColor;\n"
 				"layout (location = 1) out vec2 outTexCoord;\n"
 				"void main(void) {\n"
@@ -268,19 +269,24 @@ namespace cube
 			BaseRenderGraphicsPipelineInitializer initializer;
 
 			BaseRenderGraphicsPipelineInitializer::VertexInputAttribute attr;
-			attr.location = 0;
+			attr.location = 0; // Position data
 			attr.format = DataFormat::R32G32B32A32_SFloat;
 			attr.offset = 0;
 			initializer.vertexInputAttributes.push_back(attr);
 			
-			attr.location = 1;
+			attr.location = 1; // Color
 			attr.format = DataFormat::R32G32B32A32_SFloat;
 			attr.offset = 16;
 			initializer.vertexInputAttributes.push_back(attr);
 			
-			attr.location = 2;
-			attr.format = DataFormat::R32G32_SFloat;
+			attr.location = 2; // Normal
+			attr.format = DataFormat::R32G32B32_SFloat;
 			attr.offset = 32;
+			initializer.vertexInputAttributes.push_back(attr);
+
+			attr.location = 3; // Texture coordination
+			attr.format = DataFormat::R32G32_SFloat;
+			attr.offset = 44;
 			initializer.vertexInputAttributes.push_back(attr);
 
 			initializer.vertexSize = sizeof(Vertex);

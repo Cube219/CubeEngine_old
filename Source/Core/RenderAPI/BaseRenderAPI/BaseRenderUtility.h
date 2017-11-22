@@ -38,6 +38,7 @@ namespace cube
 	{
 		R8G8B8A8_Unorm,
 		R32G32_SFloat,
+		R32G32B32_SFloat,
 		R32G32B32A32_SFloat,
 		D16_Unorm
 	};

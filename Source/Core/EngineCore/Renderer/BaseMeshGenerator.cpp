@@ -53,6 +53,8 @@ namespace cube
 			mesh->SetVertex(vertices);
 			mesh->SetIndex(indices);
 
+			SetNormalVector(mesh);
+
 			return std::move(mesh);
 		}
 
@@ -145,6 +147,8 @@ namespace cube
 			mesh->SetVertex(vertices);
 			mesh->SetIndex(indices);
 
+			SetNormalVector(mesh);
+
 			return std::move(mesh);
 		}
 
@@ -227,6 +231,8 @@ namespace cube
 				meshVertices[i].pos.z = v.z;
 			}
 
+			SetNormalVector(mesh);
+
 			return std::move(mesh);
 		}
 
@@ -254,6 +260,8 @@ namespace cube
 
 			mesh->SetVertex(vertices);
 			mesh->SetIndex(indices);
+
+			SetNormalVector(mesh);
 
 			return std::move(mesh);
 		}
@@ -323,6 +331,45 @@ namespace cube
 
 			mesh->SetVertex(newVertices);
 			mesh->SetIndex(newIndices);
+		}
+
+		void BaseMeshGenerator::SetNormalVector(SPtr<Mesh>& mesh)
+		{
+			Vector<Vertex>& vertices = mesh->GetVertex();
+			Vector<Index>& indices = mesh->GetIndex();
+
+			for(auto& v : vertices) {
+				v.normal = {0.0f, 0.0f, 0.0f};
+			}
+
+			int numTriangles = (int)indices.size() / 3;
+			for(int i = 0; i < numTriangles; i++) {
+				Index i0 = indices[i * 3];
+				Index i1 = indices[i * 3 + 1];
+				Index i2 = indices[i * 3 + 2];
+				Vertex v0 = vertices[i0];
+				Vertex v1 = vertices[i1];
+				Vertex v2 = vertices[i2];
+
+				glm::vec3 t0;
+				t0.x = v1.pos.x - v0.pos.x;
+				t0.y = v1.pos.y - v0.pos.y;
+				t0.z = v1.pos.z - v0.pos.z;
+				glm::vec3 t1;
+				t1.x = v2.pos.x - v0.pos.x;
+				t1.y = v2.pos.y - v0.pos.y;
+				t1.z = v2.pos.z - v0.pos.z;
+
+				glm::vec3 n = glm::cross(t0, t1);
+
+				vertices[i0].normal += n;
+				vertices[i1].normal += n;
+				vertices[i2].normal += n;
+			}
+
+			for(auto& v : vertices) {
+				v.normal = glm::normalize(v.normal);
+			}
 		}
 	}
 }

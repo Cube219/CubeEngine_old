@@ -30,6 +30,7 @@ namespace cube
 		enum class RenderType;
 		class RendererManager;
 
+		struct Vertex;
 		class Mesh;
 
 		class BaseMeshGenerator;
