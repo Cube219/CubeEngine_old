@@ -128,5 +128,16 @@
     <Filter Include="Renderer\Material">
       <UniqueIdentifier>{e70c8341-926f-47fb-b385-4b913002f1f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderer\Light">
+      <UniqueIdentifier>{97762731-cfe1-4935-9c3c-4e3f3823a867}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Renderer\Vertex.glsl">
+      <Filter>Renderer</Filter>
+    </None>
+    <None Include="Renderer\Fragment.glsl">
+      <Filter>Renderer</Filter>
+    </None>
   </ItemGroup>
 </Project>
