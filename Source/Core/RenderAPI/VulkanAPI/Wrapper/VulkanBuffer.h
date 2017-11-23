@@ -41,9 +41,7 @@ namespace cube
 			void* mMappedData;
 			VkDeviceSize mMappedSize;
 			Vector<uint64_t> mDataOffsets;
-#ifdef _DEBUG
 			Vector<uint64_t> mDataSizes;
-#endif // _DEBUG
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};

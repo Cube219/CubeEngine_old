@@ -35,14 +35,11 @@ namespace cube
 
 			uint64_t bufDataNum = initializer.bufferDatas.size();
 			mDataOffsets.resize(bufDataNum);
-#ifdef _DEBUG
 			mDataSizes.resize(bufDataNum);
-#endif // _DEBUG
+
 			for(uint64_t i = 0; i < bufDataNum; i++) {
 				mDataOffsets[i] = totalDataSize;
-#ifdef _DEBUG
 				mDataSizes[i] = initializer.bufferDatas[i].size;
-#endif // _DEBUG
 
 				uint64_t alignedSize = initializer.bufferDatas[i].size + align - 1;
 				alignedSize /= align;
