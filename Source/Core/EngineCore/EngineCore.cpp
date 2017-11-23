@@ -50,29 +50,45 @@ namespace cube
 
 			mModuleManager = std::make_unique<ModuleManager>(mPlatform);
 
-
-			mGo = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
-
-			auto renderer = mGo->GetRenderer();
-
-
-			mMesh = BaseMeshGenerator::GetBoxMesh();
-
-			renderer->SetMesh(mMesh);
-
-			Vector<MaterialParameterInfo> paramInfos;
-			paramInfos.push_back({"Texture", MaterialParameterType::Texture, 0});
-			mMaterial = std::make_shared<Material>(paramInfos);
-
-			renderer->SetMaterial(mMaterial);
+			// Create mesh / texture
+			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
 
 			int width, height, channel;
 			stbi_uc* p = stbi_load("Data/TestTexture.png", &width, &height, &channel, STBI_rgb_alpha);
 			mTexture = std::make_shared<Texture>(mRendererManager, (char*)p, width * height * 4, width, height);
 			stbi_image_free(p);
 
+			// Create gameobjects
+			mGo1 = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
+			mGo1->SetPosition({2.0f, 0.0f, 0.0f});
+
+			auto renderer = mGo1->GetRenderer();
+
+			renderer->SetMesh(mBoxMesh);
+
+			Vector<MaterialParameterInfo> paramInfos;
+			paramInfos.push_back({"Texture", MaterialParameterType::Texture, 0});
+			mMaterial1 = std::make_shared<Material>(paramInfos);
+
 			String t = "Texture";
-			mMaterial->SetParameterData<SPtr<Texture>>(t, mTexture);
+			mMaterial1->SetParameterData<SPtr<Texture>>(t, mTexture);
+
+			renderer->SetMaterial(mMaterial1);
+			// 2
+			mGo2 = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
+			mGo2->SetPosition({-2.0f, 0.0f, 0.0f});
+
+			renderer = mGo2->GetRenderer();
+
+			renderer->SetMesh(mBoxMesh);
+
+			paramInfos.clear();
+			paramInfos.push_back({"Texture", MaterialParameterType::Texture, 0});
+			mMaterial2 = std::make_shared<Material>(paramInfos);
+
+			mMaterial2->SetParameterData<SPtr<Texture>>(t, mTexture);
+
+			renderer->SetMaterial(mMaterial2);
 		}
 
 		void EngineCore::Run()
@@ -99,11 +115,8 @@ namespace cube
 
 			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
 
-			auto pos = mGo->GetRotation();
-			pos.x += 200.0f * mTimeManager->GetGlobalGameTime()->GetDeltaTime();
-			mGo->SetRotation(pos);
-
-			mGo->Update();
+			mGo1->Update();
+			mGo2->Update();
 
 			mRendererManager->DrawAll();
 

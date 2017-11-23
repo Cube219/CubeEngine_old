@@ -42,10 +42,13 @@ namespace cube
 			UPtr<ModuleManager> mModuleManager;
 
 			//Vector<SPtr<GameObject>> mGameObjects;
-			SPtr<GameObject> mGo;
-			SPtr<Mesh> mMesh;
+			SPtr<Mesh> mBoxMesh;
 			SPtr<Texture> mTexture;
-			SPtr<Material> mMaterial;
+
+			SPtr<GameObject> mGo1;
+			SPtr<Material> mMaterial1;
+			SPtr<GameObject> mGo2;
+			SPtr<Material> mMaterial2;
 
 			int mFPSLimit;
 		};
