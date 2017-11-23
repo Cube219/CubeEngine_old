@@ -37,6 +37,11 @@ namespace cube
 
 		class Material;
 
+		class BaseLight;
+		class DirectionalLight;
+		class PointLight;
+		class SpotLight;
+
 		class Texture;
 
 		class ModuleManager;

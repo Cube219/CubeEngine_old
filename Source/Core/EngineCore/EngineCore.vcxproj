@@ -139,6 +139,10 @@ xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data" /Y</Command>
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="Renderer\BaseMeshGenerator.h" />
     <ClInclude Include="Renderer\CameraRenderer3D.h" />
+    <ClInclude Include="Renderer\Light\BaseLight.h" />
+    <ClInclude Include="Renderer\Light\DirectionalLight.h" />
+    <ClInclude Include="Renderer\Light\PointLight.h" />
+    <ClInclude Include="Renderer\Light\SpotLight.h" />
     <ClInclude Include="Renderer\Material\Material.h" />
     <ClInclude Include="Renderer\Mesh.h" />
     <ClInclude Include="Renderer\Renderer3D.h" />
@@ -163,6 +167,10 @@ xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data" /Y</Command>
     <ClCompile Include="ModuleManager.cpp" />
     <ClCompile Include="Renderer\BaseMeshGenerator.cpp" />
     <ClCompile Include="Renderer\CameraRenderer3D.cpp" />
+    <ClCompile Include="Renderer\Light\BaseLight.cpp" />
+    <ClCompile Include="Renderer\Light\DirectionalLight.cpp" />
+    <ClCompile Include="Renderer\Light\PointLight.cpp" />
+    <ClCompile Include="Renderer\Light\SpotLight.cpp" />
     <ClCompile Include="Renderer\Material\Material.cpp" />
     <ClCompile Include="Renderer\Mesh.cpp" />
     <ClCompile Include="Renderer\Renderer3D.cpp" />

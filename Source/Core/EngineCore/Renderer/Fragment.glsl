@@ -7,6 +7,18 @@ layout (location = 1) in vec2 texCoord;
 
 layout (location = 0) out vec4 outColor;
 
+void ComputeDirectionalLight()
+{
+}
+
+void ComputePointLight()
+{
+}
+
+void ComputeSpotLight()
+{
+}
+
 void main(void) {
     outColor = texture(texSampler, texCoord);
 }
