@@ -19,7 +19,7 @@ namespace cube
 
 			void Init(SPtr<platform::BasePlatform>& platform) final override;
 
-			SPtr<BaseRenderBuffer> CreateBuffer(uint64_t size, BufferTypeBits types) final override;
+			SPtr<BaseRenderBuffer> CreateBuffer(BaseRenderBufferInitializer& initializer) final override;
 
 			SPtr<BaseRenderDescriptorSet> CreateDescriptorSet(BaseRenderDescriptorSetInitializer& initializer) final override;
 

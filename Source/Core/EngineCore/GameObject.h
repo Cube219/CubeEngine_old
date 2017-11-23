@@ -36,6 +36,7 @@ namespace cube
 			Vector3 mRotation;
 			Vector3 mScale;
 			bool mIsTransformChanged;
+			glm::mat4 mScaleMatrix;
 			glm::mat4 mModelMatrix;
 		};
 

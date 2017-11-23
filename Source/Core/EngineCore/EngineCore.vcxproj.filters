@@ -56,6 +56,21 @@
     <ClInclude Include="Renderer\Texture.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\BaseMeshGenerator.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Light\BaseLight.h">
+      <Filter>Renderer\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Light\DirectionalLight.h">
+      <Filter>Renderer\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Light\PointLight.h">
+      <Filter>Renderer\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Light\SpotLight.h">
+      <Filter>Renderer\Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -105,6 +120,21 @@
     <ClCompile Include="Renderer\Texture.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\BaseMeshGenerator.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Light\BaseLight.cpp">
+      <Filter>Renderer\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Light\DirectionalLight.cpp">
+      <Filter>Renderer\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Light\PointLight.cpp">
+      <Filter>Renderer\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Light\SpotLight.cpp">
+      <Filter>Renderer\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
@@ -122,5 +152,16 @@
     <Filter Include="Renderer\Material">
       <UniqueIdentifier>{e70c8341-926f-47fb-b385-4b913002f1f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderer\Light">
+      <UniqueIdentifier>{97762731-cfe1-4935-9c3c-4e3f3823a867}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Renderer\Vertex.glsl">
+      <Filter>Renderer</Filter>
+    </None>
+    <None Include="Renderer\Fragment.glsl">
+      <Filter>Renderer</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -5,9 +5,11 @@
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="format.h" />
+    <ClInclude Include="Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />
     <ClCompile Include="format.cc" />
+    <ClCompile Include="Math.cpp" />
   </ItemGroup>
 </Project>

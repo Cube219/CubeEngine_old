@@ -1,6 +1,7 @@
 #include "Renderer3D.h"
 
 #include "Mesh.h"
+#include "Material/Material.h"
 #include "Texture.h"
 #include "CameraRenderer3D.h"
 
@@ -30,73 +31,171 @@ namespace cube
 			mIsMeshUpdated = true;
 		}
 
+		void Renderer3D::SetMaterial(SPtr<Material>& material)
+		{
+			mMaterial = material;
+			mMaterial->SetUpdateBool(&mIsMaterialDataUpdated);
+
+			RecreateDescriptorSet();
+
+			mIsMaterialUpdated = true;
+		}
+
 		void Renderer3D::SetModelMatrix(glm::mat4 modelMatrix)
 		{
 			mModelMatrix = modelMatrix;
 			mIsMatrixUpdated = true;
 		}
 
-		void Renderer3D::SetTexture(SPtr<Texture>& texture)
-		{
-			mTexture = texture;
-			mIsTextureUpdated = true;
-		}
-
 		void Renderer3D::Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
 		{
+			if(mMaterial == nullptr)
+				return;
+
 			auto vertices = mMesh->GetVertex();
 			auto indices = mMesh->GetIndex();
 
+			if(mIsMeshUpdated == true || mIsMaterialUpdated == true) {
+				RecreateDataBuffer();
+
+				// DescriptorSet data(mvpMatrix + material) must be rewritten to the buffer because the buffer was newly created
+				mIsMatrixUpdated = true;
+				mIsMaterialDataUpdated = true;
+
+				mIsMaterialUpdated = false;
+			}
+
 			if(mIsMeshUpdated == true) {
-				uint64_t dataSize = sizeof(mModelMatrix) + vertices.size() * sizeof(Vertex) + indices.size() * sizeof(uint32_t);
-				
-				mUniformOffset = 0;
-				mVertexOffset = sizeof(mModelMatrix);
-				mIndexOffset = mVertexOffset + vertices.size() * sizeof(Vertex);
-
-				mDataBuffer = mRenderAPI_ref->CreateBuffer(dataSize,
-					BufferTypeBits::Uniform | BufferTypeBits::Vertex | BufferTypeBits::Index);
-
 				mDataBuffer->Map();
 
-				mDataBuffer->UpdateBufferData(vertices.data(), vertices.size() * sizeof(Vertex), mVertexOffset);
-				mDataBuffer->UpdateBufferData(indices.data(), indices.size() * sizeof(uint32_t), mIndexOffset);
+				mDataBuffer->UpdateBufferData(mVertexIndex, vertices.data(), vertices.size() * sizeof(Vertex));
+				mDataBuffer->UpdateBufferData(mIndexIndex, indices.data(), indices.size() * sizeof(Index));
 
 				mIsMeshUpdated = false;
-
-				// Uniform data must be written to the buffer because the buffer was newly created.
-				mIsMatrixUpdated = true;
 			}
 
 			if(mIsMatrixUpdated == true) {
 				mDataBuffer->Map();
 
 				auto mvpMatrix = camera->GetViewProjectionMatrix() * mModelMatrix;
-				mDataBuffer->UpdateBufferData(&mvpMatrix, sizeof(mvpMatrix), mUniformOffset);
+				mDataBuffer->UpdateBufferData(mMVPIndex, &mvpMatrix, sizeof(mvpMatrix));
 
 				mDataBuffer->Unmap();
 
-				BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mUniformOffset, sizeof(mModelMatrix));
+				BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mMVPIndex);
 				mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
 
 				mIsMatrixUpdated = false;
 			}
 
-			if(mIsTextureUpdated == true) {
-				auto imageView = mTexture->GetImageView();
-				auto sampler = mTexture->GetSampler();
+			if(mIsMaterialDataUpdated == true) {
+				mDataBuffer->Map();
 
-				mDescriptorSet->WriteImagesInDescriptor(1, 1, &imageView, &sampler);
+				// Write all material parameters in descriptor
+				auto params = mMaterial->GetParameters();
+				
+				uint64_t currentIndex = 0;
+				for(size_t i = 0; i < params.size(); i++) {
+					if(params[i].type == MaterialParameterType::Data) {
+						mDataBuffer->UpdateBufferData(mMaterialParamIndex + currentIndex, params[i].data, params[i].size);
 
-				mIsTextureUpdated = false;
+						BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mMaterialParamIndex + currentIndex);
+						mDescriptorSet->WriteBufferInDescriptor((uint32_t)i + 1, 1, &bufInfo);
+
+						currentIndex++;
+					} else if(params[i].type == MaterialParameterType::Texture) {
+						auto imageView = params[i].texture->GetImageView();
+						auto sampler = params[i].texture->GetSampler();
+
+						mDescriptorSet->WriteImagesInDescriptor((uint32_t)i + 1, 1, &imageView, &sampler);
+					}
+				}
+
+				mDataBuffer->Unmap();
+
+				mIsMaterialDataUpdated = false;
+				mIsMaterialUpdated = false;
 			}
 
 			// Write
 			commandBuffer->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mDescriptorSet);
-			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &mVertexOffset);
-			commandBuffer->BindIndexBuffer(mDataBuffer, mIndexOffset);
+			uint64_t vertexOffset = mDataBuffer->GetInfo(mVertexIndex).offset;
+			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &vertexOffset);
+			commandBuffer->BindIndexBuffer(mDataBuffer, mDataBuffer->GetInfo(mIndexIndex).offset);
 
 			commandBuffer->DrawIndexed(SCast(uint32_t)(indices.size()), 0, 0, 1, 0);
+		}
+
+		void Renderer3D::RecreateDescriptorSet()
+		{
+			BaseRenderDescriptorSetInitializer init;
+			BaseRenderDescriptorSetInitializer::Descriptor desc;
+
+			// Basic MVP matrix
+			desc.shaderType = ShaderType::GLSL_Vertex;
+			desc.type = DescriptorType::UniformBuffer;
+			desc.bindingIndex = 0;
+			desc.count = 1;
+			init.descriptors.push_back(desc);
+
+			// Material parameters
+			auto& params = mMaterial->GetParameters();
+			for(size_t i = 0; i < params.size(); i++) {
+				if(params[i].type == MaterialParameterType::Data) {
+					desc.shaderType = ShaderType::GLSL_Vertex;
+					desc.type = DescriptorType::UniformBuffer;
+					desc.bindingIndex = (uint32_t)i + 1;
+					desc.count = 1;
+				} else if(params[i].type == MaterialParameterType::Texture) {
+					desc.shaderType = ShaderType::GLSL_Fragment;
+					desc.type = DescriptorType::CombinedImageSampler;
+					desc.bindingIndex = (uint32_t)i + 1;
+					desc.count = 1;
+				} else {
+					// TODO: 에러 처리
+				}
+				init.descriptors.push_back(desc);
+			}
+
+			mDescriptorSet = mRenderAPI_ref->CreateDescriptorSet(init);
+		}
+
+		void Renderer3D::RecreateDataBuffer()
+		{
+			BaseRenderBufferInitializer init;
+			init.type = BufferTypeBits::Uniform | BufferTypeBits::Vertex | BufferTypeBits::Index;
+
+			BaseRenderBufferInitializer::BufferData bufData;
+			bufData.data = nullptr;
+
+			// 0. Vertex
+			bufData.size = mMesh->GetVertex().size() * sizeof(Vertex);
+			init.bufferDatas.push_back(bufData);
+			mVertexIndex = 0;
+
+			// 1. Index
+			bufData.size = mMesh->GetIndex().size() * sizeof(Index);
+			init.bufferDatas.push_back(bufData);
+			mIndexIndex = 1;
+
+			// 2. MVP matrix
+			bufData.size = sizeof(mModelMatrix);
+			init.bufferDatas.push_back(bufData);
+			mMVPIndex = 2;
+
+			// 3 ~ . Material parameters
+			auto& params = mMaterial->GetParameters();
+			uint64_t paramNum = params.size();
+			for(uint64_t i = 0; i < paramNum; i++) {
+				// Texture data is not saved in data buffer
+				if(params[i].type != MaterialParameterType::Texture) {
+					bufData.size = params[i].size;
+					init.bufferDatas.push_back(bufData);
+				}
+			}
+			mMaterialParamIndex = 3;
+
+			mDataBuffer = mRenderAPI_ref->CreateBuffer(init);
 		}
 	}
 }

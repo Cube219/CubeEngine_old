@@ -7,12 +7,12 @@
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
 #include "Renderer/Mesh.h"
+#include "Renderer/BaseMeshGenerator.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Material/Material.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
 #include "Renderer/Renderer3D.h"
-
-#include "Renderer/Vertex.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -50,81 +50,29 @@ namespace cube
 
 			mModuleManager = std::make_unique<ModuleManager>(mPlatform);
 
-			Vector<Vertex> vertices;
-			vertices.push_back({XYZ1(-1, -1, -1), XYZ1(1.0f, 0.0f, 0.0f), {0.0f, 0.0f}});
-			vertices.push_back({XYZ1(-1, 1, -1), XYZ1(0.0f, 1.0f, 0.0f), {1.0f, 0.0f}});
-			vertices.push_back({XYZ1(1, -1, -1), XYZ1(0.0f, 0.0f, 1.0f), {0.0f, 1.0f}});
-			vertices.push_back({XYZ1(1, 1, -1), XYZ1(1.0f, 1.0f, 0.0f), {1.0f, 1.0f}});
-			vertices.push_back({XYZ1(1, -1, 1), XYZ1(1.0f, 0.0f, 1.0f), {0.0f, 0.0f}});
-			vertices.push_back({XYZ1(1, 1, 1), XYZ1(0.0f, 1.0f, 1.0f), {1.0f, 0.0f}});
-			vertices.push_back({XYZ1(-1, -1, 1), XYZ1(1.0f, 1.0f, 1.0f), {0.0f, 1.0f}});
-			vertices.push_back({XYZ1(-1, 1, 1), XYZ1(0.0f, 0.0f, 0.0f), {1.0f, 1.0f}});
-
-			Vector<uint32_t> indices;
-			indices.push_back(0);
-			indices.push_back(1);
-			indices.push_back(2);
-
-			indices.push_back(2);
-			indices.push_back(1);
-			indices.push_back(3);
-
-			indices.push_back(2);
-			indices.push_back(3);
-			indices.push_back(4);
-
-			indices.push_back(4);
-			indices.push_back(3);
-			indices.push_back(5);
-
-			indices.push_back(4);
-			indices.push_back(5);
-			indices.push_back(6);
-
-			indices.push_back(6);
-			indices.push_back(5);
-			indices.push_back(7);
-
-			indices.push_back(6);
-			indices.push_back(7);
-			indices.push_back(0);
-
-			indices.push_back(0);
-			indices.push_back(7);
-			indices.push_back(1);
-
-			indices.push_back(6);
-			indices.push_back(0);
-			indices.push_back(2);
-
-			indices.push_back(2);
-			indices.push_back(4);
-			indices.push_back(6);
-
-			indices.push_back(3);
-			indices.push_back(1);
-			indices.push_back(5);
-
-			indices.push_back(5);
-			indices.push_back(1);
-			indices.push_back(7);
 
 			mGo = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
 
 			auto renderer = mGo->GetRenderer();
 
-			mMesh = std::make_shared<Mesh>();
-			mMesh->SetVertex(vertices);
-			mMesh->SetIndex(indices);
+
+			mMesh = BaseMeshGenerator::GetBoxMesh();
 
 			renderer->SetMesh(mMesh);
+
+			Vector<MaterialParameterInfo> paramInfos;
+			paramInfos.push_back({"Texture", MaterialParameterType::Texture, 0});
+			mMaterial = std::make_shared<Material>(paramInfos);
+
+			renderer->SetMaterial(mMaterial);
 
 			int width, height, channel;
 			stbi_uc* p = stbi_load("Data/TestTexture.png", &width, &height, &channel, STBI_rgb_alpha);
 			mTexture = std::make_shared<Texture>(mRendererManager, (char*)p, width * height * 4, width, height);
 			stbi_image_free(p);
 
-			renderer->SetTexture(mTexture);
+			String t = "Texture";
+			mMaterial->SetParameterData<SPtr<Texture>>(t, mTexture);
 		}
 
 		void EngineCore::Run()
@@ -151,11 +99,11 @@ namespace cube
 
 			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
 
-			mGo->Update();
+			auto pos = mGo->GetRotation();
+			pos.x += 200.0f * mTimeManager->GetGlobalGameTime()->GetDeltaTime();
+			mGo->SetRotation(pos);
 
-			auto currentRotation = mGo->GetRotation();
-			currentRotation.x += 180.0f * mTimeManager->GetGlobalGameTime()->GetDeltaTime();
-			mGo->SetRotation(currentRotation);
+			mGo->Update();
 
 			mRendererManager->DrawAll();
 

@@ -4,6 +4,7 @@ namespace cube
 {
 	namespace core
 	{
+		/*
 		BaseRenderBufferInfo BaseRenderBuffer::GetInfo(uint64_t offset, uint64_t range) const
 		{
 			BaseRenderBufferInfo info;
@@ -13,5 +14,6 @@ namespace cube
 
 			return info;
 		}
+		*/
 	}
 }

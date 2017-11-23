@@ -86,19 +86,9 @@ namespace cube
 			mDescriptorPool = std::make_shared<VulkanDescriptorPool>(mDevice);
 		}
 
-		SPtr<BaseRenderBuffer> VulkanAPI::CreateBuffer(uint64_t size, BufferTypeBits types)
+		SPtr<BaseRenderBuffer> VulkanAPI::CreateBuffer(BaseRenderBufferInitializer& initializer)
 		{
-			VkBufferUsageFlags usageFlags = 0;
-			if(SCast(int)(types | BufferTypeBits::Uniform) > 0)
-				usageFlags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-			if(SCast(int)(types | BufferTypeBits::Vertex) > 0)
-				usageFlags |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-			if(SCast(int)(types | BufferTypeBits::Index) > 0)
-				usageFlags |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-			if(SCast(int)(types | BufferTypeBits::TransferSource) > 0)
-				usageFlags |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-
-			return std::make_shared<VulkanBuffer>(mDevice, usageFlags, size, nullptr, VK_SHARING_MODE_EXCLUSIVE);
+			return std::make_shared<VulkanBuffer>(mDevice, initializer);
 		}
 
 		SPtr<BaseRenderDescriptorSet> VulkanAPI::CreateDescriptorSet(BaseRenderDescriptorSetInitializer& initializer)

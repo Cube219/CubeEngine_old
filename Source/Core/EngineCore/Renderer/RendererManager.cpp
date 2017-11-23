@@ -3,6 +3,9 @@
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
 
+#include <fstream>
+#include <sstream>
+
 namespace cube
 {
 	namespace core
@@ -98,33 +101,20 @@ namespace cube
 			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
 
 			// Get a vertex / fragment shader
-			String vertShaderText =
-				"#version 440\n"
-				//"#extension GL_ARB_separate_shader_objects : enable\n"
-				//"#extension GL_ARB_shading_language_420pack : enable\n"
-				"layout (binding = 0) uniform bufferVals {\n"
-				"    mat4 mvp;\n"
-				"} myBufferVals;\n"
-				"layout (location = 0) in vec4 pos;\n"
-				"layout (location = 1) in vec4 inColor;\n"
-				"layout (location = 2) in vec2 inTexCoord;\n"
-				"layout (location = 0) out vec4 outColor;\n"
-				"layout (location = 1) out vec2 outTexCoord;\n"
-				"void main(void) {\n"
-				"   outColor = inColor;\n"
-				"   outTexCoord = inTexCoord;\n"
-				"   gl_Position = myBufferVals.mvp * pos;\n"
-				"}\n";
+			// TODO: 차후 spv등 여러가지 언어 지원
+			std::ifstream file;
+			std::stringstream strStream;
 
-			String fragShaderText =
-				"#version 440\n"
-				"layout (binding = 1) uniform sampler2D texSampler;\n"
-				"layout (location = 0) in vec4 color;\n"
-				"layout (location = 1) in vec2 texCoord;\n"
-				"layout (location = 0) out vec4 outColor;\n"
-				"void main(void) {\n"
-				"   outColor = texture(texSampler, texCoord);\n"
-				"}\n";
+			file.open("Data/Vertex.glsl");
+			strStream << file.rdbuf();
+			String vertShaderText = strStream.str();
+			strStream.str("");
+			file.close();
+
+			file.open("Data/Fragment.glsl");
+			strStream << file.rdbuf();
+			String fragShaderText = strStream.str();
+			file.close();
 
 			BaseRenderShaderInitializer shaderInit;
 			shaderInit.type = ShaderType::GLSL_Vertex;
@@ -160,9 +150,7 @@ namespace cube
 			SPtr<Renderer3D> r3d = std::make_shared<Renderer3D>(mRenderAPI);
 			mRenderers.push_back(r3d);
 
-			mDescriptorSets.push_back(r3d->GetDescriptorSet());
-
-			RecreatePipeline();
+			mIsPipelineDirty = true;
 
 			return r3d;
 		}
@@ -176,6 +164,12 @@ namespace cube
 		{
 			if(mIsPrepared == false)
 				return;
+
+			if(mIsPipelineDirty == true) {
+				RecreatePipeline();
+
+				mIsPipelineDirty = false;
+			}
 
 			mSwapchain->AcquireNextImageIndex(mGetImageSemaphore);
 
@@ -252,7 +246,7 @@ namespace cube
 
 			mMainCommandBuffer->BindGraphicsPipeline(mGraphicsPipeline);
 
-			for(auto r : mRenderers) {
+			for(auto& r : mRenderers) {
 				r->Draw(mMainCommandBuffer, mCameraRenderer);
 			}
 
@@ -264,19 +258,24 @@ namespace cube
 			BaseRenderGraphicsPipelineInitializer initializer;
 
 			BaseRenderGraphicsPipelineInitializer::VertexInputAttribute attr;
-			attr.location = 0;
+			attr.location = 0; // Position data
 			attr.format = DataFormat::R32G32B32A32_SFloat;
 			attr.offset = 0;
 			initializer.vertexInputAttributes.push_back(attr);
 			
-			attr.location = 1;
+			attr.location = 1; // Color
 			attr.format = DataFormat::R32G32B32A32_SFloat;
 			attr.offset = 16;
 			initializer.vertexInputAttributes.push_back(attr);
 			
-			attr.location = 2;
-			attr.format = DataFormat::R32G32_SFloat;
+			attr.location = 2; // Normal
+			attr.format = DataFormat::R32G32B32_SFloat;
 			attr.offset = 32;
+			initializer.vertexInputAttributes.push_back(attr);
+
+			attr.location = 3; // Texture coordination
+			attr.format = DataFormat::R32G32_SFloat;
+			attr.offset = 44;
 			initializer.vertexInputAttributes.push_back(attr);
 
 			initializer.vertexSize = sizeof(Vertex);
@@ -322,8 +321,8 @@ namespace cube
 				initializer.shaders.push_back(shader);
 			}
 
-			for(auto& desc : mDescriptorSets) {
-				initializer.descSets.push_back(desc);
+			for(auto& r3d : mRenderers) {
+				initializer.descSets.push_back(r3d->GetDescriptorSet());
 			}
 
 			initializer.renderPass = mRenderPass;

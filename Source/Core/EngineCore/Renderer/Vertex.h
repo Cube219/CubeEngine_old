@@ -2,12 +2,16 @@
 
 #include <glm.hpp>
 
-struct Vertex
+namespace cube
 {
-	float posX, posY, posZ, posW;  // Position data
-	float r, g, b, a;              // Color
-	glm::vec2 texCoord;            // Texture coordination
-};
-
-#define XYZ1(_x_, _y_, _z_) (_x_), (_y_), (_z_), 1.f
-#define UV(_u_, _v_) (_u_), (_v_)
+	namespace core
+	{
+		struct Vertex
+		{
+			glm::vec4 pos;      // Position data
+			glm::vec4 color;    // Color
+			glm::vec3 normal;   // Normal
+			glm::vec2 texCoord; // Texture coordination
+		};
+	}
+}

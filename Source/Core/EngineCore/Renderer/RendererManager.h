@@ -1,20 +1,20 @@
 #pragma once
 
-#include "..\EngineCoreHeader.h"
+#include "../EngineCoreHeader.h"
 
-#include "BasePlatform\BasePlatform.h"
-#include "BasePlatform\BasePlatformDLib.h"
+#include "BasePlatform/BasePlatform.h"
+#include "BasePlatform/BasePlatformDLib.h"
 
-#include "BaseRenderAPI\BaseRenderAPI.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderShader.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderGraphicsPipeline.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderImage.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderSwapchain.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderCommandBuffer.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderQueue.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderSemaphore.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderFence.h"
-#include "BaseRenderAPI\Wrapper\BaseRenderRenderPass.h"
+#include "BaseRenderAPI/BaseRenderAPI.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderShader.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderGraphicsPipeline.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderImage.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderSwapchain.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderCommandBuffer.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderQueue.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderSemaphore.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderFence.h"
+#include "BaseRenderAPI/Wrapper/BaseRenderRenderPass.h"
 
 namespace cube
 {
@@ -50,7 +50,6 @@ namespace cube
 			SPtr<BaseRenderAPI> mRenderAPI;
 
 			Vector<SPtr<Renderer3D>> mRenderers;
-			Vector<SPtr<BaseRenderDescriptorSet>> mDescriptorSets;
 			SPtr<CameraRenderer3D> mCameraRenderer;
 
 			SPtr<BaseRenderImage> mDepthBufferImage;
@@ -62,6 +61,7 @@ namespace cube
 
 			Vector<SPtr<BaseRenderShader>> mShaders;
 
+			bool mIsPipelineDirty = true;
 			SPtr<BaseRenderGraphicsPipeline> mGraphicsPipeline;
 
 			SPtr<BaseRenderCommandBuffer> mMainCommandBuffer;

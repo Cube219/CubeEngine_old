@@ -13,10 +13,18 @@ namespace cube
 			auto renderAPI = manager->GetRenderAPI();
 
 			// Add image data in buffer
-			mStagingBuffer = renderAPI->CreateBuffer(size, BufferTypeBits::TransferSource);
+			BaseRenderBufferInitializer bufInit;
+			bufInit.type = BufferTypeBits::TransferSource;
+
+			BaseRenderBufferInitializer::BufferData bufData;
+			bufData.data = nullptr;
+			bufData.size = size;
+			bufInit.bufferDatas.push_back(bufData);
+
+			mStagingBuffer = renderAPI->CreateBuffer(bufInit);
 
 			mStagingBuffer->Map();
-			mStagingBuffer->UpdateBufferData(data, size, 0);
+			mStagingBuffer->UpdateBufferData(0, data, size);
 			mStagingBuffer->Unmap();
 
 			BaseRenderImageInitializer init;
