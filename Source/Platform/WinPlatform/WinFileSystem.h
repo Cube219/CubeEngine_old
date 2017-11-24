@@ -2,7 +2,7 @@
 
 #include "WinPlatformHeader.h"
 
-#include "BasePlatform\BasePlatformFileSystem.h"
+#include "BasePlatform/BasePlatformFileSystem.h"
 
 namespace cube
 {
@@ -16,7 +16,7 @@ namespace cube
 			WinFileSystem(HINSTANCE instance);
 			virtual ~WinFileSystem();
 
-			SPtr<BasePlatformFile> OpenFile(WString& path, FileAccessModeBits accessModeBits, bool createIfNotExist = false) override;
+			SPtr<BasePlatformFile> OpenFile(WString& path, FileAccessModeBits accessModeBits, bool createIfNotExist = false) final override;
 
 		private:
 			HINSTANCE mInstance;
@@ -34,9 +34,14 @@ namespace cube
 			WinFile() = delete;
 			virtual ~WinFile();
 
-			void Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& bufferSize) override;
+			uint64_t GetFileSize() const final override;
 
-			void Write(void* pWriteBuffer, uint64_t bufferSize) override;
+			void SetFilePointer(uint64_t offset) final override;
+			void MoveFilePointer(int64_t distance) final override;
+
+			void Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize) final override;
+
+			void Write(void* pWriteBuffer, uint64_t bufferSize) final override;
 
 		private:
 			WinFile(HANDLE fileHandle);

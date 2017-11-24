@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Base\BaseTypes.h"
+#include "Base/BaseTypes.h"
 
 namespace cube
 {
@@ -32,7 +32,12 @@ namespace cube
 			BasePlatformFile() { }
 			virtual ~BasePlatformFile() { }
 
-			virtual void Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& bufferSize) = 0;
+			virtual uint64_t GetFileSize() const = 0;
+
+			virtual void SetFilePointer(uint64_t offset) = 0;
+			virtual void MoveFilePointer(int64_t distance) = 0;
+
+			virtual void Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize) = 0;
 
 			virtual void Write(void* pWriteBuffer, uint64_t bufferSize) = 0;
 		};

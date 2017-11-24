@@ -65,15 +65,54 @@ namespace cube
 			CloseHandle(mFileHandle);
 		}
 
-		void WinFile::Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& bufferSize)
+		uint64_t WinFile::GetFileSize() const
 		{
-			auto res = ReadFile(mFileHandle, pReadBuffer, (DWORD)bufferSizeToRead, (LPDWORD)&bufferSize, NULL);
+			LARGE_INTEGER size_LI;
+			bool res = GetFileSizeEx(mFileHandle, &size_LI);
 
-			if(res == TRUE)
-				return;
+			if(res == FALSE) {
+				auto err = GetLastError();
+				std::wcout << L"WinFile: Cannot get file size. / ErrorCode: " << err << std::endl;
+				return 0;
+			}
 
-			auto err = GetLastError();
-			std::wcout << L"WinFile: Cannot read the file. / ErrorCode: " << err << std::endl;
+			return size_LI.QuadPart;
+		}
+
+		void WinFile::SetFilePointer(uint64_t offset)
+		{
+			LARGE_INTEGER distance_LI;
+			distance_LI.QuadPart = offset;
+
+			bool res = SetFilePointerEx(mFileHandle, distance_LI, NULL, FILE_BEGIN);
+
+			if(res == FALSE) {
+				auto err = GetLastError();
+				std::wcout << L"WinFile: Cannot set file pointer. / ErrorCode: " << err << std::endl;
+			}
+		}
+
+		void WinFile::MoveFilePointer(int64_t distance)
+		{
+			LARGE_INTEGER distance_LI;
+			distance_LI.QuadPart = distance;
+
+			bool res = SetFilePointerEx(mFileHandle, distance_LI, NULL, FILE_CURRENT);
+
+			if(res == FALSE) {
+				auto err = GetLastError();
+				std::wcout << L"WinFile: Cannot move file pointer. / ErrorCode: " << err << std::endl;
+			}
+		}
+
+		void WinFile::Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize)
+		{
+			auto res = ReadFile(mFileHandle, pReadBuffer, (DWORD)bufferSizeToRead, (LPDWORD)&readBufferSize, NULL);
+
+			if(res == FALSE) {
+				auto err = GetLastError();
+				std::wcout << L"WinFile: Cannot read the file. / ErrorCode: " << err << std::endl;
+			}
 		}
 
 		void WinFile::Write(void* pWriteBuffer, uint64_t bufferSize)
@@ -81,11 +120,10 @@ namespace cube
 			DWORD writtenSize;
 			auto res = WriteFile(mFileHandle, pWriteBuffer, (DWORD)bufferSize, &writtenSize, nullptr);
 
-			if(res == TRUE)
-				return;
-
-			auto err = GetLastError();
-			std::wcout << L"WinFile: Cannot write the file. / ErrorCode: " << err << std::endl;
+			if(res == FALSE) {
+				auto err = GetLastError();
+				std::wcout << L"WinFile: Cannot write the file. / ErrorCode: " << err << std::endl;
+			}
 		}
 	}
 }
