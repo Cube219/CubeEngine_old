@@ -149,6 +149,8 @@ xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data\" /Y</Command>
     <ClInclude Include="Renderer\RendererManager.h" />
     <ClInclude Include="Renderer\Texture.h" />
     <ClInclude Include="Renderer\Vertex.h" />
+    <ClInclude Include="Resource\BaseResource.h" />
+    <ClInclude Include="Resource\ResourceManager.h" />
     <ClInclude Include="String\ImmutableString.h" />
     <ClInclude Include="String\PathString.h" />
     <ClInclude Include="String\BasicString.h" />
@@ -176,6 +178,8 @@ xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data\" /Y</Command>
     <ClCompile Include="Renderer\Renderer3D.cpp" />
     <ClCompile Include="Renderer\RendererManager.cpp" />
     <ClCompile Include="Renderer\Texture.cpp" />
+    <ClCompile Include="Resource\BaseResource.cpp" />
+    <ClCompile Include="Resource\ResourceManager.cpp" />
     <ClCompile Include="String\ImmutableString.cpp" />
     <ClCompile Include="String\PathString.cpp" />
     <ClCompile Include="String\BasicString.cpp" />

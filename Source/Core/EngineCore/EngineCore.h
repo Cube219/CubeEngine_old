@@ -66,7 +66,9 @@ namespace cube
 			void UpdateMousePos(uint32_t x, uint32_t y);
 
 			SPtr<platform::BasePlatform> mPlatform;
+
 			SPtr<RendererManager> mRendererManager;
+			SPtr<ResourceManager> mResourceManager;
 			SPtr<TimeManager> mTimeManager;
 			SPtr<StringManager> mStringManager;
 

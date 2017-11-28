@@ -18,6 +18,12 @@ namespace cube
 		class TimeManager;
 		class GameTime;
 
+		class ResourceManager;
+		template <typename T>
+		class ResourcePointer;
+		class ResourceRawData;
+		class BaseResource;
+
 		class LogWriter;
 
 		class BasicString;

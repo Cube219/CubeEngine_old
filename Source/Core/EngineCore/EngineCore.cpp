@@ -10,6 +10,7 @@
 #include "Renderer/BaseMeshGenerator.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Material/Material.h"
+#include "Resource/ResourceManager.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
 #include "Renderer/Renderer3D.h"
@@ -49,6 +50,8 @@ namespace cube
 			mStringManager = std::make_unique<StringManager>();
 
 			mRendererManager = std::make_unique<RendererManager>(mPlatform, RenderType::Vulkan);
+
+			mResourceManager = std::make_unique<ResourceManager>(mPlatform->GetFileSystem());
 
 			mModuleManager = std::make_unique<ModuleManager>(mPlatform);
 

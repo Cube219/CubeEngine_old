@@ -71,6 +71,12 @@
     <ClInclude Include="Renderer\Light\SpotLight.h">
       <Filter>Renderer\Light</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\BaseResource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\ResourceManager.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -135,6 +141,12 @@
     <ClCompile Include="Renderer\Light\SpotLight.cpp">
       <Filter>Renderer\Light</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\BaseResource.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\ResourceManager.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
@@ -154,6 +166,9 @@
     </Filter>
     <Filter Include="Renderer\Light">
       <UniqueIdentifier>{97762731-cfe1-4935-9c3c-4e3f3823a867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{205412c7-7a29-4d60-b436-609eac0e786d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
