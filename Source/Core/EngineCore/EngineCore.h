@@ -49,6 +49,10 @@ namespace cube
 
 			void SetFPSLimit(int limit);
 
+			SPtr<RendererManager> GetRendererManager() const { return mRendererManager; }
+			SPtr<TimeManager> GetTimeManager() const { return mTimeManager; }
+			SPtr<StringManager> GetStringManager() const { return mStringManager; }
+
 		private:
 			void Loop();
 
@@ -62,9 +66,9 @@ namespace cube
 			void UpdateMousePos(uint32_t x, uint32_t y);
 
 			SPtr<platform::BasePlatform> mPlatform;
-			UPtr<RendererManager> mRendererManager;
-			UPtr<TimeManager> mTimeManager;
-			UPtr<StringManager> mStringManager;
+			SPtr<RendererManager> mRendererManager;
+			SPtr<TimeManager> mTimeManager;
+			SPtr<StringManager> mStringManager;
 
 			UPtr<ModuleManager> mModuleManager;
 
