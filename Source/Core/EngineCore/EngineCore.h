@@ -2,7 +2,9 @@
 
 #include "EngineCoreHeader.h"
 
-#include "BasePlatform\BasePlatform.h"
+#include <iostream>
+
+#include "BasePlatform/BasePlatform.h"
 
 namespace cube
 {
@@ -10,10 +12,35 @@ namespace cube
 	{
 		class ENGINE_CORE_EXPORT EngineCore
 		{
+		// Singleton definition
 		public:
+			static void CreateInstance(SPtr<platform::BasePlatform>& platform)
+			{
+				if(mInstance == nullptr)
+					mInstance = new EngineCore(platform);
+				else
+					std::wcout << L"EngineCore: Instance is already created" << std::endl;
+			}
+			static void DestroyInstance()
+			{
+				if(mInstance != nullptr)
+					delete mInstance;
+				else
+					std::wcout << L"EngineCore: Instance is not created" << std::endl;
+			}
+			static EngineCore* GetInstance()
+			{
+				return mInstance;
+			}
+
+		private:
 			EngineCore(SPtr<platform::BasePlatform>& platform);
 			~EngineCore();
 
+			static EngineCore* mInstance;
+
+		// Actual declaration
+		public:
 			void Prepare();
 
 			void Run();
@@ -52,5 +79,11 @@ namespace cube
 
 			int mFPSLimit;
 		};
+
+		// Helper function to get singleton instance easily
+		EngineCore* ECore()
+		{
+			return EngineCore::GetInstance();
+		}
 	}
 }

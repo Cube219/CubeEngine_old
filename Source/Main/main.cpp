@@ -1,25 +1,25 @@
 #include <memory>
 
-#include "BasePlatform\BasePlatform.h"
-#include "EngineCore\EngineCore.h"
+#include "BasePlatform/BasePlatform.h"
+#include "EngineCore/EngineCore.h"
 
 using namespace cube;
 
 void LoadEngine(std::shared_ptr<platform::BasePlatform>& platform)
 {
-	auto core = std::make_unique<core::EngineCore>(platform);
+	core::EngineCore::CreateInstance(platform);
 
-	core->Prepare();
+	core::ECore()->Prepare();
+	core::ECore()->SetFPSLimit(60);
+	core::ECore()->Run();
 
-	core->SetFPSLimit(60);
-
-	core->Run();
+	core::EngineCore::DestroyInstance();
 }
 
 #ifdef _WIN32
 #include <Windows.h>
 
-#include "WinPlatform\WinPlatform.h"
+#include "WinPlatform/WinPlatform.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 {

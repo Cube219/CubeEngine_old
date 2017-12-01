@@ -21,6 +21,8 @@ namespace cube
 {
 	namespace core
 	{
+		EngineCore* EngineCore::mInstance = nullptr;
+
 		EngineCore::EngineCore(SPtr<platform::BasePlatform>& platform) :
 			mPlatform(platform), mFPSLimit(-1)
 		{
