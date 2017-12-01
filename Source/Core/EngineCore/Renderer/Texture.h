@@ -14,7 +14,7 @@ namespace cube
 		class ENGINE_CORE_EXPORT Texture
 		{
 		public:
-			Texture(UPtr<RendererManager>& manager, char* data, uint64_t size, uint32_t width, uint32_t height);
+			Texture(SPtr<RendererManager>& manager, char* data, uint64_t size, uint32_t width, uint32_t height);
 			~Texture();
 
 			void SendTextureData(SPtr<BaseRenderCommandBuffer>& commandBuffer);
@@ -37,7 +37,7 @@ namespace cube
 			SPtr<BaseRenderImageView> mImageView;
 			SPtr<BaseRenderSampler> mSampler;
 
-			UPtr<RendererManager>& mManager_ref;
+			SPtr<RendererManager> mManager_ref;
 		};
 	}
 }

@@ -7,7 +7,7 @@ namespace cube
 {
 	namespace core
 	{
-		Texture::Texture(UPtr<RendererManager>& manager, char* data, uint64_t size, uint32_t width, uint32_t height) :
+		Texture::Texture(SPtr<RendererManager>& manager, char* data, uint64_t size, uint32_t width, uint32_t height) :
 			mManager_ref(manager), mData(data), mSize(size), mWidth(width), mHeight(height)
 		{
 			auto renderAPI = manager->GetRenderAPI();
