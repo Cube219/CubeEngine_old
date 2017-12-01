@@ -19,8 +19,6 @@ namespace cube
 		class GameTime;
 
 		class ResourceManager;
-		template <typename T>
-		class ResourcePointer;
 		class ResourceRawData;
 		class BaseResource;
 

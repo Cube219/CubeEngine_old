@@ -8,27 +8,6 @@ namespace cube
 {
 	namespace core
 	{
-		template <typename T>
-		class ENGINE_CORE_EXPORT ResourcePointer
-		{
-		public:
-			ResourcePointer()
-			{
-				rawPtr->mRawData->mRefCount++;
-			}
-			~ResourcePointer()
-			{
-				rawPtr->mRawData->mRefCount--;
-			}
-
-			static ResourcePointer<T> CastFromBase(ResourcePointer<BaseResource>& base);
-
-		private:
-			friend class ResourceManager;
-
-			T* rawPtr;
-		};
-
 		class ResourceRawData
 		{
 		public:
@@ -42,9 +21,12 @@ namespace cube
 				free(mRawData);
 			}
 
+			const void* GetRawData() const { return mRawData; }
+			const uint64_t GetSize() const { return mSize; }
+
 		private:
 			friend class ResourceManager;
-			friend class ResourcePointer<BaseResource>;
+			friend class BaseResource;
 
 			void* mRawData;
 			uint64_t mSize;
@@ -55,7 +37,10 @@ namespace cube
 		class ENGINE_CORE_EXPORT BaseResource
 		{
 		public:
-			virtual ~BaseResource() { }
+			virtual ~BaseResource()
+			{
+				mRawData->mRefCount--;
+			}
 
 			// Prohibit creating
 			BaseResource() = delete;
@@ -64,14 +49,23 @@ namespace cube
 			BaseResource(const BaseResource& other) = delete;
 			BaseResource& operator=(const BaseResource& rhs) = delete;
 
+			template <typename T>
+			SPtr<T> CastResource()
+			{
+				SPtr<T> newRes(new T(this->mRawData));
+
+				return newRes;
+			}
+
 		protected:
 			friend class ResourceManager;
-			friend class ResourcePointer<BaseResource>;
 
 			// Prohibit creating except friend classes
 			BaseResource(ResourceRawData* rawData) : 
 				mRawData(rawData)
-			{ }
+			{
+				mRawData->mRefCount++;
+			}
 
 			ResourceRawData* mRawData;
 		};

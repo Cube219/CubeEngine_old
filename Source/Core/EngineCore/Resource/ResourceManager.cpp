@@ -1,5 +1,7 @@
 #include "ResourceManager.h"
 
+#include "BaseResource.h"
+
 namespace cube
 {
 	namespace core
@@ -13,18 +15,16 @@ namespace cube
 		{
 		}
 
-		ResourcePointer<BaseResource> ResourceManager::LoadResource(WString& path)
+		SPtr<BaseResource> ResourceManager::LoadResource(WString& path)
 		{
-			ResourcePointer<BaseResource> resPtr;
-
+			// Check if the resource is already loaded
 			{
 				Lock lock(mLoadedResourcesMutex);
 
-				// Check if the resource is already loaded
 				auto findIter = mLoadedResources.find(path); // TODO: UUID로 바꾸기
 				if(findIter != mLoadedResources.end()) {
-					resPtr.rawPtr = new BaseResource(findIter->second);
-					return std::move(resPtr);
+					SPtr<BaseResource> resPtr(new BaseResource(findIter->second));
+					return resPtr;
 				}
 			}
 
@@ -43,8 +43,8 @@ namespace cube
 				mLoadedResources[path] = rawData; // TODO: UUID로 바꾸기
 			}
 
-			resPtr.rawPtr = new BaseResource(rawData);
-			return std::move(resPtr);
+			SPtr<BaseResource> resPtr(new BaseResource(rawData));
+			return resPtr;
 		}
 
 		void ResourceManager::UnloadUnusedResources()

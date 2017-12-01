@@ -2,7 +2,6 @@
 
 #include "../EngineCoreHeader.h"
 
-#include "BaseResource.h"
 #include "BasePlatform/BasePlatformFileSystem.h"
 #include "../Thread/MutexLock.h"
 
@@ -16,12 +15,12 @@ namespace cube
 			ResourceManager(SPtr<platform::BasePlatformFileSystem>& fileSystem);
 			~ResourceManager();
 
-			ResourcePointer<BaseResource> LoadResource(WString& path);
+			SPtr<BaseResource> LoadResource(WString& path);
 
 			template <typename T>
-			ResourcePointer<T> LoadResource(WString& path)
+			SPtr<T> LoadResource(WString& path) // TODO: 이걸 Main으로
 			{
-				ResourcePointer<T>::CastFromBase(LoadResource(path));
+				return LoadResource(path)->CastResource<T>();
 			}
 
 			void UnloadUnusedResources();
