@@ -96,7 +96,7 @@ namespace cube
 		void EngineCore::Run()
 		{
 			mTimeManager->Start();
-			
+
 			mPlatform->StartLoop();
 		}
 
@@ -129,7 +129,7 @@ namespace cube
 				currentTime = mTimeManager->GetSystemTime();
 
 				double waitTime = nextTime - currentTime;
-				
+
 				if(waitTime > 0.1) { // TODO: 적절한 수치를 찾기
 					mPlatform->Sleep(SCast(int)(waitTime * 1000));
 				} else if(waitTime > 0.0) {
@@ -173,6 +173,11 @@ namespace cube
 		void EngineCore::UpdateMousePos(uint32_t x, uint32_t y)
 		{
 			InputManager::UpdateMousePos(x, y);
+		}
+
+		EngineCore* ECore()
+		{
+			return EngineCore::GetInstance();
 		}
 	}
 }

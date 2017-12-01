@@ -85,9 +85,6 @@ namespace cube
 		};
 
 		// Helper function to get singleton instance easily
-		EngineCore* ECore()
-		{
-			return EngineCore::GetInstance();
-		}
+		ENGINE_CORE_EXPORT EngineCore* ECore();
 	}
 }
