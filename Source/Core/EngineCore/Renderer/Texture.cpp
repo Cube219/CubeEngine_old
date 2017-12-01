@@ -1,16 +1,27 @@
 #include "Texture.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#include "../EngineCore.h"
 #include "RendererManager.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderFence.h"
+
 
 namespace cube
 {
 	namespace core
 	{
-		Texture::Texture(SPtr<RendererManager>& manager, char* data, uint64_t size, uint32_t width, uint32_t height) :
-			mManager_ref(manager), mData(data), mSize(size), mWidth(width), mHeight(height)
+		Texture::Texture(ResourceRawData* rawData) :
+			BaseResource(rawData)
 		{
-			auto renderAPI = manager->GetRenderAPI();
+			auto renderAPI = ECore()->GetRendererManager()->GetRenderAPI();
+
+			int width, height, channel;
+			stbi_uc* imageData = stbi_load("Data/TestTexture.png", &width, &height, &channel, STBI_rgb_alpha);
+			mWidth = width;
+			mHeight = height;
+			mImageSize = width * height * 4;
 
 			// Add image data in buffer
 			BaseRenderBufferInitializer bufInit;
@@ -18,13 +29,13 @@ namespace cube
 
 			BaseRenderBufferInitializer::BufferData bufData;
 			bufData.data = nullptr;
-			bufData.size = size;
+			bufData.size = mImageSize;
 			bufInit.bufferDatas.push_back(bufData);
 
 			mStagingBuffer = renderAPI->CreateBuffer(bufInit);
 
 			mStagingBuffer->Map();
-			mStagingBuffer->UpdateBufferData(0, data, size);
+			mStagingBuffer->UpdateBufferData(0, imageData, mImageSize);
 			mStagingBuffer->Unmap();
 
 			BaseRenderImageInitializer init;
@@ -57,6 +68,8 @@ namespace cube
 			mImageView = mImage->GetImageView(DataFormat::R8G8B8A8_Unorm, ImageAspectBits::Color, ImageViewType::Image2D);
 
 			mSampler = renderAPI->CreateSampler();
+
+			stbi_image_free(imageData);
 		}
 
 		Texture::~Texture()

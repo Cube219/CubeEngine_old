@@ -2,6 +2,7 @@
 
 #include "../EngineCoreHeader.h"
 
+#include "../Resource/BaseResource.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderImage.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderSampler.h"
@@ -11,10 +12,9 @@ namespace cube
 {
 	namespace core
 	{
-		class ENGINE_CORE_EXPORT Texture
+		class ENGINE_CORE_EXPORT Texture : public BaseResource
 		{
 		public:
-			Texture(SPtr<RendererManager>& manager, char* data, uint64_t size, uint32_t width, uint32_t height);
 			~Texture();
 
 			void SendTextureData(SPtr<BaseRenderCommandBuffer>& commandBuffer);
@@ -23,9 +23,10 @@ namespace cube
 			SPtr<BaseRenderSampler> GetSampler() const { return mSampler; }
 
 		private:
+			friend class BaseResource;
+			Texture(ResourceRawData* rawData);
 
-			char* mData;
-			uint64_t mSize;
+			uint64_t mImageSize;
 
 			uint32_t mWidth;
 			uint32_t mHeight;

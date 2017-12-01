@@ -15,9 +15,6 @@
 #include "GameObject.h"
 #include "Renderer/Renderer3D.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 namespace cube
 {
 	namespace core
@@ -58,10 +55,8 @@ namespace cube
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
 
-			int width, height, channel;
-			stbi_uc* p = stbi_load("Data/TestTexture.png", &width, &height, &channel, STBI_rgb_alpha);
-			mTexture = std::make_shared<Texture>(mRendererManager, (char*)p, width * height * 4, width, height);
-			stbi_image_free(p);
+			WString texturePath = L"Data/TestTexture.png";
+			mTexture = mResourceManager->LoadResource<Texture>(texturePath);
 
 			// Create gameobjects
 			mGo1 = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
