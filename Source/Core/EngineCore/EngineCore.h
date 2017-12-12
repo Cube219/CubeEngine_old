@@ -78,10 +78,11 @@ namespace cube
 			SPtr<Mesh> mBoxMesh;
 			SPtr<Texture> mTexture;
 
-			SPtr<GameObject> mGo1;
+			//SPtr<GameObject> mGo1;
 			SPtr<Material> mMaterial1;
-			SPtr<GameObject> mGo2;
-			SPtr<Material> mMaterial2;
+			//SPtr<GameObject> mGo2;
+			//SPtr<Material> mMaterial2;
+			Vector<SPtr<GameObject>> mGos;
 
 			int mFPSLimit;
 		};

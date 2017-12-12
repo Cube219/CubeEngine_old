@@ -58,14 +58,7 @@ namespace cube
 			WString texturePath = L"Data/TestTexture.png";
 			mTexture = mResourceManager->LoadResource<Texture>(texturePath);
 
-			// Create gameobjects
-			mGo1 = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
-			mGo1->SetPosition({2.0f, 0.0f, 0.0f});
-
-			auto renderer = mGo1->GetRenderer();
-
-			renderer->SetMesh(mBoxMesh);
-
+			// Create material
 			Vector<MaterialParameterInfo> paramInfos;
 			paramInfos.push_back({"Texture", MaterialParameterType::Texture, 0});
 			mMaterial1 = std::make_shared<Material>(paramInfos);
@@ -73,22 +66,25 @@ namespace cube
 			String t = "Texture";
 			mMaterial1->SetParameterData<SPtr<Texture>>(t, mTexture);
 
-			renderer->SetMaterial(mMaterial1);
-			// 2
-			mGo2 = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
-			mGo2->SetPosition({-2.0f, 0.0f, 0.0f});
+			// Create gameobjects
+			for(int i = -5; i <= 5; i++) {
+				for(int j = -5; j <= 5; j++) {
+					for(int k = -5; k <= 5; k++) {
+						auto go = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
+						Vector3 v;
+						v.x = i;
+						v.y = j;
+						v.z = k;
+						go->SetPosition(v);
 
-			renderer = mGo2->GetRenderer();
+						auto renderer = go->GetRenderer();
+						renderer->SetMesh(mBoxMesh);
+						renderer->SetMaterial(mMaterial1);
 
-			renderer->SetMesh(mBoxMesh);
-
-			paramInfos.clear();
-			paramInfos.push_back({"Texture", MaterialParameterType::Texture, 0});
-			mMaterial2 = std::make_shared<Material>(paramInfos);
-
-			mMaterial2->SetParameterData<SPtr<Texture>>(t, mTexture);
-
-			renderer->SetMaterial(mMaterial2);
+						mGos.push_back(go);
+					}
+				}
+			}
 		}
 
 		void EngineCore::Run()
@@ -115,8 +111,9 @@ namespace cube
 
 			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
 
-			mGo1->Update();
-			mGo2->Update();
+			for(auto& go : mGos) {
+				go->Update();
+			}
 
 			mRendererManager->DrawAll();
 
