@@ -135,7 +135,7 @@ namespace cube
 			VkDescriptorPoolCreateInfo info = {};
 			info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 			info.pNext = nullptr;
-			info.flags = 0;
+			info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 			info.maxSets = maxDescriptorSet;
 			info.poolSizeCount = SCast(uint32_t)(sizes.size());
 			info.pPoolSizes = sizes.data();
