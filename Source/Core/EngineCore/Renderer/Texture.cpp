@@ -18,7 +18,7 @@ namespace cube
 			auto renderAPI = ECore()->GetRendererManager()->GetRenderAPI();
 
 			int width, height, channel;
-			stbi_uc* imageData = stbi_load("Data/TestTexture.png", &width, &height, &channel, STBI_rgb_alpha);
+			stbi_uc* imageData = stbi_load_from_memory(SCast(const stbi_uc*)(rawData->GetRawData()), (int)(rawData->GetSize()), &width, &height, &channel, STBI_rgb_alpha);
 			mWidth = width;
 			mHeight = height;
 			mImageSize = width * height * 4;
