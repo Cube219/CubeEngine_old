@@ -42,66 +42,11 @@ namespace cube
 			// Graphics queue
 			mGraphicsQueue = mRenderAPI->GetQueue(QueueTypeBits::GraphicsBit, 0);
 
-			// Depth buffer
-			BaseRenderImageInitializer imageInit;
-			imageInit.type = ImageType::Image2D;
-			imageInit.format = DataFormat::D16_Unorm;
-			imageInit.width = platform->GetWindowWidth();
-			imageInit.height = platform->GetWindowHeight();
-			imageInit.depth = 1;
-			imageInit.mipLevels = 1;
-			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
-			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
-			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
+			CreateDepthBuffer();
 
-			// Swapchain
-			mSwapchain = mRenderAPI->CreateSwapchain();
-			mSwapchain->Recreate(2, platform->GetWindowWidth(), platform->GetWindowHeight(), true);
+			CreateSwapchain();
 
-			// RenderPass
-			Color c;
-			DepthStencilValue v;
-
-			BaseRenderRenderPassInitializer renderPassInit;
-			// Depth buffer attachment
-			BaseRenderRenderPassInitializer::Attachment att;
-			att.imageView = mDepthBufferImageView;
-			att.format = DataFormat::D16_Unorm;
-			att.loadOp = LoadOperator::Clear;
-			att.storeOp = StoreOperator::DontCare;
-			c.float32 = {0, 0, 0, 0};
-			att.clearColor = c;
-			att.initialLayout = ImageLayout::Undefined;
-			att.finalLayout = ImageLayout::DepthStencilAttachmentOptimal;
-
-			att.isDepthStencil = true;
-			att.stencilLoadOp = LoadOperator::DontCare;
-			att.stencilStoreOp = StoreOperator::DontCare;
-			v.depth = 1.0f;
-			v.stencil = 0;
-			att.clearDepthStencil = v;
-			renderPassInit.attachments.push_back(att);
-
-			// Swapchain attachment
-			BaseRenderRenderPassInitializer::SwapchainAttachment swapAtt;
-			swapAtt.swapchain = mSwapchain;
-			swapAtt.loadOp = LoadOperator::Clear;
-			swapAtt.storeOp = StoreOperator::Store;
-			c.float32 = {0.3f, 0.3f, 0.3f, 0};
-			swapAtt.clearColor = c;
-			swapAtt.initialLayout = ImageLayout::Undefined;
-			swapAtt.finalLayout = ImageLayout::PresentSource;
-			renderPassInit.hasSwapchain = true;
-			renderPassInit.swapchainAttachment = swapAtt;
-
-			// Subpass
-			BaseRenderSubpass subpass;
-			subpass.mColors.push_back({1, ImageLayout::ColorAttachmentOptimal});
-			subpass.mDepthStencil.index = 0;
-			subpass.mDepthStencil.layout = ImageLayout::DepthStencilAttachmentOptimal;
-			renderPassInit.subpasses.push_back(subpass);
-
-			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
+			CreateRenderpass();
 
 			// Get a main command buffer
 			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
@@ -229,26 +174,17 @@ namespace cube
 
 		void RendererManager::Resize(uint32_t width, uint32_t height)
 		{
-			mIsPrepared = false;
+			if(mIsPrepared == false)
+				return;
 
 			mWidth = width;
 			mHeight = height;
 
-			// Recreate a depth buffer
-			BaseRenderImageInitializer imageInit;
-			imageInit.type = ImageType::Image2D;
-			imageInit.format = DataFormat::D16_Unorm;
-			imageInit.width = width;
-			imageInit.height = height;
-			imageInit.depth = 1;
-			imageInit.mipLevels = 1;
-			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
-			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
-			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
+			CreateDepthBuffer();
 
 			mSwapchain->Recreate(2, width, height, mVsync);
 
-			// TODO: 다른 것들(RenderPass. Framebuffer수정때문)도 수정
+			CreateRenderpass();
 
 			mIsPrepared = true;
 		}
@@ -258,6 +194,73 @@ namespace cube
 			mVsync = vsync;
 
 			mSwapchain->Recreate(2, mWidth, mHeight, vsync);
+		}
+
+		void RendererManager::CreateDepthBuffer()
+		{
+			BaseRenderImageInitializer imageInit;
+			imageInit.type = ImageType::Image2D;
+			imageInit.format = DataFormat::D16_Unorm;
+			imageInit.width = mWidth;
+			imageInit.height = mHeight;
+			imageInit.depth = 1;
+			imageInit.mipLevels = 1;
+			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
+			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
+			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
+		}
+
+		void RendererManager::CreateSwapchain()
+		{
+			mSwapchain = mRenderAPI->CreateSwapchain();
+			mSwapchain->Recreate(2, mWidth, mHeight, true);
+		}
+
+		void RendererManager::CreateRenderpass()
+		{
+			Color c;
+			DepthStencilValue v;
+
+			BaseRenderRenderPassInitializer renderPassInit;
+			// Depth buffer attachment
+			BaseRenderRenderPassInitializer::Attachment att;
+			att.imageView = mDepthBufferImageView;
+			att.format = DataFormat::D16_Unorm;
+			att.loadOp = LoadOperator::Clear;
+			att.storeOp = StoreOperator::DontCare;
+			c.float32 = {0, 0, 0, 0};
+			att.clearColor = c;
+			att.initialLayout = ImageLayout::Undefined;
+			att.finalLayout = ImageLayout::DepthStencilAttachmentOptimal;
+
+			att.isDepthStencil = true;
+			att.stencilLoadOp = LoadOperator::DontCare;
+			att.stencilStoreOp = StoreOperator::DontCare;
+			v.depth = 1.0f;
+			v.stencil = 0;
+			att.clearDepthStencil = v;
+			renderPassInit.attachments.push_back(att);
+
+			// Swapchain attachment
+			BaseRenderRenderPassInitializer::SwapchainAttachment swapAtt;
+			swapAtt.swapchain = mSwapchain;
+			swapAtt.loadOp = LoadOperator::Clear;
+			swapAtt.storeOp = StoreOperator::Store;
+			c.float32 = {0.3f, 0.3f, 0.3f, 0};
+			swapAtt.clearColor = c;
+			swapAtt.initialLayout = ImageLayout::Undefined;
+			swapAtt.finalLayout = ImageLayout::PresentSource;
+			renderPassInit.hasSwapchain = true;
+			renderPassInit.swapchainAttachment = swapAtt;
+
+			// Subpass
+			BaseRenderSubpass subpass;
+			subpass.mColors.push_back({1, ImageLayout::ColorAttachmentOptimal});
+			subpass.mDepthStencil.index = 0;
+			subpass.mDepthStencil.layout = ImageLayout::DepthStencilAttachmentOptimal;
+			renderPassInit.subpasses.push_back(subpass);
+
+			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
 		}
 
 		void RendererManager::RewriteCommandBuffer()

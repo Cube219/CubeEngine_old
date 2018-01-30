@@ -51,7 +51,12 @@ namespace cube
 			void SetVsync(bool vsync);
 
 		private:
+			void CreateDepthBuffer();
+			void CreateSwapchain();
+			void CreateRenderpass();
+
 			void RewriteCommandBuffer();
+
 			SPtr<BaseRenderGraphicsPipeline> CreatePipeline(SPtr<Material>& material);
 
 			SPtr<platform::BasePlatformDLib> mRenderDLib;
