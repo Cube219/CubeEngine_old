@@ -17,7 +17,9 @@ namespace cube
 
 			virtual SPtr<BaseRenderBuffer> CreateBuffer(BaseRenderBufferInitializer& initializer) = 0;
 
-			virtual SPtr<BaseRenderDescriptorSet> CreateDescriptorSet(BaseRenderDescriptorSetInitializer& initializer) = 0;
+			virtual SPtr<BaseRenderDescriptorSetLayout> CreateDescriptorSetLayout(BaseRenderDescriptorSetInitializer& initializer) = 0;
+
+			virtual SPtr<BaseRenderDescriptorSet> CreateDescriptorSet(SPtr<BaseRenderDescriptorSetLayout>& layout) = 0;
 
 			virtual SPtr<BaseRenderQueue> GetQueue(QueueTypeBits types, uint32_t index) = 0;
 
@@ -29,7 +31,7 @@ namespace cube
 
 			virtual SPtr<BaseRenderGraphicsPipeline> CreateGraphicsPipeline(BaseRenderGraphicsPipelineInitializer& initializer) = 0;
 
-			virtual SPtr<BaseRenderCommandBuffer> CreateCommandBuffer() = 0;
+			virtual SPtr<BaseRenderCommandBuffer> CreateCommandBuffer(bool isPrimary = true) = 0;
 
 			virtual SPtr<BaseRenderImage> CreateImage(BaseRenderImageInitializer& initializer) = 0;
 

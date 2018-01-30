@@ -144,6 +144,8 @@ xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data\" /Y</Command>
     <ClInclude Include="Renderer\Light\PointLight.h" />
     <ClInclude Include="Renderer\Light\SpotLight.h" />
     <ClInclude Include="Renderer\Material\Material.h" />
+    <ClInclude Include="Renderer\Material\MaterialInstance.h" />
+    <ClInclude Include="Renderer\Material\Shader.h" />
     <ClInclude Include="Renderer\Mesh.h" />
     <ClInclude Include="Renderer\Renderer3D.h" />
     <ClInclude Include="Renderer\RendererManager.h" />
@@ -174,6 +176,8 @@ xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data\" /Y</Command>
     <ClCompile Include="Renderer\Light\PointLight.cpp" />
     <ClCompile Include="Renderer\Light\SpotLight.cpp" />
     <ClCompile Include="Renderer\Material\Material.cpp" />
+    <ClCompile Include="Renderer\Material\MaterialInstance.cpp" />
+    <ClCompile Include="Renderer\Material\Shader.cpp" />
     <ClCompile Include="Renderer\Mesh.cpp" />
     <ClCompile Include="Renderer\Renderer3D.cpp" />
     <ClCompile Include="Renderer\RendererManager.cpp" />

@@ -40,6 +40,7 @@ namespace cube
 			virtual ~BaseRenderBuffer(){ }
 
 			virtual void Map() = 0;
+			virtual void Map(uint64_t startIndex, uint64_t endIndex) = 0;
 			virtual void UpdateBufferData(uint64_t index, const void* data, size_t size) = 0;
 			virtual void Unmap() = 0;
 

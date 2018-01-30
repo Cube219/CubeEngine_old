@@ -2,6 +2,9 @@
 
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
+#include "Material/Shader.h"
+#include "Material/Material.h"
+#include "Material/MaterialInstance.h"
 
 #include <fstream>
 #include <sstream>
@@ -100,33 +103,6 @@ namespace cube
 
 			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
 
-			// Get a vertex / fragment shader
-			// TODO: 차후 spv등 여러가지 언어 지원
-			std::ifstream file;
-			std::stringstream strStream;
-
-			file.open("Data/Vertex.glsl");
-			strStream << file.rdbuf();
-			String vertShaderText = strStream.str();
-			strStream.str("");
-			file.close();
-
-			file.open("Data/Fragment.glsl");
-			strStream << file.rdbuf();
-			String fragShaderText = strStream.str();
-			file.close();
-
-			BaseRenderShaderInitializer shaderInit;
-			shaderInit.type = ShaderType::GLSL_Vertex;
-			shaderInit.code = vertShaderText.c_str();
-			shaderInit.entryPoint = "main";
-			mShaders.push_back(mRenderAPI->CreateShader(shaderInit));
-
-			shaderInit.type = ShaderType::GLSL_Fragment;
-			shaderInit.code = fragShaderText.c_str();
-			shaderInit.entryPoint = "main";
-			mShaders.push_back(mRenderAPI->CreateShader(shaderInit));
-
 			// Get a main command buffer
 			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
 			mMainCommandBufferSubmitFence = mRenderAPI->CreateFence();
@@ -137,6 +113,16 @@ namespace cube
 			// TODO: multiple camera
 			mCameraRenderer = std::make_shared<CameraRenderer3D>();
 
+			// Create Global / mPerObjectDescriptorSetLayout
+			BaseRenderDescriptorSetInitializer descSetInit;
+
+			mGlobalDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
+			mGlobalDescriptorSet = mRenderAPI->CreateDescriptorSet(mGlobalDescriptorSetLayout);
+
+			descSetInit.descriptors.clear();
+			descSetInit.descriptors.push_back({ShaderTypeBits::Vertex, DescriptorType::UniformBuffer, 0, 1});
+			mPerObjectDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
+
 			mIsPrepared = true;
 		}
 
@@ -145,14 +131,76 @@ namespace cube
 			mRenderers.clear();
 		}
 
+		void RendererManager::RegisterMaterial(SPtr<Material>& material)
+		{
+			if(material->mIndex != -1)
+				return;
+
+			Lock(mMaterialsMutex);
+
+			mMaterials.push_back(material);
+			material->mIndex = (int)mMaterials.size() - 1;
+			
+			mMaterialPipelines.push_back(CreatePipeline(material));
+			mMaterialCommandBuffers.push_back(mRenderAPI->CreateCommandBuffer(false));
+		}
+
+		void RendererManager::UnregisterMaterial(SPtr<Material>& material)
+		{
+			int index = material->mIndex;
+
+			if(index == -1) {
+				LogWriter::WriteLog(L"RendererManager: This material is not registed.");
+				return;
+			}
+
+			Lock(mMaterialsMutex);
+
+			int lastIndex = mMaterials.back()->mIndex;
+			
+			std::swap(mMaterials[index], mMaterials[lastIndex]);
+			std::swap(mMaterialPipelines[index], mMaterialPipelines[lastIndex]);
+			std::swap(mMaterialCommandBuffers[index], mMaterialCommandBuffers[lastIndex]);
+			mMaterials.pop_back();
+			mMaterialPipelines.pop_back();
+			mMaterialCommandBuffers.pop_back();
+			
+			material->mIndex = -1;
+		}
+
+		void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
+		{
+			if(renderer->mIndex != -1)
+				return;
+
+			Lock(mRenderersMutex);
+
+			mRenderers.push_back(renderer);
+			renderer->mIndex = (int)mRenderers.size() - 1;
+		}
+
+		void RendererManager::UnregisterRenderer3D(SPtr<Renderer3D>& renderer)
+		{
+			int index = renderer->mIndex;
+
+			if(index == -1) {
+				LogWriter::WriteLog(L"RendererManager: This renderer is not registed.");
+				return;
+			}
+
+			Lock(mRenderersMutex);
+
+			int lastIndex = mRenderers.back()->mIndex;
+
+			std::swap(mRenderers[index], mRenderers[lastIndex]);
+			mRenderers.pop_back();
+
+			renderer->mIndex = -1;
+		}
+
 		SPtr<Renderer3D> RendererManager::CreateRenderer3D()
 		{
-			SPtr<Renderer3D> r3d = std::make_shared<Renderer3D>(mRenderAPI);
-			mRenderers.push_back(r3d);
-
-			mIsPipelineDirty = true;
-
-			return r3d;
+			return std::make_shared<Renderer3D>(mRenderAPI, mPerObjectDescriptorSetLayout);
 		}
 
 		SPtr<CameraRenderer3D> RendererManager::GetCameraRenderer3D()
@@ -164,12 +212,6 @@ namespace cube
 		{
 			if(mIsPrepared == false)
 				return;
-
-			if(mIsPipelineDirty == true) {
-				RecreatePipeline();
-
-				mIsPipelineDirty = false;
-			}
 
 			mSwapchain->AcquireNextImageIndex(mGetImageSemaphore);
 
@@ -206,6 +248,8 @@ namespace cube
 
 			mSwapchain->Recreate(2, width, height, mVsync);
 
+			// TODO: 다른 것들(RenderPass. Framebuffer수정때문)도 수정
+
 			mIsPrepared = true;
 		}
 
@@ -218,17 +262,6 @@ namespace cube
 
 		void RendererManager::RewriteCommandBuffer()
 		{
-			mMainCommandBuffer->Reset();
-
-			mMainCommandBuffer->Begin();
-
-			Rect2D r;
-			r.x = 0;
-			r.y = 0;
-			r.width = mWidth;
-			r.height = mHeight;
-			mMainCommandBuffer->SetRenderPass(mRenderPass, r);
-
 			Viewport vp;
 			vp.width = SCast(float)(mWidth);
 			vp.height = SCast(float)(mHeight);
@@ -236,24 +269,63 @@ namespace cube
 			vp.maxDepth = 1.0f;
 			vp.x = 0;
 			vp.y = 0;
-			mMainCommandBuffer->SetViewport(0, 1, &vp);
+
 			Rect2D scissor;
 			scissor.x = 0;
 			scissor.y = 0;
 			scissor.width = mWidth;
 			scissor.height = mHeight;
-			mMainCommandBuffer->SetScissor(0, 1, &scissor);
 
-			mMainCommandBuffer->BindGraphicsPipeline(mGraphicsPipeline);
+			Rect2D renderArea;
+			renderArea.x = 0;
+			renderArea.y = 0;
+			renderArea.width = mWidth;
+			renderArea.height = mHeight;
 
-			for(auto& r : mRenderers) {
-				r->Draw(mMainCommandBuffer, mCameraRenderer);
+			// Prepare all command buffers of each material
+			for(uint32_t i = 0; i < mMaterialCommandBuffers.size(); i++) {
+				mMaterialCommandBuffers[i]->Reset();
+				mMaterialCommandBuffers[i]->Begin();
+
+				mMaterialCommandBuffers[i]->SetRenderPass(mRenderPass, renderArea);
+
+				mMaterialCommandBuffers[i]->BindGraphicsPipeline(mMaterialPipelines[i]);
+
+				mMaterialCommandBuffers[i]->SetViewport(0, 1, &vp);
+				mMaterialCommandBuffers[i]->SetScissor(0, 1, &scissor);
+
+				//mMaterialCommandBuffers[i]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
 			}
+
+			// TODO: MaterialInstance를 먼저 찾고 그것에 등록된 renderer들을 찾는 방식으로
+			//       그렇게하면 BindDescriptorSets 횟수를 줄일 수 있음
+			for(auto& renderer : mRenderers) {
+				SPtr<MaterialInstance> materialIns = renderer->GetMaterialInstance();
+				int materialIndex = materialIns->GetMaterial()->mIndex;
+				SPtr<BaseRenderDescriptorSet> materialInsDesc = materialIns->GetDescriptorSet();
+
+				mMaterialCommandBuffers[materialIndex]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &materialInsDesc);
+
+				renderer->Draw(mMaterialCommandBuffers[materialIndex], mCameraRenderer);
+			}
+
+			for(auto& cmd : mMaterialCommandBuffers) {
+				cmd->End();
+			}
+
+			// Main command buffer
+			mMainCommandBuffer->Reset();
+
+			mMainCommandBuffer->Begin();
+
+			mMainCommandBuffer->SetRenderPass(mRenderPass, renderArea);
+
+			mMainCommandBuffer->ExecuteCommands((uint32_t)mMaterialCommandBuffers.size(), mMaterialCommandBuffers.data());
 
 			mMainCommandBuffer->End();
 		}
 
-		void RendererManager::RecreatePipeline()
+		SPtr<BaseRenderGraphicsPipeline> RendererManager::CreatePipeline(SPtr<Material>& material)
 		{
 			BaseRenderGraphicsPipelineInitializer initializer;
 
@@ -262,12 +334,12 @@ namespace cube
 			attr.format = DataFormat::R32G32B32A32_SFloat;
 			attr.offset = 0;
 			initializer.vertexInputAttributes.push_back(attr);
-			
+
 			attr.location = 1; // Color
 			attr.format = DataFormat::R32G32B32A32_SFloat;
 			attr.offset = 16;
 			initializer.vertexInputAttributes.push_back(attr);
-			
+
 			attr.location = 2; // Normal
 			attr.format = DataFormat::R32G32B32_SFloat;
 			attr.offset = 32;
@@ -293,17 +365,17 @@ namespace cube
 			colorAttr.alphaBlendOp = BlendOperator::Add;
 
 			initializer.colorBlendAttachments.push_back(colorAttr);
-			
+
 			initializer.isScissorDynamic = true;
 			initializer.isViewportDynamic = true;
 
 			initializer.depthStencil.depthTestEnable = true;
 			initializer.depthStencil.depthBoundsTestEnable = false;
 			initializer.depthStencil.depthWriteEnable = true;
-			initializer.depthStencil.depthCompareOperator = CompareOperator::Always;
+			initializer.depthStencil.depthCompareOperator = CompareOperator::Less;
 			initializer.depthStencil.minDepthBounds = 0;
 			initializer.depthStencil.maxDepthBounds = 0;
-			
+
 			initializer.depthStencil.stencilTestEnable = false;
 			StencilOperatorState stencilOpState;
 			stencilOpState.failOperator = StencilOperator::Keep;
@@ -313,21 +385,22 @@ namespace cube
 			stencilOpState.reference = 0;
 			stencilOpState.depthFailOperator = StencilOperator::Keep;
 			stencilOpState.writeMask = 0;
-			
+
 			initializer.depthStencil.front = stencilOpState;
 			initializer.depthStencil.back = stencilOpState;
 
-			for(auto& shader : mShaders) {
-				initializer.shaders.push_back(shader);
+			auto shaders = material->GetShaders();
+			for(auto& shader : shaders) {
+				initializer.shaders.push_back(shader->GetRenderShader());
 			}
 
-			for(auto& r3d : mRenderers) {
-				initializer.descSets.push_back(r3d->GetDescriptorSet());
-			}
+			//initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
+			initializer.descSetLayouts.push_back(material->GetDescriptorSetLayout());
+			initializer.descSetLayouts.push_back(mPerObjectDescriptorSetLayout);
 
 			initializer.renderPass = mRenderPass;
 
-			mGraphicsPipeline = mRenderAPI->CreateGraphicsPipeline(initializer);
+			return mRenderAPI->CreateGraphicsPipeline(initializer);
 		}
 	}
 }

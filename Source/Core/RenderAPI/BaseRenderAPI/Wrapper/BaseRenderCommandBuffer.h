@@ -42,6 +42,8 @@ namespace cube
 			virtual void Draw(uint32_t vertexCount, uint32_t vertexOffset, uint32_t instanceCount, uint32_t firstInstance) = 0;
 			virtual void DrawIndexed(uint32_t indexCount, uint32_t indexOffset, int32_t vertexOffset, uint32_t instanceCount, uint32_t firstInstance) = 0;
 
+			virtual void ExecuteCommands(uint32_t commandCount, SPtr<BaseRenderCommandBuffer>* commandBuffers) = 0;
+
 			virtual void End() = 0;
 
 			virtual void Submit(SPtr<BaseRenderQueue>& queue,

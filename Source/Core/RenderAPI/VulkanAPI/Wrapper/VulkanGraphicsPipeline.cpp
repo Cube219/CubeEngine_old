@@ -88,9 +88,9 @@ namespace cube
 
 			// Create pipeline layout
 			Vector<VkDescriptorSetLayout> layouts;
-			layouts.resize(initializer.descSets.size());
-			for(int i = 0; i < initializer.descSets.size(); i++) {
-				layouts[i] = SPCast(VulkanDescriptorSet)(initializer.descSets[i])->GetLayout();
+			layouts.resize(initializer.descSetLayouts.size());
+			for(int i = 0; i < initializer.descSetLayouts.size(); i++) {
+				layouts[i] = SPCast(VulkanDescriptorSetLayout)(initializer.descSetLayouts[i])->GetHandle();
 			}
 
 			VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};

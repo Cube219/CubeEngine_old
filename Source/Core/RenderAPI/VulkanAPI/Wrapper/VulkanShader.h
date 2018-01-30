@@ -21,6 +21,9 @@ namespace cube
 			const VkPipelineShaderStageCreateInfo GetStageInfo() const { return mShaderStageInfo; }
 
 		private:
+			void LoadFromSPIR_V(BaseRenderShaderInitializer& initializer);
+			void LoadFromGLSL(BaseRenderShaderInitializer& initializer, VkShaderStageFlags stageFlagBits);
+
 			TBuiltInResource InitResource();
 
 			VkShaderModule mShaderModule;

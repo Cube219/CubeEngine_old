@@ -21,7 +21,9 @@ namespace cube
 
 			SPtr<BaseRenderBuffer> CreateBuffer(BaseRenderBufferInitializer& initializer) final override;
 
-			SPtr<BaseRenderDescriptorSet> CreateDescriptorSet(BaseRenderDescriptorSetInitializer& initializer) final override;
+			SPtr<BaseRenderDescriptorSetLayout> CreateDescriptorSetLayout(BaseRenderDescriptorSetInitializer& initializer) final override;
+
+			SPtr<BaseRenderDescriptorSet> CreateDescriptorSet(SPtr<BaseRenderDescriptorSetLayout>& layout) final override;
 
 			SPtr<BaseRenderQueue> GetQueue(QueueTypeBits types, uint32_t index) final override;
 
@@ -33,7 +35,7 @@ namespace cube
 
 			SPtr<BaseRenderGraphicsPipeline> CreateGraphicsPipeline(BaseRenderGraphicsPipelineInitializer& initializer) final override;
 
-			SPtr<BaseRenderCommandBuffer> CreateCommandBuffer() final override;
+			SPtr<BaseRenderCommandBuffer> CreateCommandBuffer(bool isPrimary = true) final override;
 
 			SPtr<BaseRenderImage> CreateImage(BaseRenderImageInitializer& initializer) final override;
 

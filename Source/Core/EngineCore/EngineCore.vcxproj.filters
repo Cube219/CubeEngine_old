@@ -77,6 +77,12 @@
     <ClInclude Include="Resource\ResourceManager.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\Material\Shader.h">
+      <Filter>Renderer\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Material\MaterialInstance.h">
+      <Filter>Renderer\Material</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -146,6 +152,12 @@
     </ClCompile>
     <ClCompile Include="Resource\ResourceManager.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Material\Shader.cpp">
+      <Filter>Renderer\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Material\MaterialInstance.cpp">
+      <Filter>Renderer\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

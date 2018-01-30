@@ -16,6 +16,8 @@
 #include "BaseRenderAPI/Wrapper/BaseRenderFence.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderRenderPass.h"
 
+#include "../Thread/MutexLock.h"
+
 namespace cube
 {
 	namespace core
@@ -31,8 +33,14 @@ namespace cube
 			RendererManager(SPtr<platform::BasePlatform>& platform, RenderType type);
 			~RendererManager();
 
+			void RegisterMaterial(SPtr<Material>& material);
+			void UnregisterMaterial(SPtr<Material>& material);
+
+			void RegisterRenderer3D(SPtr<Renderer3D>& renderer);
+			void UnregisterRenderer3D(SPtr<Renderer3D>& renderer);
+
 			SPtr<Renderer3D> CreateRenderer3D();
-			SPtr<CameraRenderer3D> GetCameraRenderer3D();
+			SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: 차후 저렇게 바꾸기
 
 			SPtr<BaseRenderAPI> GetRenderAPI() const { return mRenderAPI; }
 
@@ -44,13 +52,23 @@ namespace cube
 
 		private:
 			void RewriteCommandBuffer();
-			void RecreatePipeline();
+			SPtr<BaseRenderGraphicsPipeline> CreatePipeline(SPtr<Material>& material);
 
 			SPtr<platform::BasePlatformDLib> mRenderDLib;
 			SPtr<BaseRenderAPI> mRenderAPI;
 
+			Mutex mRenderersMutex;
 			Vector<SPtr<Renderer3D>> mRenderers;
 			SPtr<CameraRenderer3D> mCameraRenderer;
+
+			Mutex mMaterialsMutex;
+			Vector<SPtr<Material>> mMaterials;
+			Vector<SPtr<BaseRenderGraphicsPipeline>> mMaterialPipelines;
+			Vector<SPtr<BaseRenderCommandBuffer>> mMaterialCommandBuffers;
+
+			SPtr<BaseRenderDescriptorSetLayout> mGlobalDescriptorSetLayout;
+			SPtr<BaseRenderDescriptorSet> mGlobalDescriptorSet;
+			SPtr<BaseRenderDescriptorSetLayout> mPerObjectDescriptorSetLayout;
 
 			SPtr<BaseRenderImage> mDepthBufferImage;
 			SPtr<BaseRenderImageView> mDepthBufferImageView;
@@ -58,11 +76,6 @@ namespace cube
 			SPtr<BaseRenderSwapchain> mSwapchain;
 
 			SPtr<BaseRenderRenderPass> mRenderPass;
-
-			Vector<SPtr<BaseRenderShader>> mShaders;
-
-			bool mIsPipelineDirty = true;
-			SPtr<BaseRenderGraphicsPipeline> mGraphicsPipeline;
 
 			SPtr<BaseRenderCommandBuffer> mMainCommandBuffer;
 			SPtr<BaseRenderFence> mMainCommandBufferSubmitFence;

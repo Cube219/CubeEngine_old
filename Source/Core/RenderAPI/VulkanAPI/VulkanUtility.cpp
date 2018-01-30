@@ -547,5 +547,33 @@ namespace cube
 
 			return f;
 		}
+
+		VkShaderStageFlags GetVkShaderStageFlags(ShaderTypeBits shaderType)
+		{
+			VkShaderStageFlags shaderStageFlags = 0;
+
+			if(static_cast<int>(shaderType & ShaderTypeBits::Vertex) > 0)
+				shaderStageFlags |= VK_SHADER_STAGE_VERTEX_BIT;
+
+			if(static_cast<int>(shaderType & ShaderTypeBits::Pixel) > 0)
+				shaderStageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+
+			if(static_cast<int>(shaderType & ShaderTypeBits::Fragment) > 0)
+				shaderStageFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+
+			if(static_cast<int>(shaderType & ShaderTypeBits::Geometry) > 0)
+				shaderStageFlags |= VK_SHADER_STAGE_GEOMETRY_BIT;
+
+			if(static_cast<int>(shaderType & ShaderTypeBits::TessellationControl) > 0)
+				shaderStageFlags |= VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+
+			if(static_cast<int>(shaderType & ShaderTypeBits::TessellationEvaluation) > 0)
+				shaderStageFlags |= VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+
+			if(static_cast<int>(shaderType & ShaderTypeBits::Compute) > 0)
+				shaderStageFlags |= VK_SHADER_STAGE_COMPUTE_BIT;
+
+			return shaderStageFlags;
+		}
 	}
 }

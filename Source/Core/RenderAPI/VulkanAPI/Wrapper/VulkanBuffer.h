@@ -19,6 +19,7 @@ namespace cube
 			VkBuffer GetHandle() const { return mBuffer; }
 
 			void Map() final override;
+			void Map(uint64_t startIndex, uint64_t endIndex) final override;
 			void UpdateBufferData(uint64_t index, const void* data, size_t size) final override;
 			void Unmap() final override;
 
@@ -40,6 +41,7 @@ namespace cube
 
 			void* mMappedData;
 			VkDeviceSize mMappedSize;
+			uint64_t mMappedOffset;
 			Vector<uint64_t> mDataOffsets;
 			Vector<uint64_t> mDataSizes;
 

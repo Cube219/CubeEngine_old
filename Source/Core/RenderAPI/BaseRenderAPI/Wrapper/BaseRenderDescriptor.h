@@ -25,13 +25,22 @@ namespace cube
 		{
 			struct Descriptor
 			{
-				ShaderType shaderType;
+				ShaderTypeBits shaderType;
 				DescriptorType type;
 				uint32_t bindingIndex;
 				uint32_t count;
 			};
 
 			Vector<Descriptor> descriptors;
+		};
+
+		class BaseRenderDescriptorSetLayout
+		{
+		public:
+			virtual ~BaseRenderDescriptorSetLayout(){ }
+
+		protected:
+			BaseRenderDescriptorSetLayout(){ }
 		};
 
 		class BaseRenderDescriptorSet

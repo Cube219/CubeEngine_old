@@ -39,6 +39,11 @@ namespace cube
 
 		void VulkanCommandBuffer::Begin()
 		{
+			// If the command buffer is a secondary, Begin will be defferd to SetRenderpass
+			// because of pInheritanceInfo
+			if(mIsPrimary == false)
+				return;
+
 			VkResult res;
 
 			VkCommandBufferBeginInfo commandBufferBeginInfo = {};
@@ -48,7 +53,7 @@ namespace cube
 			commandBufferBeginInfo.pInheritanceInfo = nullptr;
 
 			res = vkBeginCommandBuffer(mCommandBuffer, &commandBufferBeginInfo);
-			CheckVkResult(L"VulkanCommandBuffer", L"Cannot begin the command buffer", res);
+			CheckVkResult(L"VulkanCommandBuffer", L"Cannot begin the command buffer (Primary)", res);
 		}
 
 		void VulkanCommandBuffer::CopyBuffer(SPtr<BaseRenderBuffer>& source, uint64_t sourceOffset,
@@ -85,10 +90,37 @@ namespace cube
 
 		void VulkanCommandBuffer::SetRenderPass(SPtr<BaseRenderRenderPass>& renderPass, Rect2D renderArea)
 		{
+			auto vkRenderPass = DPCast(VulkanRenderPass)(renderPass);
+
+			// If the command buffer is a secondary, Begin will be defferd to SetRenderpass
+			// because of pInheritanceInfo
+			if(mIsPrimary == false) {
+				VkResult res;
+
+				VkCommandBufferInheritanceInfo inheritInfo;
+				inheritInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+				inheritInfo.pNext = nullptr;
+				inheritInfo.renderPass = vkRenderPass->GetHandle();
+				inheritInfo.subpass = 0;
+				inheritInfo.framebuffer = vkRenderPass->GetFramebuffer()->GetHandle();
+				inheritInfo.occlusionQueryEnable = VK_FALSE;
+				inheritInfo.queryFlags = 0;
+				inheritInfo.pipelineStatistics = 0;
+
+				VkCommandBufferBeginInfo commandBufferBeginInfo = {};
+				commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				commandBufferBeginInfo.pNext = nullptr;
+				commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+				commandBufferBeginInfo.pInheritanceInfo = &inheritInfo;
+
+				res = vkBeginCommandBuffer(mCommandBuffer, &commandBufferBeginInfo);
+				CheckVkResult(L"VulkanCommandBuffer", L"Cannot begin the command buffer (Secondary)", res);
+
+				return;
+			}
+
 			if(mIsRenderPassStarted == true)
 				vkCmdEndRenderPass(mCommandBuffer);
-
-			auto vkRenderPass = DPCast(VulkanRenderPass)(renderPass);
 
 			VkRenderPassBeginInfo info;
 			info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -99,7 +131,7 @@ namespace cube
 			info.clearValueCount = SCast(uint32_t)(vkRenderPass->mAttachmentClearValues.size());
 			info.pClearValues = vkRenderPass->mAttachmentClearValues.data();
 
-			vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE); // TODO: Secondary command buffer牢版快 贸府 (VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS)
+			vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS); // TODO: Secondary command buffer牢版快 贸府 (VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS)
 
 			mIsRenderPassStarted = true;
 		}
@@ -224,6 +256,18 @@ namespace cube
 			vkCmdDrawIndexed(mCommandBuffer, indexCount, instanceCount, indexOffset, vertexOffset, firstInstance);
 		}
 
+		void VulkanCommandBuffer::ExecuteCommands(uint32_t commandCount, SPtr<BaseRenderCommandBuffer>* commandBuffers)
+		{
+			VkCommandBuffer* cmds = new VkCommandBuffer[commandCount];
+			for(uint32_t i = 0; i < commandCount; i++) {
+				cmds[i] = SPCast(VulkanCommandBuffer)(commandBuffers[i])->GetHandle();
+			}
+
+			vkCmdExecuteCommands(mCommandBuffer, commandCount, cmds);
+
+			delete[] cmds;
+		}
+
 		void VulkanCommandBuffer::End()
 		{
 			if(mIsRenderPassStarted == true)
@@ -331,12 +375,18 @@ namespace cube
 			commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 			commandBufferAllocateInfo.pNext = nullptr;
 			commandBufferAllocateInfo.commandPool = mCommandPool;
-			commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+			commandBufferAllocateInfo.level = level;
 			commandBufferAllocateInfo.commandBufferCount = 1;
 			res = vkAllocateCommandBuffers(mDevice_ref->GetHandle(), &commandBufferAllocateInfo, &cmd);
 			CheckVkResult(L"VulkanCommandPool", L"Cannot allocate VulkanCommandBuffer", res);
 
 			SPtr<VulkanCommandBuffer> cmdBuffer(new VulkanCommandBuffer(mDevice_ref, shared_from_this(), cmd));
+
+			if(level == VK_COMMAND_BUFFER_LEVEL_PRIMARY)
+				cmdBuffer->mIsPrimary = true;
+			else
+				cmdBuffer->mIsPrimary = false;
+
 			return cmdBuffer;
 		}
 	}

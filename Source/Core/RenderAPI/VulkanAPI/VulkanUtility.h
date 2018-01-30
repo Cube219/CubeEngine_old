@@ -26,7 +26,7 @@ const wchar_t* _CheckVkResult(const wchar_t* sayer, const wchar_t* msg, VkResult
 
 #endif // _DEBUG
 
-#include "BaseRenderAPI\BaseRenderUtility.h"
+#include "BaseRenderAPI/BaseRenderUtility.h"
 
 namespace cube
 {
@@ -48,5 +48,6 @@ namespace cube
 		VkClearColorValue GetVkClearColorValue(Color color);
 		VkClearDepthStencilValue GetVkClearDepthStencilValue(DepthStencilValue value);
 		VkAccessFlags GetVkAccessFlags(AccessBits access);
+		VkShaderStageFlags GetVkShaderStageFlags(ShaderTypeBits shaderType);
 	}
 }

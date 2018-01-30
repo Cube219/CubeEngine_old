@@ -21,6 +21,7 @@ namespace cube
 		
 		class VulkanDescriptorPool;
 		
+		class VulkanDescriptorSetLayout;
 		class VulkanDescriptorSet;
 		
 		class VulkanDeviceInitializer;

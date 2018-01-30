@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\EngineCoreHeader.h"
+#include "../EngineCoreHeader.h"
 
 #include <glm.hpp>
 
@@ -14,16 +14,15 @@ namespace cube
 			CameraRenderer3D();
 			~CameraRenderer3D();
 
-			glm::mat4 GetViewProjectionMatrix() const;
+			void RotateTemp(float dt);
+
+			glm::mat4 GetViewProjectionMatrix() const { return mProjectionMatrix * mViewMatrix; };
 
 		private:
 			glm::mat4 mProjectionMatrix;
 			glm::mat4 mViewMatrix;
-		};
 
-		inline glm::mat4 CameraRenderer3D::GetViewProjectionMatrix() const
-		{
-			return mProjectionMatrix * mViewMatrix;
-		}
+			float mAngleTemp;
+		};
 	}
 }

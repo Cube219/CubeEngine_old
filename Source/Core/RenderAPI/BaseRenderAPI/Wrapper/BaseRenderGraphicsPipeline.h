@@ -84,7 +84,7 @@ namespace cube
 
 			Vector<SPtr<BaseRenderShader>> shaders;
 			
-			Vector<SPtr<BaseRenderDescriptorSet>> descSets;
+			Vector<SPtr<BaseRenderDescriptorSetLayout>> descSetLayouts;
 
 			SPtr<BaseRenderRenderPass> renderPass;
 		};

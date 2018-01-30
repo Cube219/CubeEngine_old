@@ -39,7 +39,13 @@ namespace cube
 
 		class BaseMeshGenerator;
 
+		enum class MaterialParameterType;
+		struct MaterialParameterInfo;
+		struct MaterialInitializer;
 		class Material;
+		class MaterialInstance;
+
+		class Shader;
 
 		class BaseLight;
 		class DirectionalLight;

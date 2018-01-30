@@ -9,26 +9,6 @@ namespace cube
 {
 	namespace core
 	{
-		VkShaderStageFlags GetVkShaderStageFlags(ShaderType shaderType)
-		{
-			VkShaderStageFlags shaderStageFlags;
-
-			switch(shaderType) {
-				case ShaderType::GLSL_Vertex:
-					shaderStageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-					break;
-
-				case ShaderType::GLSL_Fragment:
-					shaderStageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-					break;
-
-				default:
-					PrintLogWithSayer(L"VulkanDescriptorSet", L"Unknown ShaderType");
-					break;
-			}
-			return shaderStageFlags;
-		}
-
 		VkDescriptorType GetVkDescriptorType(DescriptorType descType)
 		{
 			VkDescriptorType t;
@@ -150,11 +130,11 @@ namespace cube
 		}
 
 		// ------------------------------------------------
-		//               VulkanDescriptorSet
+		//               VulkanDescriptorSetLayout
 		// ------------------------------------------------
 
-		VulkanDescriptorSet::VulkanDescriptorSet(const SPtr<VulkanDevice>& device, const SPtr<VulkanDescriptorPool>& pool, BaseRenderDescriptorSetInitializer& initializer) :
-			mDevice_ref(device), mDescriptorPool_ref(pool)
+		VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(const SPtr<VulkanDevice>& device, BaseRenderDescriptorSetInitializer& initializer) : 
+			mDevice_ref(device)
 		{
 			VkResult res;
 
@@ -168,37 +148,61 @@ namespace cube
 				b.stageFlags = GetVkShaderStageFlags(descriptor.shaderType);
 				b.pImmutableSamplers = nullptr;
 
-				mLayoutBindings.push_back(b);
+				mBindings.push_back(b);
 			}
 
-			// Create set layout
 			VkDescriptorSetLayoutCreateInfo layoutInfo = {};
 			layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 			layoutInfo.pNext = nullptr;
 			layoutInfo.flags = 0;
-			layoutInfo.bindingCount = SCast(uint32_t)(mLayoutBindings.size());
-			layoutInfo.pBindings = mLayoutBindings.data();
+			layoutInfo.bindingCount = SCast(uint32_t)(mBindings.size());
+			layoutInfo.pBindings = mBindings.data();
 
-			res = vkCreateDescriptorSetLayout(device->GetHandle(), &layoutInfo, nullptr, &mLayout);
-			CheckVkResult(L"VulkanDescriptorSet", L"Cannot create a layout", res);
+			res = vkCreateDescriptorSetLayout(device->GetHandle(), &layoutInfo, nullptr, &mDescriptorSetLayout);
+			CheckVkResult(L"VulkanDescriptorSetLayout", L"Cannot create a layout", res);
+		}
+
+		VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout()
+		{
+			mBindings.clear();
+
+			vkDestroyDescriptorSetLayout(mDevice_ref->GetHandle(), mDescriptorSetLayout, nullptr);
+		}
+
+		// ------------------------------------------------
+		//               VulkanDescriptorSet
+		// ------------------------------------------------
+
+		VulkanDescriptorSet::VulkanDescriptorSet(const SPtr<VulkanDevice>& device, const SPtr<VulkanDescriptorPool>& pool, SPtr<BaseRenderDescriptorSetLayout>& layout) :
+			mDevice_ref(device), mDescriptorPool_ref(pool)
+		{
+			VkResult res;
 
 			// Allocate set from the pool
+			VkDescriptorSetLayout vkLayout = SPCast(VulkanDescriptorSetLayout)(layout)->GetHandle();
+
 			VkDescriptorSetAllocateInfo descriptorSetAllocateInfos = {};
 			descriptorSetAllocateInfos.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 			descriptorSetAllocateInfos.pNext = nullptr;
 			descriptorSetAllocateInfos.descriptorPool = pool->GetHandle();
 			descriptorSetAllocateInfos.descriptorSetCount = 1;
-			descriptorSetAllocateInfos.pSetLayouts = &mLayout;
+			descriptorSetAllocateInfos.pSetLayouts = &vkLayout;
 
 			res = vkAllocateDescriptorSets(device->GetHandle(), &descriptorSetAllocateInfos, &mDescriptorSet);
 			CheckVkResult(L"VulkanDescriptorSet", L"Cannot create a VulkanDescriptorSet", res);
+
+			auto bindings = SPCast(VulkanDescriptorSetLayout)(layout)->GetBindings();
+			mDescriptorTypes.resize(bindings.size());
+
+			for(uint32_t i = 0; i < bindings.size(); i++) {
+				mDescriptorTypes[i] = bindings[i].descriptorType;
+			}
 		}
 
 		VulkanDescriptorSet::~VulkanDescriptorSet()
 		{
-			mLayoutBindings.clear();
-
-			vkDestroyDescriptorSetLayout(mDevice_ref->GetHandle(), mLayout, nullptr);
+			mDescriptorTypes.clear();
+			
 			vkFreeDescriptorSets(mDevice_ref->GetHandle(), mDescriptorPool_ref->GetHandle(), 1, &mDescriptorSet);
 		}
 
@@ -217,7 +221,7 @@ namespace cube
 			writeDescriptorSet.dstSet = mDescriptorSet;
 			writeDescriptorSet.dstBinding = bindingIndex;
 			writeDescriptorSet.dstArrayElement = 0;
-			writeDescriptorSet.descriptorType = mLayoutBindings[bindingIndex].descriptorType;
+			writeDescriptorSet.descriptorType = mDescriptorTypes[bindingIndex];
 			writeDescriptorSet.descriptorCount = bufferNum;
 			writeDescriptorSet.pBufferInfo = bufInfos;
 			writeDescriptorSet.pImageInfo = nullptr;
@@ -243,7 +247,7 @@ namespace cube
 			writeDescriptorSet.dstSet = mDescriptorSet;
 			writeDescriptorSet.dstBinding = bindingIndex;
 			writeDescriptorSet.dstArrayElement = 0;
-			writeDescriptorSet.descriptorType = mLayoutBindings[bindingIndex].descriptorType;
+			writeDescriptorSet.descriptorType = mDescriptorTypes[bindingIndex];
 			writeDescriptorSet.descriptorCount = imageNum;
 			writeDescriptorSet.pBufferInfo = nullptr;
 			writeDescriptorSet.pImageInfo = imageInfos;

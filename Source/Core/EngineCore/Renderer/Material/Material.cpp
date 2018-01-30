@@ -1,102 +1,50 @@
 #include "Material.h"
 
-#include "../Texture.h"
-#include "../../LogWriter.h"
-#include "Base/format.h"
+#include "Shader.h"
+#include "MaterialInstance.h"
 
 namespace cube
 {
 	namespace core
 	{
-		Material::Material(const Vector<MaterialParameterInfo>& parameters) : 
-			mIsUpdated(nullptr)
+		Material::Material(SPtr<BaseRenderAPI>& renderAPI, MaterialInitializer& init) : 
+			mRenderAPI_ref(renderAPI)
 		{
-			mParametersDataSize = 0;
+			mParamInfos = init.parameters;
+			mShaders = init.shaders;
 
-			mParameters.resize(parameters.size());
+			BaseRenderDescriptorSetInitializer descSetInit;
+			BaseRenderDescriptorSetInitializer::Descriptor desc;
+			desc.shaderType = ShaderTypeBits::Vertex | ShaderTypeBits::Fragment; // TODO: 사용자 설정으로
+			desc.count = 1;
+			for(uint32_t i = 0; i < mParamInfos.size(); i++) {
+				desc.bindingIndex = i;
 
-			for(size_t i = 0; i < parameters.size(); i++) {
-				auto paramInfo = parameters[i];
+				switch(mParamInfos[i].type) {
+					case MaterialParameterType::Data:
+						desc.type = DescriptorType::UniformBuffer;
+						break;
 
-				MaterialParameter param;
-				param.type = paramInfo.type;
-				param.size = paramInfo.dataSize;
+					case MaterialParameterType::Texture:
+						desc.type = DescriptorType::CombinedImageSampler;
+						break;
 
-				if(paramInfo.type == MaterialParameterType::Data)
-					mParametersDataSize += paramInfo.dataSize;
-				else if(paramInfo.type == MaterialParameterType::Texture)
-					param.size = 0; // Texture data isn't saved in mParametersData
-
-				mParameters[i] = param;
-
-				mParameterIndexLookupMap[paramInfo.name] = i;
-			}
-
-			// Allocate memory for parameters
-			if(mParametersDataSize > 0){
-				mParametersData = (char*)malloc(mParametersDataSize);
-				char* currentDataPtr = mParametersData;
-
-				for(size_t i = 0; i < mParameters.size(); i++) {
-					mParameters[i].data = currentDataPtr;
-					currentDataPtr += mParameters[i].size;
+					default:
+						break;
 				}
+				descSetInit.descriptors.push_back(desc);
 			}
-		}
+			mDescriptorSetLayout = renderAPI->CreateDescriptorSetLayout(descSetInit);
+		} 
 
 		Material::~Material()
 		{
-			if(mParametersDataSize > 0)
-				free(mParametersData);
 		}
 
-		template<typename T>
-		void Material::SetParameterData(String& name, T& data)
+		SPtr<MaterialInstance> Material::CreateInstance()
 		{
-			auto res = mParameterIndexLookupMap.find(name);
-			if(res == mParameterIndexLookupMap.end()) {
-				//LogWriter::WriteLog(fmt::format(L"Material: Cannot find parameter name {0}.", name));
-				return;
-			}
-
-			MaterialParameter param = mParameters[res->second];
-
-			uint64_t dataSize = sizeof(data);
-#ifdef _DEBUG
-			if(dataSize != param.size) {
-				//LogWriter::WriteLog(fmt::format(L"Material: Wrong parameter size({0} != {1}).", param.size, dataSize));
-				return;
-			}
-#endif // _DEBUG
-
-			memcpy(param.data, &data, dataSize);
-
-			if(mIsUpdated != nullptr)
-				*mIsUpdated = true;
-		}
-
-		template<>
-		void Material::SetParameterData(String& name, SPtr<Texture>& texture)
-		{
-			auto res = mParameterIndexLookupMap.find(name);
-			if(res == mParameterIndexLookupMap.end()) {
-				//LogWriter::WriteLog(fmt::format(L"Material: Cannot find parameter name {0}.", name));
-				return;
-			}
-
-			MaterialParameter& param = mParameters[res->second];
-
-#ifdef _DEBUG
-			if(param.type != MaterialParameterType::Texture) {
-				//LogWriter::WriteLog(fmt::format(L"Material: The Parameter {0} is not a Texture parameter.", name));
-				return;
-			}
-#endif // _DEBUG
-
-			param.texture = texture;
-
-			if(mIsUpdated != nullptr)
-				*mIsUpdated = true;
+			SPtr<MaterialInstance> ins(new MaterialInstance(mRenderAPI_ref, shared_from_this()));
+			return ins;
 		}
 	}
 }

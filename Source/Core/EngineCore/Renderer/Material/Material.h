@@ -2,6 +2,8 @@
 
 #include "../../EngineCoreHeader.h"
 
+#include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
+
 #include <glm.hpp>
 
 namespace cube
@@ -21,40 +23,36 @@ namespace cube
 			size_t dataSize;
 		};
 
-		class ENGINE_CORE_EXPORT Material
+		struct MaterialInitializer
+		{
+			Vector<SPtr<Shader>> shaders;
+			Vector<MaterialParameterInfo> parameters;
+		};
+
+		class ENGINE_CORE_EXPORT Material : public std::enable_shared_from_this<Material>
 		{
 		public:
-			struct MaterialParameter
-			{
-				MaterialParameterType type;
-				char* data;
-				size_t size;
-				SPtr<Texture> texture; // Only use when the type is Texture
-			};
-
-			Material(const Vector<MaterialParameterInfo>& parameters);
+			Material(SPtr<BaseRenderAPI>& renderAPI, MaterialInitializer& init);
 			~Material();
 
-			void SetUpdateBool(bool* b) { mIsUpdated = b; }
+			SPtr<MaterialInstance> CreateInstance();
 
-			template <typename T>
-			void SetParameterData(String& name, T& data);
+			const Vector<SPtr<Shader>>& GetShaders() const { return mShaders; }
 
-			template <>
-			void SetParameterData(String& name, SPtr<Texture>& texture);
-
-			const Vector<MaterialParameter>& GetParameters() const { return mParameters; }
-
-			uint64_t GetParametersDataSize() const { return mParametersDataSize; }
+			SPtr<BaseRenderDescriptorSetLayout> GetDescriptorSetLayout() const { return mDescriptorSetLayout; }
 
 		private:
-			HashMap<String, uint64_t> mParameterIndexLookupMap;
+			friend class RendererManager;
+			friend class MaterialInstance;
 
-			Vector<MaterialParameter> mParameters;
-			char* mParametersData;
-			uint64_t mParametersDataSize;
+			int mIndex = -1; // Used in RendererManager
 
-			bool* mIsUpdated; // Pointer of Renderer3D::mIsMaterialDataUpdated
+			Vector<MaterialParameterInfo> mParamInfos;
+
+			Vector<SPtr<Shader>> mShaders;
+			SPtr<BaseRenderDescriptorSetLayout> mDescriptorSetLayout;
+
+			SPtr<BaseRenderAPI> mRenderAPI_ref;
 		};
 	}
 }

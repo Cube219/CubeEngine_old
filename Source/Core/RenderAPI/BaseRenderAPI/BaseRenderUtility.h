@@ -28,11 +28,24 @@ namespace cube
 		Graphics, Compute
 	};
 
-	enum class ShaderType
+	enum class ShaderLanguage
 	{
-		GLSL_Vertex,
-		GLSL_Fragment
+		GLSL,
+		HLSL,
+		SPIR_V
 	};
+
+	enum class ShaderTypeBits
+	{
+		Vertex = 1,
+		Pixel = 1 << 1,
+		Fragment = 1 << 2,
+		Geometry = 1 << 3,
+		TessellationControl = 1 << 4,
+		TessellationEvaluation = 1 << 5,
+		Compute = 1 << 6
+	};
+	SET_ENUM_AS_FLAGS(ShaderTypeBits)
 
 	enum class DataFormat
 	{

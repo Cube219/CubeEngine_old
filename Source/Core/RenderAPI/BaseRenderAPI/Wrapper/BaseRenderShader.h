@@ -8,7 +8,8 @@ namespace cube
 	{
 		struct BaseRenderShaderInitializer
 		{
-			ShaderType type;
+			ShaderLanguage language;
+			ShaderTypeBits type;
 			const char* code;
 			const char* entryPoint;
 		};

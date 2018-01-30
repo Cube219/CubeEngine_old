@@ -48,6 +48,8 @@ namespace cube
 			void Draw(uint32_t vertexCount, uint32_t vertexOffset, uint32_t instanceCount, uint32_t firstInstance) final override;
 			void DrawIndexed(uint32_t indexCount, uint32_t indexOffset, int32_t vertexOffset, uint32_t instanceCount, uint32_t firstInstance) final override;
 
+			void ExecuteCommands(uint32_t commandCount, SPtr<BaseRenderCommandBuffer>* commandBuffers) final override;
+
 			void End() final override;
 			void Submit(SPtr<BaseRenderQueue>& queue,
 				uint32_t waitSemaphoreNum, std::pair<SPtr<BaseRenderSemaphore>, PipelineStageBits>* waitSemaphores,
@@ -60,6 +62,8 @@ namespace cube
 			VkPipelineBindPoint GetVkPipelineBindPoint(PipelineType pipelineType);
 
 			VkCommandBuffer mCommandBuffer;
+
+			bool mIsPrimary;
 
 			bool mIsRenderPassStarted;
 
@@ -77,10 +81,7 @@ namespace cube
 
 			SPtr<VulkanCommandBuffer> AllocateCommandBuffer(VkCommandBufferLevel level);
 
-			VkCommandPool GetHandle() const
-			{
-				return mCommandPool;
-			}
+			VkCommandPool GetHandle() const{ return mCommandPool; }
 
 		private:
 			VkCommandPool mCommandPool;

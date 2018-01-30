@@ -3,9 +3,9 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
-layout (binding = 0) uniform bufferVals {
+layout (set = 1, binding = 0) uniform perObject {
     mat4 mvp;
-} myBufferVals;
+} perObjects;
 
 layout (location = 0) in vec4 pos;
 layout (location = 1) in vec4 inColor;
@@ -18,5 +18,5 @@ layout (location = 1) out vec2 outTexCoord;
 void main(void) {
     outColor = inColor;
     outTexCoord = inTexCoord;
-    gl_Position = myBufferVals.mvp * pos;
+    gl_Position = perObjects.mvp * pos;
 }

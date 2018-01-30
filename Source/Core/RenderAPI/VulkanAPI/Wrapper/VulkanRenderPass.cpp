@@ -230,7 +230,7 @@ namespace cube
 			// Create framebuffers to be compatible with the attachments
 			uint32_t framebufferCount;
 			// If it uses the swapchain, copy framebuffer by the number of swapchain's iamges
-			// And put each swapchain's images to the framebuffer
+			// and put each swapchain's images to the framebuffer
 			// Otherwise, just create one framebuffer
 			if(initializer.hasSwapchain == false) {
 				framebufferCount = 1;

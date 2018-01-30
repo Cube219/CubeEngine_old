@@ -91,9 +91,14 @@ namespace cube
 			return std::make_shared<VulkanBuffer>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderDescriptorSet> VulkanAPI::CreateDescriptorSet(BaseRenderDescriptorSetInitializer& initializer)
+		SPtr<BaseRenderDescriptorSetLayout> VulkanAPI::CreateDescriptorSetLayout(BaseRenderDescriptorSetInitializer& initializer)
 		{
-			return std::make_shared<VulkanDescriptorSet>(mDevice, mDescriptorPool, initializer);
+			return std::make_shared<VulkanDescriptorSetLayout>(mDevice, initializer);
+		}
+
+		SPtr<BaseRenderDescriptorSet> VulkanAPI::CreateDescriptorSet(SPtr<BaseRenderDescriptorSetLayout>& layout)
+		{
+			return std::make_shared<VulkanDescriptorSet>(mDevice, mDescriptorPool, layout);
 		}
 
 		SPtr<BaseRenderQueue> VulkanAPI::GetQueue(QueueTypeBits types, uint32_t index)
@@ -121,9 +126,16 @@ namespace cube
 			return std::make_shared<VulkanGraphicsPipeline>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderCommandBuffer> VulkanAPI::CreateCommandBuffer()
+		SPtr<BaseRenderCommandBuffer> VulkanAPI::CreateCommandBuffer(bool isPrimary)
 		{
-			return mCommandPool->AllocateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+			VkCommandBufferLevel level;
+
+			if(isPrimary == true)
+				level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+			else
+				level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+
+			return mCommandPool->AllocateCommandBuffer(level);
 		}
 
 		SPtr<BaseRenderImage> VulkanAPI::CreateImage(BaseRenderImageInitializer& initializer)

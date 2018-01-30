@@ -104,6 +104,24 @@ namespace cube
 
 			res = vkMapMemory(mDevice_ref->GetHandle(), mAllocatedMemory, 0, mMappedSize, 0, &mMappedData);
 			CheckVkResult(L"VulkanBuffer", L"Cannot map to the memory", res);
+
+			mMappedOffset = 0;
+		}
+
+		void VulkanBuffer::Map(uint64_t startIndex, uint64_t endIndex)
+		{
+			if(mMappedData != nullptr)
+				return;
+
+			VkResult res;
+
+			uint64_t startOffset = mDataOffsets[startIndex];
+			uint64_t size = mDataOffsets[endIndex] + mDataSizes[endIndex] - startOffset;
+
+			res = vkMapMemory(mDevice_ref->GetHandle(), mAllocatedMemory, startOffset, size, 0, &mMappedData);
+			CheckVkResult(L"VulkanBuffer", L"Cannot map to the memory", res);
+
+			mMappedOffset = startOffset;
 		}
 
 		void VulkanBuffer::UpdateBufferData(uint64_t index, const void* data, size_t size)
@@ -120,7 +138,7 @@ namespace cube
 				return;
 			}
 
-			char* p = (char*)mMappedData + mDataOffsets[index];
+			char* p = (char*)mMappedData + mDataOffsets[index] - mMappedOffset;
 			memcpy(p, data, size);
 		}
 

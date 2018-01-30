@@ -9,25 +9,64 @@ namespace cube
 		VulkanShader::VulkanShader(const SPtr<VulkanDevice>& device, BaseRenderShaderInitializer& initializer) : 
 			mDevice_ref(device)
 		{
-			VkShaderStageFlagBits stageFlagBits;
-			switch(initializer.type) {
-				case ShaderType::GLSL_Vertex:
-					stageFlagBits = VK_SHADER_STAGE_VERTEX_BIT;
+			VkShaderStageFlags stageFlagBits = GetVkShaderStageFlags(initializer.type);
+
+			switch(initializer.language) {
+				case ShaderLanguage::GLSL:
+					LoadFromGLSL(initializer, stageFlagBits);
 					break;
-				case ShaderType::GLSL_Fragment:
-					stageFlagBits = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+				case ShaderLanguage::SPIR_V:
+					LoadFromSPIR_V(initializer);
 					break;
 
 				default:
-					PrintlnLogWithSayer(L"VulkanShader", L"Unknown shader type");
-					break;
+					PrintlnLogWithSayer(L"VulkanShader", L"Unsupported shader language");
+					return;
 			}
 
-			// GLSL -> SPIR-V
+			// Create a module
+			VkShaderModuleCreateInfo moduleInfo = {};
+			moduleInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			moduleInfo.pNext = nullptr;
+			moduleInfo.flags = 0;
+			moduleInfo.codeSize = mSpvShader.size() * sizeof(unsigned int);
+			moduleInfo.pCode = mSpvShader.data();
+
+			VkResult res;
+			res = vkCreateShaderModule(device->GetHandle(), &moduleInfo, nullptr, &mShaderModule);
+			CheckVkResult(L"VulkanShader", L"Cannot create a shader module", res);
+
+			mEntryName = initializer.entryPoint;
+
+			// Create stage info
+			mShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			mShaderStageInfo.pNext = nullptr;
+			mShaderStageInfo.flags = 0;
+			mShaderStageInfo.pSpecializationInfo = nullptr;
+			mShaderStageInfo.stage = (VkShaderStageFlagBits)stageFlagBits;
+			mShaderStageInfo.pName = mEntryName.c_str();
+			mShaderStageInfo.module = mShaderModule;
+		}
+
+		VulkanShader::~VulkanShader()
+		{
+			vkDestroyShaderModule(mDevice_ref->GetHandle(), mShaderModule, nullptr);
+
+			mSpvShader.clear();
+		}
+
+		void VulkanShader::LoadFromSPIR_V(BaseRenderShaderInitializer& initializer)
+		{
+			// TODO
+		}
+
+		void VulkanShader::LoadFromGLSL(BaseRenderShaderInitializer& initializer, VkShaderStageFlags stageFlagBits)
+		{
 			TBuiltInResource resources = InitResource();
 
 			EShLanguage type;
-			
+
 			switch(stageFlagBits) {
 				case VK_SHADER_STAGE_VERTEX_BIT:
 					type = EShLangVertex;
@@ -78,36 +117,6 @@ namespace cube
 			glslang::GlslangToSpv(*program.getIntermediate(type), mSpvShader);
 
 			glslang::FinalizeProcess();
-
-			// Create a module
-			VkShaderModuleCreateInfo moduleInfo = {};
-			moduleInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleInfo.pNext = nullptr;
-			moduleInfo.flags = 0;
-			moduleInfo.codeSize = mSpvShader.size() * sizeof(unsigned int);
-			moduleInfo.pCode = mSpvShader.data();
-
-			VkResult res;
-			res = vkCreateShaderModule(device->GetHandle(), &moduleInfo, nullptr, &mShaderModule);
-			CheckVkResult(L"VulkanShader", L"Cannot create a shader module", res);
-
-			mEntryName = initializer.entryPoint;
-
-			// Create stage info
-			mShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			mShaderStageInfo.pNext = nullptr;
-			mShaderStageInfo.flags = 0;
-			mShaderStageInfo.pSpecializationInfo = nullptr;
-			mShaderStageInfo.stage = stageFlagBits;
-			mShaderStageInfo.pName = mEntryName.c_str();
-			mShaderStageInfo.module = mShaderModule;
-		}
-
-		VulkanShader::~VulkanShader()
-		{
-			vkDestroyShaderModule(mDevice_ref->GetHandle(), mShaderModule, nullptr);
-
-			mSpvShader.clear();
 		}
 
 		TBuiltInResource VulkanShader::InitResource()
