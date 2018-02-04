@@ -93,8 +93,8 @@
       <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Renderer\Vertex.glsl" "$(OutDir)Data\" /Y
-xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data\" /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,8 +125,8 @@ xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data\" /Y</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Renderer\Vertex.glsl" "$(OutDir)Data\" /Y
-xcopy "$(ProjectDir)Renderer\Fragment.glsl" "$(OutDir)Data\" /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
