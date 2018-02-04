@@ -58,13 +58,13 @@ namespace cube
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
 
-			WString texturePath = L"Data/TestTexture.png";
+			WString texturePath = L"../../../SampleResources/Textures/TestTexture.png";
 			mTexture = mResourceManager->LoadResource<Texture>(texturePath);
-			texturePath = L"Data/TestTexture2.png";
+			texturePath = L"../../../SampleResources/Textures/TestTexture2.png";
 			mTexture2 = mResourceManager->LoadResource<Texture>(texturePath);
 
 			// Load shader
-			WString shaderPath = L"Data/Vertex.glsl";
+			WString shaderPath = L"../../../SampleResources/Shaders/Vertex.glsl";
 			mMaterialVertexShader = mResourceManager->LoadResource<Shader>(shaderPath);
 			ShaderComplieDesc shaderDesc;
 			shaderDesc.language = ShaderLanguage::GLSL;
@@ -72,7 +72,7 @@ namespace cube
 			shaderDesc.entryPoint = "main";
 			mMaterialVertexShader->Complie(mRendererManager->GetRenderAPI(), shaderDesc);
 
-			shaderPath = L"Data/Fragment.glsl";
+			shaderPath = L"../../../SampleResources/Shaders/Fragment.glsl";
 			mMaterialFragmentShader = mResourceManager->LoadResource<Shader>(shaderPath);
 			shaderDesc.type = ShaderTypeBits::Fragment;
 			mMaterialFragmentShader->Complie(mRendererManager->GetRenderAPI(), shaderDesc);
