@@ -6,10 +6,21 @@
     <ClInclude Include="Vector.h" />
     <ClInclude Include="format.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Vector\VectorSSE.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector\VectorArray.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />
     <ClCompile Include="format.cc" />
     <ClCompile Include="Math.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Vector">
+      <UniqueIdentifier>{1376f9b4-f7bf-4a9f-8f90-3ee649a27a9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

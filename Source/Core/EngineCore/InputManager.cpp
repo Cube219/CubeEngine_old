@@ -69,8 +69,7 @@ namespace cube
 
 		void InputManager::UpdateMousePos(int posX, int posY)
 		{
-			mousePosition.x = SCast(float)(posX);
-			mousePosition.y = SCast(float)(posY);
+			mousePosition = Vector2(SCast(float)(posX), SCast(float)(posY));
 		}
 	}
 }

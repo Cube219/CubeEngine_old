@@ -1,267 +1,182 @@
 #pragma once
 
-namespace cube
+#define SIMD_SSE
+
+
+#if defined(SIMD_SSE) // SSE
+
+	#include <xmmintrin.h>
+	using VectorData = __m128;
+
+#elif defined(SIMD_NONE) // NONE
+
+	using VectorData = float[4];
+
+#else
+
+	#error You must define one of simd instruction type
+
+#endif
+
+
+class VectorBase
 {
-	struct Vector2;
-	struct Vector3;
+public:
+	static VectorBase Zero();
 
-	struct Vector2
-	{
-		float x;
-		float y;
+	VectorBase();
+	VectorBase(float x, float y, float z, float w);
+	~VectorBase();
 
-		static float Dot(const Vector2& lhs, const Vector2& rhs)
-		{
-			return lhs.x * rhs.x + lhs.y * rhs.y;
-		}
+	//void Swap(Vector& other); // TODO: 구현하기
 
-		// Operators between vector2s
-		Vector2& operator=(const Vector2& rhs)
-		{
-			if(this != &rhs) {
-				this->x = rhs.x;
-				this->y = rhs.y;
-			}
+	VectorBase& operator= (const VectorBase& rhs);
 
-			return *this;
-		}
+	VectorBase& operator= (float rhs);
 
-		Vector2 operator+(const Vector2& rhs)
-		{
-			Vector2 n;
-			n.x = this->x + rhs.x;
-			n.y = this->y + rhs.y;
+	bool operator== (const VectorBase& rhs) const; // TODO: 개별 Vector구현으로
 
-			return n;
-		}
-		Vector2& operator+=(const Vector2& rhs)
-		{
-			this->x += rhs.x;
-			this->y += rhs.y;
+	bool operator!= (const VectorBase& rhs) const; // TODO: 개별 Vector구현으로
 
-			return *this;
-		}
-		Vector2 operator-(const Vector2& rhs)
-		{
-			Vector2 n;
-			n.x = this->x - rhs.x;
-			n.y = this->y - rhs.y;
+	VectorBase operator+ (const VectorBase& rhs) const;
+	VectorBase operator- (const VectorBase& rhs) const;
+	VectorBase operator* (float rhs) const;
+	VectorBase operator* (const VectorBase& rhs) const;
+	VectorBase operator/ (float rhs) const;
+	VectorBase operator/ (const VectorBase& rhs) const;
 
-			return n;
-		}
-		Vector2& operator-=(const Vector2& rhs)
-		{
-			this->x -= rhs.x;
-			this->y -= rhs.y;
+	const VectorBase& operator+() const;
+	VectorBase operator-() const;
 
-			return *this;
-		}
+	VectorBase& operator+= (const VectorBase& rhs);
+	VectorBase& operator-= (const VectorBase& rhs);
+	VectorBase& operator*= (float rhs);
+	VectorBase& operator*= (const VectorBase& rhs);
+	VectorBase& operator/= (float rhs);
+	VectorBase& operator/= (const VectorBase& rhs);
 
-		Vector2 operator*(const float rhs)
-		{
-			Vector2 n;
-			n.x = this->x * rhs;
-			n.y = this->y * rhs;
+protected:
+	friend class Vector2;
+	friend class Vector3;
+	friend class Vector4;
 
-			return n;
-		}
-		Vector2& operator*=(const float rhs)
-		{
-			this->x *= rhs;
-			this->y *= rhs;
+	VectorData mData;
 
-			return *this;
-		}
-		Vector2 operator/(const float rhs)
-		{
-			Vector2 n;
-			n.x = this->x / rhs;
-			n.y = this->y / rhs;
+	friend VectorBase operator* (float lhs, const VectorBase& rhs);
+	friend VectorBase operator/ (float lhs, const VectorBase& rhs);
+};
 
-			return n;
-		}
-		Vector2& operator/=(const float rhs)
-		{
-			this->x /= rhs;
-			this->y /= rhs;
+VectorBase operator* (float lhs, const VectorBase& rhs);
+VectorBase operator/ (float lhs, const VectorBase& rhs);
 
-			return *this;
-		}
+class Vector2 : public VectorBase
+{
+public:
+	Vector2();
+	Vector2(float x, float y);
 
-		// Operators between vector2 and vector3
-		Vector2 operator+(const Vector3& rhs);
-		Vector2& operator+=(const Vector3& rhs);
-		Vector2 operator-(const Vector3& rhs);
-		Vector2& operator-=(const Vector3& rhs);
-	};
+	Vector2(const VectorBase& vec);
+	Vector2& operator=(const VectorBase& vec);
 
-	struct Vector3
-	{
-		float x;
-		float y;
-		float z;
+	operator Vector3() const;
+	operator Vector4() const;
 
-		static float Dot(const Vector3& lhs, const Vector3& rhs)
-		{
-			return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
-		}
-		static Vector3 Cross(const Vector3& lhs, const Vector3& rhs)
-		{
-			Vector3 n;
+	void GetFloat2(float* float2);
 
-			n.x = lhs.y*rhs.z - lhs.z*rhs.x;
-			n.y = lhs.z*rhs.x - lhs.x*rhs.z;
-			n.z = lhs.x*rhs.y - lhs.y*rhs.x;
+	VectorBase Length() const;
+	VectorBase SquareLength() const;
 
-			return n;
-		}
+	VectorBase Dot(const Vector2& rhs) const;
+	static VectorBase Dot(const Vector2& lhs, const Vector2& rhs);
 
-		// Operators between vector3s
-		Vector3& operator=(const Vector3& rhs)
-		{
-			if(this != &rhs) {
-				this->x = rhs.x;
-				this->y = rhs.y;
-				this->z = rhs.z;
-			}
+	void Normalize();
+	VectorBase Normalized() const;
 
-			return *this;
-		}
+	VectorBase Cross(const Vector2& rhs) const;
+	static VectorBase Cross(const Vector2& lhs, const Vector2& rhs);
 
-		Vector3 operator+(const Vector3& rhs)
-		{
-			Vector3 n;
-			n.x = this->x + rhs.x;
-			n.y = this->y + rhs.y;
-			n.z = this->z += rhs.z;
+private:
+	friend class Vector3;
+	friend class Vector4;
+	Vector2(const VectorData vData);
+};
 
-			return n;
-		}
-		Vector3& operator+=(const Vector3& rhs)
-		{
-			this->x += rhs.x;
-			this->y += rhs.y;
-			this->z += rhs.z;
+class Vector3 : public VectorBase
+{
+public:
+	Vector3();
+	Vector3(float x, float y, float z);
 
-			return *this;
-		}
-		Vector3 operator-(const Vector3& rhs)
-		{
-			Vector3 n;
-			n.x = this->x - rhs.x;
-			n.y = this->y - rhs.y;
-			n.z = this->z - rhs.z;
+	Vector3(const VectorBase& vec);
+	Vector3& operator=(const VectorBase& vec);
 
-			return n;
-		}
-		Vector3& operator-=(const Vector3& rhs)
-		{
-			this->x -= rhs.x;
-			this->y -= rhs.y;
-			this->z -= rhs.z;
+	operator Vector2() const;
+	operator Vector4() const;
 
-			return *this;
-		}
+	void GetFloat3(float* float3);
 
-		Vector3 operator*(const float rhs)
-		{
-			Vector3 n;
-			n.x = this->x * rhs;
-			n.y = this->y * rhs;
-			n.z = this->z * rhs;
+	VectorBase Length() const;
+	VectorBase SquareLength() const;
 
-			return n;
-		}
-		Vector3& operator*=(const float rhs)
-		{
-			this->x *= rhs;
-			this->y *= rhs;
-			this->z *= rhs;
+	VectorBase Dot(const Vector3& rhs) const;
+	static VectorBase Dot(const Vector3& lhs, const Vector3& rhs);
 
-			return *this;
-		}
-		Vector3 operator/(const float rhs)
-		{
-			Vector3 n;
-			n.x = this->x / rhs;
-			n.y = this->y / rhs;
-			n.z = this->z / rhs;
+	void Normalize();
+	VectorBase Normalized() const;
 
-			return n;
-		}
-		Vector3& operator/=(const float rhs)
-		{
-			this->x /= rhs;
-			this->y /= rhs;
-			this->z /= rhs;
+	VectorBase Cross(const Vector3& rhs) const;
+	static VectorBase Cross(const Vector3& lhs, const Vector3& rhs);
 
-			return *this;
-		}
+private:
+	friend class Vector2;
+	friend class Vector4;
+	Vector3(const VectorData vData);
+};
 
-		// Operators between vector3 and vector2
-		Vector3 operator+(const Vector2& rhs)
-		{
-			Vector3 n;
-			n.x = this->x + rhs.x;
-			n.y = this->y + rhs.y;
-			n.z = this->z;
+class Vector4 : public VectorBase
+{
+public:
+	Vector4();
+	Vector4(float x, float y, float z, float w);
 
-			return n;
-		}
-		Vector3& operator+=(const Vector2& rhs)
-		{
-			this->x += rhs.x;
-			this->y += rhs.y;
+	Vector4(const VectorBase& vec);
+	Vector4& operator=(const VectorBase& vec);
 
-			return *this;
-		}
-		Vector3 operator-(const Vector2& rhs)
-		{
-			Vector3 n;
-			n.x = this->x - rhs.x;
-			n.y = this->y - rhs.y;
-			n.z = this->z;
+	operator Vector2() const;
+	operator Vector3() const;
 
-			return n;
-		}
-		Vector3& operator-=(const Vector2& rhs)
-		{
-			this->x -= rhs.x;
-			this->y -= rhs.y;
+	void GetFloat4(float* float4);
 
-			return *this;
-		}
-	};
+	VectorBase Length() const;
+	VectorBase SquareLength() const;
 
+	VectorBase Dot(const Vector4& rhs) const;
+	static VectorBase Dot(const Vector4& lhs, const Vector4& rhs);
 
-	inline Vector2 Vector2::operator+(const Vector3& rhs)
-	{
-		Vector2 n;
-		n.x = this->x + rhs.x;
-		n.y = this->y + rhs.y;
+	void Normalize();
+	VectorBase Normalized() const;
 
-		return n;
-	}
-	inline Vector2& Vector2::operator+=(const Vector3& rhs)
-	{
-		this->x += rhs.x;
-		this->y += rhs.y;
+	VectorBase Cross(const Vector4& rhs) const;
+	static VectorBase Cross(const Vector4& lhs, const Vector4& rhs);
 
-		return *this;
-	}
-	inline Vector2 Vector2::operator-(const Vector3& rhs)
-	{
-		Vector2 n;
-		n.x = this->x - rhs.x;
-		n.y = this->y - rhs.y;
+private:
+	friend class Vector2;
+	friend class Vector3;
+	Vector4(const VectorData vData);
+};
 
-		return n;
-	}
-	inline Vector2& Vector2::operator-=(const Vector3& rhs)
-	{
-		this->x -= rhs.x;
-		this->y -= rhs.y;
+// Include inline function definition
 
-		return *this;
-	}
-}
+#ifndef VECTOR_IMPLIMENTATION
+
+	#if defined(SIMD_SSE) // SSE
+
+		#include "Vector/VectorSSE.h"
+
+	#elif defined(SIMD_NONE) // NONE
+
+		#include "Vector/VectorArray.h"
+
+	#endif
+
+#endif // !VECTOR_IMPLIMENTATION

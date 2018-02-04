@@ -100,10 +100,7 @@ namespace cube
 					for(int k = -1; k <= 1; k++) {
 
 						auto go = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
-						Vector3 v;
-						v.x = i*2;
-						v.y = j*2;
-						v.z = k*2;
+						Vector3 v(i*2, j*2, k*2);
 						go->SetPosition(v);
 
 						auto renderer = go->GetRenderer();

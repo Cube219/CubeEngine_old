@@ -8,7 +8,7 @@ namespace cube
 	namespace core
 	{
 		GameObject::GameObject() :
-			mPosition({0.0f, 0.0f, 0.0f}), mRotation({0.0f, 0.0f, 0.0f}), mScale({1.0f, 1.0f, 1.0f}),
+			mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
 			mIsTransformChanged(true), mScaleMatrix(1.0f), mModelMatrix(1.0f)
 		{
 		}
@@ -42,19 +42,24 @@ namespace cube
 
 		void GameObject::Update()
 		{
+			float pos[3], rotation[3], scale[3];
+			mPosition.GetFloat3(pos);
+			mRotation.GetFloat3(rotation);
+			mScale.GetFloat3(scale);
+
 			// Update model matrix
 			if(mIsTransformChanged == true) {
 				// Position
-				mModelMatrix[3][0] = mPosition.x;
-				mModelMatrix[3][1] = -mPosition.y;
-				mModelMatrix[3][2] = -mPosition.z; // Convert to left-hand coordinate
+				mModelMatrix[3][0] = pos[0];
+				mModelMatrix[3][1] = -pos[1];
+				mModelMatrix[3][2] = -pos[2]; // Convert to left-hand coordinate
 
 				// (          cosYcosZ                  -cosYsinZ             sinY   )
 				// (  sinXsinYcosZ + cosXsinZ   -sinXsinYsinZ + cosXcosZ   -sinXcosY )
 				// ( -cosXsinYcosZ + sinXsinZ    cosXsinYsinZ + sinXcosZ    cosXcosY )
-				float radX = glm::radians(mRotation.x);
-				float radY = glm::radians(-mRotation.y);
-				float radZ = glm::radians(-mRotation.z); // Convert to left-hand coordinate
+				float radX = glm::radians(rotation[0]);
+				float radY = glm::radians(-rotation[1]);
+				float radZ = glm::radians(-rotation[2]); // Convert to left-hand coordinate
 
 				float sinX = glm::sin(radX);
 				float cosX = glm::cos(radX);
@@ -74,9 +79,9 @@ namespace cube
 				mModelMatrix[2][2] = cosX * cosY;
 
 				// Scale
-				mScaleMatrix[0][0] = mScale.x;
-				mScaleMatrix[1][1] = mScale.y;
-				mScaleMatrix[2][2] = mScale.z;
+				mScaleMatrix[0][0] = scale[0];
+				mScaleMatrix[1][1] = scale[1];
+				mScaleMatrix[2][2] = scale[2];
 
 				mModelMatrix *= mScaleMatrix;
 
