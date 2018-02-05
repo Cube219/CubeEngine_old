@@ -9,14 +9,31 @@ namespace cube
 {
 	namespace core
 	{
-		struct ShaderComplieDesc
+		struct ShaderCompileDesc
 		{
 			ShaderLanguage language;
 			ShaderTypeBits type;
 			String entryPoint;
 		};
 
-		class ENGINE_CORE_EXPORT Shader : public BaseResource
+		class ENGINE_CORE_EXPORT ShaderImporter : public ResourceImporter
+		{
+		public:
+			ShaderImporter(SPtr<BaseRenderAPI>& renderAPI) :
+				mRenderAPI(renderAPI)
+			{
+				mResName = "shader";
+			}
+
+			Resource* Import(SPtr<platform::BasePlatformFile>& file, Json info) final override;
+
+		private:
+			ShaderCompileDesc GetCompileDesc(Json& info);
+
+			SPtr<BaseRenderAPI> mRenderAPI;
+		};
+
+		class ENGINE_CORE_EXPORT Shader : public Resource
 		{
 		public:
 			~Shader();
@@ -24,11 +41,9 @@ namespace cube
 			ShaderLanguage GetLanguage() const { return mLanguage; }
 			ShaderTypeBits GetType() const { return mType; }
 
-			void Complie(SPtr<BaseRenderAPI> renderAPI, ShaderComplieDesc& desc);
-
 		private:
-			friend class BaseResource;
-			Shader(ResourceRawData* rawData);
+			friend class ShaderImporter;
+			Shader() { }
 
 			friend class RendererManager;
 			SPtr<BaseRenderShader> GetRenderShader() const { return mRenderShader; }

@@ -14,39 +14,71 @@ namespace cube
 		ResourceManager::~ResourceManager()
 		{
 		}
-
-		SPtr<BaseResource> ResourceManager::LoadResource(WString& path)
+		void ResourceManager::RegisterImporter(UPtr<ResourceImporter> importer)
 		{
+			mImporters.push_back(std::move(importer));
+		}
+		
+		RPtr<Resource> ResourceManager::LoadResource(WString& path)
+		{
+			using namespace platform;
+
 			// Check if the resource is already loaded
 			{
 				Lock lock(mLoadedResourcesMutex);
 
 				auto findIter = mLoadedResources.find(path); // TODO: UUID로 바꾸기
 				if(findIter != mLoadedResources.end()) {
-					SPtr<BaseResource> resPtr(new BaseResource(findIter->second));
+					RPtr<Resource> resPtr(findIter->second);
 					return resPtr;
 				}
 			}
 
-			// Load resource from file
-			auto resFile = mFileSystem->OpenFile(path, platform::FileAccessModeBits::Read);
-			uint64_t resFileSize = resFile->GetFileSize();
+			// Get a metadata
+			WString metaPath = path;
+			metaPath.append(L".meta");
+			SPtr<BasePlatformFile> metaFile = mFileSystem->OpenFile(metaPath, FileAccessModeBits::Read);
 
-			ResourceRawData* rawData = new ResourceRawData(resFileSize);
+			uint64_t size = metaFile->GetFileSize();
+			char* metaString = (char*)malloc(size);
 
 			uint64_t readSize = 0;
-			resFile->Read(rawData->mRawData, rawData->mSize, readSize);
+			metaFile->Read(metaString, size, readSize);
+			metaString[size] = '\0';
+
+			Json metaJson = Json::parse(metaString);
+			
+			String resName = metaJson["res_name"];
+
+			Resource* loadedRes = nullptr;
+			// Find importer to import the resource
+			bool isFindImporter = false;
+			for(auto& importer : mImporters) {
+				if(importer->GetResourceName() == resName) {
+					SPtr<BasePlatformFile> resFile = mFileSystem->OpenFile(path, FileAccessModeBits::Read);
+					Json resInfo = metaJson["res_info"];
+
+					loadedRes = importer->Import(resFile, resInfo);
+					isFindImporter = true;
+					break;
+				}
+			}
+
+			if(loadedRes == nullptr) {
+				if(isFindImporter == true)
+					LogWriter::WriteLog(fmt::format(L"ResourceManager: Cannot find the importer whose res_name is \"{0}\".", resName));
+
+				return nullptr;
+			}
 
 			{
 				Lock lock(mLoadedResourcesMutex);
 
-				mLoadedResources[path] = rawData; // TODO: UUID로 바꾸기
+				mLoadedResources[path] = loadedRes; // TODO: UUID로 바꾸기
 			}
-
-			SPtr<BaseResource> resPtr(new BaseResource(rawData));
-			return resPtr;
+			return RPtr<Resource>(loadedRes);
 		}
-
+		
 		void ResourceManager::UnloadUnusedResources()
 		{
 			Lock lock(mLoadedResourcesMutex);

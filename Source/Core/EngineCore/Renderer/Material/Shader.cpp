@@ -8,28 +8,66 @@ namespace cube
 {
 	namespace core
 	{
-		Shader::Shader(ResourceRawData* rawData) : 
-			BaseResource(rawData)
+		Resource* ShaderImporter::Import(SPtr<platform::BasePlatformFile>& file, Json info)
 		{
-			char* p = (char*)rawData->GetRawData();
-			p[rawData->GetSize()] = '\0';
-		}
+			uint64_t size = file->GetFileSize();
 
-		Shader::~Shader()
-		{
-		}
+			char* rawData = (char*)malloc(size+1);
+			uint64_t readSize = 0;
+			file->Read(rawData, size, readSize);
+			rawData[size] = '\0';
 
-		void Shader::Complie(SPtr<BaseRenderAPI> renderAPI, ShaderComplieDesc& desc)
-		{
-			mLanguage = desc.language;
-			mType = desc.type;
-			
+			ShaderCompileDesc desc = GetCompileDesc(info);
+
 			BaseRenderShaderInitializer shaderInit;
 			shaderInit.language = desc.language;
 			shaderInit.type = desc.type;
 			shaderInit.entryPoint = desc.entryPoint.c_str();
-			shaderInit.code = (const char*)(mRawData->GetRawData());
-			mRenderShader = renderAPI->CreateShader(shaderInit);
+			shaderInit.code = (const char*)(rawData);
+
+			Shader* shader = new Shader();
+			shader->mLanguage = desc.language;
+			shader->mType = desc.type;
+			shader->mRenderShader = mRenderAPI->CreateShader(shaderInit);
+
+			free(rawData);
+
+			return shader;
+		}
+
+		ShaderCompileDesc ShaderImporter::GetCompileDesc(Json& info)
+		{
+			ShaderCompileDesc desc;
+
+			String language = info["language"];
+			String type = info["type"];
+			String entryPoint = info["entry_point"];
+
+			if(language == "glsl") {
+				desc.language = ShaderLanguage::GLSL;
+			} else if(language == "hsls") {
+				desc.language = ShaderLanguage::HLSL;
+			} else if(language == "spir-v") {
+				desc.language = ShaderLanguage::SPIR_V;
+			}
+
+			if(type == "vertex") {
+				desc.type = ShaderTypeBits::Vertex;
+			} else if(type == "fragment") {
+				desc.type = ShaderTypeBits::Fragment;
+			} else if(type == "pixel") {
+				desc.type = ShaderTypeBits::Pixel;
+			} else if(type == "compute") {
+				desc.type = ShaderTypeBits::Compute;
+			}
+
+			desc.entryPoint = entryPoint;
+
+			return desc;
+		}
+
+		Shader::~Shader()
+		{
 		}
 	}
 }

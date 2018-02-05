@@ -52,6 +52,12 @@ namespace cube
 			mRendererManager = std::make_unique<RendererManager>(mPlatform, RenderType::Vulkan);
 
 			mResourceManager = std::make_unique<ResourceManager>(mPlatform->GetFileSystem());
+			mResourceManager->RegisterImporter(
+				std::make_unique<TextureImporter>(mRendererManager->GetRenderAPI())
+			);
+			mResourceManager->RegisterImporter(
+				std::make_unique<ShaderImporter>(mRendererManager->GetRenderAPI())
+			);
 
 			mModuleManager = std::make_unique<ModuleManager>(mPlatform);
 
@@ -66,16 +72,9 @@ namespace cube
 			// Load shader
 			WString shaderPath = L"../../../SampleResources/Shaders/Vertex.glsl";
 			mMaterialVertexShader = mResourceManager->LoadResource<Shader>(shaderPath);
-			ShaderComplieDesc shaderDesc;
-			shaderDesc.language = ShaderLanguage::GLSL;
-			shaderDesc.type = ShaderTypeBits::Vertex;
-			shaderDesc.entryPoint = "main";
-			mMaterialVertexShader->Complie(mRendererManager->GetRenderAPI(), shaderDesc);
 
 			shaderPath = L"../../../SampleResources/Shaders/Fragment.glsl";
 			mMaterialFragmentShader = mResourceManager->LoadResource<Shader>(shaderPath);
-			shaderDesc.type = ShaderTypeBits::Fragment;
-			mMaterialFragmentShader->Complie(mRendererManager->GetRenderAPI(), shaderDesc);
 
 			// Create material
 			MaterialInitializer matInit;
@@ -88,10 +87,10 @@ namespace cube
 			// Create materialInstances
 			mMaterialIns1 = mMaterial->CreateInstance();
 			String t = "Texture";
-			mMaterialIns1->SetParameterData<SPtr<Texture>>(t, mTexture);
+			mMaterialIns1->SetParameterData<RPtr<Texture>>(t, mTexture);
 
 			mMaterialIns2 = mMaterial->CreateInstance();
-			mMaterialIns2->SetParameterData<SPtr<Texture>>(t, mTexture2);
+			mMaterialIns2->SetParameterData<RPtr<Texture>>(t, mTexture2);
 
 			int flag = -1;
 			// Create gameobjects

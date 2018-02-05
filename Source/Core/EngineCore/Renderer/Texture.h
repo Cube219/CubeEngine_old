@@ -12,10 +12,25 @@ namespace cube
 {
 	namespace core
 	{
-		class ENGINE_CORE_EXPORT Texture : public BaseResource
+		class ENGINE_CORE_EXPORT TextureImporter : public ResourceImporter
 		{
 		public:
-			~Texture();
+			TextureImporter(SPtr<BaseRenderAPI>& renderAPI) : 
+				mRenderAPI(renderAPI)
+			{
+				mResName = "texture";
+			}
+
+			Resource* Import(SPtr<platform::BasePlatformFile>& file, Json info) final override;
+
+		private:
+			SPtr<BaseRenderAPI> mRenderAPI;
+		};
+
+		class ENGINE_CORE_EXPORT Texture : public Resource
+		{
+		public:
+			virtual ~Texture();
 
 			void SendTextureData(SPtr<BaseRenderCommandBuffer>& commandBuffer);
 
@@ -23,8 +38,8 @@ namespace cube
 			SPtr<BaseRenderSampler> GetSampler() const { return mSampler; }
 
 		private:
-			friend class BaseResource;
-			Texture(ResourceRawData* rawData);
+			friend class TextureImporter;
+			Texture(){ }
 
 			uint64_t mImageSize;
 

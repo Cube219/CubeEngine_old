@@ -76,12 +76,12 @@ namespace cube
 
 			//Vector<SPtr<GameObject>> mGameObjects;
 			SPtr<Mesh> mBoxMesh;
-			SPtr<Texture> mTexture;
-			SPtr<Texture> mTexture2;
+			RPtr<Texture> mTexture;
+			RPtr<Texture> mTexture2;
 
 			//SPtr<GameObject> mGo1;
-			SPtr<Shader> mMaterialVertexShader;
-			SPtr<Shader> mMaterialFragmentShader;
+			RPtr<Shader> mMaterialVertexShader;
+			RPtr<Shader> mMaterialFragmentShader;
 			SPtr<Material> mMaterial;
 			SPtr<MaterialInstance> mMaterialIns1;
 			SPtr<MaterialInstance> mMaterialIns2;

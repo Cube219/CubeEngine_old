@@ -4,6 +4,7 @@
 #include "Material/Material.h"
 #include "Material/MaterialInstance.h"
 #include "Texture.h"
+#include "Material/Shader.h"
 #include "CameraRenderer3D.h"
 
 #include <gtc/matrix_transform.hpp>

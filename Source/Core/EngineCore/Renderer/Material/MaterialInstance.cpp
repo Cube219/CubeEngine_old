@@ -1,6 +1,7 @@
 #include "MaterialInstance.h"
 
 #include "Material.h"
+#include "Shader.h"
 #include "../Texture.h"
 #include "../../LogWriter.h"
 #include "Base/format.h"
@@ -72,7 +73,7 @@ namespace cube
 		}
 
 		template<>
-		void MaterialInstance::SetParameterData(String& name, SPtr<Texture>& texture)
+		void MaterialInstance::SetParameterData(String& name, RPtr<Texture>& texture)
 		{
 			auto res = mParameterIndexLookupMap.find(name);
 			if(res == mParameterIndexLookupMap.end()) {

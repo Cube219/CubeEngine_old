@@ -19,8 +19,10 @@ namespace cube
 		class GameTime;
 
 		class ResourceManager;
-		class ResourceRawData;
-		class BaseResource;
+		class ResourceImporter;
+		class Resource;
+		template <typename T>
+		class ResourcePointer;
 
 		class LogWriter;
 
@@ -60,8 +62,10 @@ namespace cube
 	}
 }
 
+#include "Resource/ResourcePointer.h"
+
 #ifdef ENGINE_CORE_EXPORTS
-#define ENGINE_CORE_EXPORT __declspec(dllexport) 
+	#define ENGINE_CORE_EXPORT __declspec(dllexport) 
 #else // ENGINE_CORE_EXPORTS
-#define ENGINE_CORE_EXPORT __declspec(dllimport) 
+	#define ENGINE_CORE_EXPORT __declspec(dllimport) 
 #endif // ENGINE_CORE_EXPORTS

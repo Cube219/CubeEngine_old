@@ -153,6 +153,7 @@
     <ClInclude Include="Renderer\Vertex.h" />
     <ClInclude Include="Resource\BaseResource.h" />
     <ClInclude Include="Resource\ResourceManager.h" />
+    <ClInclude Include="Resource\ResourcePointer.h" />
     <ClInclude Include="String\ImmutableString.h" />
     <ClInclude Include="String\PathString.h" />
     <ClInclude Include="String\BasicString.h" />

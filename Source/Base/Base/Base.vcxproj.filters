@@ -12,6 +12,7 @@
     <ClInclude Include="Vector\VectorArray.h">
       <Filter>Vector</Filter>
     </ClInclude>
+    <ClInclude Include="Json.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />

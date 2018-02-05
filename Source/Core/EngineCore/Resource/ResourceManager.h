@@ -15,19 +15,23 @@ namespace cube
 			ResourceManager(SPtr<platform::BasePlatformFileSystem>& fileSystem);
 			~ResourceManager();
 
-			SPtr<BaseResource> LoadResource(WString& path);
+			void RegisterImporter(UPtr<ResourceImporter> importer);
+
+			RPtr<Resource> LoadResource(WString& path);
 
 			template <typename T>
-			SPtr<T> LoadResource(WString& path) // TODO: 이걸 Main으로
+			RPtr<T> LoadResource(WString& path)
 			{
-				return LoadResource(path)->CastResource<T>();
+				return LoadResource(path).Cast<T>();
 			}
 
 			void UnloadUnusedResources();
 
 		private:
+			Vector<UPtr<ResourceImporter>> mImporters;
+
 			Mutex mLoadedResourcesMutex;
-			HashMap<WString, ResourceRawData*> mLoadedResources;
+			HashMap<WString, Resource*> mLoadedResources;
 
 			SPtr<platform::BasePlatformFileSystem> mFileSystem;
 		};

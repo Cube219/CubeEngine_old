@@ -18,7 +18,7 @@ namespace cube
 				MaterialParameterType type;
 				char* data;
 				size_t size;
-				SPtr<Texture> texture; // Only use when the type is Texture
+				RPtr<Texture> texture; // Only use when the type is Texture
 			};
 
 			~MaterialInstance();
@@ -31,7 +31,7 @@ namespace cube
 			void SetParameterData(String& name, T& data);
 
 			template <>
-			void SetParameterData(String& name, SPtr<Texture>& texture);
+			void SetParameterData(String& name, RPtr<Texture>& texture);
 
 		private:
 			friend class Material;

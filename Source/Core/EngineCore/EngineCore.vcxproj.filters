@@ -83,6 +83,9 @@
     <ClInclude Include="Renderer\Material\MaterialInstance.h">
       <Filter>Renderer\Material</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\ResourcePointer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />

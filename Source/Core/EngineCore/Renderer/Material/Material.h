@@ -25,7 +25,7 @@ namespace cube
 
 		struct MaterialInitializer
 		{
-			Vector<SPtr<Shader>> shaders;
+			Vector<RPtr<Shader>> shaders;
 			Vector<MaterialParameterInfo> parameters;
 		};
 
@@ -37,7 +37,7 @@ namespace cube
 
 			SPtr<MaterialInstance> CreateInstance();
 
-			const Vector<SPtr<Shader>>& GetShaders() const { return mShaders; }
+			const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
 
 			SPtr<BaseRenderDescriptorSetLayout> GetDescriptorSetLayout() const { return mDescriptorSetLayout; }
 
@@ -49,7 +49,7 @@ namespace cube
 
 			Vector<MaterialParameterInfo> mParamInfos;
 
-			Vector<SPtr<Shader>> mShaders;
+			Vector<RPtr<Shader>> mShaders;
 			SPtr<BaseRenderDescriptorSetLayout> mDescriptorSetLayout;
 
 			SPtr<BaseRenderAPI> mRenderAPI_ref;

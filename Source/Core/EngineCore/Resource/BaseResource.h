@@ -2,72 +2,41 @@
 
 #include "../EngineCoreHeader.h"
 
+#include "Base/Json.h"
 #include "../Thread/MutexLock.h"
+#include "BasePlatform/BasePlatformFileSystem.h"
 
 namespace cube
 {
 	namespace core
 	{
-		class ResourceRawData
+		class ENGINE_CORE_EXPORT ResourceImporter
 		{
 		public:
-			ResourceRawData(uint64_t dataSize) : 
-				mSize(dataSize)
-			{
-				mRawData = malloc(dataSize);
-			}
-			~ResourceRawData()
-			{
-				free(mRawData);
-			}
+			ResourceImporter(){ }
+			virtual ~ResourceImporter(){ }
 
-			const void* GetRawData() const { return mRawData; }
-			const uint64_t GetSize() const { return mSize; }
+			virtual Resource* Import(SPtr<platform::BasePlatformFile>& file, Json info) = 0;
 
-		private:
-			friend class ResourceManager;
-			friend class BaseResource;
+			String& GetResourceName(){ return mResName; }
 
-			void* mRawData;
-			uint64_t mSize;
-
-			Atomic<uint32_t> mRefCount;
+		protected:
+			String mResName;
 		};
 
-		class ENGINE_CORE_EXPORT BaseResource
+		class ENGINE_CORE_EXPORT Resource
 		{
 		public:
-			virtual ~BaseResource()
-			{
-				mRawData->mRefCount--;
-			}
-
-			// Prohibit creating
-			BaseResource() = delete;
-
-			// Prohibit copying
-			BaseResource(const BaseResource& other) = delete;
-			BaseResource& operator=(const BaseResource& rhs) = delete;
-
-			template <typename T>
-			SPtr<T> CastResource()
-			{
-				SPtr<T> newRes(new T(this->mRawData));
-
-				return newRes;
-			}
+			virtual ~Resource(){ }
 
 		protected:
 			friend class ResourceManager;
+			template <typename T>
+			friend class ResourcePointer;
 
-			// Prohibit creating except friend classes
-			BaseResource(ResourceRawData* rawData) : 
-				mRawData(rawData)
-			{
-				mRawData->mRefCount++;
-			}
+			Resource(){ }
 
-			ResourceRawData* mRawData;
+			Atomic<uint32_t> mRefCount;
 		};
 	}
 }
