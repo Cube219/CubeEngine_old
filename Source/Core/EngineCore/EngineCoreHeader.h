@@ -62,10 +62,10 @@ namespace cube
 	}
 }
 
-#include "Resource/ResourcePointer.h"
-
 #ifdef ENGINE_CORE_EXPORTS
 	#define ENGINE_CORE_EXPORT __declspec(dllexport) 
 #else // ENGINE_CORE_EXPORTS
 	#define ENGINE_CORE_EXPORT __declspec(dllimport) 
 #endif // ENGINE_CORE_EXPORTS
+
+#include "Resource/ResourcePointer.h"

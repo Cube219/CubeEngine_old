@@ -1,7 +1,6 @@
 #include "MaterialInstance.h"
 
 #include "Material.h"
-#include "Shader.h"
 #include "../Texture.h"
 #include "../../LogWriter.h"
 #include "Base/format.h"

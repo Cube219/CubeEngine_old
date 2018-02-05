@@ -1,10 +1,6 @@
 #pragma once
 
-#ifdef ENGINE_CORE_EXPORTS
-#define ENGINE_CORE_EXPORT __declspec(dllexport) 
-#else // ENGINE_CORE_EXPORTS
-#define ENGINE_CORE_EXPORT __declspec(dllimport) 
-#endif // ENGINE_CORE_EXPORTS
+#include <iostream>
 
 namespace cube
 {
@@ -17,13 +13,15 @@ namespace cube
 		class ENGINE_CORE_EXPORT ResourcePointer
 		{
 		public:
-			ResourcePointer()
+			ResourcePointer() : 
+				mRes(nullptr)
 			{
 			}
 
 			~ResourcePointer()
 			{
-				mRes->mRefCount--;
+				if(mRes != nullptr)
+					mRes->mRefCount--;
 			}
 
 			ResourcePointer(const ResourcePointer<T>& other)
@@ -48,11 +46,11 @@ namespace cube
 
 			T* operator->() const
 			{
-				return mRes;
+				return (T*)mRes;
 			}
 			T& operator*() const
 			{
-				return *mRes;
+				return *(T*)mRes;
 			}
 
 		private:
@@ -67,7 +65,7 @@ namespace cube
 				mRes->mRefCount++;
 			}
 
-			T* mRes;
+			Resource* mRes;
 		};
 
 		template <typename T>
