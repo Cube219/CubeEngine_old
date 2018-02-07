@@ -373,7 +373,12 @@ inline Vector3::operator Vector4() const
 	VectorData zero = _mm_setzero_ps();
 
 	Vector4 v4(mData);
-	v4.mData = _mm_shuffle_ps(mData, zero, _MM_SHUFFLE(0, 2, 1, 0));
+
+	VectorData temp;
+	// temp = z / z / 0 / 0
+	temp = _mm_shuffle_ps(zero, mData, _MM_SHUFFLE(0, 0, 2, 2));
+	// v4.mData = x / y / z / 0
+	v4.mData = _mm_shuffle_ps(mData, temp, _MM_SHUFFLE(2, 0, 1, 0));
 
 	return v4;
 }
@@ -453,10 +458,46 @@ inline VectorBase Vector3::Normalized() const
 
 inline VectorBase Vector3::Cross(const Vector3& rhs) const
 {
+	VectorBase res;
+
+	// y1 / z1 / x1 / ??
+	VectorData leftMul = _mm_shuffle_ps(mData, mData, _MM_SHUFFLE(0, 0, 2, 1));
+	// z2 / x2 / y2 / ??
+	VectorData rightMul = _mm_shuffle_ps(rhs.mData, rhs.mData, _MM_SHUFFLE(0, 1, 0, 2));
+
+	res.mData = _mm_mul_ps(leftMul, rightMul);
+
+	// z1 / x1 / y1 / ??
+	leftMul = _mm_shuffle_ps(mData, mData, _MM_SHUFFLE(0, 1, 0, 2));
+	// y2 / z2 / x2 / ??
+	rightMul = _mm_shuffle_ps(rhs.mData, rhs.mData, _MM_SHUFFLE(0, 0, 2, 1));
+
+	leftMul = _mm_mul_ps(leftMul, rightMul);
+	res.mData = _mm_sub_ps(res.mData, leftMul);
+
+	return res;
 }
 
 inline VectorBase Vector3::Cross(const Vector3& lhs, const Vector3& rhs)
 {
+	VectorBase res;
+
+	// y1 / z1 / x1 / ??
+	VectorData leftMul = _mm_shuffle_ps(lhs.mData, lhs.mData, _MM_SHUFFLE(0, 0, 2, 1));
+	// z2 / x2 / y2 / ??
+	VectorData rightMul = _mm_shuffle_ps(rhs.mData, rhs.mData, _MM_SHUFFLE(0, 1, 0, 2));
+
+	res.mData = _mm_mul_ps(leftMul, rightMul);
+
+	// z1 / x1 / y1 / ??
+	leftMul = _mm_shuffle_ps(lhs.mData, lhs.mData, _MM_SHUFFLE(0, 1, 0, 2));
+	// y2 / z2 / x2 / ??
+	rightMul = _mm_shuffle_ps(rhs.mData, rhs.mData, _MM_SHUFFLE(0, 0, 2, 1));
+
+	leftMul = _mm_mul_ps(leftMul, rightMul);
+	res.mData = _mm_sub_ps(res.mData, leftMul);
+
+	return res;
 }
 
 inline Vector3::Vector3(VectorData vData)

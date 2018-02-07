@@ -214,7 +214,7 @@ inline VectorBase operator/(float lhs, const VectorBase& rhs)
 //                  Vector2
 // -------------------------------------------
 
-inline Vector2::Vector2() : 
+inline Vector2::Vector2() :
 	VectorBase()
 {
 }
@@ -429,10 +429,24 @@ inline VectorBase Vector3::Normalized() const
 
 inline VectorBase Vector3::Cross(const Vector3& rhs) const
 {
+	VectorBase v;
+	v.mData[0] = mData[1] * rhs.mData[2] - mData[2] * rhs.mData[1];
+	v.mData[1] = mData[2] * rhs.mData[0] - mData[0] * rhs.mData[2];
+	v.mData[2] = mData[0] * rhs.mData[1] - mData[1] * rhs.mData[0];
+	v.mData[3] = 0.0f;
+
+	return v;
 }
 
 inline VectorBase Vector3::Cross(const Vector3& lhs, const Vector3& rhs)
 {
+	VectorBase v;
+	v.mData[0] = lhs.mData[1] * rhs.mData[2] - lhs.mData[2] * rhs.mData[1];
+	v.mData[1] = lhs.mData[2] * rhs.mData[0] - lhs.mData[0] * rhs.mData[2];
+	v.mData[2] = lhs.mData[0] * rhs.mData[1] - lhs.mData[1] * rhs.mData[0];
+	v.mData[3] = 0.0f;
+
+	return v;
 }
 
 inline Vector3::Vector3(const VectorData vData)
