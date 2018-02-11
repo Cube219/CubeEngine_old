@@ -17,7 +17,7 @@ namespace cube
 
 		struct BaseRenderBufferInfo
 		{
-			WPtr<BaseRenderBuffer> buffer;
+			SPtr<const BaseRenderBuffer> buffer;
 			uint64_t offset;
 			uint64_t range;
 		};

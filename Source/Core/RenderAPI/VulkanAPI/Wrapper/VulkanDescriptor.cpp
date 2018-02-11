@@ -210,7 +210,7 @@ namespace cube
 		{
 			VkDescriptorBufferInfo* bufInfos = new VkDescriptorBufferInfo[bufferNum];
 			for(uint32_t i = 0; i < bufferNum; i++) {
-				bufInfos[i].buffer = SPCast(VulkanBuffer)(buffers[i].buffer.lock())->GetHandle();
+				bufInfos[i].buffer = SPCast(const VulkanBuffer)(buffers[i].buffer)->GetHandle();
 				bufInfos[i].offset = buffers[i].offset;
 				bufInfos[i].range = buffers[i].range;
 			}
