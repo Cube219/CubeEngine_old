@@ -40,13 +40,14 @@ namespace cube
 			SPtr<BasePlatformFile> metaFile = mFileSystem->OpenFile(metaPath, FileAccessModeBits::Read);
 
 			uint64_t size = metaFile->GetFileSize();
-			char* metaString = (char*)malloc(size);
+			char* metaString = (char*)malloc(size + 1);
 
 			uint64_t readSize = 0;
 			metaFile->Read(metaString, size, readSize);
 			metaString[size] = '\0';
 
 			Json metaJson = Json::parse(metaString);
+			free(metaString);
 			
 			String resName = metaJson["res_name"];
 
