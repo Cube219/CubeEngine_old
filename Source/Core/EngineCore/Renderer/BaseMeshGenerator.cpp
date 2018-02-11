@@ -71,18 +71,12 @@ namespace cube
 			float dTheta = 2.0f * Math::Pi / sliceCount;
 			for(int i = 0; i < sliceCount; i++) {
 				// Up
-				vertices[i * 2].pos.x = 0.5f * Math::Cos(dTheta * i);
-				vertices[i * 2].pos.y = 1.0f;
-				vertices[i * 2].pos.z = 0.5f * Math::Sin(dTheta * i);
-				vertices[i * 2].pos.w = 1.0f;
+				vertices[i * 2].pos = {0.5f * Math::Cos(dTheta * i), 1.0f, 0.5f * Math::Sin(dTheta * i), 1.0f};
 				vertices[i * 2].color = {1.0f, 1.0f, 1.0f, 1.0f};
 				vertices[i * 2].texCoord = {0.0f, 0.0f};
 
 				// Down
-				vertices[i * 2 + 1].pos.x = 0.5f * Math::Cos(dTheta * i);
-				vertices[i * 2 + 1].pos.y = -1.0f;
-				vertices[i * 2 + 1].pos.z = 0.5f * Math::Sin(dTheta * i);
-				vertices[i * 2 + 1].pos.w = 1.0f;
+				vertices[i * 2 + 1].pos = {0.5f * Math::Cos(dTheta * i), -1.0f, 0.5f * Math::Sin(dTheta * i), 1.0f};
 				vertices[i * 2 + 1].color = {1.0f, 1.0f, 1.0f, 1.0f};
 				vertices[i * 2 + 1].texCoord = {0.0f, 0.0f};
 			}
@@ -109,10 +103,7 @@ namespace cube
 
 			// Top
 			Vertex v;
-			v.pos.x = 0.0f;
-			v.pos.y = 1.0f;
-			v.pos.z = 0.0f;
-			v.pos.w = 1.0f;
+			v.pos = {0.0f, 1.0f, 0.0f, 1.0f};
 			v.color = {1.0f, 1.0f, 1.0f, 1.0f};
 			v.texCoord = {0.0f, 0.0f};
 			vertices.push_back(v); // index: sliceCount * 2
@@ -127,10 +118,7 @@ namespace cube
 			indices.push_back(0);
 
 			// Bottom
-			v.pos.x = 0.0f;
-			v.pos.y = -1.0f;
-			v.pos.z = 0.0f;
-			v.pos.w = 1.0f;
+			v.pos = {0.0f, -1.0f, 0.0f, 1.0f};
 			v.color = {1.0f, 1.0f, 1.0f, 1.0f};
 			v.texCoord = {0.0f, 0.0f};
 			vertices.push_back(v); // index: sliceCount * 2 + 1
@@ -217,18 +205,14 @@ namespace cube
 			// Project onto sphere
 			Vector<Vertex>& meshVertices = mesh->GetVertex();
 			for(uint64_t i = 0; i < meshVertices.size(); i++) {
-				glm::vec3 v;
-				v.x = meshVertices[i].pos.x;
-				v.y = meshVertices[i].pos.y;
-				v.z = meshVertices[i].pos.z;
+				Vector3 v;
+				v = meshVertices[i].pos;
 
-				auto vLength = glm::length(v);
+				auto vLength = v.Length();
 				v /= vLength;
 				v *= 0.5f;
 
-				meshVertices[i].pos.x = v.x;
-				meshVertices[i].pos.y = v.y;
-				meshVertices[i].pos.z = v.z;
+				meshVertices[i].pos = v;
 			}
 
 			SetNormalVector(mesh);
@@ -290,20 +274,11 @@ namespace cube
 				Vertex v2 = oldVertices[oldIndices[i * 3 + 2]];
 
 				Vertex m0, m1, m2;
-				m0.pos.x = (v0.pos.x + v1.pos.x) / 2.0f;
-				m0.pos.y = (v0.pos.y + v1.pos.y) / 2.0f;
-				m0.pos.z = (v0.pos.z + v1.pos.z) / 2.0f;
-				m0.pos.w = 1.0f;
+				m0.pos = (v0.pos + v1.pos) / 2.0f;
 
-				m1.pos.x = (v1.pos.x + v2.pos.x) / 2.0f;
-				m1.pos.y = (v1.pos.y + v2.pos.y) / 2.0f;
-				m1.pos.z = (v1.pos.z + v2.pos.z) / 2.0f;
-				m1.pos.w = 1.0f;
+				m1.pos = (v1.pos + v2.pos) / 2.0f;
 
-				m2.pos.x = (v0.pos.x + v2.pos.x) / 2.0f;
-				m2.pos.y = (v0.pos.y + v2.pos.y) / 2.0f;
-				m2.pos.z = (v0.pos.z + v2.pos.z) / 2.0f;
-				m2.pos.w = 1.0f;
+				m2.pos = (v0.pos + v2.pos) / 2.0f;
 
 				newVertices.push_back(v0);
 				newVertices.push_back(v1);
@@ -351,16 +326,12 @@ namespace cube
 				Vertex v1 = vertices[i1];
 				Vertex v2 = vertices[i2];
 
-				glm::vec3 t0;
-				t0.x = v1.pos.x - v0.pos.x;
-				t0.y = v1.pos.y - v0.pos.y;
-				t0.z = v1.pos.z - v0.pos.z;
-				glm::vec3 t1;
-				t1.x = v2.pos.x - v0.pos.x;
-				t1.y = v2.pos.y - v0.pos.y;
-				t1.z = v2.pos.z - v0.pos.z;
+				Vector3 t0;
+				t0 = v1.pos - v0.pos;
+				Vector3 t1;
+				t1 = v2.pos - v0.pos;
 
-				glm::vec3 n = glm::cross(t0, t1);
+				Vector3 n = Vector3::Cross(t0, t1);
 
 				vertices[i0].normal += n;
 				vertices[i1].normal += n;
@@ -368,7 +339,7 @@ namespace cube
 			}
 
 			for(auto& v : vertices) {
-				v.normal = glm::normalize(v.normal);
+				v.normal.Normalize();
 			}
 		}
 	}

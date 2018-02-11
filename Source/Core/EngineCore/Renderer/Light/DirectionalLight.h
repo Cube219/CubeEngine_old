@@ -2,8 +2,6 @@
 
 #include "../../EngineCoreHeader.h"
 
-#include <glm.hpp>
-
 #include "BaseLight.h"
 
 namespace cube
@@ -16,12 +14,12 @@ namespace cube
 			DirectionalLight();
 			virtual ~DirectionalLight();
 
-			void SetDirection(glm::vec3& direction) { mDirection = direction; }
+			void SetDirection(Vector3& direction) { mDirection = direction; }
 
-			glm::vec3 GetDirection() const { return mDirection; }
+			Vector3 GetDirection() const { return mDirection; }
 
 		private:
-			glm::vec3 mDirection;
+			Vector3 mDirection;
 		};
 	}
 }

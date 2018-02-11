@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm.hpp>
+#include "Base/Vector.h"
 
 namespace cube
 {
@@ -8,10 +8,10 @@ namespace cube
 	{
 		struct Vertex
 		{
-			glm::vec4 pos;      // Position data
-			glm::vec4 color;    // Color
-			glm::vec3 normal;   // Normal
-			glm::vec2 texCoord; // Texture coordination
+			Vector4 pos;      // Position data
+			Vector4 color;    // Color
+			Vector3 normal;   // Normal
+			Vector2 texCoord; // Texture coordination
 		};
 	}
 }

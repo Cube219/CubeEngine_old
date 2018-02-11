@@ -2,8 +2,6 @@
 
 #include "../../EngineCoreHeader.h"
 
-#include <glm.hpp>
-
 #include "BaseLight.h"
 
 namespace cube
@@ -17,14 +15,14 @@ namespace cube
 			virtual ~PointLight();
 
 			void SetRange(float range) { mRange = range; }
-			void SetmAttenuation(glm::vec3& att) { mAttenuation = att; }
+			void SetmAttenuation(Vector3& att) { mAttenuation = att; }
 
 			float GetRange() const { return mRange; }
-			glm::vec3 GetmAttenuation() const { return mAttenuation; }
+			Vector3 GetmAttenuation() const { return mAttenuation; }
 
 		private:
 			float mRange;
-			glm::vec3 mAttenuation; // TODO: ¹»±î?
+			Vector3 mAttenuation; // TODO: ¹»±î?
 		};
 	}
 }

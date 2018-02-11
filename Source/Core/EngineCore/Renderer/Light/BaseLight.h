@@ -2,7 +2,7 @@
 
 #include "../../EngineCoreHeader.h"
 
-#include <glm.hpp>
+#include "Base/Vector.h"
 
 namespace cube
 {
@@ -14,22 +14,22 @@ namespace cube
 			BaseLight();
 			virtual ~BaseLight();
 
-			void SetAmbient(glm::vec4& ambient) { mAmbient = ambient; }
-			void SetDiffuse(glm::vec4& diffuse) { mDiffuse = diffuse; }
-			void SetSpecular(glm::vec4& specular) { mSpecular = specular; }
-			void SetPosition(glm::vec3& position) { mPosition = position; }
+			void SetAmbient(Vector4& ambient) { mAmbient = ambient; }
+			void SetDiffuse(Vector4& diffuse) { mDiffuse = diffuse; }
+			void SetSpecular(Vector4& specular) { mSpecular = specular; }
+			void SetPosition(Vector3& position) { mPosition = position; }
 
-			glm::vec4 GetAmbient() const { return mAmbient; }
-			glm::vec4 GetDiffuse() const { return mDiffuse; }
-			glm::vec4 GetSpecular() const { return mSpecular; }
-			glm::vec3 GetPosition() const { return mPosition; }
+			Vector4 GetAmbient() const { return mAmbient; }
+			Vector4 GetDiffuse() const { return mDiffuse; }
+			Vector4 GetSpecular() const { return mSpecular; }
+			Vector3 GetPosition() const { return mPosition; }
 
 		protected:
-			glm::vec4 mAmbient;
-			glm::vec4 mDiffuse;
-			glm::vec4 mSpecular;
+			Vector4 mAmbient;
+			Vector4 mDiffuse;
+			Vector4 mSpecular;
 			
-			glm::vec3 mPosition;
+			Vector3 mPosition;
 		};
 	}
 }

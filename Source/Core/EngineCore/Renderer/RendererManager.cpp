@@ -332,6 +332,7 @@ namespace cube
 		{
 			BaseRenderGraphicsPipelineInitializer initializer;
 
+			uint32_t currentVertexOffset = 0;
 			BaseRenderGraphicsPipelineInitializer::VertexInputAttribute attr;
 			attr.location = 0; // Position data
 			attr.format = DataFormat::R32G32B32A32_SFloat;
@@ -350,7 +351,7 @@ namespace cube
 
 			attr.location = 3; // Texture coordination
 			attr.format = DataFormat::R32G32_SFloat;
-			attr.offset = 44;
+			attr.offset = 48;
 			initializer.vertexInputAttributes.push_back(attr);
 
 			initializer.vertexSize = sizeof(Vertex);
