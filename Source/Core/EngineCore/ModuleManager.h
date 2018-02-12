@@ -2,8 +2,8 @@
 
 #include "EngineCoreHeader.h"
 
-#include "BaseModule\BaseModule.h"
-#include "BasePlatform\BasePlatform.h"
+#include "BaseModule/BaseModule.h"
+#include "BasePlatform/BasePlatform.h"
 
 namespace cube
 {

@@ -2,19 +2,23 @@
 
 #include "ExampleModuleHeader.h"
 
-#include "BaseModule\BaseModule.h"
+#include "BaseModule/BaseModule.h"
 
 namespace cube
 {
 	namespace module
 	{
-		extern "C" EXAMPLE_MODULE_EXPORT void GetModuleName();
-
 		class ExampleModule : public BaseModule
 		{
 		public:
 			ExampleModule();
 			virtual ~ExampleModule();
+
+			void Init() final override;
+
+			void Update(float dt) final override;
+
+			void Destroy() final override;
 		};
 	}
 }
