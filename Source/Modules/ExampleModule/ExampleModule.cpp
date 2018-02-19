@@ -12,7 +12,6 @@ namespace cube
 		ExampleModule::ExampleModule()
 		{
 			mInfo.name = "ExampleModule";
-			mInfo.isRunAfterComponent = false;
 		}
 
 		ExampleModule::~ExampleModule()

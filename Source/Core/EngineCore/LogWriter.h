@@ -23,7 +23,7 @@ namespace cube
 		private:
 			LogWriter() = delete;
 			LogWriter(const LogWriter& other) = delete;
-			LogWriter& LogWriter::operator=(const LogWriter& other) = delete;
+			//LogWriter& LogWriter::operator=(const LogWriter& other) = delete; // TODO: 왜 에러가?
 			
 			// Only can access to the friend class (EngineCore)
 			static void Init(SPtr<platform::BasePlatform>& platform);

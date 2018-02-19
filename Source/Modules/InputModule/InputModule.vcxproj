@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{79CD5EF1-C2FB-432B-A38E-3DB371C00C98}</ProjectGuid>
-    <RootNamespace>EngineCore</RootNamespace>
+    <ProjectGuid>{B1F5FB14-F492-4490-A5E1-0ABEDF551C85}</ProjectGuid>
+    <RootNamespace>InputModule</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,32 +70,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(SolutionDir)Dependencies\stb\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(SolutionDir)Dependencies\stb\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>INPUT_MODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -104,6 +100,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -117,89 +114,25 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>INPUT_MODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Assertion.h" />
-    <ClInclude Include="EngineCore.h" />
-    <ClInclude Include="EngineCoreHeader.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="LogWriter.h" />
-    <ClInclude Include="ModuleManager.h" />
-    <ClInclude Include="Renderer\BaseMeshGenerator.h" />
-    <ClInclude Include="Renderer\CameraRenderer3D.h" />
-    <ClInclude Include="Renderer\Light\BaseLight.h" />
-    <ClInclude Include="Renderer\Light\DirectionalLight.h" />
-    <ClInclude Include="Renderer\Light\PointLight.h" />
-    <ClInclude Include="Renderer\Light\SpotLight.h" />
-    <ClInclude Include="Renderer\Material\Material.h" />
-    <ClInclude Include="Renderer\Material\MaterialInstance.h" />
-    <ClInclude Include="Renderer\Material\Shader.h" />
-    <ClInclude Include="Renderer\Mesh.h" />
-    <ClInclude Include="Renderer\Renderer3D.h" />
-    <ClInclude Include="Renderer\RendererManager.h" />
-    <ClInclude Include="Renderer\Texture.h" />
-    <ClInclude Include="Renderer\Vertex.h" />
-    <ClInclude Include="Resource\BaseResource.h" />
-    <ClInclude Include="Resource\ResourceManager.h" />
-    <ClInclude Include="Resource\ResourcePointer.h" />
-    <ClInclude Include="String\ImmutableString.h" />
-    <ClInclude Include="String\PathString.h" />
-    <ClInclude Include="String\BasicString.h" />
-    <ClInclude Include="String\StringManager.h" />
-    <ClInclude Include="Thread\MutexLock.h" />
-    <ClInclude Include="Thread\Thread.h" />
-    <ClInclude Include="Thread\ThreadManager.h" />
-    <ClInclude Include="Time\GameTime.h" />
-    <ClInclude Include="Time\TimeManager.h" />
+    <ClInclude Include="InputModule.h" />
+    <ClInclude Include="InputModuleHeader.h" />
+    <ClInclude Include="KeyboardMouseInput.h" />
+    <ClInclude Include="XboxControllerInput.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EngineCore.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="LogWriter.cpp" />
-    <ClCompile Include="ModuleManager.cpp" />
-    <ClCompile Include="Renderer\BaseMeshGenerator.cpp" />
-    <ClCompile Include="Renderer\CameraRenderer3D.cpp" />
-    <ClCompile Include="Renderer\Light\BaseLight.cpp" />
-    <ClCompile Include="Renderer\Light\DirectionalLight.cpp" />
-    <ClCompile Include="Renderer\Light\PointLight.cpp" />
-    <ClCompile Include="Renderer\Light\SpotLight.cpp" />
-    <ClCompile Include="Renderer\Material\Material.cpp" />
-    <ClCompile Include="Renderer\Material\MaterialInstance.cpp" />
-    <ClCompile Include="Renderer\Material\Shader.cpp" />
-    <ClCompile Include="Renderer\Mesh.cpp" />
-    <ClCompile Include="Renderer\Renderer3D.cpp" />
-    <ClCompile Include="Renderer\RendererManager.cpp" />
-    <ClCompile Include="Renderer\Texture.cpp" />
-    <ClCompile Include="Resource\BaseResource.cpp" />
-    <ClCompile Include="Resource\ResourceManager.cpp" />
-    <ClCompile Include="String\ImmutableString.cpp" />
-    <ClCompile Include="String\PathString.cpp" />
-    <ClCompile Include="String\BasicString.cpp" />
-    <ClCompile Include="String\StringManager.cpp" />
-    <ClCompile Include="Thread\Thread.cpp" />
-    <ClCompile Include="Thread\ThreadManager.cpp" />
-    <ClCompile Include="Time\GameTime.cpp" />
-    <ClCompile Include="Time\TimeManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Base\Base\Base.vcxproj">
-      <Project>{84d3a49e-2aef-4370-aa37-3d297a45fc91}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Renderer\Fragment.glsl" />
-    <None Include="Renderer\Vertex.glsl" />
+    <ClCompile Include="InputModule.cpp" />
+    <ClCompile Include="KeyboardMouseInput.cpp" />
+    <ClCompile Include="XboxControllerInput.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

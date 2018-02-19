@@ -58,19 +58,14 @@ namespace cube
 
 			void Resize(uint32_t width, uint32_t height);
 
-			void KeyDown(KeyCode keyCode);
-			void KeyUp(KeyCode keyCode);
-			void MouseDown(MouseButtonType buttonType);
-			void MouseUp(MouseButtonType buttonType);
-			void MouseWheel(int wheelDelta);
-			void UpdateMousePos(uint32_t x, uint32_t y);
-
 			SPtr<platform::BasePlatform> mPlatform;
 
 			SPtr<RendererManager> mRendererManager;
 			SPtr<ResourceManager> mResourceManager;
 			SPtr<TimeManager> mTimeManager;
 			SPtr<StringManager> mStringManager;
+
+			SPtr<ThreadManager> mThreadManager;
 
 			UPtr<ModuleManager> mModuleManager;
 

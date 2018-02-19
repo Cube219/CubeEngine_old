@@ -4,6 +4,8 @@
 
 #include "BaseModule/BaseModule.h"
 #include "BasePlatform/BasePlatform.h"
+#include "Thread/ThreadManager.h"
+#include "Thread/Thread.h"
 
 namespace cube
 {
@@ -12,11 +14,19 @@ namespace cube
 		class ModuleManager
 		{
 		public:
-			ModuleManager(SPtr<platform::BasePlatform>& platform);
+			ModuleManager(SPtr<ThreadManager>& threadManager);
 			~ModuleManager();
+
+			void AddModule(SPtr<module::BaseModule>& m);
 			
 		private:
-			SPtr<platform::BasePlatform> mPlatform_ref;
+			void RunModule(SPtr<module::BaseModule>& module);
+
+			HashMap<const char*, SPtr<module::BaseModule>> mModuleLookup;
+
+			Vector<SPtr<Thread>> mThreadsToRunModules;
+
+			SPtr<ThreadManager> mThreadManager;
 		};
 	}
 }

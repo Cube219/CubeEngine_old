@@ -102,4 +102,6 @@ namespace cube
 		RightBracket = 221,
 		Quote = 222
 	};
+
+	constexpr int MaxKeyCode = 223;
 }

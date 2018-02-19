@@ -8,7 +8,6 @@ namespace cube
 		struct ModuleInfo
 		{
 			const char* name;
-			bool isRunAfterComponent;
 			Vector<const char*> dependencies;
 		};
 
