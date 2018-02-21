@@ -89,7 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
@@ -117,7 +117,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

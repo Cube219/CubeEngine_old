@@ -4,14 +4,12 @@
 
 #include "BaseModule/BaseModule.h"
 #include "BasePlatform/BasePlatform.h"
-#include "Thread/ThreadManager.h"
-#include "Thread/Thread.h"
 
 namespace cube
 {
 	namespace core
 	{
-		class ModuleManager
+		class ENGINE_CORE_EXPORT ModuleManager
 		{
 		public:
 			ModuleManager(SPtr<ThreadManager>& threadManager);

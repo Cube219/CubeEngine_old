@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Base/BaseTypes.h"
+#include "EngineCore/EngineCore.h"
 
 namespace cube
 {
@@ -19,7 +21,7 @@ namespace cube
 
 			ModuleInfo GetModuleInfo() const { return mInfo; }
 
-			virtual void Init() = 0;
+			virtual void Init(core::EngineCore* eCore, ...) = 0;
 
 			virtual void Update(float dt) = 0;
 

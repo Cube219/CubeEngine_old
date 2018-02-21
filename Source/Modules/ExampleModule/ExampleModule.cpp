@@ -3,7 +3,7 @@
 namespace cube
 {
 	namespace module
-	{
+	{/*
 		BaseModule* CreateModule()
 		{
 			return new ExampleModule;
@@ -28,6 +28,6 @@ namespace cube
 
 		void ExampleModule::Destroy()
 		{
-		}
+		}*/
 	}
 }

@@ -45,7 +45,7 @@ namespace cube
 			InputModule(SPtr<platform::BasePlatform>& platform);
 			~InputModule();
 
-			void Init() final override;
+			void Init(core::EngineCore* eCore, ...) final override;
 
 			void Update(float dt) final override;
 

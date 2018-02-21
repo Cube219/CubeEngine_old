@@ -2,12 +2,13 @@
 
 #include "ExampleModuleHeader.h"
 
-#include "BaseModule/BaseModule.h"
+//#include "BaseModule/BaseModule.h"
 
 namespace cube
 {
 	namespace module
 	{
+		/*
 		class ExampleModule : public BaseModule
 		{
 		public:
@@ -19,6 +20,6 @@ namespace cube
 			void Update(float dt) final override;
 
 			void Destroy() final override;
-		};
+		}*/
 	}
 }

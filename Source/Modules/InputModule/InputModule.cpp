@@ -18,7 +18,7 @@ namespace cube
 			mInfo.name = "InputModule";
 		}
 
-		void InputModule::Init()
+		void InputModule::Init(core::EngineCore* eCore, ...)
 		{
 			mKMInput = std::make_unique<KeyboardMouseInput>(mPlatform);
 

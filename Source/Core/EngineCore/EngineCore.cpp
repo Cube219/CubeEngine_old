@@ -3,6 +3,7 @@
 #include "Time/TimeManager.h"
 #include "Time/GameTime.h"
 #include "String/StringManager.h"
+#include "Thread/ThreadManager.h"
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
 #include "Renderer/Mesh.h"
