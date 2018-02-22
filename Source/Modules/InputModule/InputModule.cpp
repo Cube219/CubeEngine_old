@@ -8,8 +8,7 @@ namespace cube
 {
 	namespace module
 	{
-		InputModule::InputModule(SPtr<platform::BasePlatform>& platform) : 
-			mPlatform(platform)
+		InputModule::InputModule()
 		{
 		}
 
@@ -20,7 +19,9 @@ namespace cube
 
 		void InputModule::Init(core::EngineCore* eCore, ...)
 		{
-			mKMInput = std::make_unique<KeyboardMouseInput>(mPlatform);
+			SPtr<platform::BasePlatform> platform = eCore->GetPlatform();
+
+			mKMInput = std::make_unique<KeyboardMouseInput>(platform);
 
 			Action jump;
 			jump.bindedDigitalButtons.push_back(KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::SpaceBar));

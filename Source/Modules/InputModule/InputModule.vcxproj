@@ -134,6 +134,11 @@
     <ClCompile Include="KeyboardMouseInput.cpp" />
     <ClCompile Include="XboxControllerInput.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\EngineCore\EngineCore.vcxproj">
+      <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

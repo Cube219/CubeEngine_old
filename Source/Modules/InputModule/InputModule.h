@@ -42,7 +42,7 @@ namespace cube
 		class INPUT_MODULE_EXPORT InputModule : public BaseModule
 		{
 		public:
-			InputModule(SPtr<platform::BasePlatform>& platform);
+			InputModule();
 			~InputModule();
 
 			void Init(core::EngineCore* eCore, ...) final override;
@@ -62,8 +62,6 @@ namespace cube
 
 			HashMap<String, Action> mActions;
 			HashMap<String, Axis> mAxes;
-
-			SPtr<platform::BasePlatform> mPlatform;
 		};
 	}
 }
