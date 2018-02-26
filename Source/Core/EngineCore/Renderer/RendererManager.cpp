@@ -1,5 +1,7 @@
 #include "RendererManager.h"
 
+#include "Base/format.h"
+#include "../LogWriter.h"
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
 #include "Material/Shader.h"
@@ -25,7 +27,7 @@ namespace cube
 					break;
 
 				default:
-					LogWriter::WriteLog(L"Unknown renderer type");
+					CUBE_LOG(LogType::Error, L"Unknown renderer type");
 					return;
 			}
 
@@ -95,7 +97,7 @@ namespace cube
 			int index = material->mIndex;
 
 			if(index == -1) {
-				LogWriter::WriteLog(L"RendererManager: This material is not registed.");
+				CUBE_LOG(LogType::Error, L"This material is not registed.");
 				return;
 			}
 
@@ -129,7 +131,7 @@ namespace cube
 			int index = renderer->mIndex;
 
 			if(index == -1) {
-				LogWriter::WriteLog(L"RendererManager: This renderer is not registed.");
+				CUBE_LOG(LogType::Error, L"This renderer is not registed.");
 				return;
 			}
 

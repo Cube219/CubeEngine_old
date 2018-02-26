@@ -35,7 +35,7 @@ namespace cube
 
 			uint32_t nextIdleIndex = (mIdleThreadIndices_front + 1) % mThreads.size();
 			if(nextIdleIndex == mIdleThreadIndices_back) {
-				LogWriter::WriteDebugLog(L"ThreadManager: There's no idle thread in the pool.");
+				CUBE_LOG(LogType::Error, L"There's no idle thread in the pool.");
 				return nullptr;
 			}
 

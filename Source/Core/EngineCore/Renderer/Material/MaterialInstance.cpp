@@ -49,7 +49,7 @@ namespace cube
 		{
 			auto res = mParameterIndexLookupMap.find(name);
 			if(res == mParameterIndexLookupMap.end()) {
-				LogWriter::WriteLog(fmt::format(L"MaterialInstance: Cannot find parameter name {0}.", name));
+				CUBE_LOG(LogType::Error, fmt::format(L"Cannot find parameter name {0}.", name));
 				return;
 			}
 
@@ -58,7 +58,7 @@ namespace cube
 			uint64_t dataSize = sizeof(data);
 #ifdef _DEBUG
 			if(dataSize != mParamInfos[paramIndex].size) {
-				LogWriter::WriteLog(fmt::format(L"MaterialInstance: Wrong parameter size({0} != {1}).", param.size, dataSize));
+				CUBE_LOG(LogType::Error, fmt::format(L"Wrong parameter size({0} != {1}).", param.size, dataSize));
 				return;
 			}
 #endif // _DEBUG
@@ -76,7 +76,7 @@ namespace cube
 		{
 			auto res = mParameterIndexLookupMap.find(name);
 			if(res == mParameterIndexLookupMap.end()) {
-				LogWriter::WriteLog(fmt::format(L"Material: Cannot find parameter name {0}.", name));
+				CUBE_LOG(LogType::Error, fmt::format(L"Cannot find parameter name {0}.", name));
 				return;
 			}
 
@@ -84,7 +84,7 @@ namespace cube
 
 #ifdef _DEBUG
 			if(mParamInfos[paramIndex].type != MaterialParameterType::Texture) {
-				LogWriter::WriteLog(fmt::format(L"Material: The Parameter {0} is not a Texture parameter.", name));
+				CUBE_LOG(LogType::Error, fmt::format(L"The Parameter {0} is not a Texture parameter.", name));
 				return;
 			}
 #endif // _DEBUG

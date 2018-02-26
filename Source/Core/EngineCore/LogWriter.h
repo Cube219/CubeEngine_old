@@ -2,19 +2,23 @@
 
 #include "EngineCoreHeader.h"
 
-#include "BasePlatform\BasePlatform.h"
+#include "BasePlatform/BasePlatform.h"
 
 namespace cube
 {
 	namespace core
 	{
+		enum class LogType
+		{
+			Info, Warning, Error
+		};
+
 		class LogWriter
 		{
 			friend class EngineCore;
 		public:
 
-			static void WriteLog(WString msg);
-			static void WriteDebugLog(WString msg);
+			static void WriteLog(LogType type, WString msg, const char* fileName, int lineNum);
 
 		private:
 			LogWriter() = delete;
@@ -24,7 +28,11 @@ namespace cube
 			// Only can access to the friend class (EngineCore)
 			static void Init(SPtr<platform::BasePlatform>& platform);
 
+			static const char* SplitFileName(const char* fullPath);
+
 			static SPtr<platform::BasePlatform> mPlatform;
 		};
+
+#define CUBE_LOG(type, msg) LogWriter::WriteLog(type, msg, __FILE__, __LINE__)
 	}
 }

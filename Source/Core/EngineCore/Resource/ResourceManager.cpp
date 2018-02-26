@@ -1,5 +1,7 @@
 #include "ResourceManager.h"
 
+#include "../LogWriter.h"
+#include "Base/format.h"
 #include "BaseResource.h"
 
 namespace cube
@@ -67,7 +69,7 @@ namespace cube
 
 			if(loadedRes == nullptr) {
 				if(isFindImporter == true)
-					LogWriter::WriteLog(fmt::format(L"ResourceManager: Cannot find the importer whose res_name is \"{0}\".", resName));
+					CUBE_LOG(LogType::Error, fmt::format(L"Cannot find the importer whose res_name is \"{0}\".", resName));
 
 				return nullptr;
 			}
