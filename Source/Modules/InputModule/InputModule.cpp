@@ -15,11 +15,11 @@ namespace cube
 
 		InputModule::InputModule()
 		{
+			mInfo.name = "InputModule";
 		}
 
 		InputModule::~InputModule()
 		{
-			mInfo.name = "InputModule";
 		}
 
 		void InputModule::Init(core::EngineCore* eCore, ...)

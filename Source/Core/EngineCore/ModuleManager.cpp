@@ -20,6 +20,11 @@ namespace cube
 			for(auto& m : mModules) {
 				m.module->Destroy();
 			}
+
+			// mModuleLoopup must be freed before mModules
+			// Because the module cannot be freed after its DLib has been unloaded
+			mModuleLookup.clear();
+			mModules.clear();
 		}
 
 		void ModuleManager::LoadModule(String moduleName)
