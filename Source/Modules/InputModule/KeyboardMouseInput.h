@@ -44,6 +44,8 @@ namespace cube
 			bool mIsMousePressed[3];
 
 			Vector2 mMousePos;
+
+			SPtr<platform::BasePlatform> mPlatform;
 		};
 	}
 }

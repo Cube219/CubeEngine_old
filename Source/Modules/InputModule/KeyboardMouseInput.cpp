@@ -4,7 +4,8 @@ namespace cube
 {
 	namespace module
 	{
-		KeyboardMouseInput::KeyboardMouseInput(SPtr<platform::BasePlatform>& platform)
+		KeyboardMouseInput::KeyboardMouseInput(SPtr<platform::BasePlatform>& platform) : 
+			mPlatform(platform)
 		{
 			platform->SetKeyDownFunction([this](KeyCode keyCode) {
 				mIsKeyPressed[SCast(int)(keyCode)] = true;
@@ -28,6 +29,12 @@ namespace cube
 
 		KeyboardMouseInput::~KeyboardMouseInput()
 		{
+			mPlatform->SetKeyDownFunction(0);
+			mPlatform->SetKeyUpFunction(0);
+			mPlatform->SetMouseDownFunction(0);
+			mPlatform->SetMouseUpFunction(0);
+			mPlatform->SetMouseWheelFunction(0);
+			mPlatform->SetMousePosFunction(0);
 		}
 
 		bool KeyboardMouseInput::IsButtonPressed(DigitalButton button)
