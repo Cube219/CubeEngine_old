@@ -8,6 +8,11 @@ namespace cube
 {
 	namespace module
 	{
+		BaseModule* CreateModule()
+		{
+			return new InputModule();
+		}
+
 		InputModule::InputModule()
 		{
 		}

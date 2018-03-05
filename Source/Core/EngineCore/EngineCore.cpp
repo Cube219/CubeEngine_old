@@ -54,7 +54,10 @@ namespace cube
 
 			mThreadManager = std::make_shared<ThreadManager>();
 
-			mModuleManager = std::make_unique<ModuleManager>(mThreadManager);
+			mModuleManager = std::make_unique<ModuleManager>(mPlatform, mThreadManager);
+			mModuleManager->LoadModule("InputModule");
+
+			mModuleManager->InitModules();
 
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
@@ -137,11 +140,15 @@ namespace cube
 
 			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
 
+			float dt = mTimeManager->GetGlobalGameTime()->GetDeltaTime();
+
 			for(auto& go : mGos) {
 				go->Update();
 			}
 
-			mRendererManager->GetCameraRenderer3D()->RotateTemp(mTimeManager->GetGlobalGameTime()->GetDeltaTime());
+			mModuleManager->UpdateAllModules(dt);
+
+			mRendererManager->GetCameraRenderer3D()->RotateTemp(dt);
 			
 			mRendererManager->DrawAll();
 

@@ -39,6 +39,8 @@ namespace cube
 			Vector<VirtualButtonInfo> bindedVirtualButtons;
 		};
 
+		extern "C" INPUT_MODULE_EXPORT BaseModule* CreateModule();
+
 		class INPUT_MODULE_EXPORT InputModule : public BaseModule
 		{
 		public:
