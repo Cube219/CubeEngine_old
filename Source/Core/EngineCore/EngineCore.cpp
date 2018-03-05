@@ -15,6 +15,7 @@
 #include "Resource/ResourceManager.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
+#include "Component/ComponentManager.h"
 #include "Renderer/Renderer3D.h"
 #include "Renderer/CameraRenderer3D.h"
 
@@ -58,6 +59,8 @@ namespace cube
 			mModuleManager->LoadModule("InputModule");
 
 			mModuleManager->InitModules();
+
+			mComponentManager = std::make_shared<ComponentManager>();
 
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
@@ -142,11 +145,11 @@ namespace cube
 
 			float dt = mTimeManager->GetGlobalGameTime()->GetDeltaTime();
 
+			mModuleManager->UpdateAllModules(dt);
+
 			for(auto& go : mGos) {
 				go->Update();
 			}
-
-			mModuleManager->UpdateAllModules(dt);
 
 			mRendererManager->GetCameraRenderer3D()->RotateTemp(dt);
 			

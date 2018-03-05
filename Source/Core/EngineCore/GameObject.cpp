@@ -1,8 +1,13 @@
 #include "GameObject.h"
 
-#include "Renderer\Renderer3D.h"
-#include <iostream>
-#include <gtc\matrix_transform.hpp>
+#include "Base/format.h"
+#include "LogWriter.h"
+#include "EngineCore.h"
+#include "Component/Component.h"
+#include "Component/ComponentManager.h"
+#include "Renderer/Renderer3D.h"
+#include <gtc/matrix_transform.hpp>
+
 namespace cube
 {
 	namespace core
@@ -40,8 +45,47 @@ namespace cube
 			mIsTransformChanged = true;
 		}
 
+		template<typename T>
+		SPtr<T> GameObject::GetComponent()
+		{
+			const String& nameToGet = T::GetName();
+			SPtr<Componemt> componentToGet = nullptr;
+
+			for(auto& c : mComponents) {
+				if(c->GetName() == nameToGet) {
+					componentToGet = c;
+					break;
+				}
+			}
+
+			return DPCast(T)(componentToGet);
+		}
+
+		template<typename T>
+		SPtr<T> GameObject::AddComponent()
+		{
+			const String& nameToAdd = T::GetName();
+
+			for(auto& com : mComponents) {
+				if(com->GetName() == nameToAdd) {
+					CUBE_LOG(LogType::Error, fmt::format(L"Cannot add component \"{0}\". The component already exists", nameToAdd));
+					return nullptr;
+				}
+			}
+
+			SPtr<Component> c = ECore()->GetComponentManager()->CreateComponent(nameToAdd);
+			c->AttachGameObject(this);
+			mComponents.push_back(c);
+
+			return DPCast(T)(c);
+		}
+
 		void GameObject::Update()
 		{
+			for(auto& com : mComponents) {
+				com->OnUpdate();
+			}
+
 			float pos[3], rotation[3], scale[3];
 			mPosition.GetFloat3(pos);
 			mRotation.GetFloat3(rotation);

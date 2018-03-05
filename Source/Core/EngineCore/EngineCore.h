@@ -52,6 +52,7 @@ namespace cube
 			SPtr<RendererManager> GetRendererManager() const { return mRendererManager; }
 			SPtr<TimeManager> GetTimeManager() const { return mTimeManager; }
 			SPtr<StringManager> GetStringManager() const { return mStringManager; }
+			SPtr<ComponentManager> GetComponentManager() const { return mComponentManager; }
 			SPtr<platform::BasePlatform> GetPlatform() const { return mPlatform; }
 
 		private:
@@ -69,6 +70,7 @@ namespace cube
 			SPtr<ThreadManager> mThreadManager;
 
 			SPtr<ModuleManager> mModuleManager;
+			SPtr<ComponentManager> mComponentManager;
 
 			//Vector<SPtr<GameObject>> mGameObjects;
 			SPtr<Mesh> mBoxMesh;

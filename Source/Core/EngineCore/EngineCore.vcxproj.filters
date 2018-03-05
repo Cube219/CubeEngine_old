@@ -85,6 +85,12 @@
     <ClInclude Include="Resource\ResourcePointer.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Component\ComponentManager.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Component.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -160,6 +166,12 @@
     <ClCompile Include="Renderer\Material\MaterialInstance.cpp">
       <Filter>Renderer\Material</Filter>
     </ClCompile>
+    <ClCompile Include="Component\ComponentManager.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Component.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
@@ -182,6 +194,9 @@
     </Filter>
     <Filter Include="Resource">
       <UniqueIdentifier>{205412c7-7a29-4d60-b436-609eac0e786d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{cd517b62-17a3-465a-9ba5-f3d52f34b794}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

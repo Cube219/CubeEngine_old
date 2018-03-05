@@ -2,7 +2,7 @@
 
 #include "EngineCoreHeader.h"
 
-#include <Base\Vector.h>
+#include <Base/Vector.h>
 #include <glm.hpp>
 
 namespace cube
@@ -20,11 +20,17 @@ namespace cube
 			void SetRotation(Vector3 rotation);
 			void SetScale(Vector3 scale);
 			
-			Vector3 GetPosition() const;
-			Vector3 GetRotation() const;
-			Vector3 GetScale() const;
+			Vector3 GetPosition() const { return mPosition; }
+			Vector3 GetRotation() const { return mRotation; }
+			Vector3 GetScale() const { return mScale; }
 
-			SPtr<Renderer3D> GetRenderer() const;
+			SPtr<Renderer3D> GetRenderer() const { return mRenderer3D; }
+
+			template <typename T>
+			SPtr<T> GetComponent();
+
+			template <typename T>
+			SPtr<T> AddComponent();
 
 			void Update();
 
@@ -38,26 +44,9 @@ namespace cube
 			bool mIsTransformChanged;
 			glm::mat4 mScaleMatrix;
 			glm::mat4 mModelMatrix;
+
+			Vector<SPtr<Component>> mComponents;
+
 		};
-
-		inline Vector3 GameObject::GetPosition() const
-		{
-			return mPosition;
-		}
-
-		inline Vector3 GameObject::GetRotation() const
-		{
-			return mRotation;
-		}
-
-		inline Vector3 GameObject::GetScale() const
-		{
-			return mScale;
-		}
-
-		inline SPtr<Renderer3D> GameObject::GetRenderer() const
-		{
-			return mRenderer3D;
-		}
 	}
 }
