@@ -1,9 +1,9 @@
 #include "EngineCore.h"
 
-#include "InputManager.h"
 #include "Time/TimeManager.h"
 #include "Time/GameTime.h"
 #include "String/StringManager.h"
+#include "Thread/ThreadManager.h"
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
 #include "Renderer/Mesh.h"
@@ -27,13 +27,6 @@ namespace cube
 		EngineCore::EngineCore(SPtr<platform::BasePlatform>& platform) :
 			mPlatform(platform), mFPSLimit(-1)
 		{
-			platform->SetKeyDownFunction(std::bind(&EngineCore::KeyDown, this, _1));
-			platform->SetKeyUpFunction(std::bind(&EngineCore::KeyUp, this, _1));
-			platform->SetMouseDownFunction(std::bind(&EngineCore::MouseDown, this, _1));
-			platform->SetMouseUpFunction(std::bind(&EngineCore::MouseUp, this, _1));
-			platform->SetMouseWheelFunction(std::bind(&EngineCore::MouseWheel, this, _1));
-			platform->SetMousePosFunction(std::bind(&EngineCore::UpdateMousePos, this, _1, _2));
-
 			platform->SetLoopFunction(std::bind(&EngineCore::Loop, this));
 			platform->SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
 		}
@@ -59,7 +52,12 @@ namespace cube
 				std::make_unique<ShaderImporter>(mRendererManager->GetRenderAPI())
 			);
 
-			mModuleManager = std::make_unique<ModuleManager>(mPlatform);
+			mThreadManager = std::make_shared<ThreadManager>();
+
+			mModuleManager = std::make_unique<ModuleManager>(mPlatform, mThreadManager);
+			mModuleManager->LoadModule("InputModule");
+
+			mModuleManager->InitModules();
 
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
@@ -142,11 +140,15 @@ namespace cube
 
 			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
 
+			float dt = mTimeManager->GetGlobalGameTime()->GetDeltaTime();
+
 			for(auto& go : mGos) {
 				go->Update();
 			}
 
-			mRendererManager->GetCameraRenderer3D()->RotateTemp(mTimeManager->GetGlobalGameTime()->GetDeltaTime());
+			mModuleManager->UpdateAllModules(dt);
+
+			mRendererManager->GetCameraRenderer3D()->RotateTemp(dt);
 			
 			mRendererManager->DrawAll();
 
@@ -171,36 +173,6 @@ namespace cube
 		void EngineCore::Resize(uint32_t width, uint32_t height)
 		{
 			mRendererManager->Resize(width, height);
-		}
-
-		void EngineCore::KeyDown(KeyCode keyCode)
-		{
-			InputManager::KeyDown(keyCode);
-		}
-
-		void EngineCore::KeyUp(KeyCode keyCode)
-		{
-			InputManager::KeyUp(keyCode);
-		}
-
-		void EngineCore::MouseDown(MouseButtonType buttonType)
-		{
-			InputManager::MouseDown(buttonType);
-		}
-
-		void EngineCore::MouseUp(MouseButtonType buttonType)
-		{
-			InputManager::MouseUp(buttonType);
-		}
-
-		void EngineCore::MouseWheel(int wheelDelta)
-		{
-			InputManager::MouseWheel(wheelDelta);
-		}
-
-		void EngineCore::UpdateMousePos(uint32_t x, uint32_t y)
-		{
-			InputManager::UpdateMousePos(x, y);
 		}
 
 		EngineCore* ECore()

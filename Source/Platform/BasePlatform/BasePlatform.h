@@ -1,7 +1,7 @@
-#pragma once
+﻿#pragma once
 
-#include "Base\KeyCode.h"
-#include "Base\BaseTypes.h"
+#include "Base/KeyCode.h"
+#include "Base/BaseTypes.h"
 
 #include "BasePlatformDLib.h"
 #include "BasePlatformFileSystem.h"
@@ -32,6 +32,7 @@ namespace cube
 
 			SPtr<BasePlatformFileSystem> GetFileSystem();
 
+			// TODO: C#의 Event처럼 여러 함수들을 등록할 수 있게 하기?
 			void SetKeyDownFunction(std::function<void(KeyCode)> pFunction);
 			void SetKeyUpFunction(std::function<void(KeyCode)> pFunction);
 			void SetMouseDownFunction(std::function<void(MouseButtonType)> pFunction);

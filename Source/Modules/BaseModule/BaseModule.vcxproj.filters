@@ -3,4 +3,7 @@
   <ItemGroup>
     <ClInclude Include="BaseModule.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="a.cpp" />
+  </ItemGroup>
 </Project>

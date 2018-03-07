@@ -52,18 +52,12 @@ namespace cube
 			SPtr<RendererManager> GetRendererManager() const { return mRendererManager; }
 			SPtr<TimeManager> GetTimeManager() const { return mTimeManager; }
 			SPtr<StringManager> GetStringManager() const { return mStringManager; }
+			SPtr<platform::BasePlatform> GetPlatform() const { return mPlatform; }
 
 		private:
 			void Loop();
 
 			void Resize(uint32_t width, uint32_t height);
-
-			void KeyDown(KeyCode keyCode);
-			void KeyUp(KeyCode keyCode);
-			void MouseDown(MouseButtonType buttonType);
-			void MouseUp(MouseButtonType buttonType);
-			void MouseWheel(int wheelDelta);
-			void UpdateMousePos(uint32_t x, uint32_t y);
 
 			SPtr<platform::BasePlatform> mPlatform;
 
@@ -71,6 +65,8 @@ namespace cube
 			SPtr<ResourceManager> mResourceManager;
 			SPtr<TimeManager> mTimeManager;
 			SPtr<StringManager> mStringManager;
+
+			SPtr<ThreadManager> mThreadManager;
 
 			UPtr<ModuleManager> mModuleManager;
 

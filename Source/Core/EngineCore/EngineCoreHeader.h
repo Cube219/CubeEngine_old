@@ -13,8 +13,6 @@ namespace cube
 		class ThreadManager;
 		class Thread;
 
-		class InputManager;
-		
 		class TimeManager;
 		class GameTime;
 

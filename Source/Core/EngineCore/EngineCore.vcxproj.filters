@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClInclude Include="EngineCore.h" />
     <ClInclude Include="EngineCoreHeader.h" />
-    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Renderer\CameraRenderer3D.h">
       <Filter>Renderer</Filter>
     </ClInclude>
@@ -89,7 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
-    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Renderer\CameraRenderer3D.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
