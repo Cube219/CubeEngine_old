@@ -14,6 +14,7 @@ namespace cube
 		public:
 			GameObject();
 			GameObject(SPtr<Renderer3D> renderer3D);
+			GameObject(SPtr<CameraRenderer3D> cameraRenderer3D);
 			~GameObject();
 
 			void SetPosition(Vector3 position);
@@ -23,6 +24,10 @@ namespace cube
 			Vector3 GetPosition() const { return mPosition; }
 			Vector3 GetRotation() const { return mRotation; }
 			Vector3 GetScale() const { return mScale; }
+
+			Vector3 GetForward() const { return mForward; }
+			Vector3 GetUp() const { return mUp; }
+			Vector3 GetRight() const { return mRight; }
 
 			SPtr<Renderer3D> GetRenderer() const { return mRenderer3D; }
 
@@ -36,6 +41,7 @@ namespace cube
 
 		private:
 			SPtr<Renderer3D> mRenderer3D;
+			SPtr<CameraRenderer3D> mCameraRenderer3D;
 
 			// Variables related to transform
 			Vector3 mPosition;
@@ -45,8 +51,11 @@ namespace cube
 			glm::mat4 mScaleMatrix;
 			glm::mat4 mModelMatrix;
 
-			Vector<SPtr<Component>> mComponents;
+			Vector3 mForward;
+			Vector3 mUp;
+			Vector3 mRight;
 
+			Vector<SPtr<Component>> mComponents;
 		};
 	}
 }

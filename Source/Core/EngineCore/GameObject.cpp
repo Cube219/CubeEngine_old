@@ -1,4 +1,4 @@
-#include "GameObject.h"
+﻿#include "GameObject.h"
 
 #include "Base/format.h"
 #include "LogWriter.h"
@@ -6,6 +6,7 @@
 #include "Component/Component.h"
 #include "Component/ComponentManager.h"
 #include "Renderer/Renderer3D.h"
+#include "Renderer/CameraRenderer3D.h"
 #include <gtc/matrix_transform.hpp>
 
 namespace cube
@@ -14,13 +15,21 @@ namespace cube
 	{
 		GameObject::GameObject() :
 			mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
-			mIsTransformChanged(true), mScaleMatrix(1.0f), mModelMatrix(1.0f)
+			mIsTransformChanged(true), mScaleMatrix(1.0f), mModelMatrix(1.0f),
+			mForward(0.0f, 0.0f, 1.0f), mUp(0.0f, 1.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f)
 		{
+			mRenderer3D = nullptr;
+			mCameraRenderer3D = nullptr;
 		}
 
 		GameObject::GameObject(SPtr<Renderer3D> renderer3D) : GameObject()
 		{
 			mRenderer3D = renderer3D;
+		}
+
+		GameObject::GameObject(SPtr<CameraRenderer3D> cameraRenderer3D) : GameObject()
+		{
+			mCameraRenderer3D = cameraRenderer3D;
 		}
 
 		GameObject::~GameObject()
@@ -49,7 +58,7 @@ namespace cube
 		SPtr<T> GameObject::GetComponent()
 		{
 			const String& nameToGet = T::GetName();
-			SPtr<Componemt> componentToGet = nullptr;
+			SPtr<Component> componentToGet = nullptr;
 
 			for(auto& c : mComponents) {
 				if(c->GetName() == nameToGet) {
@@ -122,6 +131,19 @@ namespace cube
 				mModelMatrix[1][2] = (cosX * sinY * sinZ) + (sinX * cosZ);
 				mModelMatrix[2][2] = cosX * cosY;
 
+				// Update the vectors of dirction
+				// TODO: Matrix 구현시 glm을 통하지 않고 바로 곱하게 만들기
+				glm::vec4 forward(0.0f, 0.0f, 1.0f, 0.0f);
+				glm::vec4 up(0.0f, 1.0f, 0.0f, 0.0f);
+				glm::vec4 right(1.0f, 0.0f, 0.0f, 0.0f);
+
+				forward = mModelMatrix * forward;
+				up = mModelMatrix * up;
+				right = mModelMatrix * right;
+				mForward = Vector3(forward.x, forward.y, forward.z);
+				mUp = Vector3(up.x, up.y, up.z);
+				mRight = Vector3(right.x, right.y, right.z);
+
 				// Scale
 				mScaleMatrix[0][0] = scale[0];
 				mScaleMatrix[1][1] = scale[1];
@@ -129,7 +151,8 @@ namespace cube
 
 				mModelMatrix *= mScaleMatrix;
 
-				mRenderer3D->SetModelMatrix(mModelMatrix);
+				if(mRenderer3D != nullptr)
+					mRenderer3D->SetModelMatrix(mModelMatrix);
 
 				mIsTransformChanged = false;
 			}
