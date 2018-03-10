@@ -68,7 +68,7 @@ namespace cube
 
 			SPtr<ThreadManager> mThreadManager;
 
-			UPtr<ModuleManager> mModuleManager;
+			SPtr<ModuleManager> mModuleManager;
 
 			//Vector<SPtr<GameObject>> mGameObjects;
 			SPtr<Mesh> mBoxMesh;

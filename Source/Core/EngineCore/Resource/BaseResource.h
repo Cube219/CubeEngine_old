@@ -18,7 +18,7 @@ namespace cube
 
 			virtual Resource* Import(SPtr<platform::BasePlatformFile>& file, Json info) = 0;
 
-			String& GetResourceName(){ return mResName; }
+			const String& GetResourceName() const { return mResName; }
 
 		protected:
 			String mResName;

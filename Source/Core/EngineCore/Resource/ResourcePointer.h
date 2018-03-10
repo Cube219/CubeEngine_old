@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "BaseResource.h"
+
 namespace cube
 {
 	namespace core
