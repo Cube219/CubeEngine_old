@@ -24,10 +24,12 @@ namespace cube
 
 	void MoveComponent::OnUpdate()
 	{
-		String j = "Jump";
-		bool r = mInputModule->IsActionPressed(j);
+		String xStr = "MoveHorizontally";
+		float x = mInputModule->GetAxisValue(xStr);
+		String yStr = "MoveVertically";
+		float y = mInputModule->GetAxisValue(yStr);
 
-		CUBE_LOG(LogType::Info, fmt::format(L"Jump: {0}", r));
+		CUBE_LOG(LogType::Info, fmt::format(L"Move: ({0}, {1})", x, y));
 	}
 
 	void MoveComponent::OnDestroy()

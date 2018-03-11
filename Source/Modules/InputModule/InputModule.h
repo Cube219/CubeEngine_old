@@ -33,6 +33,7 @@ namespace cube
 				float scale;
 			};
 			float deadZone;
+			float sensitivityToZero;
 
 			float currentValue;
 			Vector<ButtonInfo> bindedAnalogButtons;
