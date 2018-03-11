@@ -9,7 +9,7 @@ namespace cube
 {
 	namespace core
 	{
-		class GameObject
+		class ENGINE_CORE_EXPORT GameObject
 		{
 		public:
 			GameObject();

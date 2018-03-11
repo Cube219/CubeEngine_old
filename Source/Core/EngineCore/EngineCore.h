@@ -57,6 +57,8 @@ namespace cube
 			SPtr<platform::BasePlatform> GetPlatform() const { return mPlatform; }
 
 		private:
+			friend class CubeEngine;
+
 			void Loop();
 
 			void Resize(uint32_t width, uint32_t height);

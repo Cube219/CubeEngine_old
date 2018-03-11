@@ -2,6 +2,7 @@
 
 #include "EngineCore/Component/ComponentManager.h"
 #include "Component/MoveComponent.h"
+#include "EngineCore/GameObject.h"
 
 namespace cube
 {
@@ -20,6 +21,9 @@ namespace cube
 		core::ECore()->SetFPSLimit(60);
 
 		InitComponents();
+
+		// TODO: 임시로 한 것. 차후 main으로 이런 로직들을 옮기면서 지워질 예정
+		core::ECore()->mCameraGo->AddComponent<MoveComponent>();
 	}
 
 	void CubeEngine::Run()

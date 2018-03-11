@@ -3,7 +3,6 @@
 #include "CubeEngineHeader.h"
 
 #include "BasePlatform/BasePlatform.h"
-#include "EngineCore/EngineCore.h"
 
 namespace cube
 {
