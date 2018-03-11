@@ -1,5 +1,8 @@
 #include "ComponentManager.h"
 
+#include "Base/format.h"
+#include "../LogWriter.h"
+
 namespace cube
 {
 	namespace core
@@ -21,6 +24,15 @@ namespace cube
 			}
 
 			return findIter->second();
+		}
+
+		void ComponentManager::CheckIfComponentExisted(const String& name)
+		{
+			auto findIter = mComponentCreators.find(name);
+			if(findIter != mComponentCreators.end()) {
+				CUBE_LOG(LogType::Error, fmt::format(L"Component \"{0}\" is already registered", name));
+				return;
+			}
 		}
 	}
 }

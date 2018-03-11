@@ -5,6 +5,8 @@
 namespace cube
 {
 	class CubeEngine;
+
+	class MoveComponent;
 }
 
 #ifdef CUBE_ENGINE_EXPORTS

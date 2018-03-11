@@ -19,7 +19,6 @@
 #include "Component/ComponentManager.h"
 #include "Renderer/Renderer3D.h"
 #include "Renderer/CameraRenderer3D.h"
-#include "Component/MoveComponent.h"
 
 namespace cube
 {
@@ -63,7 +62,6 @@ namespace cube
 			mModuleManager->InitModules();
 
 			mComponentManager = std::make_shared<ComponentManager>();
-			mComponentManager->RegisterComponent<MoveComponent>();
 
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
@@ -124,7 +122,6 @@ namespace cube
 			}
 
 			mCameraGo = std::make_shared<GameObject>(mRendererManager->GetCameraRenderer3D());
-			mCameraGo->AddComponent<MoveComponent>();
 		}
 
 		void EngineCore::Run()

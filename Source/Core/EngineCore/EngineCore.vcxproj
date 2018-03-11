@@ -139,7 +139,6 @@
     <ClInclude Include="Assertion.h" />
     <ClInclude Include="Component\Component.h" />
     <ClInclude Include="Component\ComponentManager.h" />
-    <ClInclude Include="Component\MoveComponent.h" />
     <ClInclude Include="EngineCore.h" />
     <ClInclude Include="EngineCoreHeader.h" />
     <ClInclude Include="GameObject.h" />
@@ -175,7 +174,6 @@
   <ItemGroup>
     <ClCompile Include="Component\Component.cpp" />
     <ClCompile Include="Component\ComponentManager.cpp" />
-    <ClCompile Include="Component\MoveComponent.cpp" />
     <ClCompile Include="EngineCore.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LogWriter.cpp" />

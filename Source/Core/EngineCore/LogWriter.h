@@ -6,13 +6,13 @@
 
 namespace cube
 {
+	enum class LogType
+	{
+		Info, Warning, Error
+	};
+
 	namespace core
 	{
-		enum class LogType
-		{
-			Info, Warning, Error
-		};
-
 		class LogWriter
 		{
 			friend class EngineCore;
@@ -32,7 +32,7 @@ namespace cube
 
 			static SPtr<platform::BasePlatform> mPlatform;
 		};
-
-#define CUBE_LOG(type, msg) LogWriter::WriteLog(type, msg, __FILE__, __LINE__)
 	}
 }
+
+#define CUBE_LOG(type, msg) cube::core::LogWriter::WriteLog(type, msg, __FILE__, __LINE__)

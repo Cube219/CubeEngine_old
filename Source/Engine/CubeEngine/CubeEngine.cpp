@@ -1,6 +1,7 @@
 #include "CubeEngine.h"
 
-#include "WinPlatform/WinPlatform.h"
+#include "EngineCore/Component/ComponentManager.h"
+#include "Component/MoveComponent.h"
 
 namespace cube
 {
@@ -17,6 +18,8 @@ namespace cube
 
 		core::ECore()->Prepare();
 		core::ECore()->SetFPSLimit(60);
+
+		InitComponents();
 	}
 
 	void CubeEngine::Run()
@@ -29,13 +32,24 @@ namespace cube
 		core::ECore()->DestroyInstance();
 	}
 
+	void CubeEngine::InitComponents()
+	{
+		SPtr<core::ComponentManager> comManager = core::ECore()->GetComponentManager();
+
+		comManager->RegisterComponent<MoveComponent>();
+	}
+
 	////////////////////////////////
 	//           WIN32            //
 	////////////////////////////////
 
 #ifdef _WIN32
 
+}
+
 #include "WinPlatform/WinPlatform.h"
+
+namespace cube{
 
 	SPtr<platform::BasePlatform> CubeEngine::GetPlatform()
 	{
@@ -46,4 +60,5 @@ namespace cube
 	}
 
 #endif // _WIN32
+
 }

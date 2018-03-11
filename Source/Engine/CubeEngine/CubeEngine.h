@@ -28,6 +28,8 @@ namespace cube
 		static void Destroy();
 
 	private:
+		static void InitComponents();
+
 		static SPtr<platform::BasePlatform> GetPlatform();
 
 		static SPtr<platform::BasePlatform> mPlatform;

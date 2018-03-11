@@ -4,9 +4,6 @@
 
 #include <functional>
 
-#include "Base/format.h"
-#include "../LogWriter.h"
-
 namespace cube
 {
 	namespace core
@@ -22,11 +19,7 @@ namespace cube
 			{
 				const String& name = T::GetName();
 
-				auto findIter = mComponentCreators.find(name);
-				if(findIter != mComponentCreators.end()) {
-					CUBE_LOG(LogType::Error, fmt::format(L"Component \"{0}\" is already registered", name));
-					return;
-				}
+				CheckIfComponentExisted(name);
 
 				mComponentCreators[name] = []() {
 					SPtr<T> c(new T());
@@ -37,6 +30,8 @@ namespace cube
 			SPtr<Component> CreateComponent(const String& name);
 
 		private:
+			void CheckIfComponentExisted(const String& name);
+
 			HashMap<String, std::function<SPtr<Component>()>> mComponentCreators;
 		};
 	}
