@@ -26,12 +26,12 @@ namespace cube
 					mRes->mRefCount--;
 			}
 
-			ResourcePointer(const ResourcePointer<T>& other)
+			ResourcePointer(const ResourcePointer& other)
 			{
 				mRes = other.mRes;
 				mRes->mRefCount++;
 			}
-			ResourcePointer<T>& operator=(const ResourcePointer<T>& rhs)
+			ResourcePointer& operator=(const ResourcePointer& rhs)
 			{
 				mRes = rhs.mRes;
 				mRes->mRefCount++;

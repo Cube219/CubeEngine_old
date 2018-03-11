@@ -60,6 +60,7 @@ namespace cube
 
 		class ComponentManager;
 		class Component;
+	//	class MoveComponent;
 	}
 }
 

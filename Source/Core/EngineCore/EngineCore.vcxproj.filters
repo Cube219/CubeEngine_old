@@ -91,6 +91,9 @@
     <ClInclude Include="Component\Component.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="Component\MoveComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -170,6 +173,9 @@
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="Component\Component.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\MoveComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>

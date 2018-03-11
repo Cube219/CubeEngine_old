@@ -54,39 +54,41 @@ namespace cube
 			mIsTransformChanged = true;
 		}
 
-		template<typename T>
-		SPtr<T> GameObject::GetComponent()
+		SPtr<Component> GameObject::GetComponent(const String& name)
 		{
-			const String& nameToGet = T::GetName();
 			SPtr<Component> componentToGet = nullptr;
 
 			for(auto& c : mComponents) {
-				if(c->GetName() == nameToGet) {
+				if(c->GetName() == name) {
 					componentToGet = c;
 					break;
 				}
 			}
 
-			return DPCast(T)(componentToGet);
+			return componentToGet;
 		}
 
-		template<typename T>
-		SPtr<T> GameObject::AddComponent()
+		SPtr<Component> GameObject::AddComponent(const String& name)
 		{
-			const String& nameToAdd = T::GetName();
-
 			for(auto& com : mComponents) {
-				if(com->GetName() == nameToAdd) {
-					CUBE_LOG(LogType::Error, fmt::format(L"Cannot add component \"{0}\". The component already exists", nameToAdd));
+				if(com->GetName() == name) {
+					CUBE_LOG(LogType::Error, fmt::format(L"Cannot add component \"{0}\". The component already exists", name));
 					return nullptr;
 				}
 			}
 
-			SPtr<Component> c = ECore()->GetComponentManager()->CreateComponent(nameToAdd);
+			SPtr<Component> c = ECore()->GetComponentManager()->CreateComponent(name);
 			c->AttachGameObject(this);
 			mComponents.push_back(c);
 
-			return DPCast(T)(c);
+			return c;
+		}
+
+		void GameObject::Start()
+		{
+			for(auto& com : mComponents) {
+				com->OnInit();
+			}
 		}
 
 		void GameObject::Update()

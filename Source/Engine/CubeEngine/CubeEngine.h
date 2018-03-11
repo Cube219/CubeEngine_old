@@ -1,0 +1,35 @@
+#pragma once
+
+#include "CubeEngineHeader.h"
+
+#include "BasePlatform/BasePlatform.h"
+#include "EngineCore/EngineCore.h"
+
+namespace cube
+{
+	struct CUBE_ENGINE_EXPORT CubeEngineStartOption
+	{
+		bool isWindowMode = false;
+		uint32_t windowWidth;
+		uint32_t windowHeight;
+		WString title;
+	};
+
+	class CUBE_ENGINE_EXPORT CubeEngine
+	{
+	public:
+		CubeEngine() = delete;
+		~CubeEngine() = delete;
+
+		static void Start(const CubeEngineStartOption& startOption);
+
+		static void Run();
+
+		static void Destroy();
+
+	private:
+		static SPtr<platform::BasePlatform> GetPlatform();
+
+		static SPtr<platform::BasePlatform> mPlatform;
+	};
+}
