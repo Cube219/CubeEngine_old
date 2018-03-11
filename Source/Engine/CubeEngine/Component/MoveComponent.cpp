@@ -6,6 +6,8 @@
 
 namespace cube
 {
+	String MoveComponent::mName = "MoveComponent";
+
 	MoveComponent::MoveComponent()
 	{
 	}
@@ -16,14 +18,16 @@ namespace cube
 
 	void MoveComponent::OnInit()
 	{
-		//mInputModule = DPCast(module::InputModule)(ECore()->GetModuleManager()->GetModule(String("InputModule")));
+		String n = "InputModule";
+		mInputModule = DPCast(module::InputModule)(core::ECore()->GetModuleManager()->GetModule(n));
 	}
 
 	void MoveComponent::OnUpdate()
 	{
-		//bool r = mInputModule->IsActionPressed(String("Jump"));
+		String j = "Jump";
+		bool r = mInputModule->IsActionPressed(j);
 
-		//CUBE_LOG(LogType::Info, fmt::format(L"Jump: {0}", r));
+		CUBE_LOG(LogType::Info, fmt::format(L"Jump: {0}", r));
 	}
 
 	void MoveComponent::OnDestroy()

@@ -143,6 +143,9 @@
     <ProjectReference Include="..\..\Core\EngineCore\EngineCore.vcxproj">
       <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\InputModule\InputModule.vcxproj">
+      <Project>{b1f5fb14-f492-4490-a5e1-0abedf551c85}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Platform\BasePlatform\BasePlatform.vcxproj">
       <Project>{b7a93207-08d1-4caf-ae2a-686b64f67042}</Project>
     </ProjectReference>

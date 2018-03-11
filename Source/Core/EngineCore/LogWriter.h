@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include "EngineCoreHeader.h"
 
@@ -13,7 +13,7 @@ namespace cube
 
 	namespace core
 	{
-		class LogWriter
+		class ENGINE_CORE_EXPORT LogWriter
 		{
 			friend class EngineCore;
 		public:
@@ -23,7 +23,7 @@ namespace cube
 		private:
 			LogWriter() = delete;
 			LogWriter(const LogWriter& other) = delete;
-			//LogWriter& LogWriter::operator=(const LogWriter& other) = delete; // TODO: ø÷ ø°∑Ø∞°?
+			//LogWriter& LogWriter::operator=(const LogWriter& other) = delete; // TODO: Ïôú ÏóêÎü¨Í∞Ä?
 			
 			// Only can access to the friend class (EngineCore)
 			static void Init(SPtr<platform::BasePlatform>& platform);
