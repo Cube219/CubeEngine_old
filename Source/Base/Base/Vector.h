@@ -20,6 +20,35 @@
 
 #endif
 
+struct Float2
+{
+	float x;
+	float y;
+};
+// Float2 formatting
+void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float2& f2);
+void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float2& f2);
+
+struct Float3
+{
+	float x;
+	float y;
+	float z;
+};
+// Float3 formatting
+void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float3& f3);
+void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float3& f3);
+
+struct Float4
+{
+	float x;
+	float y;
+	float z;
+	float w;
+};
+// Float4 formatting
+void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float4& f4);
+void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float4& f4);
 
 class VectorBase
 {
@@ -83,7 +112,7 @@ public:
 	operator Vector3() const;
 	operator Vector4() const;
 
-	void GetFloat2(float* float2) const;
+	Float2 GetFloat2() const;
 
 	VectorBase Length() const;
 	VectorBase SquareLength() const;
@@ -119,7 +148,7 @@ public:
 	operator Vector2() const;
 	operator Vector4() const;
 
-	void GetFloat3(float* float3) const;
+	Float3 GetFloat3() const;
 
 	VectorBase Length() const;
 	VectorBase SquareLength() const;
@@ -155,7 +184,7 @@ public:
 	operator Vector2() const;
 	operator Vector3() const;
 
-	void GetFloat4(float* float4) const;
+	Float4 GetFloat4() const;
 
 	VectorBase Length() const;
 	VectorBase SquareLength() const;

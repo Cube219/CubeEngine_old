@@ -260,10 +260,13 @@ inline Vector2::operator Vector4() const
 	return v4;
 }
 
-inline void Vector2::GetFloat2(float* float2) const
+inline Float2 Vector2::GetFloat2() const
 {
-	float2[0] = mData[0];
-	float2[1] = mData[1];
+	Float2 f2;
+	f2.x = mData[0];
+	f2.y = mData[1];
+
+	return f2;
 }
 
 inline VectorBase Vector2::Length() const
@@ -372,11 +375,14 @@ inline Vector3::operator Vector4() const
 	return v4;
 }
 
-inline void Vector3::GetFloat3(float* float3) const
+inline Float3 Vector3::GetFloat3() const
 {
-	float3[0] = mData[0];
-	float3[1] = mData[1];
-	float3[2] = mData[2];
+	Float3 f3;
+	f3.x = mData[0];
+	f3.y = mData[1];
+	f3.z = mData[2];
+
+	return f3;
 }
 
 inline VectorBase Vector3::Length() const
@@ -502,12 +508,15 @@ inline Vector4::operator Vector3() const
 	return v3;
 }
 
-inline void Vector4::GetFloat4(float* float4) const
+inline Float4 Vector4::GetFloat4() const
 {
-	float4[0] = mData[0];
-	float4[1] = mData[1];
-	float4[2] = mData[2];
-	float4[3] = mData[3];
+	Float4 f4;
+	f4.x = mData[0];
+	f4.y = mData[1];
+	f4.z = mData[2];
+	f4.w = mData[3];
+
+	return f4;
 }
 
 inline VectorBase Vector4::Length() const

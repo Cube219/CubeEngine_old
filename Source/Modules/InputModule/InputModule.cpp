@@ -79,9 +79,9 @@ namespace cube
 			lookHorizontally.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::LeftArrow), 10.0f, -1.0f});
 			lookHorizontally.bindedAnalogButtons.push_back(ButtonInfo{[this]() {
 				Vector2 mouseDelta = mKMInput->GetMouseDeltaPosition();
-				float f[2];
-				mouseDelta.GetFloat2(f);
-				return f[0];
+				Float2 f2;
+				f2 = mouseDelta.GetFloat2();
+				return f2.x;
 			}});
 			lookHorizontally.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightStickX));
 			mAxes["LookHorizontally"] = lookHorizontally;
@@ -95,9 +95,9 @@ namespace cube
 			lookVertically.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::DownArrow), 10.0f, -1.0f});
 			lookVertically.bindedAnalogButtons.push_back(ButtonInfo{[this]() {
 				Vector2 mouseDelta = mKMInput->GetMouseDeltaPosition();
-				float f[2];
-				mouseDelta.GetFloat2(f);
-				return -f[1];
+				Float2 f2;
+				f2 = mouseDelta.GetFloat2();
+				return -f2.y;
 			}});
 			lookVertically.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightStickY));
 			mAxes["LookVertically"] = lookVertically;

@@ -96,25 +96,25 @@ namespace cube
 			for(auto& com : mComponents) {
 				com->OnUpdate(dt);
 			}
-
-			float pos[3], rotation[3], scale[3];
-			mPosition.GetFloat3(pos);
-			mRotation.GetFloat3(rotation);
-			mScale.GetFloat3(scale);
+;
+			Float3 pos, rotation, scale;
+			pos = mPosition.GetFloat3();
+			rotation = mRotation.GetFloat3();
+			scale = mScale.GetFloat3();
 
 			// Update model matrix
 			if(mIsTransformChanged == true) {
 				// Position
-				mModelMatrix[3][0] = pos[0];
-				mModelMatrix[3][1] = -pos[1];
-				mModelMatrix[3][2] = -pos[2]; // Convert to left-hand coordinate
+				mModelMatrix[3][0] = pos.x;
+				mModelMatrix[3][1] = -pos.y;
+				mModelMatrix[3][2] = -pos.z; // Convert to left-hand coordinate
 
 				// (          cosYcosZ                  -cosYsinZ             sinY   )
 				// (  sinXsinYcosZ + cosXsinZ   -sinXsinYsinZ + cosXcosZ   -sinXcosY )
 				// ( -cosXsinYcosZ + sinXsinZ    cosXsinYsinZ + sinXcosZ    cosXcosY )
-				float radX = glm::radians(rotation[0]);
-				float radY = glm::radians(-rotation[1]);
-				float radZ = glm::radians(-rotation[2]); // Convert to left-hand coordinate
+				float radX = glm::radians(rotation.x);
+				float radY = glm::radians(-rotation.y);
+				float radZ = glm::radians(-rotation.z); // Convert to left-hand coordinate
 
 				float sinX = glm::sin(radX);
 				float cosX = glm::cos(radX);
@@ -147,9 +147,9 @@ namespace cube
 				mRight = Vector3(right.x, right.y, right.z);
 
 				// Scale
-				mScaleMatrix[0][0] = scale[0];
-				mScaleMatrix[1][1] = scale[1];
-				mScaleMatrix[2][2] = scale[2];
+				mScaleMatrix[0][0] = scale.x;
+				mScaleMatrix[1][1] = scale.y;
+				mScaleMatrix[2][2] = scale.z;
 
 				mModelMatrix *= mScaleMatrix;
 
