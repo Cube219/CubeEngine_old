@@ -14,8 +14,6 @@ namespace cube
 			CameraRenderer3D();
 			~CameraRenderer3D();
 
-			void RotateTemp(float dt);
-
 			glm::mat4 GetViewProjectionMatrix() const { return mProjectionMatrix * mViewMatrix; };
 
 			void SetViewMatrix(const glm::mat4& matrix);

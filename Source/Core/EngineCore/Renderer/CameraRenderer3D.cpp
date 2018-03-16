@@ -24,22 +24,6 @@ namespace cube
 		{
 		}
 
-		void CameraRenderer3D::RotateTemp(float dt)
-		{
-			mAngleTemp += 60.0f * dt;
-
-			float angleRad = Math::Deg2Rad(mAngleTemp);
-
-			float x = Math::Cos(angleRad) * 10;
-			float z = Math::Sin(angleRad) * 10;
-
-			mViewMatrix = glm::lookAt(
-				glm::vec3(x, -5, z), // Flip y, z
-				glm::vec3(0, 0, 0),
-				glm::vec3(0, 1, 0)
-			);
-		}
-
 		void CameraRenderer3D::SetViewMatrix(const glm::mat4& matrix)
 		{
 			mViewMatrix = matrix;

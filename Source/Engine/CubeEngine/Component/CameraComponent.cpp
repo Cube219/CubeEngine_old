@@ -36,8 +36,8 @@ namespace cube
 		posForward.GetFloat3(posForwardF);
 
 		mViewMatrix = glm::lookAt(
-			glm::vec3(posF[0], -posF[1], -posF[2]),
-			glm::vec3(posForwardF[0], -posForwardF[1], -posForwardF[2]),
+			glm::vec3(posF[0], -posF[1], -posF[2]), // Flip y, z
+			glm::vec3(posForwardF[0], -posForwardF[1], -posForwardF[2]), // Flip y, z
 			glm::vec3(0, 1, 0)
 		);
 

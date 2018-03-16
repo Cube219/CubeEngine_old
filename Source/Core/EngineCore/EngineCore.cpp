@@ -158,7 +158,6 @@ namespace cube
 				go->Update(dt);
 			}
 
-			// mRendererManager->GetCameraRenderer3D()->RotateTemp(dt);
 			mCameraGo->Update(dt);
 			
 			mRendererManager->DrawAll();
