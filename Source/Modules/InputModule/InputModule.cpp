@@ -28,6 +28,10 @@ namespace cube
 
 		void InputModule::Init(core::EngineCore* eCore, ...)
 		{
+			for(int i = 0; i < 4; i++) {
+				mIsVibrated[i] = false;
+			}
+
 			SPtr<platform::BasePlatform> platform = eCore->GetPlatform();
 
 			mKMInput = std::make_unique<KeyboardMouseInput>(platform);
@@ -38,10 +42,12 @@ namespace cube
 
 			Action submit;
 			submit.bindedDigitalButtons.push_back(KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::Enter));
+			submit.bindedDigitalButtons.push_back(XBOX_DIGIT_BTN_INFO(0, XboxControllerInput::DigitalButton::A));
 			mActions["Submit"] = submit;
 
 			Action cancel;
 			cancel.bindedDigitalButtons.push_back(KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::Escape));
+			submit.bindedDigitalButtons.push_back(XBOX_DIGIT_BTN_INFO(0, XboxControllerInput::DigitalButton::B));
 			mActions["Cancel"] = cancel;
 
 			Axis moveHorizontally;
@@ -51,6 +57,7 @@ namespace cube
 			moveHorizontally.sensitivityToZero = 10.0f;
 			moveHorizontally.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::D), 10.0f, 1.0f});
 			moveHorizontally.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::A), 10.0f, -1.0f});
+			moveHorizontally.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::LeftStickX));
 			mAxes["MoveHorizontally"] = moveHorizontally;
 
 			Axis moveVertically;
@@ -60,6 +67,7 @@ namespace cube
 			moveVertically.sensitivityToZero = 10.0f;
 			moveVertically.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::W), 10.0f, 1.0f});
 			moveVertically.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::S), 10.0f, -1.0f});
+			moveVertically.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::LeftStickY));
 			mAxes["MoveVertically"] = moveVertically;
 
 			Axis lookHorizontally;
@@ -75,6 +83,7 @@ namespace cube
 				mouseDelta.GetFloat2(f);
 				return f[0];
 			}});
+			lookHorizontally.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightStickX));
 			mAxes["LookHorizontally"] = lookHorizontally;
 
 			Axis lookVertically;
@@ -90,12 +99,37 @@ namespace cube
 				mouseDelta.GetFloat2(f);
 				return f[1];
 			}});
+			lookVertically.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightStickY));
 			mAxes["LookVertically"] = lookVertically;
+
+			Axis triggerLeft;
+			triggerLeft.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::LeftTrigger));
+			mAxes["TriggerLeft"] = triggerLeft;
+
+			Axis triggerRight;
+			triggerRight.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightTrigger));
+			mAxes["TriggerRight"] = triggerRight;
+
+
+			mXboxInput = std::make_unique<XboxControllerInput>();
 		}
 
 		void InputModule::Update(float dt)
 		{
 			mKMInput->UpdateMouseDelta(dt);
+
+			mXboxInput->Update();
+
+			for(int i = 0; i < 4; i++) {
+				if(mIsVibrated[i] == false)
+					continue;
+
+				mRemainedVibrationTime[i] -= dt;
+				if(mRemainedVibrationTime[i] < 0.0f) {
+					mIsVibrated[i] = false;
+					mXboxInput->SetVibration(i, 0.0f, 0.0f);
+				}
+			}
 
 			for(auto& action : mActions) {
 				bool isPressed = false;
@@ -178,6 +212,22 @@ namespace cube
 		float InputModule::GetAxisValue(String& name)
 		{
 			return mAxes[name].currentValue;
+		}
+
+		void InputModule::SendVibration(uint32_t playerIndex, float time, float intensity)
+		{
+			mIsVibrated[playerIndex] = true;
+			mRemainedVibrationTime[playerIndex] = time;
+
+			mXboxInput->SetVibration(playerIndex, intensity, intensity);
+		}
+
+		void InputModule::SendVibration(uint32_t playerIndex, float time, float leftIntensity, float rightIntensity)
+		{
+			mIsVibrated[playerIndex] = true;
+			mRemainedVibrationTime[playerIndex] = time;
+
+			mXboxInput->SetVibration(playerIndex, leftIntensity, rightIntensity);
 		}
 
 		Vector2 InputModule::GetMousePosition()
