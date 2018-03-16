@@ -91,10 +91,10 @@ namespace cube
 			}
 		}
 
-		void GameObject::Update()
+		void GameObject::Update(float dt)
 		{
 			for(auto& com : mComponents) {
-				com->OnUpdate();
+				com->OnUpdate(dt);
 			}
 
 			float pos[3], rotation[3], scale[3];
@@ -139,9 +139,9 @@ namespace cube
 				glm::vec4 up(0.0f, 1.0f, 0.0f, 0.0f);
 				glm::vec4 right(1.0f, 0.0f, 0.0f, 0.0f);
 
-				forward = mModelMatrix * forward;
-				up = mModelMatrix * up;
-				right = mModelMatrix * right;
+				forward = forward * mModelMatrix;
+				up = up * mModelMatrix;
+				right = right * mModelMatrix;
 				mForward = Vector3(forward.x, forward.y, forward.z);
 				mUp = Vector3(up.x, up.y, up.z);
 				mRight = Vector3(right.x, right.y, right.z);

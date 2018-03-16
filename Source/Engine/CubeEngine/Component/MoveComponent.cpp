@@ -3,6 +3,7 @@
 #include "EngineCore/ModuleManager.h"
 #include "Base/format.h"
 #include "EngineCore/LogWriter.h"
+#include "EngineCore/GameObject.h"
 
 namespace cube
 {
@@ -22,35 +23,30 @@ namespace cube
 		mInputModule = DPCast(module::InputModule)(core::ECore()->GetModuleManager()->GetModule(n));
 	}
 
-	void MoveComponent::OnUpdate()
+	void MoveComponent::OnUpdate(float dt)
 	{
-		/*
-		String leftTriggerStr = "TriggerLeft";
-		float lt = mInputModule->GetAxisValue(leftTriggerStr);
-
-		String rightTriggerStr = "TriggerRight";
-		float rt = mInputModule->GetAxisValue(rightTriggerStr);
-
-		mInputModule->SendVibration(0, 0.5f, lt, rt);*/
-
-		//CUBE_LOG(LogType::Info, fmt::format(L"{0} / {1}", lt, rt));
-
-		
-		String submitStr = "Submit";
-		bool r = mInputModule->IsActionPressed(submitStr);
-		
-		if(r == true) {
-			mInputModule->SendVibration(0, 0.5f, 1.0f);
-		}
-		
-		/*
 		String xStr = "MoveHorizontally";
 		float x = mInputModule->GetAxisValue(xStr);
 		String yStr = "MoveVertically";
 		float y = mInputModule->GetAxisValue(yStr);
 
-		CUBE_LOG(LogType::Info, fmt::format(L"Move: ({0}, {1})", x, y));
-		*/
+		Vector3 pos = GetGameObject()->GetPosition();
+		pos += GetGameObject()->GetForward() * y * 0.2f;
+		pos += GetGameObject()->GetRight() * x * 0.2f;
+
+		GetGameObject()->SetPosition(pos);
+
+		String lookXStr = "LookHorizontally";
+		float lookX = mInputModule->GetAxisValue(lookXStr);
+		String lookYStr = "LookVertically";
+		float lookY = mInputModule->GetAxisValue(lookYStr);
+
+		Vector3 rot = GetGameObject()->GetRotation();
+
+		rot += Vector3(0.0f, 1.0f, 0.0f) * lookX * 2.0f;
+		rot += Vector3(1.0f, 0.0f, 0.0f) * lookY * 2.0f;
+
+		GetGameObject()->SetRotation(rot);
 	}
 
 	void MoveComponent::OnDestroy()

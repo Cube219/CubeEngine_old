@@ -1,6 +1,7 @@
 #include "CubeEngine.h"
 
 #include "EngineCore/Component/ComponentManager.h"
+#include "Component/CameraComponent.h"
 #include "Component/MoveComponent.h"
 #include "EngineCore/GameObject.h"
 
@@ -24,6 +25,7 @@ namespace cube
 
 		// TODO: 임시로 한 것. 차후 main으로 이런 로직들을 옮기면서 지워질 예정
 		core::ECore()->mCameraGo->AddComponent<MoveComponent>();
+		core::ECore()->mCameraGo->AddComponent<CameraComponent>();
 	}
 
 	void CubeEngine::Run()
@@ -40,6 +42,7 @@ namespace cube
 	{
 		SPtr<core::ComponentManager> comManager = core::ECore()->GetComponentManager();
 
+		comManager->RegisterComponent<CameraComponent>();
 		comManager->RegisterComponent<MoveComponent>();
 	}
 

@@ -7,6 +7,7 @@ namespace cube
 {
 	class CubeEngine;
 
+	class CameraComponent;
 	class MoveComponent;
 }
 

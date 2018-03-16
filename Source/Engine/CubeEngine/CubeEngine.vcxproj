@@ -83,8 +83,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -120,8 +120,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -130,10 +130,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Component\CameraComponent.cpp" />
     <ClCompile Include="Component\MoveComponent.cpp" />
     <ClCompile Include="CubeEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Component\CameraComponent.h" />
     <ClInclude Include="Component\MoveComponent.h" />
     <ClInclude Include="CubeEngine.h" />
     <ClInclude Include="CubeEngineHeader.h" />

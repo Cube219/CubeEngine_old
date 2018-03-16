@@ -155,11 +155,11 @@ namespace cube
 			mModuleManager->UpdateAllModules(dt);
 
 			for(auto& go : mGos) {
-				go->Update();
+				go->Update(dt);
 			}
 
 			// mRendererManager->GetCameraRenderer3D()->RotateTemp(dt);
-			mCameraGo->Update();
+			mCameraGo->Update(dt);
 			
 			mRendererManager->DrawAll();
 

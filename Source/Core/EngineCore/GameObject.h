@@ -49,7 +49,7 @@ namespace cube
 
 			void Start();
 
-			void Update();
+			void Update(float dt);
 
 		private:
 

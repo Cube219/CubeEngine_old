@@ -3,11 +3,13 @@
 #include "../CubeEngineHeader.h"
 
 #include "EngineCore/Component/Component.h"
-#include "InputModule/InputModule.h"
+#include "EngineCore/Renderer/CameraRenderer3D.h"
+
+#include <glm.hpp>
 
 namespace cube
 {
-	class MoveComponent : public core::Component
+	class CameraComponent : public core::Component
 	{
 	public:
 		static const String& GetName() { return mName; }
@@ -16,14 +18,16 @@ namespace cube
 		static String mName;
 
 	public:
-		MoveComponent();
-		virtual ~MoveComponent();
+		CameraComponent();
+		virtual ~CameraComponent();
 
 		void OnInit() override;
 		void OnUpdate(float dt) override;
 		void OnDestroy() override;
 
 	private:
-		SPtr<module::InputModule> mInputModule;
+		glm::mat4 mViewMatrix;
+
+		SPtr<core::CameraRenderer3D> mCameraRenderer3D;
 	};
 }

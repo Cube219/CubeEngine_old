@@ -5,11 +5,17 @@
     <ClCompile Include="Component\MoveComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="Component\CameraComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CubeEngine.h" />
     <ClInclude Include="CubeEngineHeader.h" />
     <ClInclude Include="Component\MoveComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CameraComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>

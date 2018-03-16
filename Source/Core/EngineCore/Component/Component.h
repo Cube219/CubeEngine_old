@@ -19,8 +19,10 @@ namespace cube
 			virtual ~Component();
 
 			virtual void OnInit() = 0;
-			virtual void OnUpdate() = 0;
+			virtual void OnUpdate(float dt) = 0;
 			virtual void OnDestroy() = 0;
+
+			GameObject* GetGameObject() const { return mAttachedGameObject; }
 
 		private:
 			friend class GameObject;
