@@ -24,9 +24,9 @@ namespace cube
 
 	void MoveComponent::OnUpdate()
 	{
-		String xStr = "MoveHorizontally";
+		String xStr = "LookHorizontally";
 		float x = mInputModule->GetAxisValue(xStr);
-		String yStr = "MoveVertically";
+		String yStr = "LookVertically";
 		float y = mInputModule->GetAxisValue(yStr);
 
 		CUBE_LOG(LogType::Info, fmt::format(L"Move: ({0}, {1})", x, y));

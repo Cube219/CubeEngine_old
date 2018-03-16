@@ -58,6 +58,18 @@ namespace cube
 			return mMousePos;
 		}
 
+		Vector2 KeyboardMouseInput::GetMouseDeltaPosition()
+		{
+			return mMouseDeltaPos;
+		}
+
+		void KeyboardMouseInput::UpdateMouseDelta(float dt)
+		{
+			mMouseDeltaPos = (mMousePos - mLastMousePos) * dt * 3.0f;
+
+			mLastMousePos = mMousePos;
+		}
+
 		KeyCode KeyboardMouseInput::GetKeyCode(DigitalButton button)
 		{
 			KeyCode keyCode;

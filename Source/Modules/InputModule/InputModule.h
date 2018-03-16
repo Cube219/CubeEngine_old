@@ -31,10 +31,13 @@ namespace cube
 				ButtonInfo digitalButton;
 				float sensitivity;
 				float scale;
+
+				float currentValue = 0.0f;
 			};
 			float deadZone;
 			float sensitivityToZero;
 
+			bool isClamped;
 			float currentValue;
 			Vector<ButtonInfo> bindedAnalogButtons;
 			Vector<VirtualButtonInfo> bindedVirtualButtons;

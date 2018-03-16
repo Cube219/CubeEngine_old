@@ -135,6 +135,9 @@
     <ClCompile Include="XboxControllerInput.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Base\Base\Base.vcxproj">
+      <Project>{84d3a49e-2aef-4370-aa37-3d297a45fc91}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\EngineCore\EngineCore.vcxproj">
       <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
     </ProjectReference>
