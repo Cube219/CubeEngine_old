@@ -31,7 +31,7 @@ namespace cube
 		{
 			auto temp = mModuleLookup.find(moduleName);
 			if(temp != mModuleLookup.end()) {
-				CUBE_LOG(LogType::Error, fmt::format(L"Already module name \"{0}\" loaded.", moduleName));
+				CUBE_LOG(LogType::Error, L"Already module name \"{0}\" loaded.", moduleName);
 				return;
 			}
 
@@ -63,7 +63,7 @@ namespace cube
 		{
 			auto temp = mModuleLookup.find(name.c_str());
 			if(temp == mModuleLookup.end()) {
-				CUBE_LOG(LogType::Error, fmt::format(L"Cannot find module \"{0}\".", name));
+				CUBE_LOG(LogType::Error, L"Cannot find module \"{0}\".", name);
 				return nullptr;
 			}
 

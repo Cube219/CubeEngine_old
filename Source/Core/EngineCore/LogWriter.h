@@ -3,6 +3,7 @@
 #include "EngineCoreHeader.h"
 
 #include "BasePlatform/BasePlatform.h"
+#include "Base/format.h"
 
 namespace cube
 {
@@ -35,4 +36,4 @@ namespace cube
 	}
 }
 
-#define CUBE_LOG(type, msg) cube::core::LogWriter::WriteLog(type, msg, __FILE__, __LINE__)
+#define CUBE_LOG(type, msg, ...) cube::core::LogWriter::WriteLog(type, fmt::format(msg, ##__VA_ARGS__), __FILE__, __LINE__)

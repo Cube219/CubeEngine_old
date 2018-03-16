@@ -72,7 +72,7 @@ namespace cube
 		{
 			for(auto& com : mComponents) {
 				if(com->GetName() == name) {
-					CUBE_LOG(LogType::Error, fmt::format(L"Cannot add component \"{0}\". The component already exists", name));
+					CUBE_LOG(LogType::Error, L"Cannot add component \"{0}\". The component already exists", name);
 					return nullptr;
 				}
 			}

@@ -69,7 +69,7 @@ namespace cube
 
 			if(loadedRes == nullptr) {
 				if(isFindImporter == true)
-					CUBE_LOG(LogType::Error, fmt::format(L"Cannot find the importer whose res_name is \"{0}\".", resName));
+					CUBE_LOG(LogType::Error, L"Cannot find the importer whose res_name is \"{0}\".", resName);
 
 				return nullptr;
 			}
