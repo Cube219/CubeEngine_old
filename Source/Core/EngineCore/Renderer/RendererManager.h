@@ -27,7 +27,7 @@ namespace cube
 			Vulkan
 		};
 
-		class RendererManager
+		class ENGINE_CORE_EXPORT RendererManager
 		{
 		public:
 			RendererManager(SPtr<platform::BasePlatform>& platform, RenderType type);

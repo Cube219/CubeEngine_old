@@ -36,6 +36,10 @@ namespace cube
 
 			Vector2 GetMousePosition();
 
+			Vector2 GetMouseDeltaPosition();
+
+			void UpdateMouseDelta(float dt);
+
 		private:
 			KeyCode GetKeyCode(DigitalButton button);
 
@@ -43,7 +47,9 @@ namespace cube
 
 			bool mIsMousePressed[3];
 
+			Vector2 mLastMousePos;
 			Vector2 mMousePos;
+			Vector2 mMouseDeltaPos;
 
 			SPtr<platform::BasePlatform> mPlatform;
 		};

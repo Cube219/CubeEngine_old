@@ -39,5 +39,10 @@ namespace cube
 				glm::vec3(0, 1, 0)
 			);
 		}
+
+		void CameraRenderer3D::SetViewMatrix(const glm::mat4& matrix)
+		{
+			mViewMatrix = matrix;
+		}
 	}
 }

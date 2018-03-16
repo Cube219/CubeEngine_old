@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{B1F5FB14-F492-4490-A5E1-0ABEDF551C85}</ProjectGuid>
-    <RootNamespace>InputModule</RootNamespace>
+    <ProjectGuid>{C1AFEC4D-784D-4DC0-BA24-40758A9C46DF}</ProjectGuid>
+    <RootNamespace>CubeEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,9 +71,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -81,11 +83,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>INPUT_MODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -118,25 +120,25 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>INPUT_MODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="InputModule.h" />
-    <ClInclude Include="InputModuleHeader.h" />
-    <ClInclude Include="KeyboardMouseInput.h" />
-    <ClInclude Include="XboxControllerInput.h" />
+    <ClCompile Include="Component\CameraComponent.cpp" />
+    <ClCompile Include="Component\MoveComponent.cpp" />
+    <ClCompile Include="CubeEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="InputModule.cpp" />
-    <ClCompile Include="KeyboardMouseInput.cpp" />
-    <ClCompile Include="XboxControllerInput.cpp" />
+    <ClInclude Include="Component\CameraComponent.h" />
+    <ClInclude Include="Component\MoveComponent.h" />
+    <ClInclude Include="CubeEngine.h" />
+    <ClInclude Include="CubeEngineHeader.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Base\Base\Base.vcxproj">
@@ -144,6 +146,15 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Core\EngineCore\EngineCore.vcxproj">
       <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\InputModule\InputModule.vcxproj">
+      <Project>{b1f5fb14-f492-4490-a5e1-0abedf551c85}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Platform\BasePlatform\BasePlatform.vcxproj">
+      <Project>{b7a93207-08d1-4caf-ae2a-686b64f67042}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Platform\WinPlatform\WinPlatform.vcxproj">
+      <Project>{6baedf33-d719-4a21-97e7-8c73dcdb9b4c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

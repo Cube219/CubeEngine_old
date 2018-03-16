@@ -52,9 +52,13 @@ namespace cube
 			SPtr<RendererManager> GetRendererManager() const { return mRendererManager; }
 			SPtr<TimeManager> GetTimeManager() const { return mTimeManager; }
 			SPtr<StringManager> GetStringManager() const { return mStringManager; }
+			SPtr<ModuleManager> GetModuleManager() const { return mModuleManager; }
+			SPtr<ComponentManager> GetComponentManager() const { return mComponentManager; }
 			SPtr<platform::BasePlatform> GetPlatform() const { return mPlatform; }
 
 		private:
+			friend class CubeEngine;
+
 			void Loop();
 
 			void Resize(uint32_t width, uint32_t height);
@@ -69,21 +73,19 @@ namespace cube
 			SPtr<ThreadManager> mThreadManager;
 
 			SPtr<ModuleManager> mModuleManager;
+			SPtr<ComponentManager> mComponentManager;
 
-			//Vector<SPtr<GameObject>> mGameObjects;
 			SPtr<Mesh> mBoxMesh;
 			RPtr<Texture> mTexture;
 			RPtr<Texture> mTexture2;
 
-			//SPtr<GameObject> mGo1;
 			RPtr<Shader> mMaterialVertexShader;
 			RPtr<Shader> mMaterialFragmentShader;
 			SPtr<Material> mMaterial;
 			SPtr<MaterialInstance> mMaterialIns1;
 			SPtr<MaterialInstance> mMaterialIns2;
-			//SPtr<GameObject> mGo2;
-			//SPtr<Material> mMaterial2;
 			Vector<SPtr<GameObject>> mGos;
+			SPtr<GameObject> mCameraGo;
 
 			int mFPSLimit;
 		};

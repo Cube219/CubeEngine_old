@@ -103,7 +103,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -134,7 +134,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,17 +146,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Base\Base\Base.vcxproj">
-      <Project>{84d3a49e-2aef-4370-aa37-3d297a45fc91}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\EngineCore\EngineCore.vcxproj">
-      <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Platform\BasePlatform\BasePlatform.vcxproj">
-      <Project>{b7a93207-08d1-4caf-ae2a-686b64f67042}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Platform\WinPlatform\WinPlatform.vcxproj">
-      <Project>{6baedf33-d719-4a21-97e7-8c73dcdb9b4c}</Project>
+    <ProjectReference Include="..\Engine\CubeEngine\CubeEngine.vcxproj">
+      <Project>{c1afec4d-784d-4dc0-ba24-40758a9c46df}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

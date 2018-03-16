@@ -8,7 +8,7 @@ namespace cube
 {
 	namespace core
 	{
-		class CameraRenderer3D
+		class ENGINE_CORE_EXPORT CameraRenderer3D
 		{
 		public:
 			CameraRenderer3D();
@@ -17,6 +17,8 @@ namespace cube
 			void RotateTemp(float dt);
 
 			glm::mat4 GetViewProjectionMatrix() const { return mProjectionMatrix * mViewMatrix; };
+
+			void SetViewMatrix(const glm::mat4& matrix);
 
 		private:
 			glm::mat4 mProjectionMatrix;

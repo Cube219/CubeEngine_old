@@ -72,10 +72,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)Dependencies\glm\include;$(SolutionDir)Dependencies\stb\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)Dependencies\glm\include;$(SolutionDir)Dependencies\stb\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -96,6 +98,9 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -123,6 +128,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -131,6 +137,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Assertion.h" />
+    <ClInclude Include="Component\Component.h" />
+    <ClInclude Include="Component\ComponentManager.h" />
     <ClInclude Include="EngineCore.h" />
     <ClInclude Include="EngineCoreHeader.h" />
     <ClInclude Include="GameObject.h" />
@@ -164,6 +172,8 @@
     <ClInclude Include="Time\TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Component\Component.cpp" />
+    <ClCompile Include="Component\ComponentManager.cpp" />
     <ClCompile Include="EngineCore.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LogWriter.cpp" />

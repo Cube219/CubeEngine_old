@@ -1,9 +1,10 @@
-#include "EngineCore.h"
+ï»¿#include "EngineCore.h"
 
 #include "Time/TimeManager.h"
 #include "Time/GameTime.h"
 #include "String/StringManager.h"
 #include "Thread/ThreadManager.h"
+#include "Base/format.h"
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
 #include "Renderer/Mesh.h"
@@ -15,6 +16,7 @@
 #include "Resource/ResourceManager.h"
 #include "ModuleManager.h"
 #include "GameObject.h"
+#include "Component/ComponentManager.h"
 #include "Renderer/Renderer3D.h"
 #include "Renderer/CameraRenderer3D.h"
 
@@ -54,10 +56,12 @@ namespace cube
 
 			mThreadManager = std::make_shared<ThreadManager>();
 
-			mModuleManager = std::make_unique<ModuleManager>(mPlatform, mThreadManager);
+			mModuleManager = std::make_shared<ModuleManager>(mPlatform, mThreadManager);
 			mModuleManager->LoadModule("InputModule");
 
 			mModuleManager->InitModules();
+
+			mComponentManager = std::make_shared<ComponentManager>();
 
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
@@ -95,6 +99,8 @@ namespace cube
 			for(int i = -1; i <= 1; i++) {
 				for(int j = -1; j <= 1; j++) {
 					for(int k = -1; k <= 1; k++) {
+						if(i == 0 && j == 0 && k == 0)
+							continue;
 
 						auto go = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
 						Vector3 v(i*2, j*2, k*2);
@@ -114,18 +120,22 @@ namespace cube
 					}
 				}
 			}
+
+			mCameraGo = std::make_shared<GameObject>(mRendererManager->GetCameraRenderer3D());
 		}
 
 		void EngineCore::Run()
 		{
 			mTimeManager->Start();
 
+			mCameraGo->Start();
+
 			mPlatform->StartLoop();
 		}
 
 		float EngineCore::GetCurrentFPS()
 		{
-			// TODO: ´õ ÁÁÀº ¹æ¹ýÀ¸·Î °³¼±
+			// TODO: ë” ì¢‹ì€ ë°©ë²•ìœ¼ë¡œ ê°œì„ 
 			return 1.0f / mTimeManager->GetGlobalGameTime()->GetDeltaTime();
 		}
 
@@ -142,13 +152,14 @@ namespace cube
 
 			float dt = mTimeManager->GetGlobalGameTime()->GetDeltaTime();
 
-			for(auto& go : mGos) {
-				go->Update();
-			}
-
 			mModuleManager->UpdateAllModules(dt);
 
-			mRendererManager->GetCameraRenderer3D()->RotateTemp(dt);
+			for(auto& go : mGos) {
+				go->Update(dt);
+			}
+
+			// mRendererManager->GetCameraRenderer3D()->RotateTemp(dt);
+			mCameraGo->Update(dt);
 			
 			mRendererManager->DrawAll();
 
@@ -160,7 +171,7 @@ namespace cube
 
 				double waitTime = nextTime - currentTime;
 
-				if(waitTime > 0.1) { // TODO: ÀûÀýÇÑ ¼öÄ¡¸¦ Ã£±â
+				if(waitTime > 0.1) { // TODO: ì ì ˆí•œ ìˆ˜ì¹˜ë¥¼ ì°¾ê¸°
 					mPlatform->Sleep(SCast(int)(waitTime * 1000));
 				} else if(waitTime > 0.0) {
 					while(nextTime > currentTime) {

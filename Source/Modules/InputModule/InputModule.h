@@ -16,7 +16,8 @@ namespace cube
 			std::function<float()> getButtonValue;
 		};
 #define KM_DIGIT_BTN_INFO(btn) ButtonInfo{[this](){return mKMInput->IsButtonPressed(btn) == true ? 1.0f : 0.0f;}}
-//#define XBOX_BTN_INFO(btn) ButtonInfo{InputType::XboxController, btn}
+#define XBOX_DIGIT_BTN_INFO(playerIdx, btn) ButtonInfo{[this](){return mXboxInput->IsButtonPressed(playerIdx, btn) == true ? 1.0f : 0.0f;}}
+#define XBOX_ANALOG_BTN_INFO(playerIdx, btn) ButtonInfo{[this](){return mXboxInput->GetAnalogValue(playerIdx, btn);}}
 
 		struct Action
 		{
@@ -31,9 +32,13 @@ namespace cube
 				ButtonInfo digitalButton;
 				float sensitivity;
 				float scale;
+
+				float currentValue = 0.0f;
 			};
 			float deadZone;
+			float sensitivityToZero;
 
+			bool isClamped;
 			float currentValue;
 			Vector<ButtonInfo> bindedAnalogButtons;
 			Vector<VirtualButtonInfo> bindedVirtualButtons;
@@ -57,44 +62,20 @@ namespace cube
 
 			float GetAxisValue(String& name);
 
+			void SendVibration(uint32_t playerIndex, float time, float intensity);
+			void SendVibration(uint32_t playerIndex, float time, float leftIntensity, float rightIntensity);
+
 			Vector2 GetMousePosition();
 
 		private:
 			UPtr<KeyboardMouseInput> mKMInput;
+			UPtr<XboxControllerInput> mXboxInput;
 
 			HashMap<String, Action> mActions;
 			HashMap<String, Axis> mAxes;
+
+			Array<bool, 4> mIsVibrated;
+			Array<float, 4> mRemainedVibrationTime;
 		};
 	}
 }
-
-/*
-Axes
-  MoveHorizontally
-  MoveVertically
-  AimHorizontally
-  AimVertically
-  Jump
-  Submit
-  Cancel
-
-
-MouseX / Y
-MouseLeft / Right / Wheel
-Keyboard?
-
-XboxLeftJoystickX / Y
-XboxRightJoystickX / Y
-XboxLeftTrigger
-XboxRightTrigger
-XboxLeftButton
-XboxRightButton
-XboxButtonX
-XboxButtonY
-XboxButtonA
-XboxButtonB
-XboxDpadLeft
-XboxDpadRight
-XboxDpadUp
-XboxDpadDown
-*/
