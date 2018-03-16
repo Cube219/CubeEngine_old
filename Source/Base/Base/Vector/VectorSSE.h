@@ -233,7 +233,7 @@ inline Vector2::operator Vector4() const
 	return v4;
 }
 
-inline void Vector2::GetFloat2(float* float2)
+inline void Vector2::GetFloat2(float* float2) const
 {
 	float temp[4];
 	_mm_store_ps(temp, mData);
@@ -383,7 +383,7 @@ inline Vector3::operator Vector4() const
 	return v4;
 }
 
-inline void Vector3::GetFloat3(float* float3)
+inline void Vector3::GetFloat3(float* float3) const
 {
 	float temp[4];
 	_mm_store_ps(temp, mData);
@@ -560,7 +560,7 @@ inline Vector4::operator Vector3() const
 	return Vector3(mData);
 }
 
-inline void Vector4::GetFloat4(float* float4)
+inline void Vector4::GetFloat4(float* float4) const
 {
 	_mm_store_ps(float4, mData);
 }
@@ -640,4 +640,4 @@ inline Vector4::Vector4(const VectorData vData)
 {
 	mData = vData;
 }
-#endif
+#endif // SIMD_SSE

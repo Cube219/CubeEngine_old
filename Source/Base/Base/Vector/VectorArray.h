@@ -260,7 +260,7 @@ inline Vector2::operator Vector4() const
 	return v4;
 }
 
-inline void Vector2::GetFloat2(float* float2)
+inline void Vector2::GetFloat2(float* float2) const
 {
 	float2[0] = mData[0];
 	float2[1] = mData[1];
@@ -372,7 +372,7 @@ inline Vector3::operator Vector4() const
 	return v4;
 }
 
-inline void Vector3::GetFloat3(float* float3)
+inline void Vector3::GetFloat3(float* float3) const
 {
 	float3[0] = mData[0];
 	float3[1] = mData[1];
@@ -502,7 +502,7 @@ inline Vector4::operator Vector3() const
 	return v3;
 }
 
-inline void Vector4::GetFloat4(float* float4)
+inline void Vector4::GetFloat4(float* float4) const
 {
 	float4[0] = mData[0];
 	float4[1] = mData[1];

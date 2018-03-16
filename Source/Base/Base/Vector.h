@@ -1,5 +1,7 @@
 #pragma once
 
+#include "format.h"
+
 #define SIMD_SSE
 
 
@@ -81,7 +83,7 @@ public:
 	operator Vector3() const;
 	operator Vector4() const;
 
-	void GetFloat2(float* float2);
+	void GetFloat2(float* float2) const;
 
 	VectorBase Length() const;
 	VectorBase SquareLength() const;
@@ -101,6 +103,10 @@ private:
 	Vector2(const VectorData vData);
 };
 
+// Vector2 formatting
+void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector2& vec2);
+void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector2& vec2);
+
 class Vector3 : public VectorBase
 {
 public:
@@ -113,7 +119,7 @@ public:
 	operator Vector2() const;
 	operator Vector4() const;
 
-	void GetFloat3(float* float3);
+	void GetFloat3(float* float3) const;
 
 	VectorBase Length() const;
 	VectorBase SquareLength() const;
@@ -133,6 +139,10 @@ private:
 	Vector3(const VectorData vData);
 };
 
+// Vector3 formatting
+void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector3& vec3);
+void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector3& vec3);
+
 class Vector4 : public VectorBase
 {
 public:
@@ -145,7 +155,7 @@ public:
 	operator Vector2() const;
 	operator Vector3() const;
 
-	void GetFloat4(float* float4);
+	void GetFloat4(float* float4) const;
 
 	VectorBase Length() const;
 	VectorBase SquareLength() const;
@@ -164,6 +174,10 @@ private:
 	friend class Vector3;
 	Vector4(const VectorData vData);
 };
+
+// Vector4 formatting
+void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector4& vec4);
+void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector4& vec4);
 
 // Include inline function definition
 
