@@ -22,6 +22,9 @@
     <ClInclude Include="Win32\Win32DLib.h">
       <Filter>Win32</Filter>
     </ClInclude>
+    <ClInclude Include="Win32\Win32FileSystem.h">
+      <Filter>Win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Win32">

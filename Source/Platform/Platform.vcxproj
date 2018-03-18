@@ -132,6 +132,7 @@
     <ClInclude Include="Platform.h" />
     <ClInclude Include="DLib.h" />
     <ClInclude Include="Win32\Win32DLib.h" />
+    <ClInclude Include="Win32\Win32FileSystem.h" />
     <ClInclude Include="Win32\Win32Platform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

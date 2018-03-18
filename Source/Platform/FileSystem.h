@@ -16,8 +16,8 @@ namespace cube
 		class File
 		{
 		public:
-			File();
-			~File();
+			File(){ }
+			virtual ~File(){ }
 
 			uint64_t GetFileSize();
 
@@ -28,7 +28,7 @@ namespace cube
 
 			void Write(void* pWriteBuffer, uint64_t bufferSize);
 
-		private:
+		protected:
 			friend class FileSystem;
 			
 			struct Data;
@@ -38,12 +38,12 @@ namespace cube
 		class FileSystem
 		{
 		public:
-			FileSystem();
-			~FileSystem();
+			FileSystem(){ }
+			virtual ~FileSystem(){ }
 
 			SPtr<File> OpenFile(const WString& path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
 
-		private:
+		protected:
 			struct Data;
 			Data* mData;
 		};

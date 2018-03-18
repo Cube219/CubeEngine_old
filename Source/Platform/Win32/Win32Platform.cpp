@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Win32DLib.h"
+#include "Win32FileSystem.h"
 
 namespace cube
 {
@@ -16,7 +17,7 @@ namespace cube
 
 		void Platform::Init()
 		{
-			fileSystem = std::make_shared<FileSystem>();
+			fileSystem = std::make_shared<Win32FileSystem>();
 		}
 
 		void Platform::InitWindow(const WString& title, uint32_t width, uint32_t height)
@@ -99,11 +100,6 @@ namespace cube
 		SPtr<DLib> Platform::LoadDLib(const WString& path)
 		{
 			return std::make_shared<Win32DLib>(path);
-		}
-
-		SPtr<FileSystem> Platform::GetFileSystem()
-		{
-			return nullptr; // TODO: Win32FileSystem 구현 후 구현
 		}
 
 		HINSTANCE Win32Platform::GetInstance()
