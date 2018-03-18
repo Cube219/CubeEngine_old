@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform_old;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>INPUT_MODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -118,7 +118,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform_old;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>INPUT_MODULE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

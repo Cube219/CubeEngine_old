@@ -84,7 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform_old;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -121,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform_old;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -150,10 +150,10 @@
     <ProjectReference Include="..\..\Modules\InputModule\InputModule.vcxproj">
       <Project>{b1f5fb14-f492-4490-a5e1-0abedf551c85}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Platform\BasePlatform\BasePlatform.vcxproj">
+    <ProjectReference Include="..\..\Platform_old\BasePlatform\BasePlatform.vcxproj">
       <Project>{b7a93207-08d1-4caf-ae2a-686b64f67042}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Platform\WinPlatform\WinPlatform.vcxproj">
+    <ProjectReference Include="..\..\Platform_old\WinPlatform\WinPlatform.vcxproj">
       <Project>{6baedf33-d719-4a21-97e7-8c73dcdb9b4c}</Project>
     </ProjectReference>
   </ItemGroup>
