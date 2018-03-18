@@ -1,40 +1,46 @@
 #include "KeyboardMouseInput.h"
 
+#include "Platform.h"
+
+#include "EngineCore/LogWriter.h"
+
 namespace cube
 {
 	namespace module
 	{
-		KeyboardMouseInput::KeyboardMouseInput(SPtr<platform::BasePlatform>& platform) : 
-			mPlatform(platform)
+		KeyboardMouseInput::KeyboardMouseInput()
 		{
-			platform->SetKeyDownFunction([this](KeyCode keyCode) {
+			platform::Platform::SetKeyDownFunction([this](KeyCode keyCode) {
 				mIsKeyPressed[SCast(int)(keyCode)] = true;
 			});
-			platform->SetKeyUpFunction([this](KeyCode keyCode) {
+			platform::Platform::SetKeyUpFunction([this](KeyCode keyCode) {
 				mIsKeyPressed[SCast(int)(keyCode)] = false;
 			});
 			
-			platform->SetMouseDownFunction([this](MouseButtonType buttonType) {
+			platform::Platform::SetMouseDownFunction([this](MouseButtonType buttonType) {
 				mIsMousePressed[SCast(int)(buttonType)] = true;
 			});
-			platform->SetMouseUpFunction([this](MouseButtonType buttonType) {
+			platform::Platform::SetMouseUpFunction([this](MouseButtonType buttonType) {
 				mIsMousePressed[SCast(int)(buttonType)] = false;
 			});
-			platform->SetMouseWheelFunction([this](int wheelDelta) {
+			platform::Platform::SetMouseWheelFunction([this](int wheelDelta) {
 			});
-			platform->SetMousePosFunction([this](int x, int y) {
+			platform::Platform::SetMousePosFunction([this](int x, int y) {
 				mMousePos = Vector2(SCast(float)(x), SCast(float)(y));
 			});
+
+			mMousePos = Vector2::Zero();
+			mLastMousePos = Vector2::Zero();
 		}
 
 		KeyboardMouseInput::~KeyboardMouseInput()
 		{
-			mPlatform->SetKeyDownFunction(0);
-			mPlatform->SetKeyUpFunction(0);
-			mPlatform->SetMouseDownFunction(0);
-			mPlatform->SetMouseUpFunction(0);
-			mPlatform->SetMouseWheelFunction(0);
-			mPlatform->SetMousePosFunction(0);
+			platform::Platform::SetKeyDownFunction(0);
+			platform::Platform::SetKeyUpFunction(0);
+			platform::Platform::SetMouseDownFunction(0);
+			platform::Platform::SetMouseUpFunction(0);
+			platform::Platform::SetMouseWheelFunction(0);
+			platform::Platform::SetMousePosFunction(0);
 		}
 
 		bool KeyboardMouseInput::IsButtonPressed(DigitalButton button)

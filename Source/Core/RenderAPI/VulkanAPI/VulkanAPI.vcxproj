@@ -179,6 +179,9 @@
     <ClCompile Include="Wrapper\VulkanWindowSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Platform\Platform.vcxproj">
+      <Project>{22a0e1be-e953-4d07-b5a3-b06a0256929b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\BaseRenderAPI\BaseRenderAPI.vcxproj">
       <Project>{b11ffb66-deb2-41ae-8b3c-1c9cfb2e2167}</Project>
     </ProjectReference>

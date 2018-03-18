@@ -21,7 +21,7 @@ namespace cube
 				mResName = "texture";
 			}
 
-			Resource* Import(SPtr<platform::BasePlatformFile>& file, Json info) final override;
+			Resource* Import(SPtr<platform::File>& file, Json info) final override;
 
 		private:
 			SPtr<BaseRenderAPI> mRenderAPI;

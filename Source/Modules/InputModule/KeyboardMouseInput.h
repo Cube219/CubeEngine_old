@@ -3,7 +3,6 @@
 #include "InputModuleHeader.h"
 
 #include "Base/KeyCode.h"
-#include "BasePlatform/BasePlatform.h"
 #include "Base/Vector.h"
 
 namespace cube
@@ -25,7 +24,7 @@ namespace cube
 				NumPad0, NumPad1, NumPad2, NumPad3, NumPad4, NumPad5, NumPad6, NumPad7, NumPad8, NumPad9
 			};
 
-			KeyboardMouseInput(SPtr<platform::BasePlatform>& platform);
+			KeyboardMouseInput();
 			~KeyboardMouseInput();
 
 			bool IsButtonPressed(DigitalButton button);
@@ -50,8 +49,6 @@ namespace cube
 			Vector2 mLastMousePos;
 			Vector2 mMousePos;
 			Vector2 mMouseDeltaPos;
-
-			SPtr<platform::BasePlatform> mPlatform;
 		};
 	}
 }

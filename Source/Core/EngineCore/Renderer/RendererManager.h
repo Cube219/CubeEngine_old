@@ -2,8 +2,7 @@
 
 #include "../EngineCoreHeader.h"
 
-#include "BasePlatform/BasePlatform.h"
-#include "BasePlatform/BasePlatformDLib.h"
+#include "DLib.h"
 
 #include "BaseRenderAPI/BaseRenderAPI.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderShader.h"
@@ -30,7 +29,7 @@ namespace cube
 		class ENGINE_CORE_EXPORT RendererManager
 		{
 		public:
-			RendererManager(SPtr<platform::BasePlatform>& platform, RenderType type);
+			RendererManager(RenderType type);
 			~RendererManager();
 
 			void RegisterMaterial(SPtr<Material>& material);
@@ -59,7 +58,7 @@ namespace cube
 
 			SPtr<BaseRenderGraphicsPipeline> CreatePipeline(SPtr<Material>& material);
 
-			SPtr<platform::BasePlatformDLib> mRenderDLib;
+			SPtr<platform::DLib> mRenderDLib;
 			SPtr<BaseRenderAPI> mRenderAPI;
 
 			Mutex mRenderersMutex;
@@ -94,8 +93,6 @@ namespace cube
 			bool mVsync;
 			uint32_t mWidth;
 			uint32_t mHeight;
-
-			SPtr<platform::BasePlatform> mPlatform_ref;
 		};
 	}
 }

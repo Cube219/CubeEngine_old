@@ -7,8 +7,6 @@ namespace cube
 {
 	namespace core
 	{
-		SPtr<platform::BasePlatform> LogWriter::mPlatform;
-
 		void LogWriter::WriteLog(LogType type, WString msg, const char* fileName, int lineNum)
 		{
 			// INFO [18:22:22.1111 / EngineCore.cpp:152] : 내용
@@ -33,11 +31,10 @@ namespace cube
 			std::wcout << prefix << " / " << SplitFileName(fileName) << ":" << lineNum << "] : " << msg << std::endl;
 		}
 
-		void LogWriter::Init(SPtr<platform::BasePlatform>& platform)
+		void LogWriter::Init()
 		{
 			// TODO: File에 쓰는 방식 추가
 			// TODO: 시간 기록
-			mPlatform = platform;
 		}
 
 		const char* LogWriter::SplitFileName(const char* fullPath)

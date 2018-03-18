@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BaseRenderAPIHeader.h"
-#include "BasePlatform/BasePlatform.h"
 
 namespace cube
 {
@@ -13,7 +12,7 @@ namespace cube
 			BaseRenderAPI() {};
 			virtual ~BaseRenderAPI() {}
 
-			virtual void Init(SPtr<platform::BasePlatform>& platform) = 0;
+			virtual void Init() = 0;
 
 			virtual SPtr<BaseRenderBuffer> CreateBuffer(BaseRenderBufferInitializer& initializer) = 0;
 

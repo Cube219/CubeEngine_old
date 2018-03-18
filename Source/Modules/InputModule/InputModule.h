@@ -4,7 +4,6 @@
 
 #include "BaseModule/BaseModule.h"
 
-#include "BasePlatform/BasePlatform.h"
 #include "Base/Vector.h"
 
 namespace cube

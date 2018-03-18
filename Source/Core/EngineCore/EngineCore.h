@@ -4,8 +4,6 @@
 
 #include <iostream>
 
-#include "BasePlatform/BasePlatform.h"
-
 namespace cube
 {
 	namespace core
@@ -14,10 +12,10 @@ namespace cube
 		{
 		// Singleton definition
 		public:
-			static void CreateInstance(SPtr<platform::BasePlatform>& platform)
+			static void CreateInstance()
 			{
 				if(mInstance == nullptr)
-					mInstance = new EngineCore(platform);
+					mInstance = new EngineCore();
 				else
 					std::wcout << L"EngineCore: Instance is already created" << std::endl;
 			}
@@ -34,7 +32,7 @@ namespace cube
 			}
 
 		private:
-			EngineCore(SPtr<platform::BasePlatform>& platform);
+			EngineCore();
 			~EngineCore();
 
 			static EngineCore* mInstance;
@@ -54,7 +52,6 @@ namespace cube
 			SPtr<StringManager> GetStringManager() const { return mStringManager; }
 			SPtr<ModuleManager> GetModuleManager() const { return mModuleManager; }
 			SPtr<ComponentManager> GetComponentManager() const { return mComponentManager; }
-			SPtr<platform::BasePlatform> GetPlatform() const { return mPlatform; }
 
 		private:
 			friend class CubeEngine;
@@ -62,8 +59,6 @@ namespace cube
 			void Loop();
 
 			void Resize(uint32_t width, uint32_t height);
-
-			SPtr<platform::BasePlatform> mPlatform;
 
 			SPtr<RendererManager> mRendererManager;
 			SPtr<ResourceManager> mResourceManager;

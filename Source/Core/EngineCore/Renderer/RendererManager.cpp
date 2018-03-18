@@ -1,6 +1,6 @@
 #include "RendererManager.h"
 
-#include "Base/format.h"
+#include "Platform.h"
 #include "../LogWriter.h"
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
@@ -15,15 +15,15 @@ namespace cube
 {
 	namespace core
 	{
-		RendererManager::RendererManager(SPtr<platform::BasePlatform>& platform, RenderType type) :
-			mPlatform_ref(platform), mIsPrepared(false)
+		RendererManager::RendererManager(RenderType type) :
+			mIsPrepared(false)
 		{
-			mWidth = platform->GetWindowWidth();
-			mHeight = platform->GetWindowHeight();
+			mWidth = platform::Platform::GetWindowWidth();
+			mHeight = platform::Platform::GetWindowHeight();
 
 			switch(type) {
 				case RenderType::Vulkan:
-					mRenderDLib = platform->LoadDLib(L"VulkanAPI");
+					mRenderDLib = platform::Platform::LoadDLib(L"VulkanAPI");
 					break;
 
 				default:
@@ -39,7 +39,7 @@ namespace cube
 			SPtr<BaseRenderAPI> temp(createAPIFunction());
 			mRenderAPI = std::move(temp);
 
-			mRenderAPI->Init(platform);
+			mRenderAPI->Init();
 
 			// Graphics queue
 			mGraphicsQueue = mRenderAPI->GetQueue(QueueTypeBits::GraphicsBit, 0);

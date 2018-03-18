@@ -1,5 +1,6 @@
 ﻿#include "EngineCore.h"
 
+#include "Platform.h"
 #include "Time/TimeManager.h"
 #include "Time/GameTime.h"
 #include "String/StringManager.h"
@@ -26,11 +27,11 @@ namespace cube
 	{
 		EngineCore* EngineCore::mInstance = nullptr;
 
-		EngineCore::EngineCore(SPtr<platform::BasePlatform>& platform) :
-			mPlatform(platform), mFPSLimit(-1)
+		EngineCore::EngineCore() :
+			mFPSLimit(-1)
 		{
-			platform->SetLoopFunction(std::bind(&EngineCore::Loop, this));
-			platform->SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
+			platform::Platform::SetLoopFunction(std::bind(&EngineCore::Loop, this));
+			platform::Platform::SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
 		}
 
 		EngineCore::~EngineCore()
@@ -39,14 +40,14 @@ namespace cube
 
 		void EngineCore::Prepare()
 		{
-			LogWriter::Init(mPlatform);
+			LogWriter::Init();
 
 			mTimeManager = std::make_unique<TimeManager>();
 			mStringManager = std::make_unique<StringManager>();
 
-			mRendererManager = std::make_unique<RendererManager>(mPlatform, RenderType::Vulkan);
+			mRendererManager = std::make_unique<RendererManager>(RenderType::Vulkan);
 
-			mResourceManager = std::make_unique<ResourceManager>(mPlatform->GetFileSystem());
+			mResourceManager = std::make_unique<ResourceManager>(platform::Platform::GetFileSystem());
 			mResourceManager->RegisterImporter(
 				std::make_unique<TextureImporter>(mRendererManager->GetRenderAPI())
 			);
@@ -56,7 +57,7 @@ namespace cube
 
 			mThreadManager = std::make_shared<ThreadManager>();
 
-			mModuleManager = std::make_shared<ModuleManager>(mPlatform, mThreadManager);
+			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
 			mModuleManager->LoadModule("InputModule");
 
 			mModuleManager->InitModules();
@@ -130,7 +131,7 @@ namespace cube
 
 			mCameraGo->Start();
 
-			mPlatform->StartLoop();
+			platform::Platform::StartLoop();
 		}
 
 		float EngineCore::GetCurrentFPS()
@@ -171,7 +172,7 @@ namespace cube
 				double waitTime = nextTime - currentTime;
 
 				if(waitTime > 0.1) { // TODO: 적절한 수치를 찾기
-					mPlatform->Sleep(SCast(int)(waitTime * 1000));
+					platform::Platform::Sleep(SCast(int)(waitTime * 1000));
 				} else if(waitTime > 0.0) {
 					while(nextTime > currentTime) {
 						currentTime = mTimeManager->GetSystemTime();

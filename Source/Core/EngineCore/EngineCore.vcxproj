@@ -206,6 +206,9 @@
     <ProjectReference Include="..\..\Base\Base\Base.vcxproj">
       <Project>{84d3a49e-2aef-4370-aa37-3d297a45fc91}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\Platform\Platform.vcxproj">
+      <Project>{22a0e1be-e953-4d07-b5a3-b06a0256929b}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Renderer\Fragment.glsl" />

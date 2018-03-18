@@ -2,8 +2,6 @@
 
 #include "CubeEngineHeader.h"
 
-#include "BasePlatform/BasePlatform.h"
-
 namespace cube
 {
 	struct CUBE_ENGINE_EXPORT CubeEngineStartOption
@@ -29,8 +27,6 @@ namespace cube
 	private:
 		static void InitComponents();
 
-		static SPtr<platform::BasePlatform> GetPlatform();
-
-		static SPtr<platform::BasePlatform> mPlatform;
+		static void InitPlatform();
 	};
 }

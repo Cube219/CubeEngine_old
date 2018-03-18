@@ -32,9 +32,7 @@ namespace cube
 				mIsVibrated[i] = false;
 			}
 
-			SPtr<platform::BasePlatform> platform = eCore->GetPlatform();
-
-			mKMInput = std::make_unique<KeyboardMouseInput>(platform);
+			mKMInput = std::make_unique<KeyboardMouseInput>();
 
 			Action jump;
 			jump.bindedDigitalButtons.push_back(KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::SpaceBar));

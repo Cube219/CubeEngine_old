@@ -4,7 +4,7 @@
 
 #include "Base/Json.h"
 #include "../Thread/MutexLock.h"
-#include "BasePlatform/BasePlatformFileSystem.h"
+#include "FileSystem.h"
 
 namespace cube
 {
@@ -16,7 +16,7 @@ namespace cube
 			ResourceImporter(){ }
 			virtual ~ResourceImporter(){ }
 
-			virtual Resource* Import(SPtr<platform::BasePlatformFile>& file, Json info) = 0;
+			virtual Resource* Import(SPtr<platform::File>& file, Json info) = 0;
 
 			const String& GetResourceName() const { return mResName; }
 

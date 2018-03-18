@@ -1,5 +1,7 @@
 #include "VulkanWindowSurface.h"
 
+#include "Win32/Win32Platform.h"
+
 #include "VulkanInstance.h"
 #include "VulkanPhysicalDevice.h"
 #include "VulkanDevice.h"
@@ -10,16 +12,15 @@ namespace cube
 	namespace core
 	{
 #ifdef _WIN32
-		VulkanWindowSurface::VulkanWindowSurface(const SPtr<VulkanInstance>& instance, const SPtr<VulkanPhysicalDevice>& physicalDevice, const SPtr<VulkanDevice>& device,
-			HINSTANCE win32Instance, HWND win32Window) :
+		VulkanWindowSurface::VulkanWindowSurface(const SPtr<VulkanInstance>& instance, const SPtr<VulkanPhysicalDevice>& physicalDevice, const SPtr<VulkanDevice>& device) :
 			mInstance_ref(instance), mPhysicalDevice_ref(physicalDevice), mDevice_ref(device)
 		{
 			VkWin32SurfaceCreateInfoKHR info;
 			info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 			info.pNext = nullptr;
 			info.flags = 0;
-			info.hinstance = win32Instance;
-			info.hwnd = win32Window;
+			info.hinstance = platform::Win32Platform::GetInstance();
+			info.hwnd = platform::Win32Platform::GetWindow();
 
 			VkResult res;
 			res = vkCreateWin32SurfaceKHR(instance->GetHandle(), &info, nullptr, &mSurface);

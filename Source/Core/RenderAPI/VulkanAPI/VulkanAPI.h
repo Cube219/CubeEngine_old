@@ -3,7 +3,6 @@
 #include "VulkanAPIHeader.h"
 
 #include "BaseRenderAPI/BaseRenderAPI.h"
-#include "BasePlatform/BasePlatform.h"
 
 namespace cube
 {
@@ -17,7 +16,7 @@ namespace cube
 			VulkanAPI();
 			virtual ~VulkanAPI();
 
-			void Init(SPtr<platform::BasePlatform>& platform) final override;
+			void Init() final override;
 
 			SPtr<BaseRenderBuffer> CreateBuffer(BaseRenderBufferInitializer& initializer) final override;
 

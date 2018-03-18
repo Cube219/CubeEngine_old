@@ -150,11 +150,8 @@
     <ProjectReference Include="..\..\Modules\InputModule\InputModule.vcxproj">
       <Project>{b1f5fb14-f492-4490-a5e1-0abedf551c85}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Platform\BasePlatform\BasePlatform.vcxproj">
-      <Project>{b7a93207-08d1-4caf-ae2a-686b64f67042}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Platform\WinPlatform\WinPlatform.vcxproj">
-      <Project>{6baedf33-d719-4a21-97e7-8c73dcdb9b4c}</Project>
+    <ProjectReference Include="..\..\Platform\Platform.vcxproj">
+      <Project>{22a0e1be-e953-4d07-b5a3-b06a0256929b}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
