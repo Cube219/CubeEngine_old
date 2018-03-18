@@ -9,12 +9,12 @@ namespace cube
 		class DLib
 		{
 		public:
-			DLib();
-			~DLib();
+			DLib(){ }
+			virtual ~DLib(){ }
 
 			void* GetFunction(const String& name);
 
-		private:
+		protected:
 			struct Data;
 			Data* mData;
 		};

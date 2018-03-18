@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Win32DLib.h"
+
 namespace cube
 {
 	namespace platform
@@ -96,7 +98,7 @@ namespace cube
 
 		SPtr<DLib> Platform::LoadDLib(const WString& path)
 		{
-			return nullptr; // TODO: Win32DLib 구현 후 구현
+			return std::make_shared<Win32DLib>(path);
 		}
 
 		SPtr<FileSystem> Platform::GetFileSystem()
