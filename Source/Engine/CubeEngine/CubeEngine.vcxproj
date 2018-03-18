@@ -153,12 +153,6 @@
     <ProjectReference Include="..\..\Platform\Platform.vcxproj">
       <Project>{22a0e1be-e953-4d07-b5a3-b06a0256929b}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Platform_old\BasePlatform\BasePlatform.vcxproj">
-      <Project>{b7a93207-08d1-4caf-ae2a-686b64f67042}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Platform_old\WinPlatform\WinPlatform.vcxproj">
-      <Project>{6baedf33-d719-4a21-97e7-8c73dcdb9b4c}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
