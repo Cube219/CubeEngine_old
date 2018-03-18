@@ -118,6 +118,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />
+    <ClCompile Include="Win32\Win32DLib.cpp" />
+    <ClCompile Include="Win32\Win32FileSystem.cpp" />
+    <ClCompile Include="Win32\Win32Platform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Base\Base\Base.vcxproj">
@@ -128,6 +131,7 @@
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="DLib.h" />
+    <ClInclude Include="Win32\Win32Platform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
