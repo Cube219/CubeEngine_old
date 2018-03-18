@@ -8,7 +8,7 @@ namespace cube
 {
 	namespace core
 	{
-		Resource* ShaderImporter::Import(SPtr<platform::BasePlatformFile>& file, Json info)
+		Resource* ShaderImporter::Import(SPtr<platform::File>& file, Json info)
 		{
 			uint64_t size = file->GetFileSize();
 

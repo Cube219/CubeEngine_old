@@ -4,8 +4,8 @@
 
 #include <functional>
 
+#include "DLib.h"
 #include "BaseModule/BaseModule.h"
-#include "BasePlatform/BasePlatform.h"
 #include "Thread/MutexLock.h"
 
 namespace cube
@@ -21,7 +21,7 @@ namespace cube
 				NotRun, Running, Finished
 			};
 
-			SPtr<platform::BasePlatformDLib> moduleDLib;
+			SPtr<platform::DLib> moduleDLib;
 			SPtr<module::BaseModule> module;
 			uint32_t remainDependencyNum;
 			State state;
@@ -30,7 +30,7 @@ namespace cube
 		class ENGINE_CORE_EXPORT ModuleManager
 		{
 		public:
-			ModuleManager(SPtr<platform::BasePlatform>& platform, SPtr<ThreadManager>& threadManager);
+			ModuleManager(SPtr<ThreadManager>& threadManager);
 			~ModuleManager();
 
 			void LoadModule(String moduleName);
@@ -52,7 +52,6 @@ namespace cube
 
 			Vector<ModuleNode> mModules;
 
-			SPtr<platform::BasePlatform> mPlatform;
 			SPtr<ThreadManager> mThreadManager;
 		};
 	}

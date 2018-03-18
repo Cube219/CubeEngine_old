@@ -25,6 +25,7 @@
     <ClInclude Include="Win32\Win32FileSystem.h">
       <Filter>Win32</Filter>
     </ClInclude>
+    <ClInclude Include="PlatformHeader.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Win32">

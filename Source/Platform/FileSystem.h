@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Base/BaseTypes.h"
+#include "PlatformHeader.h"
 
 namespace cube
 {
@@ -13,7 +13,7 @@ namespace cube
 		};
 		SET_ENUM_AS_FLAGS(FileAccessModeBits);
 
-		class File
+		class PLATFORM_EXPORT File
 		{
 		public:
 			File(){ }
@@ -35,7 +35,7 @@ namespace cube
 			Data* mData;
 		};
 
-		class FileSystem
+		class PLATFORM_EXPORT FileSystem
 		{
 		public:
 			FileSystem(){ }

@@ -1,5 +1,7 @@
 ﻿#include "ModuleManager.h"
 
+#include "Platform.h"
+
 #include "Thread/ThreadManager.h"
 #include "Thread/Thread.h"
 
@@ -10,8 +12,8 @@ namespace cube
 {
 	namespace core
 	{
-		ModuleManager::ModuleManager(SPtr<platform::BasePlatform>& platform, SPtr<ThreadManager>& threadManager) :
-			mPlatform(platform), mThreadManager(threadManager)
+		ModuleManager::ModuleManager(SPtr<ThreadManager>& threadManager) :
+			mThreadManager(threadManager)
 		{
 		}
 
@@ -41,7 +43,7 @@ namespace cube
 			// !위 변환은 String이 ACSII인 경우만 가능
 			// 따라서 다른 곳에서는 이 방식을 쓰면 안 됨. 차후에 String 시스템 개선 때 고쳐질 것
 			moduleWName.assign(moduleName.begin(), moduleName.end());
-			node.moduleDLib = mPlatform->LoadDLib(moduleWName);
+			node.moduleDLib = platform::Platform::LoadDLib(moduleWName);
 			
 			using CreateModuleFunction = module::BaseModule* (*)();
 

@@ -12,8 +12,7 @@ namespace cube
 		{
 		public:
 #ifdef _WIN32
-			VulkanWindowSurface(const SPtr<VulkanInstance>& instance, const SPtr<VulkanPhysicalDevice>& physicalDevice, const SPtr<VulkanDevice>& device,
-				HINSTANCE win32Instance, HWND win32Window);
+			VulkanWindowSurface(const SPtr<VulkanInstance>& instance, const SPtr<VulkanPhysicalDevice>& physicalDevice, const SPtr<VulkanDevice>& device);
 #endif // WIN32
 			virtual ~VulkanWindowSurface();
 

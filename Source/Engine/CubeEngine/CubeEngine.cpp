@@ -1,5 +1,6 @@
 #include "CubeEngine.h"
 
+#include "Platform.h"
 #include "EngineCore/Component/ComponentManager.h"
 #include "Component/CameraComponent.h"
 #include "Component/MoveComponent.h"
@@ -7,16 +8,14 @@
 
 namespace cube
 {
-	SPtr<platform::BasePlatform> CubeEngine::mPlatform = nullptr;
-
 	void CubeEngine::Start(const CubeEngineStartOption& startOption)
 	{
-		mPlatform = GetPlatform();
+		InitPlatform();
 
-		mPlatform->InitWindow(startOption.title, startOption.windowWidth, startOption.windowHeight);
-		mPlatform->ShowWindow();
+		platform::Platform::InitWindow(startOption.title, startOption.windowWidth, startOption.windowHeight);
+		platform::Platform::ShowWindow();
 
-		core::EngineCore::CreateInstance(mPlatform);
+		core::EngineCore::CreateInstance();
 
 		core::ECore()->Prepare();
 		core::ECore()->SetFPSLimit(60);
@@ -54,16 +53,16 @@ namespace cube
 
 }
 
-#include "WinPlatform/WinPlatform.h"
+#include "Win32/Win32Platform.h"
 
 namespace cube{
 
-	SPtr<platform::BasePlatform> CubeEngine::GetPlatform()
+	void CubeEngine::InitPlatform()
 	{
 		HINSTANCE ins;
 		ins = GetModuleHandle(NULL);
 
-		return std::make_shared<platform::WinPlatform>(ins);
+		platform::Win32Platform::Init(ins);
 	}
 
 #endif // _WIN32

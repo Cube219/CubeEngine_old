@@ -1,14 +1,16 @@
 #pragma once
 
-#include "../DLib.h"
+#include "../PlatformHeader.h"
 
 #include <Windows.h>
+
+#include "../DLib.h"
 
 namespace cube
 {
 	namespace platform
 	{
-		class Win32DLib : public DLib
+		class PLATFORM_EXPORT Win32DLib : public DLib
 		{
 		public:
 			Win32DLib(const WString& path);

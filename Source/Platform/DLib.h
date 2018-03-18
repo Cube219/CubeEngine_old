@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Base/BaseTypes.h"
+#include "PlatformHeader.h"
 
 namespace cube
 {
 	namespace platform
 	{
-		class DLib
+		class PLATFORM_EXPORT DLib
 		{
 		public:
 			DLib(){ }

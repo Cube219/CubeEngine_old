@@ -15,6 +15,25 @@ namespace cube
 			HWND window;
 		};
 
+		Platform::Data Platform::data;
+
+		SPtr<FileSystem> Platform::fileSystem;
+
+		WString Platform::title;
+
+		uint32_t Platform::width;
+		uint32_t Platform::height;
+
+		std::function<void(KeyCode)> Platform::keyDownFunction;
+		std::function<void(KeyCode)> Platform::keyUpFunction;
+		std::function<void(MouseButtonType)> Platform::mouseDownFunction;
+		std::function<void(MouseButtonType)> Platform::mouseUpFunction;
+		std::function<void(int)> Platform::mouseWheelFunction;
+		std::function<void(uint32_t, uint32_t)> Platform::mousePosFunction;
+
+		std::function<void()> Platform::loopFunction;
+		std::function<void(uint32_t, uint32_t)> Platform::resizeFunction;
+
 		void Platform::Init()
 		{
 			fileSystem = std::make_shared<Win32FileSystem>();
@@ -100,6 +119,11 @@ namespace cube
 		SPtr<DLib> Platform::LoadDLib(const WString& path)
 		{
 			return std::make_shared<Win32DLib>(path);
+		}
+
+		void Win32Platform::Init(HINSTANCE instance)
+		{
+			data.instance = instance;
 		}
 
 		HINSTANCE Win32Platform::GetInstance()

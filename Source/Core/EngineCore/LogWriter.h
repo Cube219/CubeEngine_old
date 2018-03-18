@@ -2,7 +2,6 @@
 
 #include "EngineCoreHeader.h"
 
-#include "BasePlatform/BasePlatform.h"
 #include "Base/format.h"
 
 namespace cube
@@ -27,11 +26,9 @@ namespace cube
 			//LogWriter& LogWriter::operator=(const LogWriter& other) = delete; // TODO: 왜 에러가?
 			
 			// Only can access to the friend class (EngineCore)
-			static void Init(SPtr<platform::BasePlatform>& platform);
+			static void Init();
 
 			static const char* SplitFileName(const char* fullPath);
-
-			static SPtr<platform::BasePlatform> mPlatform;
 		};
 	}
 }

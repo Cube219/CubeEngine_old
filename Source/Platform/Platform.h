@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Base/BaseTypes.h"
+#include "PlatformHeader.h"
+
 #include "Base/KeyCode.h"
 
 #include "DLib.h"
@@ -13,7 +14,7 @@ namespace cube
 {
 	namespace platform
 	{
-		class Platform
+		class PLATFORM_EXPORT Platform
 		{
 		public:
 			static void Init();

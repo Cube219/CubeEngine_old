@@ -1,14 +1,16 @@
 #pragma once
 
-#include "../FileSystem.h"
+#include "../PlatformHeader.h"
 
 #include <Windows.h>
+
+#include "../FileSystem.h"
 
 namespace cube
 {
 	namespace platform
 	{
-		class Win32File : public File
+		class PLATFORM_EXPORT Win32File : public File
 		{
 		public:
 			Win32File(HANDLE fileHandle);

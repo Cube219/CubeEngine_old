@@ -20,8 +20,6 @@
 #include "Wrapper/VulkanFence.h"
 #include "Wrapper/VulkanSemaphore.h"
 
-#include "WinPlatform/WinPlatform.h"
-
 namespace cube
 {
 	namespace core
@@ -39,7 +37,7 @@ namespace cube
 		{
 		}
 
-		void VulkanAPI::Init(SPtr<platform::BasePlatform>& platform)
+		void VulkanAPI::Init()
 		{
 			// Init instance
 			VulkanInstanceInitializer instanceInit;
@@ -77,10 +75,7 @@ namespace cube
 			mCommandPool = std::make_shared<VulkanCommandPool>(mDevice, mDevice->GetGraphicsQueueFamily());
 
 			// Create a surface
-#ifdef _WIN32
-			SPtr<platform::WinPlatform> win32Platform = DPCast(platform::WinPlatform)(platform);
-			mWindowSurface = std::make_shared<VulkanWindowSurface>(mInstance, mMainPhysicalDevice, mDevice, win32Platform->GetInstance(), win32Platform->GetWindow());
-#endif // _WIN32
+			mWindowSurface = std::make_shared<VulkanWindowSurface>(mInstance, mMainPhysicalDevice, mDevice);
 
 			// Create a descriptor pool
 			mDescriptorPool = std::make_shared<VulkanDescriptorPool>(mDevice);

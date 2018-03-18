@@ -4,6 +4,8 @@
 
 #include "../LogWriter.h"
 
+using namespace std::placeholders;
+
 namespace cube
 {
 	namespace core

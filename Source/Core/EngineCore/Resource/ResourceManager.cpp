@@ -8,7 +8,7 @@ namespace cube
 {
 	namespace core
 	{
-		ResourceManager::ResourceManager(SPtr<platform::BasePlatformFileSystem>& fileSystem) : 
+		ResourceManager::ResourceManager(SPtr<platform::FileSystem>& fileSystem) : 
 			mFileSystem(fileSystem)
 		{
 		}
@@ -39,7 +39,7 @@ namespace cube
 			// Get a metadata
 			WString metaPath = path;
 			metaPath.append(L".meta");
-			SPtr<BasePlatformFile> metaFile = mFileSystem->OpenFile(metaPath, FileAccessModeBits::Read);
+			SPtr<File> metaFile = mFileSystem->OpenFile(metaPath, FileAccessModeBits::Read);
 
 			uint64_t size = metaFile->GetFileSize();
 			char* metaString = (char*)malloc(size + 1);
@@ -58,7 +58,7 @@ namespace cube
 			bool isFindImporter = false;
 			for(auto& importer : mImporters) {
 				if(importer->GetResourceName() == resName) {
-					SPtr<BasePlatformFile> resFile = mFileSystem->OpenFile(path, FileAccessModeBits::Read);
+					SPtr<File> resFile = mFileSystem->OpenFile(path, FileAccessModeBits::Read);
 					Json resInfo = metaJson["res_info"];
 
 					loadedRes = importer->Import(resFile, resInfo);

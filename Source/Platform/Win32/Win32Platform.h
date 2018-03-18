@@ -1,16 +1,20 @@
 #pragma once
 
-#include "../Platform.h"
+#include "../PlatformHeader.h"
 
 #include <Windows.h>
+
+#include "../Platform.h"
 
 namespace cube
 {
 	namespace platform
 	{
-		class Win32Platform : public Platform
+		class PLATFORM_EXPORT Win32Platform : public Platform
 		{
 		public:
+			static void Init(HINSTANCE instance);
+
 			static HINSTANCE GetInstance();
 			static HWND GetWindow();
 
