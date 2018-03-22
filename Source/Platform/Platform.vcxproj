@@ -124,10 +124,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="a.cpp" />
     <ClCompile Include="Win32\Win32DLib.cpp" />
     <ClCompile Include="Win32\Win32FileSystem.cpp" />
     <ClCompile Include="Win32\Win32Platform.cpp" />
+    <ClCompile Include="Win32\Win32String.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Base\Base\Base.vcxproj">
@@ -139,6 +139,7 @@
     <ClInclude Include="Platform.h" />
     <ClInclude Include="DLib.h" />
     <ClInclude Include="PlatformHeader.h" />
+    <ClInclude Include="PlatformString.h" />
     <ClInclude Include="Win32\Win32DLib.h" />
     <ClInclude Include="Win32\Win32FileSystem.h" />
     <ClInclude Include="Win32\Win32Platform.h" />

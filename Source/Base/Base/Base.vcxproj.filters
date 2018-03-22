@@ -13,6 +13,7 @@
       <Filter>Vector</Filter>
     </ClInclude>
     <ClInclude Include="Json.h" />
+    <ClInclude Include="String.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />

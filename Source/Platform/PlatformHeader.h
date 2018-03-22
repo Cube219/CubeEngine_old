@@ -4,6 +4,8 @@
 
 #include "Base/BaseTypes.h"
 
+#include "PlatformString.h"
+
 #ifdef PLATFORM_EXPORTS
 #define PLATFORM_EXPORT __declspec(dllexport) 
 #else // PLATFORM_EXPORTS
