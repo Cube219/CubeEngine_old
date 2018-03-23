@@ -12,7 +12,7 @@ namespace cube
 			DLib(){ }
 			virtual ~DLib(){ }
 
-			void* GetFunction(const String& name);
+			void* GetFunction(const String2& name);
 
 		protected:
 			struct Data;

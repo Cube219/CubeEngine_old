@@ -19,7 +19,7 @@ namespace cube
 
 		SPtr<FileSystem> Platform::fileSystem;
 
-		WString Platform::title;
+		PString Platform::title;
 
 		uint32_t Platform::width;
 		uint32_t Platform::height;
@@ -39,7 +39,7 @@ namespace cube
 			fileSystem = std::make_shared<Win32FileSystem>();
 		}
 
-		void Platform::InitWindow(const WString& title, uint32_t width, uint32_t height)
+		void Platform::InitWindow(const String2& title, uint32_t width, uint32_t height)
 		{
 			// Show console if it is debug mode
 #ifdef _DEBUG
@@ -56,7 +56,7 @@ namespace cube
 			}
 #endif // _DEBUG
 
-			Platform::title = title;
+			Platform::title = ToPString(title);
 			Platform::width = width;
 			Platform::height = height;
 
@@ -72,7 +72,7 @@ namespace cube
 			winClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 			winClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 			winClass.lpszMenuName = nullptr;
-			winClass.lpszClassName = title.c_str();
+			winClass.lpszClassName = Platform::title.c_str();
 			winClass.hIconSm = LoadIcon(nullptr, IDI_WINLOGO);
 
 			if(!RegisterClassEx(&winClass))
@@ -116,7 +116,7 @@ namespace cube
 			::Sleep(time);
 		}
 
-		SPtr<DLib> Platform::LoadDLib(const WString& path)
+		SPtr<DLib> Platform::LoadDLib(const String2& path)
 		{
 			return std::make_shared<Win32DLib>(path);
 		}

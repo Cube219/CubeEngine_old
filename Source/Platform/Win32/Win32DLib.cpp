@@ -11,12 +11,13 @@ namespace cube
 			HMODULE dLib;
 		};
 
-		void* DLib::GetFunction(const String& name)
+		void* DLib::GetFunction(const String2& name)
 		{
 			if(!mData->dLib)
 				return nullptr;
 
-			auto pFunction = GetProcAddress(mData->dLib, name.c_str());
+			std::string aName = ToASCIIString(name);
+			auto pFunction = GetProcAddress(mData->dLib, aName.c_str());
 			if(pFunction == NULL) {
 				std::wcout << L"Win32DLib: Failed to get the function. (Error: " << GetLastError() << ")" << std::endl;
 				return nullptr;
@@ -25,11 +26,11 @@ namespace cube
 			return RCast(void*)(pFunction);
 		}
 
-		Win32DLib::Win32DLib(const WString& path)
+		Win32DLib::Win32DLib(const String2& path)
 		{
 			mData = new DLib::Data();
 
-			WString pathWithExtension = path + L".dll";
+			PString pathWithExtension = ToPString(path) + L".dll";
 
 			mData->dLib = LoadLibrary(pathWithExtension.c_str());
 

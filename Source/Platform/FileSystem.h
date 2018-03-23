@@ -41,7 +41,7 @@ namespace cube
 			FileSystem(){ }
 			virtual ~FileSystem(){ }
 
-			SPtr<File> OpenFile(const WString& path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
+			SPtr<File> OpenFile(const String2& path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
 
 		protected:
 			struct Data;

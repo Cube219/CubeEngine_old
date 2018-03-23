@@ -13,7 +13,7 @@ namespace cube
 		class PLATFORM_EXPORT Win32DLib : public DLib
 		{
 		public:
-			Win32DLib(const WString& path);
+			Win32DLib(const String2& path);
 			virtual ~Win32DLib();
 		};
 	}
