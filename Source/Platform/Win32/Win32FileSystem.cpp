@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include "Win32FileSystem.h"
 
 #include <iostream>
@@ -148,3 +150,5 @@ namespace cube
 		}
 	}
 }
+
+#endif // _WIN32

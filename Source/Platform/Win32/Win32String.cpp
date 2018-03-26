@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include "../PlatformString.h"
 
 #include <Windows.h>
@@ -173,3 +175,5 @@ namespace cube
 		std::wcout << pStr << std::endl;
 	}
 } // namespace cube
+
+#endif // _WIN32

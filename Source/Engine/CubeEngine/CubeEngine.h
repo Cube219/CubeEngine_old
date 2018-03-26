@@ -9,7 +9,7 @@ namespace cube
 		bool isWindowMode = false;
 		uint32_t windowWidth;
 		uint32_t windowHeight;
-		WString title;
+		String2 title;
 	};
 
 	class CUBE_ENGINE_EXPORT CubeEngine

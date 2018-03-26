@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef _WIN32
+
 #include "../PlatformHeader.h"
 
 #include <Windows.h>
@@ -18,3 +20,5 @@ namespace cube
 		};
 	}
 }
+
+#endif // _WIN32

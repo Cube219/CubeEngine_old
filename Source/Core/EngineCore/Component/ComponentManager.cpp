@@ -1,6 +1,5 @@
 #include "ComponentManager.h"
 
-#include "Base/format.h"
 #include "../LogWriter.h"
 
 namespace cube

@@ -5,7 +5,6 @@
 #include "Time/GameTime.h"
 #include "String/StringManager.h"
 #include "Thread/ThreadManager.h"
-#include "Base/format.h"
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
 #include "Renderer/Mesh.h"

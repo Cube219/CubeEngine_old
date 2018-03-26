@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PlatformHeader.h"
-#include "Base/format.h"
 
 namespace cube
 {

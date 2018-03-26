@@ -12,10 +12,10 @@ namespace cube
 	class CameraComponent : public core::Component
 	{
 	public:
-		static const String& GetName() { return mName; }
+		static const String2& GetName() { return mName; }
 
 	private:
-		static String mName;
+		static String2 mName;
 
 	public:
 		CameraComponent();

@@ -3,7 +3,6 @@
 #include "Material.h"
 #include "../Texture.h"
 #include "../../LogWriter.h"
-#include "Base/format.h"
 
 namespace cube
 {

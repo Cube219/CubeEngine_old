@@ -50,7 +50,9 @@ namespace cube
 			}
 
 			String2 res = fmt::format(CUBE_T("{0} / {1}:{2}] : {3}"), prefix, SplitFileName(fileName), lineNum, msg);
+#ifdef _DEBUG
 			PrintToConsole(res);
+#endif // _DEBUG
 		}
 	} // namespace core
 } // namespace cube

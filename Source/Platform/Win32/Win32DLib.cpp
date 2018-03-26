@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include "Win32DLib.h"
 
 #include <iostream>
@@ -54,3 +56,5 @@ namespace cube
 		}
 	}
 }
+
+#endif // _WIN32

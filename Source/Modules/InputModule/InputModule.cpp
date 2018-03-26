@@ -2,10 +2,9 @@
 
 #include <cfloat>
 
-#include "EngineCore/EngineCore.h"
 #include "KeyboardMouseInput.h"
 #include "XboxControllerInput.h"
-#include "Base/format.h"
+#include "EngineCore/EngineCore.h"
 #include "EngineCore/LogWriter.h"
 
 namespace cube
@@ -36,17 +35,17 @@ namespace cube
 
 			Action jump;
 			jump.bindedDigitalButtons.push_back(KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::SpaceBar));
-			mActions["Jump"] = jump;
+			mActions[CUBE_T("Jump")] = jump;
 
 			Action submit;
 			submit.bindedDigitalButtons.push_back(KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::Enter));
 			submit.bindedDigitalButtons.push_back(XBOX_DIGIT_BTN_INFO(0, XboxControllerInput::DigitalButton::A));
-			mActions["Submit"] = submit;
+			mActions[CUBE_T("Submit")] = submit;
 
 			Action cancel;
 			cancel.bindedDigitalButtons.push_back(KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::Escape));
 			submit.bindedDigitalButtons.push_back(XBOX_DIGIT_BTN_INFO(0, XboxControllerInput::DigitalButton::B));
-			mActions["Cancel"] = cancel;
+			mActions[CUBE_T("Cancel")] = cancel;
 
 			Axis moveHorizontally;
 			moveHorizontally.isClamped = true;
@@ -56,7 +55,7 @@ namespace cube
 			moveHorizontally.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::D), 10.0f, 1.0f});
 			moveHorizontally.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::A), 10.0f, -1.0f});
 			moveHorizontally.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::LeftStickX));
-			mAxes["MoveHorizontally"] = moveHorizontally;
+			mAxes[CUBE_T("MoveHorizontally")] = moveHorizontally;
 
 			Axis moveVertically;
 			moveVertically.isClamped = true;
@@ -66,7 +65,7 @@ namespace cube
 			moveVertically.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::W), 10.0f, 1.0f});
 			moveVertically.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::S), 10.0f, -1.0f});
 			moveVertically.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::LeftStickY));
-			mAxes["MoveVertically"] = moveVertically;
+			mAxes[CUBE_T("MoveVertically")] = moveVertically;
 
 			Axis lookHorizontally;
 			lookHorizontally.isClamped = false;
@@ -82,7 +81,7 @@ namespace cube
 				return f2.x;
 			}});
 			lookHorizontally.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightStickX));
-			mAxes["LookHorizontally"] = lookHorizontally;
+			mAxes[CUBE_T("LookHorizontally")] = lookHorizontally;
 
 			Axis lookVertically;
 			lookVertically.isClamped = false;
@@ -98,15 +97,15 @@ namespace cube
 				return -f2.y;
 			}});
 			lookVertically.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightStickY));
-			mAxes["LookVertically"] = lookVertically;
+			mAxes[CUBE_T("LookVertically")] = lookVertically;
 
 			Axis triggerLeft;
 			triggerLeft.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::LeftTrigger));
-			mAxes["TriggerLeft"] = triggerLeft;
+			mAxes[CUBE_T("TriggerLeft")] = triggerLeft;
 
 			Axis triggerRight;
 			triggerRight.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightTrigger));
-			mAxes["TriggerRight"] = triggerRight;
+			mAxes[CUBE_T("TriggerRight")] = triggerRight;
 
 
 			mXboxInput = std::make_unique<XboxControllerInput>();
@@ -202,12 +201,12 @@ namespace cube
 		{
 		}
 
-		bool InputModule::IsActionPressed(String& name)
+		bool InputModule::IsActionPressed(String2& name)
 		{
 			return mActions[name].isPressed;
 		}
 
-		float InputModule::GetAxisValue(String& name)
+		float InputModule::GetAxisValue(String2& name)
 		{
 			return mAxes[name].currentValue;
 		}
@@ -232,5 +231,5 @@ namespace cube
 		{
 			return mKMInput->GetMousePosition();
 		}
-	}
-}
+	} // namespace module
+} // namespace cube

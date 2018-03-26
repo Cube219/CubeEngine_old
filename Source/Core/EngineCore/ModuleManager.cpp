@@ -5,7 +5,6 @@
 #include "Thread/ThreadManager.h"
 #include "Thread/Thread.h"
 
-#include "Base/format.h"
 #include "LogWriter.h"
 
 namespace cube

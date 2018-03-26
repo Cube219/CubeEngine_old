@@ -1,6 +1,5 @@
 ﻿#include "GameObject.h"
 
-#include "Base/format.h"
 #include "LogWriter.h"
 #include "EngineCore.h"
 #include "Component/Component.h"

@@ -57,9 +57,9 @@ namespace cube
 
 			void Destroy() final override;
 
-			bool IsActionPressed(String& name);
+			bool IsActionPressed(String2& name);
 
-			float GetAxisValue(String& name);
+			float GetAxisValue(String2& name);
 
 			void SendVibration(uint32_t playerIndex, float time, float intensity);
 			void SendVibration(uint32_t playerIndex, float time, float leftIntensity, float rightIntensity);
@@ -70,11 +70,11 @@ namespace cube
 			UPtr<KeyboardMouseInput> mKMInput;
 			UPtr<XboxControllerInput> mXboxInput;
 
-			HashMap<String, Action> mActions;
-			HashMap<String, Axis> mAxes;
+			HashMap<String2, Action> mActions;
+			HashMap<String2, Axis> mAxes;
 
 			Array<bool, 4> mIsVibrated;
 			Array<float, 4> mRemainedVibrationTime;
 		};
-	}
-}
+	} // namespace module
+} // namespace cube

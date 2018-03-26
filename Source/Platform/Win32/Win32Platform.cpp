@@ -1,4 +1,6 @@
-﻿#include "Win32Platform.h"
+﻿#ifdef _WIN32
+
+#include "Win32Platform.h"
 
 #include <iostream>
 #include <io.h> 
@@ -48,6 +50,9 @@ namespace cube
 			if(AllocConsole()) {
 				std::wcout.imbue(std::locale(""));
 
+				SetConsoleOutputCP(CP_WINUNICODE);
+				_setmode(_fileno(stdout), _O_WTEXT);
+
 				FILE* acStreamIn;
 				FILE* acStreamOut;
 				FILE* acStreamErr;
@@ -55,8 +60,6 @@ namespace cube
 				freopen_s(&acStreamIn, "CONIN$", "rb", stdin);
 				freopen_s(&acStreamOut, "CONOUT$", "wb", stdout);
 				freopen_s(&acStreamErr, "CONOUT$", "wb", stderr);
-
-				_setmode(_fileno(stdout), _O_WTEXT);
 			}
 #endif // _DEBUG
 
@@ -211,3 +214,5 @@ namespace cube
 		}
 	}
 }
+
+#endif // _WIN32

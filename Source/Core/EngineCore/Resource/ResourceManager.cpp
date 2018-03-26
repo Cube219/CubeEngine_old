@@ -1,7 +1,6 @@
 #include "ResourceManager.h"
 
 #include "../LogWriter.h"
-#include "Base/format.h"
 #include "BaseResource.h"
 
 namespace cube
