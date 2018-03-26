@@ -66,13 +66,13 @@ namespace cube
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
 
-			String2 texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
+			String texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
 			mTexture = mResourceManager->LoadResource<Texture>(texturePath);
 			texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture2.png");
 			mTexture2 = mResourceManager->LoadResource<Texture>(texturePath);
 
 			// Load shader
-			String2 shaderPath = CUBE_T("../../../SampleResources/Shaders/Vertex.glsl");
+			String shaderPath = CUBE_T("../../../SampleResources/Shaders/Vertex.glsl");
 			mMaterialVertexShader = mResourceManager->LoadResource<Shader>(shaderPath);
 
 			shaderPath = CUBE_T("../../../SampleResources/Shaders/Fragment.glsl");
@@ -88,7 +88,7 @@ namespace cube
 
 			// Create materialInstances
 			mMaterialIns1 = mMaterial->CreateInstance();
-			String2 t = CUBE_T("Texture");
+			String t = CUBE_T("Texture");
 			mMaterialIns1->SetParameterData<RPtr<Texture>>(t, mTexture);
 
 			mMaterialIns2 = mMaterial->CreateInstance();
@@ -189,5 +189,5 @@ namespace cube
 		{
 			return EngineCore::GetInstance();
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

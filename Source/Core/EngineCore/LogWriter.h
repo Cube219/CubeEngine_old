@@ -19,7 +19,7 @@ namespace cube
 		public:
 
 			template <typename ...Args>
-			static void WriteLog(LogType type, const char* fileName, int lineNum, String2 msg, Args&&... args)
+			static void WriteLog(LogType type, const char* fileName, int lineNum, String msg, Args&&... args)
 			{
 				WriteLogImpl(type, fileName, lineNum, fmt::format(msg, std::forward<Args>(args)...));
 			}
@@ -34,7 +34,7 @@ namespace cube
 
 			static const char* SplitFileName(const char* fullPath);
 
-			static void WriteLogImpl(LogType type, const char* fileName, int lineNum, String2&& msg);
+			static void WriteLogImpl(LogType type, const char* fileName, int lineNum, String&& msg);
 		};
 	} // namespace core
 } // namespace cube

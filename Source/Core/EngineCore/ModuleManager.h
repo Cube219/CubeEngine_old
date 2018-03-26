@@ -33,14 +33,14 @@ namespace cube
 			ModuleManager(SPtr<ThreadManager>& threadManager);
 			~ModuleManager();
 
-			void LoadModule(String2 moduleName);
+			void LoadModule(String moduleName);
 
 			void InitModules();
 
-			SPtr<module::BaseModule> GetModule(String2& name);
+			SPtr<module::BaseModule> GetModule(String& name);
 			
 			template <typename T>
-			SPtr<T> GetModule(String2& name)
+			SPtr<T> GetModule(String& name)
 			{
 				return DPCast(T)(GetModule(name));
 			}
@@ -48,11 +48,11 @@ namespace cube
 			void UpdateAllModules(float dt);
 
 		private:
-			HashMap<String2, SPtr<module::BaseModule>> mModuleLookup;
+			HashMap<String, SPtr<module::BaseModule>> mModuleLookup;
 
 			Vector<ModuleNode> mModules;
 
 			SPtr<ThreadManager> mThreadManager;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

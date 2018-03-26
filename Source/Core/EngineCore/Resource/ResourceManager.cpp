@@ -20,7 +20,7 @@ namespace cube
 			mImporters.push_back(std::move(importer));
 		}
 		
-		RPtr<Resource> ResourceManager::LoadResource(String2& path)
+		RPtr<Resource> ResourceManager::LoadResource(String& path)
 		{
 			using namespace platform;
 
@@ -36,7 +36,7 @@ namespace cube
 			}
 
 			// Get a metadata
-			String2 metaPath = path;
+			String metaPath = path;
 			metaPath.append(CUBE_T(".meta"));
 			SPtr<File> metaFile = mFileSystem->OpenFile(metaPath, FileAccessModeBits::Read);
 
@@ -51,7 +51,7 @@ namespace cube
 			free(metaString);
 			
 			U8String resNameU8 = metaJson["res_name"];
-			String2 resName = ToString(resNameU8);
+			String resName = ToString(resNameU8);
 
 			Resource* loadedRes = nullptr;
 			// Find importer to import the resource
@@ -86,7 +86,7 @@ namespace cube
 		{
 			Lock lock(mLoadedResourcesMutex);
 
-			Vector<String2> resToUnload;
+			Vector<String> resToUnload;
 			for(auto iter = mLoadedResources.begin(); iter != mLoadedResources.end(); iter++) {
 				if(iter->second->mRefCount == 0) {
 					resToUnload.push_back(iter->first);
@@ -98,5 +98,5 @@ namespace cube
 				mLoadedResources.erase(res);
 			}
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

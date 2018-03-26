@@ -17,7 +17,7 @@ namespace cube
 			template <typename T>
 			void RegisterComponent()
 			{
-				const String2& name = T::GetName();
+				const String& name = T::GetName();
 
 				CheckIfComponentExisted(name);
 
@@ -27,12 +27,12 @@ namespace cube
 				};
 			}
 
-			SPtr<Component> CreateComponent(const String2& name);
+			SPtr<Component> CreateComponent(const String& name);
 
 		private:
-			void CheckIfComponentExisted(const String2& name);
+			void CheckIfComponentExisted(const String& name);
 
-			HashMap<String2, std::function<SPtr<Component>()>> mComponentCreators;
+			HashMap<String, std::function<SPtr<Component>()>> mComponentCreators;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

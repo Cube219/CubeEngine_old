@@ -18,7 +18,7 @@ namespace cube
 
 		struct ENGINE_CORE_EXPORT MaterialParameterInfo
 		{
-			String2 name;
+			String name;
 			MaterialParameterType type;
 			size_t dataSize;
 		};
@@ -54,5 +54,5 @@ namespace cube
 
 			SPtr<BaseRenderAPI> mRenderAPI_ref;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

@@ -44,7 +44,7 @@ namespace cube
 		}
 
 		template<typename T>
-		void MaterialInstance::SetParameterData(String2& name, T& data)
+		void MaterialInstance::SetParameterData(String& name, T& data)
 		{
 			auto res = mParameterIndexLookupMap.find(name);
 			if(res == mParameterIndexLookupMap.end()) {
@@ -71,7 +71,7 @@ namespace cube
 		}
 
 		template<>
-		void MaterialInstance::SetParameterData(String2& name, RPtr<Texture>& texture)
+		void MaterialInstance::SetParameterData(String& name, RPtr<Texture>& texture)
 		{
 			auto res = mParameterIndexLookupMap.find(name);
 			if(res == mParameterIndexLookupMap.end()) {
@@ -93,5 +93,5 @@ namespace cube
 
 			mDescriptorSet->WriteImagesInDescriptor(paramIndex, 1, &imageView, &sampler);
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

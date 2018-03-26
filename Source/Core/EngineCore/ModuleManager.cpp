@@ -28,7 +28,7 @@ namespace cube
 			mModules.clear();
 		}
 
-		void ModuleManager::LoadModule(String2 moduleName)
+		void ModuleManager::LoadModule(String moduleName)
 		{
 			auto temp = mModuleLookup.find(moduleName);
 			if(temp != mModuleLookup.end()) {
@@ -56,7 +56,7 @@ namespace cube
 			}
 		}
 
-		SPtr<module::BaseModule> ModuleManager::GetModule(String2& name)
+		SPtr<module::BaseModule> ModuleManager::GetModule(String& name)
 		{
 			auto temp = mModuleLookup.find(name.c_str());
 			if(temp == mModuleLookup.end()) {
@@ -73,5 +73,5 @@ namespace cube
 				iter->module->Update(dt);
 			}
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

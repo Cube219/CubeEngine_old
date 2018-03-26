@@ -28,16 +28,16 @@ namespace cube
 			SPtr<BaseRenderDescriptorSet> GetDescriptorSet() const { return mDescriptorSet; }
 
 			template <typename T>
-			void SetParameterData(String2& name, T& data);
+			void SetParameterData(String& name, T& data);
 
 			template <>
-			void SetParameterData(String2& name, RPtr<Texture>& texture);
+			void SetParameterData(String& name, RPtr<Texture>& texture);
 
 		private:
 			friend class Material;
 			MaterialInstance(SPtr<BaseRenderAPI>& renderAPI, SPtr<Material> mat);
 
-			HashMap<String2, uint64_t> mParameterIndexLookupMap;
+			HashMap<String, uint64_t> mParameterIndexLookupMap;
 
 			SPtr<BaseRenderBuffer> mParametersBuffer;
 #ifdef _DEBUG
@@ -48,5 +48,5 @@ namespace cube
 
 			SPtr<Material> mMaterialRef;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

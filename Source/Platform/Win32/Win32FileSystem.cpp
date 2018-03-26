@@ -113,7 +113,7 @@ namespace cube
 			return d;
 		}
 
-		SPtr<File> FileSystem::OpenFile(const String2& path, FileAccessModeBits accessModeBits, bool createIfNotExist)
+		SPtr<File> FileSystem::OpenFile(const String& path, FileAccessModeBits accessModeBits, bool createIfNotExist)
 		{
 			DWORD desiredAccess = GetDwDesiredAccess(accessModeBits);
 			PString pPath = ToPString(path);
@@ -148,7 +148,7 @@ namespace cube
 		{
 			delete mData;
 		}
-	}
-}
+	} // namespace platform
+} // namespace cube
 
 #endif // _WIN32

@@ -43,7 +43,7 @@ namespace cube
 			fileSystem = std::make_shared<Win32FileSystem>();
 		}
 
-		void Platform::InitWindow(const String2& title, uint32_t width, uint32_t height)
+		void Platform::InitWindow(const String& title, uint32_t width, uint32_t height)
 		{
 			// Show console if it is debug mode
 #ifdef _DEBUG
@@ -123,7 +123,7 @@ namespace cube
 			::Sleep(time);
 		}
 
-		SPtr<DLib> Platform::LoadDLib(const String2& path)
+		SPtr<DLib> Platform::LoadDLib(const String& path)
 		{
 			return std::make_shared<Win32DLib>(path);
 		}
@@ -212,7 +212,7 @@ namespace cube
 
 			return DefWindowProc(hWnd, uMsg, wParam, lParam);
 		}
-	}
-}
+	} // namespace platform
+} // namespace cube
 
 #endif // _WIN32

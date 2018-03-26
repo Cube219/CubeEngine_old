@@ -14,7 +14,7 @@ namespace cube
 		{
 		}
 
-		SPtr<Component> ComponentManager::CreateComponent(const String2& name)
+		SPtr<Component> ComponentManager::CreateComponent(const String& name)
 		{
 			auto findIter = mComponentCreators.find(name);
 			if(findIter == mComponentCreators.end()) {
@@ -25,7 +25,7 @@ namespace cube
 			return findIter->second();
 		}
 
-		void ComponentManager::CheckIfComponentExisted(const String2& name)
+		void ComponentManager::CheckIfComponentExisted(const String& name)
 		{
 			auto findIter = mComponentCreators.find(name);
 			if(findIter != mComponentCreators.end()) {
@@ -33,5 +33,5 @@ namespace cube
 				return;
 			}
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

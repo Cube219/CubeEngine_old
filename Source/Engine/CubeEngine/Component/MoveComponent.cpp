@@ -6,7 +6,7 @@
 
 namespace cube
 {
-	String2 MoveComponent::mName = CUBE_T("MoveComponent");
+	String MoveComponent::mName = CUBE_T("MoveComponent");
 
 	MoveComponent::MoveComponent()
 	{
@@ -18,15 +18,15 @@ namespace cube
 
 	void MoveComponent::OnInit()
 	{
-		String2 n = CUBE_T("InputModule");
+		String n = CUBE_T("InputModule");
 		mInputModule = DPCast(module::InputModule)(core::ECore()->GetModuleManager()->GetModule(n));
 	}
 
 	void MoveComponent::OnUpdate(float dt)
 	{
-		String2 xStr = CUBE_T("MoveHorizontally");
+		String xStr = CUBE_T("MoveHorizontally");
 		float x = mInputModule->GetAxisValue(xStr);
-		String2 yStr = CUBE_T("MoveVertically");
+		String yStr = CUBE_T("MoveVertically");
 		float y = mInputModule->GetAxisValue(yStr);
 
 		Vector3 pos = GetGameObject()->GetPosition();
@@ -35,9 +35,9 @@ namespace cube
 
 		GetGameObject()->SetPosition(pos);
 
-		String2 lookXStr = CUBE_T("LookHorizontally");
+		String lookXStr = CUBE_T("LookHorizontally");
 		float lookX = mInputModule->GetAxisValue(lookXStr);
-		String2 lookYStr = CUBE_T("LookVertically");
+		String lookYStr = CUBE_T("LookVertically");
 		float lookY = mInputModule->GetAxisValue(lookYStr);
 
 		Vector3 rot = GetGameObject()->GetRotation();

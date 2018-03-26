@@ -201,12 +201,12 @@ namespace cube
 		{
 		}
 
-		bool InputModule::IsActionPressed(String2& name)
+		bool InputModule::IsActionPressed(String& name)
 		{
 			return mActions[name].isPressed;
 		}
 
-		float InputModule::GetAxisValue(String2& name)
+		float InputModule::GetAxisValue(String& name)
 		{
 			return mAxes[name].currentValue;
 		}

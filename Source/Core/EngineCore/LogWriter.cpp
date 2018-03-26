@@ -28,7 +28,7 @@ namespace cube
 			return fullPath;
 		}
 
-		void LogWriter::WriteLogImpl(LogType type, const char* fileName, int lineNum, String2&& msg)
+		void LogWriter::WriteLogImpl(LogType type, const char* fileName, int lineNum, String&& msg)
 		{
 			// INFO [18:22:22.1111 / EngineCore.cpp:152] : ³»¿ë
 
@@ -49,7 +49,7 @@ namespace cube
 					break;
 			}
 
-			String2 res = fmt::format(CUBE_T("{0} / {1}:{2}] : {3}"), prefix, SplitFileName(fileName), lineNum, msg);
+			String res = fmt::format(CUBE_T("{0} / {1}:{2}] : {3}"), prefix, SplitFileName(fileName), lineNum, msg);
 #ifdef _DEBUG
 			PrintToConsole(res);
 #endif // _DEBUG

@@ -9,10 +9,10 @@ namespace cube
 		class ENGINE_CORE_EXPORT Component
 		{
 		public:
-			static const String2& GetName() { return mName; }
+			static const String& GetName() { return mName; }
 
 		private:
-			static String2 mName;
+			static String mName;
 
 		public:
 			Component();
@@ -31,5 +31,5 @@ namespace cube
 
 			GameObject* mAttachedGameObject;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

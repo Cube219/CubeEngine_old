@@ -53,7 +53,7 @@ namespace cube
 			mIsTransformChanged = true;
 		}
 
-		SPtr<Component> GameObject::GetComponent(const String2& name)
+		SPtr<Component> GameObject::GetComponent(const String& name)
 		{
 			SPtr<Component> componentToGet = nullptr;
 
@@ -67,7 +67,7 @@ namespace cube
 			return componentToGet;
 		}
 
-		SPtr<Component> GameObject::AddComponent(const String2& name)
+		SPtr<Component> GameObject::AddComponent(const String& name)
 		{
 			for(auto& com : mComponents) {
 				if(com->GetName() == name) {
@@ -158,5 +158,5 @@ namespace cube
 				mIsTransformChanged = false;
 			}
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

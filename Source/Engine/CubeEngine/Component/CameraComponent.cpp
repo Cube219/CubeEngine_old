@@ -9,7 +9,7 @@
 
 namespace cube
 {
-	String2 CameraComponent::mName = CUBE_T("CameraComponent");
+	String CameraComponent::mName = CUBE_T("CameraComponent");
 
 	CameraComponent::CameraComponent()
 	{
@@ -46,4 +46,4 @@ namespace cube
 	void CameraComponent::OnDestroy()
 	{
 	}
-}
+} // namespace cube

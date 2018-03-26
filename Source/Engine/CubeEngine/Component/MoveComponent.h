@@ -10,10 +10,10 @@ namespace cube
 	class MoveComponent : public core::Component
 	{
 	public:
-		static const String2& GetName() { return mName; }
+		static const String& GetName() { return mName; }
 
 	private:
-		static String2 mName;
+		static String mName;
 
 	public:
 		MoveComponent();

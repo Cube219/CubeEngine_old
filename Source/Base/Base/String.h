@@ -130,43 +130,43 @@ namespace cube
 
 #if defined (STR_UTF8)
 
-	using String2 = U8String;
+	using String = U8String;
 	#define CUBE_T(text) u8 ## text
-	inline String2 ToStringFromASCII(const std::string& str) { return ToU8StringFromASCII(str); }
-	inline String2 ToString(const U8String& str) { return str; }
-	inline String2 ToString(const UCS2String& str) { return ToU8String(str); }
-	inline String2 ToString(const U16String& str) { return ToU8String(str); }
-	inline String2 ToString(const U32String& str) { return ToU8String(str); }
+	inline String ToStringFromASCII(const std::string& str) { return ToU8StringFromASCII(str); }
+	inline String ToString(const U8String& str) { return str; }
+	inline String ToString(const UCS2String& str) { return ToU8String(str); }
+	inline String ToString(const U16String& str) { return ToU8String(str); }
+	inline String ToString(const U32String& str) { return ToU8String(str); }
 
 #elif defined (STR_UCS2)
 
-	using String2 = UCS2String;
+	using String = UCS2String;
 	#define CUBE_T(text) (const unsigned short*)u ## text
-	inline String2 ToStringFromASCII(const std::string& str) { return ToUCS2StringFromASCII(str); }
-	inline String2 ToString(const U8String& str) { return ToUCS2String(str); }
-	inline String2 ToString(const UCS2String& str) { return str; }
-	inline String2 ToString(const U16String& str) { return ToUCS2String(str); }
-	inline String2 ToString(const U32String& str) { return ToUCS2String(str); }
+	inline String ToStringFromASCII(const std::string& str) { return ToUCS2StringFromASCII(str); }
+	inline String ToString(const U8String& str) { return ToUCS2String(str); }
+	inline String ToString(const UCS2String& str) { return str; }
+	inline String ToString(const U16String& str) { return ToUCS2String(str); }
+	inline String ToString(const U32String& str) { return ToUCS2String(str); }
 
 #elif defined (STR_UTF16)
 
-	using String2 = U16String;
+	using String = U16String;
 	#define CUBE_T(text) u ## text
-	inline String2 ToStringFromASCII(const std::string& str) { return ToU16StringFromASCII(str); }
-	inline String2 ToString(const U8String& str) { return ToU16String(str); }
-	inline String2 ToString(const UCS2String& str) { return ToU16String(str); }
-	inline String2 ToString(const U16String& str) { return str; }
-	inline String2 ToString(const U32String& str) { return ToU16String(str); }
+	inline String ToStringFromASCII(const std::string& str) { return ToU16StringFromASCII(str); }
+	inline String ToString(const U8String& str) { return ToU16String(str); }
+	inline String ToString(const UCS2String& str) { return ToU16String(str); }
+	inline String ToString(const U16String& str) { return str; }
+	inline String ToString(const U32String& str) { return ToU16String(str); }
 
 #elif defined (STR_UTF32)
 
-	using String2 = U32String;
+	using String = U32String;
 	#define CUBE_T(text) U ## text
-	inline String2 ToStringFromASCII(const std::string& str) { return ToU32StringFromASCII(str); }
-	inline String2 ToString(const U8String& str) { return ToU32String(str); }
-	inline String2 ToString(const U16String& str) { return ToU32String(str); }
-	inline String2 ToString(const UCS2String& str) { return ToU32String(str); }
-	inline String2 ToString(const U32String& str) { return str; }
+	inline String ToStringFromASCII(const std::string& str) { return ToU32StringFromASCII(str); }
+	inline String ToString(const U8String& str) { return ToU32String(str); }
+	inline String ToString(const U16String& str) { return ToU32String(str); }
+	inline String ToString(const UCS2String& str) { return ToU32String(str); }
+	inline String ToString(const U32String& str) { return str; }
 
 #else
 	#error You must define one of string type

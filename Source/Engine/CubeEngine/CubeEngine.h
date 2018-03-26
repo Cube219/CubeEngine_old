@@ -9,7 +9,7 @@ namespace cube
 		bool isWindowMode = false;
 		uint32_t windowWidth;
 		uint32_t windowHeight;
-		String2 title;
+		String title;
 	};
 
 	class CUBE_ENGINE_EXPORT CubeEngine
@@ -29,4 +29,4 @@ namespace cube
 
 		static void InitPlatform();
 	};
-}
+} // namespace cube

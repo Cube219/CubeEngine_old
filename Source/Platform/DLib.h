@@ -12,11 +12,11 @@ namespace cube
 			DLib(){ }
 			virtual ~DLib(){ }
 
-			void* GetFunction(const String2& name);
+			void* GetFunction(const String& name);
 
 		protected:
 			struct Data;
 			Data* mData;
 		};
-	}
-}
+	} // namespace platform
+} // namespace cube

@@ -31,19 +31,19 @@ namespace cube
 
 			SPtr<Renderer3D> GetRenderer() const { return mRenderer3D; }
 
-			SPtr<Component> GetComponent(const String2& name);
+			SPtr<Component> GetComponent(const String& name);
 			template <typename T>
 			SPtr<T> GetComponent()
 			{
-				const String2& nameToGet = T::GetName();
+				const String& nameToGet = T::GetName();
 				return DPCast(T)(GetComponent(nameToGet));
 			}
 
-			SPtr<Component> AddComponent(const String2& name);
+			SPtr<Component> AddComponent(const String& name);
 			template <typename T>
 			SPtr<T> AddComponent()
 			{
-				const String2& nameToAdd = T::GetName();
+				const String& nameToAdd = T::GetName();
 				return DPCast(T)(AddComponent(nameToAdd));
 			}
 
@@ -70,5 +70,5 @@ namespace cube
 
 			Vector<SPtr<Component>> mComponents;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

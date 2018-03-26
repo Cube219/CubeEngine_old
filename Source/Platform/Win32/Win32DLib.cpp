@@ -15,7 +15,7 @@ namespace cube
 			HMODULE dLib;
 		};
 
-		void* DLib::GetFunction(const String2& name)
+		void* DLib::GetFunction(const String& name)
 		{
 			if(!mData->dLib)
 				return nullptr;
@@ -30,7 +30,7 @@ namespace cube
 			return RCast(void*)(pFunction);
 		}
 
-		Win32DLib::Win32DLib(const String2& path)
+		Win32DLib::Win32DLib(const String& path)
 		{
 			mData = new DLib::Data();
 
@@ -54,7 +54,7 @@ namespace cube
 
 			delete mData;
 		}
-	}
-}
+	} // namespace platform
+} // namespace cube
 
 #endif // _WIN32
