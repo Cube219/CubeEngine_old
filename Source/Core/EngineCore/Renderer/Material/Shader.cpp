@@ -39,9 +39,9 @@ namespace cube
 		{
 			ShaderCompileDesc desc;
 
-			String language = info["language"];
-			String type = info["type"];
-			String entryPoint = info["entry_point"];
+			U8String language = info["language"];
+			U8String type = info["type"];
+			U8String entryPoint = info["entry_point"];
 
 			if(language == "glsl") {
 				desc.language = ShaderLanguage::GLSL;

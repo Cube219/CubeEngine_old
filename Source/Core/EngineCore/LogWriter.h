@@ -18,7 +18,11 @@ namespace cube
 			friend class EngineCore;
 		public:
 
-			static void WriteLog(LogType type, WString msg, const char* fileName, int lineNum);
+			template <typename ...Args>
+			static void WriteLog(LogType type, const char* fileName, int lineNum, String2 msg, Args&&... args)
+			{
+				WriteLogImpl(type, fileName, lineNum, fmt::format(msg, std::forward<Args>(args)...));
+			}
 
 		private:
 			LogWriter() = delete;
@@ -29,8 +33,10 @@ namespace cube
 			static void Init();
 
 			static const char* SplitFileName(const char* fullPath);
-		};
-	}
-}
 
-#define CUBE_LOG(type, msg, ...) cube::core::LogWriter::WriteLog(type, fmt::format(msg, ##__VA_ARGS__), __FILE__, __LINE__)
+			static void WriteLogImpl(LogType type, const char* fileName, int lineNum, String2&& msg);
+		};
+	} // namespace core
+} // namespace cube
+
+#define CUBE_LOG(type, msg, ...) cube::core::LogWriter::WriteLog(type, __FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__)

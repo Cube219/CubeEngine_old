@@ -21,7 +21,7 @@ namespace cube
 			mImporters.push_back(std::move(importer));
 		}
 		
-		RPtr<Resource> ResourceManager::LoadResource(WString& path)
+		RPtr<Resource> ResourceManager::LoadResource(String2& path)
 		{
 			using namespace platform;
 
@@ -37,8 +37,8 @@ namespace cube
 			}
 
 			// Get a metadata
-			WString metaPath = path;
-			metaPath.append(L".meta");
+			String2 metaPath = path;
+			metaPath.append(CUBE_T(".meta"));
 			SPtr<File> metaFile = mFileSystem->OpenFile(metaPath, FileAccessModeBits::Read);
 
 			uint64_t size = metaFile->GetFileSize();
@@ -51,7 +51,8 @@ namespace cube
 			Json metaJson = Json::parse(metaString);
 			free(metaString);
 			
-			String resName = metaJson["res_name"];
+			U8String resNameU8 = metaJson["res_name"];
+			String2 resName = ToString(resNameU8);
 
 			Resource* loadedRes = nullptr;
 			// Find importer to import the resource
@@ -69,7 +70,7 @@ namespace cube
 
 			if(loadedRes == nullptr) {
 				if(isFindImporter == true)
-					CUBE_LOG(LogType::Error, L"Cannot find the importer whose res_name is \"{0}\".", resName);
+					CUBE_LOG(LogType::Error, "Cannot find the importer whose res_name is \"{0}\".", resName);
 
 				return nullptr;
 			}
@@ -86,7 +87,7 @@ namespace cube
 		{
 			Lock lock(mLoadedResourcesMutex);
 
-			Vector<WString> resToUnload;
+			Vector<String2> resToUnload;
 			for(auto iter = mLoadedResources.begin(); iter != mLoadedResources.end(); iter++) {
 				if(iter->second->mRefCount == 0) {
 					resToUnload.push_back(iter->first);

@@ -9,10 +9,10 @@ namespace cube
 		class ENGINE_CORE_EXPORT Component
 		{
 		public:
-			static const String& GetName() { return mName; }
+			static const String2& GetName() { return mName; }
 
 		private:
-			static String mName;
+			static String2 mName;
 
 		public:
 			Component();

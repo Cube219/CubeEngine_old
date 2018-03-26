@@ -18,7 +18,7 @@ namespace cube
 
 		struct ENGINE_CORE_EXPORT MaterialParameterInfo
 		{
-			String name;
+			String2 name;
 			MaterialParameterType type;
 			size_t dataSize;
 		};

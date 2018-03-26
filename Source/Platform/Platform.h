@@ -4,6 +4,7 @@
 
 #include "Base/KeyCode.h"
 
+#include "PlatformString.h"
 #include "DLib.h"
 #include "FileSystem.h"
 

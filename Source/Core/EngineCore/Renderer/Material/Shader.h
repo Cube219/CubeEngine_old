@@ -13,7 +13,7 @@ namespace cube
 		{
 			ShaderLanguage language;
 			ShaderTypeBits type;
-			String entryPoint;
+			U8String entryPoint;
 		};
 
 		class ENGINE_CORE_EXPORT ShaderImporter : public ResourceImporter
@@ -22,7 +22,7 @@ namespace cube
 			ShaderImporter(SPtr<BaseRenderAPI>& renderAPI) :
 				mRenderAPI(renderAPI)
 			{
-				mResName = "shader";
+				mResName = CUBE_T("shader");
 			}
 
 			Resource* Import(SPtr<platform::File>& file, Json info) final override;

@@ -54,7 +54,7 @@ namespace cube
 			mIsTransformChanged = true;
 		}
 
-		SPtr<Component> GameObject::GetComponent(const String& name)
+		SPtr<Component> GameObject::GetComponent(const String2& name)
 		{
 			SPtr<Component> componentToGet = nullptr;
 
@@ -68,11 +68,11 @@ namespace cube
 			return componentToGet;
 		}
 
-		SPtr<Component> GameObject::AddComponent(const String& name)
+		SPtr<Component> GameObject::AddComponent(const String2& name)
 		{
 			for(auto& com : mComponents) {
 				if(com->GetName() == name) {
-					CUBE_LOG(LogType::Error, L"Cannot add component \"{0}\". The component already exists", name);
+					CUBE_LOG(LogType::Error, "Cannot add component \"{0}\". The component already exists", name);
 					return nullptr;
 				}
 			}

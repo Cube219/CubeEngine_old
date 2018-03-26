@@ -17,10 +17,10 @@ namespace cube
 
 			void RegisterImporter(UPtr<ResourceImporter> importer);
 
-			RPtr<Resource> LoadResource(WString& path);
+			RPtr<Resource> LoadResource(String2& path);
 
 			template <typename T>
-			RPtr<T> LoadResource(WString& path)
+			RPtr<T> LoadResource(String2& path)
 			{
 				return LoadResource(path).Cast<T>();
 			}
@@ -31,7 +31,7 @@ namespace cube
 			Vector<UPtr<ResourceImporter>> mImporters;
 
 			Mutex mLoadedResourcesMutex;
-			HashMap<WString, Resource*> mLoadedResources;
+			HashMap<String2, Resource*> mLoadedResources;
 
 			SPtr<platform::FileSystem> mFileSystem;
 		};

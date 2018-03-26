@@ -23,17 +23,17 @@ namespace cube
 
 			switch(type) {
 				case RenderType::Vulkan:
-					mRenderDLib = platform::Platform::LoadDLib(L"VulkanAPI");
+					mRenderDLib = platform::Platform::LoadDLib(CUBE_T("VulkanAPI"));
 					break;
 
 				default:
-					CUBE_LOG(LogType::Error, L"Unknown renderer type");
+					CUBE_LOG(LogType::Error, "Unknown renderer type");
 					return;
 			}
 
 			using CreateAPIFunction = BaseRenderAPI*(*)();
 
-			auto createAPIFunction = RCast(CreateAPIFunction)(mRenderDLib->GetFunction("CreateAPI"));
+			auto createAPIFunction = RCast(CreateAPIFunction)(mRenderDLib->GetFunction(CUBE_T("CreateAPI")));
 
 			// TODO: 좀 더 좋은 방법은 없을까?
 			SPtr<BaseRenderAPI> temp(createAPIFunction());
@@ -97,7 +97,7 @@ namespace cube
 			int index = material->mIndex;
 
 			if(index == -1) {
-				CUBE_LOG(LogType::Error, L"This material is not registed.");
+				CUBE_LOG(LogType::Error, "This material is not registed.");
 				return;
 			}
 
@@ -131,7 +131,7 @@ namespace cube
 			int index = renderer->mIndex;
 
 			if(index == -1) {
-				CUBE_LOG(LogType::Error, L"This renderer is not registed.");
+				CUBE_LOG(LogType::Error, "This renderer is not registed.");
 				return;
 			}
 

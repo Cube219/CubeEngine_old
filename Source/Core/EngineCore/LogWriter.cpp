@@ -1,36 +1,11 @@
 #include "LogWriter.h"
 
-#include <iostream>
-#include <string.h>
+#include "PlatformString.h"
 
 namespace cube
 {
 	namespace core
 	{
-		void LogWriter::WriteLog(LogType type, WString msg, const char* fileName, int lineNum)
-		{
-			// INFO [18:22:22.1111 / EngineCore.cpp:152] : 내용
-			
-			const wchar_t* prefix = L"";
-
-			switch(type) {
-				case LogType::Info:
-					prefix = L"   INFO [";
-					break;
-				case LogType::Warning:
-					prefix = L"WARNING [";
-					break;
-				case LogType::Error:
-					prefix = L"  ERROR [";
-					break;
-
-				default:
-					break;
-			}
-
-			std::wcout << prefix << " / " << SplitFileName(fileName) << ":" << lineNum << "] : " << msg << std::endl;
-		}
-
 		void LogWriter::Init()
 		{
 			// TODO: File에 쓰는 방식 추가
@@ -52,5 +27,30 @@ namespace cube
 
 			return fullPath;
 		}
-	}
-}
+
+		void LogWriter::WriteLogImpl(LogType type, const char* fileName, int lineNum, String2&& msg)
+		{
+			// INFO [18:22:22.1111 / EngineCore.cpp:152] : 내용
+
+			const char* prefix = "";
+
+			switch(type) {
+				case LogType::Info:
+					prefix = "   INFO [";
+					break;
+				case LogType::Warning:
+					prefix = "WARNING [";
+					break;
+				case LogType::Error:
+					prefix = "  ERROR [";
+					break;
+
+				default:
+					break;
+			}
+
+			String2 res = fmt::format(CUBE_T("{0} / {1}:{2}] : {3}"), prefix, SplitFileName(fileName), lineNum, msg);
+			PrintToConsole(res);
+		}
+	} // namespace core
+} // namespace cube

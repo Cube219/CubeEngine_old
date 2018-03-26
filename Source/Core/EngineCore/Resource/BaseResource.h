@@ -18,10 +18,10 @@ namespace cube
 
 			virtual Resource* Import(SPtr<platform::File>& file, Json info) = 0;
 
-			const String& GetResourceName() const { return mResName; }
+			const String2& GetResourceName() const { return mResName; }
 
 		protected:
-			String mResName;
+			String2 mResName;
 		};
 
 		class ENGINE_CORE_EXPORT Resource

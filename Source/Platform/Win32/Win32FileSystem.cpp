@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "../PlatformString.h"
+
 namespace cube
 {
 	namespace platform
