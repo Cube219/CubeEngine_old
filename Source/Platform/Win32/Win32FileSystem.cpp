@@ -1,6 +1,10 @@
+#ifdef _WIN32
+
 #include "Win32FileSystem.h"
 
 #include <iostream>
+
+#include "../PlatformString.h"
 
 namespace cube
 {
@@ -109,11 +113,12 @@ namespace cube
 			return d;
 		}
 
-		SPtr<File> FileSystem::OpenFile(const WString& path, FileAccessModeBits accessModeBits, bool createIfNotExist)
+		SPtr<File> FileSystem::OpenFile(const String& path, FileAccessModeBits accessModeBits, bool createIfNotExist)
 		{
 			DWORD desiredAccess = GetDwDesiredAccess(accessModeBits);
+			PString pPath = ToPString(path);
 
-			HANDLE file = CreateFile(path.c_str(), desiredAccess, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			HANDLE file = CreateFile(pPath.c_str(), desiredAccess, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 			if(file != INVALID_HANDLE_VALUE) {
 				return std::make_shared<Win32File>(file);
@@ -122,7 +127,7 @@ namespace cube
 			DWORD err = GetLastError();
 
 			if(err == ERROR_FILE_NOT_FOUND && createIfNotExist == true) {
-				file = CreateFile(path.c_str(), desiredAccess, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+				file = CreateFile(pPath.c_str(), desiredAccess, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 				if(file != INVALID_HANDLE_VALUE)
 					return std::make_shared<Win32File>(file);
@@ -130,7 +135,7 @@ namespace cube
 				err = GetLastError();
 			}
 
-			std::wcout << L"Win32FileSystem: Cannot open a file. (" << path << L") / ErrorCode: " << err << std::endl;
+			std::wcout << L"Win32FileSystem: Cannot open a file. (" << pPath << L") / ErrorCode: " << err << std::endl;
 			return nullptr;
 		}
 
@@ -143,5 +148,7 @@ namespace cube
 		{
 			delete mData;
 		}
-	}
-}
+	} // namespace platform
+} // namespace cube
+
+#endif // _WIN32

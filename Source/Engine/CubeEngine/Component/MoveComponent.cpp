@@ -1,13 +1,12 @@
 #include "MoveComponent.h"
 
 #include "EngineCore/ModuleManager.h"
-#include "Base/format.h"
 #include "EngineCore/LogWriter.h"
 #include "EngineCore/GameObject.h"
 
 namespace cube
 {
-	String MoveComponent::mName = "MoveComponent";
+	String MoveComponent::mName = CUBE_T("MoveComponent");
 
 	MoveComponent::MoveComponent()
 	{
@@ -19,15 +18,15 @@ namespace cube
 
 	void MoveComponent::OnInit()
 	{
-		String n = "InputModule";
+		String n = CUBE_T("InputModule");
 		mInputModule = DPCast(module::InputModule)(core::ECore()->GetModuleManager()->GetModule(n));
 	}
 
 	void MoveComponent::OnUpdate(float dt)
 	{
-		String xStr = "MoveHorizontally";
+		String xStr = CUBE_T("MoveHorizontally");
 		float x = mInputModule->GetAxisValue(xStr);
-		String yStr = "MoveVertically";
+		String yStr = CUBE_T("MoveVertically");
 		float y = mInputModule->GetAxisValue(yStr);
 
 		Vector3 pos = GetGameObject()->GetPosition();
@@ -36,9 +35,9 @@ namespace cube
 
 		GetGameObject()->SetPosition(pos);
 
-		String lookXStr = "LookHorizontally";
+		String lookXStr = CUBE_T("LookHorizontally");
 		float lookX = mInputModule->GetAxisValue(lookXStr);
-		String lookYStr = "LookVertically";
+		String lookYStr = CUBE_T("LookVertically");
 		float lookY = mInputModule->GetAxisValue(lookYStr);
 
 		Vector3 rot = GetGameObject()->GetRotation();
@@ -52,4 +51,4 @@ namespace cube
 	void MoveComponent::OnDestroy()
 	{
 	}
-}
+} // namespace cube

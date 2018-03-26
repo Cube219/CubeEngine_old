@@ -54,5 +54,5 @@ namespace cube
 
 			SPtr<BaseRenderAPI> mRenderAPI_ref;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

@@ -28,7 +28,7 @@ namespace cube
 
 			VkShaderModule mShaderModule;
 			VkPipelineShaderStageCreateInfo mShaderStageInfo;
-			String mEntryName;
+			std::string mEntryName;
 
 			Vector<unsigned int> mSpvShader;
 

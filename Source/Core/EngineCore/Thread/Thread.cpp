@@ -23,7 +23,7 @@ namespace cube
 			Lock lock(mMutex);
 
 			if(mIsRun == true) {
-				CUBE_LOG(LogType::Error, L"Already started thread.");
+				CUBE_LOG(LogType::Error, "Already started thread.");
 				return;
 			}
 			

@@ -26,4 +26,4 @@ namespace cube
 	private:
 		SPtr<module::InputModule> mInputModule;
 	};
-}
+} // namespace cube

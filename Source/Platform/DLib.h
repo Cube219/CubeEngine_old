@@ -18,5 +18,5 @@ namespace cube
 			struct Data;
 			Data* mData;
 		};
-	}
-}
+	} // namespace platform
+} // namespace cube

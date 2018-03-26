@@ -34,9 +34,7 @@ enum class MouseButtonType
 	Left, Right, Middle
 };
 
-#include <string>
-using String = std::string;
-using WString = std::wstring;
+#include "String.h"
 
 #include <vector>
 template <typename T>

@@ -38,5 +38,5 @@ namespace cube
 
 			Atomic<uint32_t> mRefCount;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

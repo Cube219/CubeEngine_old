@@ -31,5 +31,5 @@ namespace cube
 
 			GameObject* mAttachedGameObject;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

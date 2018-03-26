@@ -881,6 +881,71 @@ extern template int CharTraits<wchar_t>::format_float<long double>
          const wchar_t* format, unsigned width, int precision, long double value);
 #endif
 
+// Cube219 : Add CharTraits for unicode
+// Cube219 : UCS-2 (unsigned short)
+template <>
+class CharTraits<unsigned short> : public BasicCharTraits<unsigned short>
+{
+public:
+	static unsigned short convert(char value) { return value; }
+	static unsigned short convert(wchar_t value) { return (unsigned short)value; }
+
+	template <typename T>
+	FMT_API static int format_float(unsigned short *buffer, std::size_t size,
+		const unsigned short *format, unsigned width, int precision, T value);
+
+};
+#if FMT_USE_EXTERN_TEMPLATES
+extern template int CharTraits<unsigned short>::format_float<double>
+(unsigned short *buffer, std::size_t size,
+	const unsigned short* format, unsigned width, int precision, double value);
+extern template int CharTraits<unsigned short>::format_float<long double>
+(unsigned short *buffer, std::size_t size,
+	const unsigned short* format, unsigned width, int precision, long double value);
+#endif
+// Cube219 : UTF-16(char16_t)
+template <>
+class CharTraits<char16_t> : public BasicCharTraits<char16_t>
+{
+public:
+	static char16_t convert(char value) { return value; }
+	static char16_t convert(wchar_t value) { return value; }
+
+	template <typename T>
+	FMT_API static int format_float(char16_t *buffer, std::size_t size,
+		const char16_t *format, unsigned width, int precision, T value);
+
+};
+#if FMT_USE_EXTERN_TEMPLATES
+extern template int CharTraits<char16_t>::format_float<double>
+(char16_t *buffer, std::size_t size,
+	const char16_t* format, unsigned width, int precision, double value);
+extern template int CharTraits<char16_t>::format_float<long double>
+(char16_t *buffer, std::size_t size,
+	const char16_t* format, unsigned width, int precision, long double value);
+#endif
+// Cube219 : UTF-32(char32_t)
+template <>
+class CharTraits<char32_t> : public BasicCharTraits<char32_t>
+{
+public:
+	static char32_t convert(char value) { return value; }
+	static char32_t convert(wchar_t value) { return value; }
+
+	template <typename T>
+	FMT_API static int format_float(char32_t *buffer, std::size_t size,
+		const char32_t *format, unsigned width, int precision, T value);
+
+};
+#if FMT_USE_EXTERN_TEMPLATES
+extern template int CharTraits<char32_t>::format_float<double>
+(char32_t *buffer, std::size_t size,
+	const char32_t* format, unsigned width, int precision, double value);
+extern template int CharTraits<char32_t>::format_float<long double>
+(char32_t *buffer, std::size_t size,
+	const char32_t* format, unsigned width, int precision, long double value);
+#endif
+
 // Checks if a number is negative - used to avoid warnings.
 template <bool IsSigned>
 struct SignChecker {
@@ -1715,19 +1780,20 @@ struct WidthSpec {
   unsigned width_;
   // Fill is always wchar_t and cast to char if necessary to avoid having
   // two specialization of WidthSpec and its subclasses.
-  wchar_t fill_;
+  // CUbe219: Chande wchar_t to char32_t for UTF-32
+  char32_t fill_;
 
-  WidthSpec(unsigned width, wchar_t fill) : width_(width), fill_(fill) {}
+  WidthSpec(unsigned width, char32_t fill) : width_(width), fill_(fill) {}
 
   unsigned width() const { return width_; }
-  wchar_t fill() const { return fill_; }
+  char32_t fill() const { return fill_; }
 };
 
 // An alignment specifier.
 struct AlignSpec : WidthSpec {
   Alignment align_;
 
-  AlignSpec(unsigned width, wchar_t fill, Alignment align = ALIGN_DEFAULT)
+  AlignSpec(unsigned width, char32_t fill, Alignment align = ALIGN_DEFAULT)
   : WidthSpec(width, fill), align_(align) {}
 
   Alignment align() const { return align_; }
@@ -1738,7 +1804,7 @@ struct AlignSpec : WidthSpec {
 // An alignment and type specifier.
 template <char TYPE>
 struct AlignTypeSpec : AlignSpec {
-  AlignTypeSpec(unsigned width, wchar_t fill) : AlignSpec(width, fill) {}
+  AlignTypeSpec(unsigned width, char32_t fill) : AlignSpec(width, fill) {}
 
   bool flag(unsigned) const { return false; }
   char type() const { return TYPE; }
@@ -1752,7 +1818,7 @@ struct FormatSpec : AlignSpec {
   char type_;
 
   FormatSpec(
-    unsigned width = 0, char type = 0, wchar_t fill = ' ')
+    unsigned width = 0, char type = 0, char32_t fill = ' ')
   : AlignSpec(width, fill), flags_(0), precision_(-1), type_(type) {}
 
   bool flag(unsigned f) const { return (flags_ & f) != 0; }
@@ -2472,7 +2538,7 @@ class BasicWriter {
   // Fills the padding around the content and returns the pointer to the
   // content area.
   static CharPtr fill_padding(CharPtr buffer,
-      unsigned total_size, std::size_t content_size, wchar_t fill);
+      unsigned total_size, std::size_t content_size, char32_t fill);
 
   // Grows the buffer by n characters and returns a pointer to the newly
   // allocated area.
@@ -2774,7 +2840,7 @@ template <typename Char>
 typename BasicWriter<Char>::CharPtr
   BasicWriter<Char>::fill_padding(
     CharPtr buffer, unsigned total_size,
-    std::size_t content_size, wchar_t fill) {
+    std::size_t content_size, char32_t fill) {
   std::size_t padding = total_size - content_size;
   std::size_t left_padding = padding / 2;
   Char fill_char = internal::CharTraits<Char>::cast(fill);
@@ -3300,6 +3366,31 @@ inline std::wstring format(WCStringRef format_str, ArgList args) {
   w.write(format_str, args);
   return w.str();
 }
+// Cube219: Add format functions supporting Unicode
+typedef BasicCStringRef<unsigned short> UCS2CStringRef;
+typedef BasicCStringRef<char16_t> U16CStringRef;
+typedef BasicCStringRef<char32_t> U32CStringRef;
+// Cube219: UCS-2(unsigned short)
+inline std::basic_string<unsigned short> format(UCS2CStringRef format_str, ArgList args)
+{
+	BasicMemoryWriter<unsigned short> w;
+	w.write(format_str, args);
+	return w.str();
+}
+// Cube219: UTF-16(char16_t)
+inline std::basic_string<char16_t> format(U16CStringRef format_str, ArgList args)
+{
+	BasicMemoryWriter<char16_t> w;
+	w.write(format_str, args);
+	return w.str();
+}
+// Cube219: UTF-32(char32_t)
+inline std::basic_string<char32_t> format(U32CStringRef format_str, ArgList args)
+{
+	BasicMemoryWriter<char32_t> w;
+	w.write(format_str, args);
+	return w.str();
+}
 
 /**
   \rst
@@ -3560,6 +3651,16 @@ void arg(WStringRef, const internal::NamedArg<Char>&) FMT_DELETED_OR_UNDEFINED;
 #define FMT_VARIADIC_W(ReturnType, func, ...) \
   FMT_VARIADIC_(wchar_t, ReturnType, func, return func, __VA_ARGS__)
 
+// Cube219 : Register variadic functions for unicode
+#define FMT_VARIADIC_UCS2(ReturnType, func, ...) \
+  FMT_VARIADIC_(unsigned short, ReturnType, func, return func, __VA_ARGS__)
+
+#define FMT_VARIADIC_U16(ReturnType, func, ...) \
+  FMT_VARIADIC_(char16_t, ReturnType, func, return func, __VA_ARGS__)
+
+#define FMT_VARIADIC_U32(ReturnType, func, ...) \
+  FMT_VARIADIC_(char32_t, ReturnType, func, return func, __VA_ARGS__)
+
 #define FMT_CAPTURE_ARG_(id, index) ::fmt::arg(#id, id)
 
 #define FMT_CAPTURE_ARG_W_(id, index) ::fmt::arg(L###id, id)
@@ -3588,6 +3689,11 @@ FMT_VARIADIC_W(std::wstring, format, WCStringRef)
 FMT_VARIADIC(void, print, CStringRef)
 FMT_VARIADIC(void, print, std::FILE *, CStringRef)
 FMT_VARIADIC(void, print_colored, Color, CStringRef)
+
+// Cube219: Register variadic functions for unicode
+FMT_VARIADIC_UCS2(std::basic_string<unsigned short>, format, UCS2CStringRef)
+FMT_VARIADIC_U16(std::basic_string<char16_t>, format, U16CStringRef)
+FMT_VARIADIC_U32(std::basic_string<char32_t>, format, U32CStringRef)
 
 namespace internal {
 template <typename Char>

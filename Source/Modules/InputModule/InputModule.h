@@ -76,5 +76,5 @@ namespace cube
 			Array<bool, 4> mIsVibrated;
 			Array<float, 4> mRemainedVibrationTime;
 		};
-	}
-}
+	} // namespace module
+} // namespace cube

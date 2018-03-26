@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef _WIN32
+
 #include "../PlatformHeader.h"
 
 #include <Windows.h>
@@ -28,3 +30,5 @@ namespace cube
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	}
 }
+
+#endif // _WIN32

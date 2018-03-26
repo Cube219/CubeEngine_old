@@ -54,5 +54,5 @@ namespace cube
 
 			SPtr<ThreadManager> mThreadManager;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

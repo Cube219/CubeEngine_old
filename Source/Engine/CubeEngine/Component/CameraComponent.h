@@ -30,4 +30,4 @@ namespace cube
 
 		SPtr<core::CameraRenderer3D> mCameraRenderer3D;
 	};
-}
+} // namespace cube

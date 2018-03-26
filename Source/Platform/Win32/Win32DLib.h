@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef _WIN32
+
 #include "../PlatformHeader.h"
 
 #include <Windows.h>
@@ -13,8 +15,10 @@ namespace cube
 		class PLATFORM_EXPORT Win32DLib : public DLib
 		{
 		public:
-			Win32DLib(const WString& path);
+			Win32DLib(const String& path);
 			virtual ~Win32DLib();
 		};
-	}
-}
+	} // namespace platform
+} // namespace cube
+
+#endif // _WIN32

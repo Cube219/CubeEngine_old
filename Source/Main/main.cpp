@@ -4,13 +4,14 @@
 #include <Windows.h>
 
 #include "CubeEngine/CubeEngine.h"
+#include "Base/String.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 {
 	using namespace cube;
 
 	CubeEngineStartOption startOption;
-	startOption.title = L"Test title";
+	startOption.title = CUBE_T("Test title");
 	startOption.windowWidth = 1024;
 	startOption.windowHeight = 768;
 	startOption.isWindowMode = true;

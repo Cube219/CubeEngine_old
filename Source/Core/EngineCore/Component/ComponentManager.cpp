@@ -1,6 +1,5 @@
 #include "ComponentManager.h"
 
-#include "Base/format.h"
 #include "../LogWriter.h"
 
 namespace cube
@@ -19,7 +18,7 @@ namespace cube
 		{
 			auto findIter = mComponentCreators.find(name);
 			if(findIter == mComponentCreators.end()) {
-				CUBE_LOG(LogType::Error, L"Cannot create component \"{0}\". It hasn't been registerd", name);
+				CUBE_LOG(LogType::Error, "Cannot create component \"{0}\". It hasn't been registerd", name);
 				return nullptr;
 			}
 
@@ -30,9 +29,9 @@ namespace cube
 		{
 			auto findIter = mComponentCreators.find(name);
 			if(findIter != mComponentCreators.end()) {
-				CUBE_LOG(LogType::Error, L"Component \"{0}\" is already registered", name);
+				CUBE_LOG(LogType::Error, "Component \"{0}\" is already registered", name);
 				return;
 			}
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

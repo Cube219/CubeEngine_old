@@ -123,15 +123,15 @@
     <ClInclude Include="Json.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="String.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Vector\VectorArray.h" />
     <ClInclude Include="Vector\VectorSSE.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="a.cpp" />
     <ClCompile Include="format.cc" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Vector.cpp" />
+    <ClCompile Include="String.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

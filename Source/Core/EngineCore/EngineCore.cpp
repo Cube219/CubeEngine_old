@@ -5,7 +5,6 @@
 #include "Time/GameTime.h"
 #include "String/StringManager.h"
 #include "Thread/ThreadManager.h"
-#include "Base/format.h"
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
 #include "Renderer/Mesh.h"
@@ -58,7 +57,7 @@ namespace cube
 			mThreadManager = std::make_shared<ThreadManager>();
 
 			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
-			mModuleManager->LoadModule("InputModule");
+			mModuleManager->LoadModule(CUBE_T("InputModule"));
 
 			mModuleManager->InitModules();
 
@@ -67,29 +66,29 @@ namespace cube
 			// Create mesh / texture
 			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
 
-			WString texturePath = L"../../../SampleResources/Textures/TestTexture.png";
+			String texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
 			mTexture = mResourceManager->LoadResource<Texture>(texturePath);
-			texturePath = L"../../../SampleResources/Textures/TestTexture2.png";
+			texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture2.png");
 			mTexture2 = mResourceManager->LoadResource<Texture>(texturePath);
 
 			// Load shader
-			WString shaderPath = L"../../../SampleResources/Shaders/Vertex.glsl";
+			String shaderPath = CUBE_T("../../../SampleResources/Shaders/Vertex.glsl");
 			mMaterialVertexShader = mResourceManager->LoadResource<Shader>(shaderPath);
 
-			shaderPath = L"../../../SampleResources/Shaders/Fragment.glsl";
+			shaderPath = CUBE_T("../../../SampleResources/Shaders/Fragment.glsl");
 			mMaterialFragmentShader = mResourceManager->LoadResource<Shader>(shaderPath);
 
 			// Create material
 			MaterialInitializer matInit;
 			matInit.shaders.push_back(mMaterialVertexShader);
 			matInit.shaders.push_back(mMaterialFragmentShader);
-			matInit.parameters.push_back({"Texture", MaterialParameterType::Texture, 0});
+			matInit.parameters.push_back({CUBE_T("Texture"), MaterialParameterType::Texture, 0});
 			mMaterial = std::make_shared<Material>(mRendererManager->GetRenderAPI(), matInit);
 			mRendererManager->RegisterMaterial(mMaterial);
 
 			// Create materialInstances
 			mMaterialIns1 = mMaterial->CreateInstance();
-			String t = "Texture";
+			String t = CUBE_T("Texture");
 			mMaterialIns1->SetParameterData<RPtr<Texture>>(t, mTexture);
 
 			mMaterialIns2 = mMaterial->CreateInstance();
@@ -190,5 +189,5 @@ namespace cube
 		{
 			return EngineCore::GetInstance();
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

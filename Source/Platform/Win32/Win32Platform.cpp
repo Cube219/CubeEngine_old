@@ -1,6 +1,10 @@
-﻿#include "Win32Platform.h"
+﻿#ifdef _WIN32
+
+#include "Win32Platform.h"
 
 #include <iostream>
+#include <io.h> 
+#include <fcntl.h>
 
 #include "Win32DLib.h"
 #include "Win32FileSystem.h"
@@ -19,7 +23,7 @@ namespace cube
 
 		SPtr<FileSystem> Platform::fileSystem;
 
-		WString Platform::title;
+		PString Platform::title;
 
 		uint32_t Platform::width;
 		uint32_t Platform::height;
@@ -39,12 +43,15 @@ namespace cube
 			fileSystem = std::make_shared<Win32FileSystem>();
 		}
 
-		void Platform::InitWindow(const WString& title, uint32_t width, uint32_t height)
+		void Platform::InitWindow(const String& title, uint32_t width, uint32_t height)
 		{
 			// Show console if it is debug mode
 #ifdef _DEBUG
 			if(AllocConsole()) {
 				std::wcout.imbue(std::locale(""));
+
+				SetConsoleOutputCP(CP_WINUNICODE);
+				_setmode(_fileno(stdout), _O_WTEXT);
 
 				FILE* acStreamIn;
 				FILE* acStreamOut;
@@ -56,7 +63,7 @@ namespace cube
 			}
 #endif // _DEBUG
 
-			Platform::title = title;
+			Platform::title = ToPString(title);
 			Platform::width = width;
 			Platform::height = height;
 
@@ -72,7 +79,7 @@ namespace cube
 			winClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 			winClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 			winClass.lpszMenuName = nullptr;
-			winClass.lpszClassName = title.c_str();
+			winClass.lpszClassName = Platform::title.c_str();
 			winClass.hIconSm = LoadIcon(nullptr, IDI_WINLOGO);
 
 			if(!RegisterClassEx(&winClass))
@@ -116,7 +123,7 @@ namespace cube
 			::Sleep(time);
 		}
 
-		SPtr<DLib> Platform::LoadDLib(const WString& path)
+		SPtr<DLib> Platform::LoadDLib(const String& path)
 		{
 			return std::make_shared<Win32DLib>(path);
 		}
@@ -205,5 +212,7 @@ namespace cube
 
 			return DefWindowProc(hWnd, uMsg, wParam, lParam);
 		}
-	}
-}
+	} // namespace platform
+} // namespace cube
+
+#endif // _WIN32

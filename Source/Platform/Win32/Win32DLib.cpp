@@ -1,6 +1,10 @@
+#ifdef _WIN32
+
 #include "Win32DLib.h"
 
 #include <iostream>
+
+#include "../PlatformString.h"
 
 namespace cube
 {
@@ -16,7 +20,8 @@ namespace cube
 			if(!mData->dLib)
 				return nullptr;
 
-			auto pFunction = GetProcAddress(mData->dLib, name.c_str());
+			std::string aName = ToASCIIString(name);
+			auto pFunction = GetProcAddress(mData->dLib, aName.c_str());
 			if(pFunction == NULL) {
 				std::wcout << L"Win32DLib: Failed to get the function. (Error: " << GetLastError() << ")" << std::endl;
 				return nullptr;
@@ -25,11 +30,11 @@ namespace cube
 			return RCast(void*)(pFunction);
 		}
 
-		Win32DLib::Win32DLib(const WString& path)
+		Win32DLib::Win32DLib(const String& path)
 		{
 			mData = new DLib::Data();
 
-			WString pathWithExtension = path + L".dll";
+			PString pathWithExtension = ToPString(path) + L".dll";
 
 			mData->dLib = LoadLibrary(pathWithExtension.c_str());
 
@@ -49,5 +54,7 @@ namespace cube
 
 			delete mData;
 		}
-	}
-}
+	} // namespace platform
+} // namespace cube
+
+#endif // _WIN32

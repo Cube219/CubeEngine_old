@@ -5,7 +5,6 @@
 #include "Thread/ThreadManager.h"
 #include "Thread/Thread.h"
 
-#include "Base/format.h"
 #include "LogWriter.h"
 
 namespace cube
@@ -33,21 +32,17 @@ namespace cube
 		{
 			auto temp = mModuleLookup.find(moduleName);
 			if(temp != mModuleLookup.end()) {
-				CUBE_LOG(LogType::Error, L"Already module name \"{0}\" loaded.", moduleName);
+				CUBE_LOG(LogType::Error, "Already module name \"{0}\" loaded.", moduleName);
 				return;
 			}
 
 			ModuleNode node;
 			
-			WString moduleWName;
-			// !위 변환은 String이 ACSII인 경우만 가능
-			// 따라서 다른 곳에서는 이 방식을 쓰면 안 됨. 차후에 String 시스템 개선 때 고쳐질 것
-			moduleWName.assign(moduleName.begin(), moduleName.end());
-			node.moduleDLib = platform::Platform::LoadDLib(moduleWName);
+			node.moduleDLib = platform::Platform::LoadDLib(moduleName);
 			
 			using CreateModuleFunction = module::BaseModule* (*)();
 
-			auto createModuleFunction = RCast(CreateModuleFunction)(node.moduleDLib->GetFunction("CreateModule"));
+			auto createModuleFunction = RCast(CreateModuleFunction)(node.moduleDLib->GetFunction(CUBE_T("CreateModule")));
 			node.module = SPtr<module::BaseModule>(createModuleFunction());
 
 			mModules.push_back(node);
@@ -65,7 +60,7 @@ namespace cube
 		{
 			auto temp = mModuleLookup.find(name.c_str());
 			if(temp == mModuleLookup.end()) {
-				CUBE_LOG(LogType::Error, L"Cannot find module \"{0}\".", name);
+				CUBE_LOG(LogType::Error, "Cannot find module \"{0}\".", name);
 				return nullptr;
 			}
 
@@ -78,5 +73,5 @@ namespace cube
 				iter->module->Update(dt);
 			}
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

@@ -4,6 +4,7 @@
 
 #include "Base/KeyCode.h"
 
+#include "PlatformString.h"
 #include "DLib.h"
 #include "FileSystem.h"
 
@@ -19,7 +20,7 @@ namespace cube
 		public:
 			static void Init();
 
-			static void InitWindow(const WString& title, uint32_t width, uint32_t height);
+			static void InitWindow(const String& title, uint32_t width, uint32_t height);
 			static void ShowWindow();
 
 			static void StartLoop();
@@ -28,7 +29,7 @@ namespace cube
 			static uint32_t GetWindowWidth() { return width; }
 			static uint32_t GetWindowHeight() { return height; }
 
-			static SPtr<DLib> LoadDLib(const WString& path);
+			static SPtr<DLib> LoadDLib(const String& path);
 			static SPtr<FileSystem> GetFileSystem() { return fileSystem; }
 
 			// TODO: C#의 Event처럼 여러 함수들을 등록할 수 있게 하기?
@@ -72,7 +73,7 @@ namespace cube
 		protected:
 			static SPtr<FileSystem> fileSystem;
 
-			static WString title;
+			static PString title;
 
 			static uint32_t width;
 			static uint32_t height;
@@ -91,5 +92,5 @@ namespace cube
 			Platform() = delete;
 			~Platform() = delete;
 		};
-	}
-}
+	} // namespace platform
+} // namespace cube

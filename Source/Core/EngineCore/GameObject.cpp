@@ -1,6 +1,5 @@
 ﻿#include "GameObject.h"
 
-#include "Base/format.h"
 #include "LogWriter.h"
 #include "EngineCore.h"
 #include "Component/Component.h"
@@ -72,7 +71,7 @@ namespace cube
 		{
 			for(auto& com : mComponents) {
 				if(com->GetName() == name) {
-					CUBE_LOG(LogType::Error, L"Cannot add component \"{0}\". The component already exists", name);
+					CUBE_LOG(LogType::Error, "Cannot add component \"{0}\". The component already exists", name);
 					return nullptr;
 				}
 			}
@@ -159,5 +158,5 @@ namespace cube
 				mIsTransformChanged = false;
 			}
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

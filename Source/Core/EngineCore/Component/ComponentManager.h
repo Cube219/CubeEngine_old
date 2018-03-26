@@ -34,5 +34,5 @@ namespace cube
 
 			HashMap<String, std::function<SPtr<Component>()>> mComponentCreators;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

@@ -1,6 +1,5 @@
 #include "XboxControllerInput.h"
 
-#include "Base/format.h"
 #include "EngineCore/LogWriter.h"
 
 namespace cube
@@ -21,7 +20,7 @@ namespace cube
 		{
 #ifdef _DEBUG
 			if(playerIndex >= XUSER_MAX_COUNT) {
-				CUBE_LOG(LogType::Error, L"Invalid player index (index: {0} / maxIndex: {1})", playerIndex, XUSER_MAX_COUNT - 1);
+				CUBE_LOG(LogType::Error, "Invalid player index (index: {0} / maxIndex: {1})", playerIndex, XUSER_MAX_COUNT - 1);
 				return false;
 			}
 #endif // _DEBUG
@@ -117,7 +116,7 @@ namespace cube
 						return false;
 				
 				default:
-					CUBE_LOG(LogType::Error, L"Invalid digital button ({0})", button);
+					CUBE_LOG(LogType::Error, "Invalid digital button ({0})", button);
 					return false;
 			}
 
@@ -128,7 +127,7 @@ namespace cube
 		{
 #ifdef _DEBUG
 			if(playerIndex >= XUSER_MAX_COUNT) {
-				CUBE_LOG(LogType::Error, L"Invalid player index (index: {0} / maxIndex: {1})", playerIndex, XUSER_MAX_COUNT - 1);
+				CUBE_LOG(LogType::Error, "Invalid player index (index: {0} / maxIndex: {1})", playerIndex, XUSER_MAX_COUNT - 1);
 				return 0.0f;
 			}
 #endif // _DEBUG
@@ -187,7 +186,7 @@ namespace cube
 					return static_cast<float>(triggerValue) / 255.0f;
 				
 				default:
-					CUBE_LOG(LogType::Error, L"Invalid analog button ({0})", button);
+					CUBE_LOG(LogType::Error, "Invalid analog button ({0})", button);
 					return 0.0f;
 			}
 
@@ -198,7 +197,7 @@ namespace cube
 		{
 #ifdef _DEBUG
 			if(playerIndex >= XUSER_MAX_COUNT) {
-				CUBE_LOG(LogType::Error, L"Invalid player index (index: {0} / maxIndex: {1})", playerIndex, XUSER_MAX_COUNT - 1);
+				CUBE_LOG(LogType::Error, "Invalid player index (index: {0} / maxIndex: {1})", playerIndex, XUSER_MAX_COUNT - 1);
 				return;
 			}
 #endif // _DEBUG
@@ -246,5 +245,5 @@ namespace cube
 		{
 		}
 #endif // _WIN32
-	}
-}
+	} // namespace module
+} // namespace cube

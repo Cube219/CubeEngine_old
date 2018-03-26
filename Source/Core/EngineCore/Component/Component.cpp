@@ -6,7 +6,7 @@ namespace cube
 {
 	namespace core
 	{
-		String Component::mName = "Component";
+		String Component::mName = CUBE_T("Component");
 
 		Component::Component()
 		{
@@ -15,5 +15,5 @@ namespace cube
 		Component::~Component()
 		{
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

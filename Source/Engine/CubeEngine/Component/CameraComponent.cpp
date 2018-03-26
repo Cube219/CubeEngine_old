@@ -5,12 +5,11 @@
 #include "EngineCore/GameObject.h"
 #include "EngineCore/EngineCore.h"
 #include "EngineCore/Renderer/RendererManager.h"
-#include "Base/format.h"
 #include "EngineCore/LogWriter.h"
 
 namespace cube
 {
-	String CameraComponent::mName = "CameraComponent";
+	String CameraComponent::mName = CUBE_T("CameraComponent");
 
 	CameraComponent::CameraComponent()
 	{
@@ -47,4 +46,4 @@ namespace cube
 	void CameraComponent::OnDestroy()
 	{
 	}
-}
+} // namespace cube

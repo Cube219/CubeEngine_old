@@ -70,5 +70,5 @@ namespace cube
 
 			Vector<SPtr<Component>> mComponents;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

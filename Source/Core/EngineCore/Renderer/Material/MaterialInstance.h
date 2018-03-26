@@ -48,5 +48,5 @@ namespace cube
 
 			SPtr<Material> mMaterialRef;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

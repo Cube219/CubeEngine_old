@@ -3,7 +3,6 @@
 #include "Material.h"
 #include "../Texture.h"
 #include "../../LogWriter.h"
-#include "Base/format.h"
 
 namespace cube
 {
@@ -49,7 +48,7 @@ namespace cube
 		{
 			auto res = mParameterIndexLookupMap.find(name);
 			if(res == mParameterIndexLookupMap.end()) {
-				CUBE_LOG(LogType::Error, L"Cannot find parameter name {0}.", name);
+				CUBE_LOG(LogType::Error, "Cannot find parameter name {0}.", name);
 				return;
 			}
 
@@ -58,7 +57,7 @@ namespace cube
 			uint64_t dataSize = sizeof(data);
 #ifdef _DEBUG
 			if(dataSize != mParamInfos[paramIndex].size) {
-				CUBE_LOG(LogType::Error, L"Wrong parameter size({0} != {1}).", param.size, dataSize);
+				CUBE_LOG(LogType::Error, "Wrong parameter size({0} != {1}).", param.size, dataSize);
 				return;
 			}
 #endif // _DEBUG
@@ -76,7 +75,7 @@ namespace cube
 		{
 			auto res = mParameterIndexLookupMap.find(name);
 			if(res == mParameterIndexLookupMap.end()) {
-				CUBE_LOG(LogType::Error, L"Cannot find parameter name {0}.", name);
+				CUBE_LOG(LogType::Error, "Cannot find parameter name {0}.", name);
 				return;
 			}
 
@@ -84,7 +83,7 @@ namespace cube
 
 #ifdef _DEBUG
 			if(mParamInfos[paramIndex].type != MaterialParameterType::Texture) {
-				CUBE_LOG(LogType::Error, L"The Parameter {0} is not a Texture parameter.", name);
+				CUBE_LOG(LogType::Error, "The Parameter {0} is not a Texture parameter.", name);
 				return;
 			}
 #endif // _DEBUG
@@ -94,5 +93,5 @@ namespace cube
 
 			mDescriptorSet->WriteImagesInDescriptor(paramIndex, 1, &imageView, &sampler);
 		}
-	}
-}
+	} // namespace core
+} // namespace cube
