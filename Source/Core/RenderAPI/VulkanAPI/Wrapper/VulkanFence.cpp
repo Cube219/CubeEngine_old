@@ -17,7 +17,7 @@ namespace cube
 			info.flags = 0;
 
 			res = vkCreateFence(device->GetHandle(), &info, nullptr, &mFence);
-			CheckVkResult(L"VulkanFence", L"Cannot create a VulkanFence", res);
+			CheckVkResult("Cannot create a VulkanFence", res);
 		}
 
 		VulkanFence::~VulkanFence()
@@ -35,7 +35,7 @@ namespace cube
 				return false;
 			}
 
-			CheckVkResult(L"VulkanFence", L"Error occured waiting for the fance", res);
+			CheckVkResult("Error occured waiting for the fance", res);
 
 			return true;
 		}

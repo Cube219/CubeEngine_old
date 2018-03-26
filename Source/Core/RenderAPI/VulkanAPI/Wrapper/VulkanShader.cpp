@@ -21,7 +21,7 @@ namespace cube
 					break;
 
 				default:
-					PrintlnLogWithSayer(L"VulkanShader", L"Unsupported shader language");
+					CUBE_LOG(cube::LogType::Error, "Unsupported shader language ({0})", (int)initializer.language);
 					return;
 			}
 
@@ -35,7 +35,7 @@ namespace cube
 
 			VkResult res;
 			res = vkCreateShaderModule(device->GetHandle(), &moduleInfo, nullptr, &mShaderModule);
-			CheckVkResult(L"VulkanShader", L"Cannot create a shader module", res);
+			CheckVkResult("Cannot create a shader module", res);
 
 			mEntryName = initializer.entryPoint;
 
@@ -100,18 +100,15 @@ namespace cube
 
 			EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
 			if(!shader.parse(&resources, 100, false, messages)) {
-				PrintLogWithSayer(L"VulkanShader", L"Cannot parse the glsl to spir-v (");
-				PrintLog(shader.getInfoLog());
-				PrintlnLog(L")");
+				CUBE_LOG(cube::LogType::Error, "Cannot parse the glsl to spir-v ({0})", shader.getInfoLog());
 				return;
 			}
 
 			program.addShader(&shader);
 
 			if(!program.link(messages)) {
-				PrintLogWithSayer(L"VulkanShader", L"Cannot link the glsl to spir-v (");
-				PrintLog(shader.getInfoLog());
-				PrintlnLog(L")");
+				CUBE_LOG(cube::LogType::Error, "Cannot link the glsl to spir-v ({0})", shader.getInfoLog());
+				return;
 			}
 
 			glslang::GlslangToSpv(*program.getIntermediate(type), mSpvShader);

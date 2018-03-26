@@ -103,7 +103,7 @@ namespace cube
 			pipelineLayoutCreateInfo.pSetLayouts = layouts.data();
 
 			res = vkCreatePipelineLayout(mDevice_ref->GetHandle(), &pipelineLayoutCreateInfo, nullptr, &mPipelineLayout);
-			CheckVkResult(L"VulkanPipeline", L"Cannot create a pipeline layout", res);
+			CheckVkResult("Cannot create a pipeline layout", res);
 
 			// Vertex input
 			Vector<VkVertexInputAttributeDescription> vertexInputAttributes;
@@ -260,7 +260,7 @@ namespace cube
 			pipelineCreateInfo.subpass = 0;
 
 			res = vkCreateGraphicsPipelines(mDevice_ref->GetHandle(), nullptr, 1, &pipelineCreateInfo, nullptr, &mPipeline);
-			CheckVkResult(L"VulkanPipeline", L"Cannot create a VulkanPipeline", res);
+			CheckVkResult("Cannot create a VulkanPipeline", res);
 		}
 
 		VulkanGraphicsPipeline::~VulkanGraphicsPipeline()

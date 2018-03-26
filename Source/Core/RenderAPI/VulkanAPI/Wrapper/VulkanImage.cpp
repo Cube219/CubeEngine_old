@@ -22,7 +22,7 @@ namespace cube
 					break;
 
 				default:
-					PrintlnLogWithSayer(L"VulkanImage", L"Unknown ImageType");
+					CUBE_LOG(cube::LogType::Error, "Unknown ImageType ({0})", (int)type);
 					break;
 			}
 			return t;
@@ -87,7 +87,7 @@ namespace cube
 					break;
 
 				default:
-					PrintlnLogWithSayer(L"VulkanImage", L"Unknown ImageViewType");
+					CUBE_LOG(cube::LogType::Error, "Unknown ImageViewType ({0})", (int)type);
 					break;
 			}
 
@@ -153,7 +153,7 @@ namespace cube
 					break;
 
 				default:
-					PrintlnLogWithSayer(L"VulkanImage", L"Unknown ImageLayout");
+					CUBE_LOG(cube::LogType::Error, "Unknown ImageLayout ({0})", (int)imageLayout);
 					break;
 			}
 
@@ -178,7 +178,7 @@ namespace cube
 			imageViewCreateinfo.viewType = viewType;
 
 			res = vkCreateImageView(mDevice_ref->GetHandle(), &imageViewCreateinfo, nullptr, &mImageView);
-			CheckVkResult(L"VulkanImageView", L"Cannot create a VulkanImageView", res);
+			CheckVkResult("Cannot create a VulkanImageView", res);
 
 			mFormat = format;
 		}
@@ -222,7 +222,7 @@ namespace cube
 			imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 			
 			res = vkCreateImage(device->GetHandle(), &imageCreateInfo, nullptr, &mImage);
-			CheckVkResult(L"VulkanImage", L"Cannot create VulkanImage", res);
+			CheckVkResult("Cannot create VulkanImage", res);
 
 			// Allocate memory and bind
 			VkMemoryRequirements memRequire;
@@ -230,7 +230,7 @@ namespace cube
 
 			mAllocatedMemory = device->AllocateMemory(memRequire, 0);
 			res = vkBindImageMemory(device->GetHandle(), mImage, mAllocatedMemory, 0);
-			CheckVkResult(L"VulkanImage", L"Cannot bind memory to the image", res);
+			CheckVkResult("Cannot bind memory to the image", res);
 		}
 
 		VulkanImage::~VulkanImage()

@@ -192,7 +192,7 @@ namespace cube
 					break;
 
 				default:
-					PrintlnLogWithSayer(L"VulkanPhysicalDeviceFeatures", L"Undefined Feature");
+					CUBE_LOG(cube::LogType::Error, "Undefined Feature ({0})", (int)feature);
 					break;
 			}
 		}

@@ -32,7 +32,7 @@ namespace cube
 			VkResult res;
 
 			res = vkAcquireNextImageKHR(mDevice_ref->GetHandle(), mSwapchain, UINT64_MAX, DPCast(VulkanSemaphore)(signalSemaphore)->GetHandle(), VK_NULL_HANDLE, &mCurrentImageIndex);
-			CheckVkResult(L"VulkanSwapchain", L"Cannot get a next iamge", res);
+			CheckVkResult("Cannot get a next iamge", res);
 
 			return mCurrentImageIndex;
 		}
@@ -63,10 +63,10 @@ namespace cube
 			info.pResults = nullptr;
 
 			res = vkQueuePresentKHR(mPresentQueue->GetHandle(), &info);
-			CheckVkResult(L"VulkanSwapchain", L"Cannot present", res);
+			CheckVkResult("Cannot present", res);
 
 			res = vkQueueWaitIdle(mPresentQueue->GetHandle());
-			CheckVkResult(L"VulkanSwapchain", L"Cannot wait the present queue", res);
+			CheckVkResult("Cannot wait the present queue", res);
 		}
 
 		// TODO: vsync 기능 구현
@@ -123,7 +123,7 @@ namespace cube
 			}
 
 			res = vkCreateSwapchainKHR(mDevice_ref->GetHandle(), &info, nullptr, &mSwapchain);
-			CheckVkResult(L"VulkanSwapchain", L"Cannot create VulkanSwapchain", res);
+			CheckVkResult("Cannot create VulkanSwapchain", res);
 
 			// If this swapchain is recreated, destroy the old swapchain
 			if(isRecreated == true) {
@@ -135,11 +135,11 @@ namespace cube
 			// Get the swapchain imgaes
 			uint32_t swapchainImageCount = 0;
 			res = vkGetSwapchainImagesKHR(mDevice_ref->GetHandle(), mSwapchain, &swapchainImageCount, nullptr);
-			CheckVkResult(L"VulkanSwapchain", L"Cannt get image number in the swapchain", res);
+			CheckVkResult("Cannt get image number in the swapchain", res);
 
 			VkImage* imgs = new VkImage[swapchainImageCount];
 			res = vkGetSwapchainImagesKHR(mDevice_ref->GetHandle(), mSwapchain, &swapchainImageCount, imgs);
-			CheckVkResult(L"VulkanSwapchain", L"Cannt get images in the swapchain", res);
+			CheckVkResult("Cannt get images in the swapchain", res);
 
 			mImages.resize(swapchainImageCount);
 			mImageViews.resize(swapchainImageCount);

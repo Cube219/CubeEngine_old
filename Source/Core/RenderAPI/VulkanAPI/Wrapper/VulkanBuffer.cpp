@@ -61,7 +61,7 @@ namespace cube
 			bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 			res = vkCreateBuffer(device->GetHandle(), &bufferCreateInfo, nullptr, &mBuffer);
-			CheckVkResult(L"VulkanBuffer", L"Cannot create a VulkanBuffer", res);
+			CheckVkResult("Cannot create a VulkanBuffer", res);
 
 			// Allocate memory
 			VkMemoryRequirements memRequire;
@@ -74,7 +74,7 @@ namespace cube
 
 			// Bind
 			res = vkBindBufferMemory(device->GetHandle(), mBuffer, mAllocatedMemory, 0);
-			CheckVkResult(L"VulkanBuffer", L"Cannot bind the memory", res);
+			CheckVkResult("Cannot bind the memory", res);
 
 			// Update buffer data
 			for(uint64_t i = 0; i < bufDataNum; i++) {
@@ -103,7 +103,7 @@ namespace cube
 			VkResult res;
 
 			res = vkMapMemory(mDevice_ref->GetHandle(), mAllocatedMemory, 0, mMappedSize, 0, &mMappedData);
-			CheckVkResult(L"VulkanBuffer", L"Cannot map to the memory", res);
+			CheckVkResult("Cannot map to the memory", res);
 
 			mMappedOffset = 0;
 		}
@@ -119,7 +119,7 @@ namespace cube
 			uint64_t size = mDataOffsets[endIndex] + mDataSizes[endIndex] - startOffset;
 
 			res = vkMapMemory(mDevice_ref->GetHandle(), mAllocatedMemory, startOffset, size, 0, &mMappedData);
-			CheckVkResult(L"VulkanBuffer", L"Cannot map to the memory", res);
+			CheckVkResult("Cannot map to the memory", res);
 
 			mMappedOffset = startOffset;
 		}
@@ -128,13 +128,13 @@ namespace cube
 		{
 #ifdef _DEBUG
 			if(size != mDataSizes[index]) {
-				PrintlnLogWithSayer(L"VulkanBuffer", L"Wrong data size.");
+				CUBE_LOG(cube::LogType::Error, "Wrong data size. (Expected: {0} / Actual: {1})", mDataSizes[index], size);
 				return;
 			}
 #endif // _DEBUG
 
 			if(mMappedData == nullptr) {
-				PrintlnLogWithSayer(L"VulkanBuffer", L"Cannot update buffer data. It is not mapped.");
+				CUBE_LOG(cube::LogType::Error, "Cannot update buffer data. It is not mapped.");
 				return;
 			}
 

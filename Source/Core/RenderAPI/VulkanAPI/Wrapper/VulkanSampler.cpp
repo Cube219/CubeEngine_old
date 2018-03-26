@@ -32,7 +32,7 @@ namespace cube
 			info.unnormalizedCoordinates = VK_FALSE;
 
 			res = vkCreateSampler(device->GetHandle(), &info, nullptr, &mSampler);
-			CheckVkResult(L"VulkanSampler", L"Cannot create a VulkanSampler", res);
+			CheckVkResult("Cannot create a VulkanSampler", res);
 		}
 
 		VulkanSampler::~VulkanSampler()

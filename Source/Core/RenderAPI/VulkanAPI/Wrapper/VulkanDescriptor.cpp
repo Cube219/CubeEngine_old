@@ -49,7 +49,7 @@ namespace cube
 					break;
 
 				default:
-					PrintlnLogWithSayer(L"VulkanDescriptor", L"Unknown DescriptorType");
+					CUBE_LOG(cube::LogType::Error, "Unknown DescriptorType ({0})", (int)descType);
 					break;
 			}
 
@@ -121,7 +121,7 @@ namespace cube
 			info.pPoolSizes = sizes.data();
 
 			res = vkCreateDescriptorPool(device->GetHandle(), &info, nullptr, &mDescriptorPool);
-			CheckVkResult(L"VulkanDescriptorPool", L"Cannot create a DescriptorPool", res);
+			CheckVkResult("Cannot create a DescriptorPool", res);
 		}
 
 		VulkanDescriptorPool::~VulkanDescriptorPool()
@@ -159,7 +159,7 @@ namespace cube
 			layoutInfo.pBindings = mBindings.data();
 
 			res = vkCreateDescriptorSetLayout(device->GetHandle(), &layoutInfo, nullptr, &mDescriptorSetLayout);
-			CheckVkResult(L"VulkanDescriptorSetLayout", L"Cannot create a layout", res);
+			CheckVkResult("Cannot create a layout", res);
 		}
 
 		VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout()
@@ -189,7 +189,7 @@ namespace cube
 			descriptorSetAllocateInfos.pSetLayouts = &vkLayout;
 
 			res = vkAllocateDescriptorSets(device->GetHandle(), &descriptorSetAllocateInfos, &mDescriptorSet);
-			CheckVkResult(L"VulkanDescriptorSet", L"Cannot create a VulkanDescriptorSet", res);
+			CheckVkResult("Cannot create a VulkanDescriptorSet", res);
 
 			auto bindings = SPCast(VulkanDescriptorSetLayout)(layout)->GetBindings();
 			mDescriptorTypes.resize(bindings.size());

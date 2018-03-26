@@ -24,7 +24,7 @@ namespace cube
 
 			VkResult res;
 			res = vkCreateWin32SurfaceKHR(instance->GetHandle(), &info, nullptr, &mSurface);
-			CheckVkResult(L"VulkanSurface", L"Cannot create VulkanWindowSurface for win32", res);
+			CheckVkResult("Cannot create VulkanWindowSurface for win32", res);
 
 			GetProperties();
 		}
@@ -42,7 +42,7 @@ namespace cube
 			VkSurfaceCapabilitiesKHR cap;
 
 			res = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(mPhysicalDevice_ref->GetHandle(), mSurface, &cap);
-			CheckVkResult(L"VulkanSurface", L"Cannot get capabilities", res);
+			CheckVkResult("Cannot get capabilities", res);
 
 			return cap;
 		}
@@ -76,11 +76,11 @@ namespace cube
 			// TODO: 일단 SRGB만 지원. 차후 UNORM도 지원?? (둘의 차이가 뭔가)
 			uint32_t surfaceFormatCount = 0;
 			res = vkGetPhysicalDeviceSurfaceFormatsKHR(mPhysicalDevice_ref->GetHandle(), mSurface, &surfaceFormatCount, nullptr);
-			CheckVkResult(L"VulkanSurface", L"Cannot find surface formats", res);
+			CheckVkResult("Cannot find surface formats", res);
 
 			VkSurfaceFormatKHR* surfaceFormats = new VkSurfaceFormatKHR[surfaceFormatCount];
 			res = vkGetPhysicalDeviceSurfaceFormatsKHR(mPhysicalDevice_ref->GetHandle(), mSurface, &surfaceFormatCount, surfaceFormats);
-			CheckVkResult(L"VulkanSurface", L"Cannot find surface formats", res);
+			CheckVkResult("Cannot find surface formats", res);
 
 			// If there is no supported surface format, use RGBA
 			if(surfaceFormatCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED) {

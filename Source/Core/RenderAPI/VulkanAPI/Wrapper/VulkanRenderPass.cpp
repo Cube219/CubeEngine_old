@@ -26,7 +26,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanRenderPass", L"Unknown LoadOperator");
+					CUBE_LOG(cube::LogType::Error, "Unknown LoadOperator ({0})", (int)loadOperator);
 					break;
 			}
 
@@ -46,7 +46,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanRenderPass", L"Unknown StoreOperator");
+					CUBE_LOG(cube::LogType::Error, "Unknown StoreOperator ({0})", (int)storeOperator);
 					break;
 			}
 
@@ -225,7 +225,7 @@ namespace cube
 			info.pDependencies = subpassDependencies.data();
 
 			res = vkCreateRenderPass(mDevice_ref->GetHandle(), &info, nullptr, &mRenderPass);
-			CheckVkResult(L"VulkanRenderPass", L"Cannot create a VulkanRenderPass", res);
+			CheckVkResult("Cannot create a VulkanRenderPass", res);
 
 			// Create framebuffers to be compatible with the attachments
 			uint32_t framebufferCount;

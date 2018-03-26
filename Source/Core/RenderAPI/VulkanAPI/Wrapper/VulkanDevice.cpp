@@ -75,7 +75,7 @@ namespace cube
 			info.pEnabledFeatures = &SCast(VkPhysicalDeviceFeatures)(features);
 
 			res = vkCreateDevice(physicalDevice->GetHandle(), &info, nullptr, &mDevice);
-			CheckVkResult(L"VulkanDevice", L"Cannot create VulkanDevice", res);
+			CheckVkResult("Cannot create VulkanDevice", res);
 
 			// Get a graphics queue family
 			mGraphicsQueueFamily = GetQueueFamily(VK_QUEUE_GRAPHICS_BIT);
@@ -110,7 +110,7 @@ namespace cube
 				}
 			}
 
-			PrintlnLogWithSayer(L"VulkanDevice", L"Cannot find a queueFamily");
+			CUBE_LOG(cube::LogType::Error, "Cannot find a queueFamily (VkQueueFlags: {0})", type);
 			return {};
 		}
 
@@ -124,13 +124,14 @@ namespace cube
 			memAllocateInfo.allocationSize = require.size;
 			memAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(require.memoryTypeBits, memoryPropertyFlags);
 			if(memAllocateInfo.memoryTypeIndex == -1) {
-				PrintlnLogWithSayer(L"VulkanDevice", L"Cannot find memory type to allocate");
+				CUBE_LOG(cube::LogType::Error, "Cannot find memory type to allocate (MemoryTypeBits: {0} / VkMemoryPropertyFlags: {1})",
+					require.memoryTypeBits, memoryPropertyFlags);
 				return nullptr;
 			}
 
 			VkDeviceMemory mem;
 			res = vkAllocateMemory(mDevice, &memAllocateInfo, nullptr, &mem);
-			CheckVkResult(L"VulkanDevice", L"Cannot allocate DeviceMemory", res);
+			CheckVkResult("Cannot allocate DeviceMemory", res);
 			return mem;
 		}
 

@@ -24,7 +24,7 @@ namespace cube
 			info.layers = initializer.layers;
 
 			res = vkCreateFramebuffer(device->GetHandle(), &info, nullptr, &mFramebuffer);
-			CheckVkResult(L"VulkanFramebuffer", L"Cannot create a VulkanFramebuffer", res);
+			CheckVkResult("Cannot create a VulkanFramebuffer", res);
 		}
 
 		VulkanFramebuffer::~VulkanFramebuffer()

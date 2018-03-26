@@ -3,86 +3,74 @@
 #include <memory.h>
 
 #ifdef _DEBUG
-const wchar_t* _CheckVkResult(const wchar_t* sayer, const wchar_t* msg, VkResult res)
+
+void PrintVkFail(const char* fileName, int lineNum, cube::String msg, VkResult res)
 {
-	if(res != VK_SUCCESS) {
-		wchar_t* errMsg;
-		switch(res) {
-			case VK_ERROR_OUT_OF_HOST_MEMORY:
-				errMsg = L"(VK_ERROR_OUT_OF_HOST_MEMORY)";
-				break;
-			case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-				errMsg = L"(VK_ERROR_OUT_OF_DEVICE_MEMORY)";
-				break;
-			case VK_ERROR_INITIALIZATION_FAILED:
-				errMsg = L"(VK_ERROR_INITIALIZATION_FAILED)";
-				break;
-			case VK_ERROR_DEVICE_LOST:
-				errMsg = L"(VK_ERROR_DEVICE_LOST)";
-				break;
-			case VK_ERROR_MEMORY_MAP_FAILED:
-				errMsg = L"(VK_ERROR_MEMORY_MAP_FAILED)";
-				break;
-			case VK_ERROR_LAYER_NOT_PRESENT:
-				errMsg = L"(VK_ERROR_LAYER_NOT_PRESENT)";
-				break;
-			case VK_ERROR_EXTENSION_NOT_PRESENT:
-				errMsg = L"(VK_ERROR_EXTENSION_NOT_PRESENT)";
-				break;
-			case VK_ERROR_FEATURE_NOT_PRESENT:
-				errMsg = L"(VK_ERROR_FEATURE_NOT_PRESENT)";
-				break;
-			case VK_ERROR_INCOMPATIBLE_DRIVER:
-				errMsg = L"Cannot find a compatible Vulkan ICD (VK_ERROR_INCOMPATIBLE_DRIVER)";
-				break;
-			case VK_ERROR_TOO_MANY_OBJECTS:
-				errMsg = L"(VK_ERROR_TOO_MANY_OBJECTS)";
-				break;
-			case VK_ERROR_FORMAT_NOT_SUPPORTED:
-				errMsg = L"(VK_ERROR_FORMAT_NOT_SUPPORTED)";
-				break;
-			case VK_ERROR_FRAGMENTED_POOL:
-				errMsg = L"(VK_ERROR_FRAGMENTED_POOL)";
-				break;
-			case VK_ERROR_SURFACE_LOST_KHR:
-				errMsg = L"(VK_ERROR_SURFACE_LOST_KHR)";
-				break;
-			case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
-				errMsg = L"(VK_ERROR_NATIVE_WINDOW_IN_USE_KHR)";
-				break;
-			case VK_ERROR_OUT_OF_DATE_KHR:
-				errMsg = L"(VK_ERROR_OUT_OF_DATE_KHR)";
-				break;
-			case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
-				errMsg = L"(VK_ERROR_INCOMPATIBLE_DISPLAY_KHR)";
-				break;
-			case VK_ERROR_VALIDATION_FAILED_EXT:
-				errMsg = L"(VK_ERROR_VALIDATION_FAILED_EXT)";
-				break;
-			case VK_ERROR_INVALID_SHADER_NV:
-				errMsg = L"(VK_ERROR_INVALID_SHADER_NV)";
-				break;
-			case VK_ERROR_OUT_OF_POOL_MEMORY_KHR:
-				errMsg = L"(VK_ERROR_OUT_OF_POOL_MEMORY_KHR)";
-				break;
-	//		case VK_ERROR_INVALID_EXTERNAL_HANDLE_KHX:
-	//			errMsg = L"(VK_ERROR_INVALID_EXTERNAL_HANDLE_KHX)"; // TODO: 왜 지워졌지?
-	//			break;
-			default:
-				errMsg = L"(UNKNOWN)";
-				break;
-		}
-		PrintLogWithSayer(sayer, "VkResult Failed! - ");
-		
-		PrintLog(msg);
+	cube::String errMsg;
 
-		PrintLog(" ");
-		PrintlnLog(errMsg);
-
-		return errMsg;
+	switch(res) {
+		case VK_ERROR_INITIALIZATION_FAILED:
+			errMsg = CUBE_T("(VK_ERROR_INITIALIZATION_FAILED)");
+			break;
+		case VK_ERROR_DEVICE_LOST:
+			errMsg = CUBE_T("(VK_ERROR_DEVICE_LOST)");
+			break;
+		case VK_ERROR_MEMORY_MAP_FAILED:
+			errMsg = CUBE_T("(VK_ERROR_MEMORY_MAP_FAILED)");
+			break;
+		case VK_ERROR_LAYER_NOT_PRESENT:
+			errMsg = CUBE_T("(VK_ERROR_LAYER_NOT_PRESENT)");
+			break;
+		case VK_ERROR_EXTENSION_NOT_PRESENT:
+			errMsg = CUBE_T("(VK_ERROR_EXTENSION_NOT_PRESENT)");
+			break;
+		case VK_ERROR_FEATURE_NOT_PRESENT:
+			errMsg = CUBE_T("(VK_ERROR_FEATURE_NOT_PRESENT)");
+			break;
+		case VK_ERROR_INCOMPATIBLE_DRIVER:
+			errMsg = CUBE_T("(VK_ERROR_INCOMPATIBLE_DRIVER)");
+			break;
+		case VK_ERROR_TOO_MANY_OBJECTS:
+			errMsg = CUBE_T("(VK_ERROR_TOO_MANY_OBJECTS)");
+			break;
+		case VK_ERROR_FORMAT_NOT_SUPPORTED:
+			errMsg = CUBE_T("(VK_ERROR_FORMAT_NOT_SUPPORTED)");
+			break;
+		case VK_ERROR_FRAGMENTED_POOL:
+			errMsg = CUBE_T("(VK_ERROR_FRAGMENTED_POOL)");
+			break;
+		case VK_ERROR_SURFACE_LOST_KHR:
+			errMsg = CUBE_T("(VK_ERROR_SURFACE_LOST_KHR)");
+			break;
+		case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
+			errMsg = CUBE_T("(VK_ERROR_NATIVE_WINDOW_IN_USE_KHR)");
+			break;
+		case VK_ERROR_OUT_OF_DATE_KHR:
+			errMsg = CUBE_T("(VK_ERROR_OUT_OF_DATE_KHR)");
+			break;
+		case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
+			errMsg = CUBE_T("(VK_ERROR_INCOMPATIBLE_DISPLAY_KHR)");
+			break;
+		case VK_ERROR_VALIDATION_FAILED_EXT:
+			errMsg = CUBE_T("(VK_ERROR_VALIDATION_FAILED_EXT)");
+			break;
+		case VK_ERROR_INVALID_SHADER_NV:
+			errMsg = CUBE_T("(VK_ERROR_INVALID_SHADER_NV)");
+			break;
+		case VK_ERROR_OUT_OF_POOL_MEMORY_KHR:
+			errMsg = CUBE_T("(VK_ERROR_OUT_OF_POOL_MEMORY_KHR)");
+			break;
+		case VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR:
+			errMsg = CUBE_T("(VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR)");
+			break;
+		default:
+			errMsg = CUBE_T("(UNKNOWN)");
+			break;
 	}
-	return nullptr;
+
+	cube::core::LogWriter::WriteLog(cube::LogType::Error, fileName, lineNum, CUBE_T("VkResult Failed! - {0} {1}"), msg, errMsg);
 }
+
 #endif // _DEBUG
 
 namespace cube
@@ -111,7 +99,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown DataFormat");
+					CUBE_LOG(cube::LogType::Error, "Unknown DataFormat ({0})", (int)format);
 					break;
 			}
 
@@ -134,7 +122,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown VertexTopology");
+					CUBE_LOG(cube::LogType::Error, "Unknown VertexTopology ({0})", (int)topology);
 					break;
 			}
 
@@ -181,7 +169,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown PolygonMode");
+					CUBE_LOG(cube::LogType::Error, "Unknown PolygonMode ({0})", (int)polygonMode);
 					break;
 			}
 
@@ -201,7 +189,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown PolygonFrontFace");
+					CUBE_LOG(cube::LogType::Error, "Unknown PolygonFrontFace ({0})", (int)frontFace);
 					break;
 			}
 
@@ -227,7 +215,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown CullMode");
+					CUBE_LOG(cube::LogType::Error, "Unknown CullMode ({0})", (int)cullMode);
 					break;
 			}
 
@@ -265,7 +253,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown CompareOperator");
+					CUBE_LOG(cube::LogType::Error, "Unknown CompareOperator ({0})", (int)compareOperator);
 					break;
 			}
 
@@ -317,7 +305,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown StencilOperator");
+					CUBE_LOG(cube::LogType::Error, "Unknown StencilOperator ({0})", (int)op);
 					break;
 			}
 
@@ -373,7 +361,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown BlendFactor");
+					CUBE_LOG(cube::LogType::Error, "Unknown BlendFactor ({0})", (int)blendFactor);
 					break;
 			}
 
@@ -402,7 +390,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown BlendOperator");
+					CUBE_LOG(cube::LogType::Error, "Unknown BlendOperator ({0})", (int)blendOperator);
 					break;
 			}
 
@@ -464,7 +452,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanPipeline", L"Unknown LogicOperator");
+					CUBE_LOG(cube::LogType::Error, "Unknown LogicOperator ({0})", (int)logicOperator);
 					break;
 			}
 

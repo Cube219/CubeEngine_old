@@ -32,7 +32,7 @@ namespace cube
 			instanceCreateInfo.ppEnabledLayerNames = initializer.layerNames.data();
 
 			res = vkCreateInstance(&instanceCreateInfo, nullptr, &mInstance);
-			CheckVkResult(L"VulkanInstance", L"Cannot create VulkanInstance", res);
+			CheckVkResult("Cannot create VulkanInstance", res);
 		}
 
 		VulkanInstance::~VulkanInstance()
@@ -48,7 +48,7 @@ namespace cube
 			uint32_t physicalDeviceNum;
 
 			res = vkEnumeratePhysicalDevices(mInstance, &physicalDeviceNum, nullptr);
-			CheckVkResult(L"VulkanInstance", L"Cannot enumerate VulkanPhysicalDevices", res);
+			CheckVkResult("Cannot enumerate VulkanPhysicalDevices", res);
 
 			if(res == VK_SUCCESS) {
 				VkPhysicalDevice* pds = new VkPhysicalDevice[physicalDeviceNum];

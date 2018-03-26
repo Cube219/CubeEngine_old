@@ -32,7 +32,7 @@ namespace cube
 			VkResult res;
 
 			res = vkResetCommandBuffer(mCommandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
-			CheckVkResult(L"VulkanCommandBuffer", L"Cannot reset the command buffer", res);
+			CheckVkResult("Cannot reset the command buffer", res);
 
 			mIsRenderPassStarted = false;
 		}
@@ -53,7 +53,7 @@ namespace cube
 			commandBufferBeginInfo.pInheritanceInfo = nullptr;
 
 			res = vkBeginCommandBuffer(mCommandBuffer, &commandBufferBeginInfo);
-			CheckVkResult(L"VulkanCommandBuffer", L"Cannot begin the command buffer (Primary)", res);
+			CheckVkResult("Cannot begin the command buffer (Primary)", res);
 		}
 
 		void VulkanCommandBuffer::CopyBuffer(SPtr<BaseRenderBuffer>& source, uint64_t sourceOffset,
@@ -114,7 +114,7 @@ namespace cube
 				commandBufferBeginInfo.pInheritanceInfo = &inheritInfo;
 
 				res = vkBeginCommandBuffer(mCommandBuffer, &commandBufferBeginInfo);
-				CheckVkResult(L"VulkanCommandBuffer", L"Cannot begin the command buffer (Secondary)", res);
+				CheckVkResult("Cannot begin the command buffer (Secondary)", res);
 
 				return;
 			}
@@ -276,7 +276,7 @@ namespace cube
 			VkResult res;
 
 			res = vkEndCommandBuffer(mCommandBuffer);
-			CheckVkResult(L"VulkanCommandBuffer", L"Cannot end the command buffer", res);
+			CheckVkResult("Cannot end the command buffer", res);
 		}
 
 		void VulkanCommandBuffer::Submit(SPtr<BaseRenderQueue>& queue,
@@ -317,7 +317,7 @@ namespace cube
 				f = DPCast(VulkanFence)(waitFence)->GetHandle();
 
 			res = vkQueueSubmit(DPCast(VulkanQueue)(queue)->GetHandle(), 1, &submitInfo, f);
-			CheckVkResult(L"VulkanCommandBuffer", L"Cannot submit the command buffer", res);
+			CheckVkResult("Cannot submit the command buffer", res);
 		}
 
 		VkPipelineBindPoint VulkanCommandBuffer::GetVkPipelineBindPoint(PipelineType pipelineType)
@@ -333,7 +333,7 @@ namespace cube
 					break;
 
 				default:
-					PrintLogWithSayer(L"VulkanCommandBuffer", L"Unknown PipelineType");
+					CUBE_LOG(cube::LogType::Error, "Unknown PipelineType ({0})", (int)pipelineType);
 					break;
 			}
 
@@ -356,7 +356,7 @@ namespace cube
 
 			VkResult res;
 			res = vkCreateCommandPool(device->GetHandle(), &info, nullptr, &mCommandPool);
-			CheckVkResult(L"VulkanCommandPool", L"Cannot create VulkanCommandPool", res);
+			CheckVkResult("Cannot create VulkanCommandPool", res);
 		}
 
 		VulkanCommandPool::~VulkanCommandPool()
@@ -378,7 +378,7 @@ namespace cube
 			commandBufferAllocateInfo.level = level;
 			commandBufferAllocateInfo.commandBufferCount = 1;
 			res = vkAllocateCommandBuffers(mDevice_ref->GetHandle(), &commandBufferAllocateInfo, &cmd);
-			CheckVkResult(L"VulkanCommandPool", L"Cannot allocate VulkanCommandBuffer", res);
+			CheckVkResult("Cannot allocate VulkanCommandBuffer", res);
 
 			SPtr<VulkanCommandBuffer> cmdBuffer(new VulkanCommandBuffer(mDevice_ref, shared_from_this(), cmd));
 

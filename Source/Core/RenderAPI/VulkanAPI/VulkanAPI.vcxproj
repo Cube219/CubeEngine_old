@@ -86,7 +86,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -123,7 +123,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -179,8 +179,14 @@
     <ClCompile Include="Wrapper\VulkanWindowSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Base\Base\Base.vcxproj">
+      <Project>{84d3a49e-2aef-4370-aa37-3d297a45fc91}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Platform\Platform.vcxproj">
       <Project>{22a0e1be-e953-4d07-b5a3-b06a0256929b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EngineCore\EngineCore.vcxproj">
+      <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
     </ProjectReference>
     <ProjectReference Include="..\BaseRenderAPI\BaseRenderAPI.vcxproj">
       <Project>{b11ffb66-deb2-41ae-8b3c-1c9cfb2e2167}</Project>
