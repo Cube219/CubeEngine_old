@@ -130,6 +130,7 @@ namespace cube
 
 #if defined (STR_UTF8)
 
+	using Character = char;
 	using String = U8String;
 	#define CUBE_T(text) u8 ## text
 	inline String ToStringFromASCII(const std::string& str) { return ToU8StringFromASCII(str); }
@@ -140,6 +141,7 @@ namespace cube
 
 #elif defined (STR_UCS2)
 
+	using Character = unsigned short;
 	using String = UCS2String;
 	#define CUBE_T(text) (const unsigned short*)u ## text
 	inline String ToStringFromASCII(const std::string& str) { return ToUCS2StringFromASCII(str); }
@@ -150,6 +152,7 @@ namespace cube
 
 #elif defined (STR_UTF16)
 
+	using Character = char16_t;
 	using String = U16String;
 	#define CUBE_T(text) u ## text
 	inline String ToStringFromASCII(const std::string& str) { return ToU16StringFromASCII(str); }
@@ -160,6 +163,7 @@ namespace cube
 
 #elif defined (STR_UTF32)
 
+	using Character = char32_t;
 	using String = U32String;
 	#define CUBE_T(text) U ## text
 	inline String ToStringFromASCII(const std::string& str) { return ToU32StringFromASCII(str); }

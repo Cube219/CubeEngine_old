@@ -19,7 +19,13 @@ namespace cube
 		public:
 
 			template <typename ...Args>
-			static void WriteLog(LogType type, const char* fileName, int lineNum, String msg, Args&&... args)
+			static void WriteLog(LogType type, const char* fileName, int lineNum, const String& msg, Args&&... args)
+			{
+				WriteLogImpl(type, fileName, lineNum, fmt::format(msg, std::forward<Args>(args)...));
+			}
+
+			template <typename ...Args>
+			static void WriteLog(LogType type, const char* fileName, int lineNum, const Character* msg, Args&&... args)
 			{
 				WriteLogImpl(type, fileName, lineNum, fmt::format(msg, std::forward<Args>(args)...));
 			}
