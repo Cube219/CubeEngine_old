@@ -151,4 +151,25 @@ namespace cube
 
 		return u32Str;
 	}
-}
+
+	void PrintToConsole(const U8String& str)
+	{
+		PString pStr = ToPString(str);
+		std::wcout << pStr << std::endl;
+	}
+	void PrintToConsole(const UCS2String& str)
+	{
+		PString pStr = ToPString(str);
+		std::wcout << pStr << std::endl;
+	}
+	void PrintToConsole(const U16String& str)
+	{
+		PString pStr = ToPString(str);
+		std::wcout << pStr << std::endl;
+	}
+	void PrintToConsole(const U32String& str)
+	{
+		PString pStr = ToPString(str);
+		std::wcout << pStr << std::endl;
+	}
+} // namespace cube

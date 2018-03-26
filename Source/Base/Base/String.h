@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "format.h"
 
 #define STR_UTF16
 
@@ -113,19 +114,23 @@ namespace cube
 	U32String ToU32String(const UCS2String& str);
 	U32String ToU32String(const U16String& str);
 
-	char32_t GetUTF8CharAndMove(U8String::const_iterator& iter);
-	int GetUTF8CharSize(U8String::const_iterator iter);
-	int GetUTF8RequiredCharSize(char32_t ch);
-	void InsertCharInUTF8(U8String& str, char32_t ch);
+	namespace internal
+	{
+		// Helper functions
+		char32_t GetUTF8CharAndMove(U8String::const_iterator& iter);
+		int GetUTF8CharSize(U8String::const_iterator iter);
+		int GetUTF8RequiredCharSize(char32_t ch);
+		void InsertCharInUTF8(U8String& str, char32_t ch);
 
-	char32_t GetUTF16CharAndMove(U16String::const_iterator& iter);
-	int GetUTF16CharSize(U16String::const_iterator iter);
-	int GetUTF16RequiredCharSize(char32_t ch);
-	void InsertCharInUTF16(U16String& str, char32_t ch);
+		char32_t GetUTF16CharAndMove(U16String::const_iterator& iter);
+		int GetUTF16CharSize(U16String::const_iterator iter);
+		int GetUTF16RequiredCharSize(char32_t ch);
+		void InsertCharInUTF16(U16String& str, char32_t ch);
+	} // namespace internal
 
 #if defined (STR_UTF8)
 
-	using String = U8String;
+	using String2 = U8String;
 	#define CUBE_T(text) u8 ## text
 	inline String2 ToStringFromASCII(const std::string& str) { return ToU8StringFromASCII(str); }
 	inline String2 ToString(const U8String& str) { return str; }
@@ -135,7 +140,7 @@ namespace cube
 
 #elif defined (STR_UCS2)
 
-	using String = UCS2String;
+	using String2 = UCS2String;
 	#define CUBE_T(text) (const unsigned short*)u ## text
 	inline String2 ToStringFromASCII(const std::string& str) { return ToUCS2StringFromASCII(str); }
 	inline String2 ToString(const U8String& str) { return ToUCS2String(str); }
@@ -155,7 +160,7 @@ namespace cube
 
 #elif defined (STR_UTF32)
 
-	using String = U32String;
+	using String2 = U32String;
 	#define CUBE_T(text) U ## text
 	inline String2 ToStringFromASCII(const std::string& str) { return ToU32StringFromASCII(str); }
 	inline String2 ToString(const U8String& str) { return ToU32String(str); }
@@ -166,4 +171,79 @@ namespace cube
 #else
 	#error You must define one of string type
 #endif
-}
+} // namespace cube
+
+// Formatting each strings
+namespace fmt
+{
+	namespace internal
+	{
+		// U8String
+		inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short* format_str, const cube::U8String& s)
+		{
+			f.writer().write(cube::ToUCS2String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t* format_str, const cube::U8String& s)
+		{
+			f.writer().write(cube::ToU16String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t* format_str, const cube::U8String& s)
+		{
+			f.writer().write(cube::ToU32String(s));
+		}
+
+		// UCS2String
+		inline void format_arg(fmt::BasicFormatter<char>& f, const char* format_str, const cube::UCS2String& s)
+		{
+			f.writer().write(cube::ToU8String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short* format_str, const cube::UCS2String& s)
+		{
+			f.writer().write(s);
+		}
+		inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t* format_str, const cube::UCS2String& s)
+		{
+			f.writer().write(cube::ToU16String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t* format_str, const cube::UCS2String& s)
+		{
+			f.writer().write(cube::ToU32String(s));
+		}
+
+		// U16String
+		inline void format_arg(fmt::BasicFormatter<char>& f, const char* format_str, const cube::U16String& s)
+		{
+			f.writer().write(cube::ToU8String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short* format_str, const cube::U16String& s)
+		{
+			f.writer().write(cube::ToUCS2String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t* format_str, const cube::U16String& s)
+		{
+			f.writer().write(s);
+		}
+		inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t* format_str, const cube::U16String& s)
+		{
+			f.writer().write(cube::ToU32String(s));
+		}
+
+		// U32String
+		inline void format_arg(fmt::BasicFormatter<char>& f, const char* format_str, const cube::U32String& s)
+		{
+			f.writer().write(cube::ToU8String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short* format_str, const cube::U32String& s)
+		{
+			f.writer().write(cube::ToUCS2String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t* format_str, const cube::U32String& s)
+		{
+			f.writer().write(cube::ToU16String(s));
+		}
+		inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t* format_str, const cube::U32String& s)
+		{
+			f.writer().write(s);
+		}
+	} // namespace internal
+} // namespace fmt

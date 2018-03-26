@@ -251,6 +251,102 @@ int internal::CharTraits<wchar_t>::format_float(
 }
 
 template <typename T>
+int internal::CharTraits<unsigned short>::format_float(
+	unsigned short *buffer, std::size_t size, const unsigned short *format,
+	unsigned width, int precision, T value)
+{
+	int length;
+
+	std::string cBuffer;
+	cBuffer.resize(size);
+
+	char cFormat[10]; // Max format size = 10
+	for(int i = 0; i < 10; i++) {
+		cFormat[i] = (char)format[i];
+	}
+
+	if(width == 0) {
+		length = precision < 0 ?
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, value) :
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, precision, value);
+	} else {
+		length = precision < 0 ?
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, width, value) :
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, width, precision, value);
+	}
+
+	for(int i = 0; i < length; i++) {
+		buffer[i] = cBuffer[i];
+	}
+
+	return length;
+}
+
+template <typename T>
+int internal::CharTraits<char16_t>::format_float(
+	char16_t *buffer, std::size_t size, const char16_t *format,
+	unsigned width, int precision, T value)
+{
+	int length;
+
+	std::string cBuffer;
+	cBuffer.resize(size);
+
+	char cFormat[10]; // Max format size = 10
+	for(int i = 0; i < 10; i++) {
+		cFormat[i] = (char)format[i];
+	}
+
+	if(width == 0) {
+		length = precision < 0 ?
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, value) :
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, precision, value);
+	} else {
+		length = precision < 0 ?
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, width, value) :
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, width, precision, value);
+	}
+
+	for(int i = 0; i < length; i++) {
+		buffer[i] = cBuffer[i];
+	}
+
+	return length;
+}
+
+template <typename T>
+int internal::CharTraits<char32_t>::format_float(
+	char32_t *buffer, std::size_t size, const char32_t *format,
+	unsigned width, int precision, T value)
+{
+	int length;
+
+	std::string cBuffer;
+	cBuffer.resize(size);
+
+	char cFormat[10]; // Max format size = 10
+	for(int i = 0; i < 10; i++) {
+		cFormat[i] = (char)format[i];
+	}
+
+	if(width == 0) {
+		length = precision < 0 ? 
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, value) :
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, precision, value);
+	} else {
+		length = precision < 0 ?
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, width, value) :
+			FMT_SNPRINTF(&cBuffer[0], size, cFormat, width, precision, value);
+	}
+	
+	for(int i = 0; i < length; i++) {
+		buffer[i] = cBuffer[i];
+	}
+
+	return length;
+}
+
+template <typename T>
 const char internal::BasicData<T>::DIGITS[] =
     "0001020304050607080910111213141516171819"
     "2021222324252627282930313233343536373839"
@@ -525,6 +621,44 @@ template FMT_API int internal::CharTraits<wchar_t>::format_float(
 template FMT_API int internal::CharTraits<wchar_t>::format_float(
     wchar_t *buffer, std::size_t size, const wchar_t *format,
     unsigned width, int precision, long double value);
+
+// Cube219: Add explicit instantiations for Unicodes
+// Cube219: UCS-2(unsigned short)
+template void internal::FixedBuffer<unsigned short>::grow(std::size_t);
+
+template void internal::ArgMap<unsigned short>::init(const ArgList &args);
+
+template FMT_API int internal::CharTraits<unsigned short>::format_float(
+	unsigned short *buffer, std::size_t size, const unsigned short *format,
+	unsigned width, int precision, double value);
+
+template FMT_API int internal::CharTraits<unsigned short>::format_float(
+	unsigned short *buffer, std::size_t size, const unsigned short *format,
+	unsigned width, int precision, long double value);
+// Cube219: UTF-16(char16_t)
+template void internal::FixedBuffer<char16_t>::grow(std::size_t);
+
+template void internal::ArgMap<char16_t>::init(const ArgList &args);
+
+template FMT_API int internal::CharTraits<char16_t>::format_float(
+	char16_t *buffer, std::size_t size, const char16_t *format,
+	unsigned width, int precision, double value);
+
+template FMT_API int internal::CharTraits<char16_t>::format_float(
+	char16_t *buffer, std::size_t size, const char16_t *format,
+	unsigned width, int precision, long double value);
+// Cube219: UTF-32(char32_t)
+template void internal::FixedBuffer<char32_t>::grow(std::size_t);
+
+template void internal::ArgMap<char32_t>::init(const ArgList &args);
+
+template FMT_API int internal::CharTraits<char32_t>::format_float(
+	char32_t *buffer, std::size_t size, const char32_t *format,
+	unsigned width, int precision, double value);
+
+template FMT_API int internal::CharTraits<char32_t>::format_float(
+	char32_t *buffer, std::size_t size, const char32_t *format,
+	unsigned width, int precision, long double value);
 
 #endif  // FMT_HEADER_ONLY
 

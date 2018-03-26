@@ -1,5 +1,6 @@
 #pragma once
 
+#include "String.h"
 #include "format.h"
 
 #define SIMD_SSE
@@ -26,8 +27,27 @@ struct Float2
 	float y;
 };
 // Float2 formatting
-void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float2& f2);
-void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float2& f2);
+inline void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float2& f2)
+{
+	f.writer().write("({:.3f}, {:.3f})", f2.x, f2.y);
+}
+inline void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float2& f2)
+{
+	f.writer().write(L"({:.3f}, {:.3f})", f2.x, f2.y);
+}
+inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short*& format_str, const Float2& f2)
+{
+	f.writer().write((const unsigned short*)u"({:.3f}, {:.3f})", f2.x, f2.y);
+}
+inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t*& format_str, const Float2& f2)
+{
+	f.writer().write(u"({:.3f}, {:.3f})", f2.x, f2.y);
+}
+inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t*& format_str, const Float2& f2)
+{
+	f.writer().write(U"({:.3f}, {:.3f})", f2.x, f2.y);
+}
+
 
 struct Float3
 {
@@ -36,8 +56,26 @@ struct Float3
 	float z;
 };
 // Float3 formatting
-void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float3& f3);
-void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float3& f3);
+inline void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float3& f3)
+{
+	f.writer().write("({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
+inline void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float3& f3)
+{
+	f.writer().write(L"({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
+inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short*& format_str, const Float3& f3)
+{
+	f.writer().write((const unsigned short*)u"({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
+inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t*& format_str, const Float3& f3)
+{
+	f.writer().write(u"({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
+inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t*& format_str, const Float3& f3)
+{
+	f.writer().write(U"({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
 
 struct Float4
 {
@@ -47,8 +85,26 @@ struct Float4
 	float w;
 };
 // Float4 formatting
-void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float4& f4);
-void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float4& f4);
+inline void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Float4& f4)
+{
+	f.writer().write("({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
+inline void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Float4& f4)
+{
+	f.writer().write(L"({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
+inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short*& format_str, const Float4& f4)
+{
+	f.writer().write((const unsigned short*)u"({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
+inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t*& format_str, const Float4& f4)
+{
+	f.writer().write(u"({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
+inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t*& format_str, const Float4& f4)
+{
+	f.writer().write(U"({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
 
 class VectorBase
 {
@@ -133,8 +189,31 @@ private:
 };
 
 // Vector2 formatting
-void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector2& vec2);
-void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector2& vec2);
+inline void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector2& vec2)
+{
+	Float2 f2 = vec2.GetFloat2();
+	f.writer().write("({:.3f}, {:.3f})", f2.x, f2.y);
+}
+inline void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector2& vec2)
+{
+	Float2 f2 = vec2.GetFloat2();
+	f.writer().write(L"({:.3f}, {:.3f})", f2.x, f2.y);
+}
+inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short*& format_str, const Vector2& vec2)
+{
+	Float2 f2 = vec2.GetFloat2();
+	f.writer().write((const unsigned short*)u"({:.3f}, {:.3f})", f2.x, f2.y);
+}
+inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t*& format_str, const Vector2& vec2)
+{
+	Float2 f2 = vec2.GetFloat2();
+	f.writer().write(u"({:.3f}, {:.3f})", f2.x, f2.y);
+}
+inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t*& format_str, const Vector2& vec2)
+{
+	Float2 f2 = vec2.GetFloat2();
+	f.writer().write(U"({:.3f}, {:.3f})", f2.x, f2.y);
+}
 
 class Vector3 : public VectorBase
 {
@@ -169,8 +248,31 @@ private:
 };
 
 // Vector3 formatting
-void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector3& vec3);
-void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector3& vec3);
+inline void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector3& vec3)
+{
+	Float3 f3 = vec3.GetFloat3();
+	f.writer().write("({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
+inline void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector3& vec3)
+{
+	Float3 f3 = vec3.GetFloat3();
+	f.writer().write(L"({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
+inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short*& format_str, const Vector3& vec3)
+{
+	Float3 f3 = vec3.GetFloat3();
+	f.writer().write((const unsigned short*)u"({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
+inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t*& format_str, const Vector3& vec3)
+{
+	Float3 f3 = vec3.GetFloat3();
+	f.writer().write(u"({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
+inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t*& format_str, const Vector3& vec3)
+{
+	Float3 f3 = vec3.GetFloat3();
+	f.writer().write(U"({:.3f}, {:.3f}, {:.3f})", f3.x, f3.y, f3.z);
+}
 
 class Vector4 : public VectorBase
 {
@@ -205,8 +307,31 @@ private:
 };
 
 // Vector4 formatting
-void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector4& vec4);
-void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector4& vec4);
+inline void format_arg(fmt::BasicFormatter<char>& f, const char*& format_str, const Vector4& vec4)
+{
+	Float4 f4 = vec4.GetFloat4();
+	f.writer().write("({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
+inline void format_arg(fmt::BasicFormatter<wchar_t>& f, const wchar_t*& format_str, const Vector4& vec4)
+{
+	Float4 f4 = vec4.GetFloat4();
+	f.writer().write(L"({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
+inline void format_arg(fmt::BasicFormatter<unsigned short>& f, const unsigned short*& format_str, const Vector4& vec4)
+{
+	Float4 f4 = vec4.GetFloat4();
+	f.writer().write((const unsigned short*)u"({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
+inline void format_arg(fmt::BasicFormatter<char16_t>& f, const char16_t*& format_str, const Vector4& vec4)
+{
+	Float4 f4 = vec4.GetFloat4();
+	f.writer().write(u"({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
+inline void format_arg(fmt::BasicFormatter<char32_t>& f, const char32_t*& format_str, const Vector4& vec4)
+{
+	Float4 f4 = vec4.GetFloat4();
+	f.writer().write(U"({:.3f}, {:.3f}, {:.3f}, {:.3f})", f4.x, f4.y, f4.z, f4.w);
+}
 
 // Include inline function definition
 

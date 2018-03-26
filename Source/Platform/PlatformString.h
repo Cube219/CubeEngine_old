@@ -17,4 +17,9 @@ namespace cube
 	UCS2String ToUCS2String(const PString& str);
 	U16String ToU16String(const PString& str);
 	U32String ToU32String(const PString& str);
-}
+
+	void PrintToConsole(const U8String& str);
+	void PrintToConsole(const UCS2String& str);
+	void PrintToConsole(const U16String& str);
+	void PrintToConsole(const U32String& str);
+} // namespace cube

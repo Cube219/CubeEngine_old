@@ -1,6 +1,8 @@
 ﻿#include "Win32Platform.h"
 
 #include <iostream>
+#include <io.h> 
+#include <fcntl.h>
 
 #include "Win32DLib.h"
 #include "Win32FileSystem.h"
@@ -53,6 +55,8 @@ namespace cube
 				freopen_s(&acStreamIn, "CONIN$", "rb", stdin);
 				freopen_s(&acStreamOut, "CONOUT$", "wb", stdout);
 				freopen_s(&acStreamErr, "CONOUT$", "wb", stderr);
+
+				_setmode(_fileno(stdout), _O_WTEXT);
 			}
 #endif // _DEBUG
 

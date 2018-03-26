@@ -18,7 +18,6 @@
   <ItemGroup>
     <ClCompile Include="format.cc" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="String.cpp" />
   </ItemGroup>
   <ItemGroup>
