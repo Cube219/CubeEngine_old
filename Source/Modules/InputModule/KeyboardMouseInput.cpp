@@ -1,4 +1,4 @@
-#include "KeyboardMouseInput.h"
+ï»¿#include "KeyboardMouseInput.h"
 
 #include "Platform.h"
 
@@ -178,10 +178,10 @@ namespace cube
 					keyCode = KeyCode::Space;
 					break;
 				case DigitalButton::PageUp:
-					// TODO: Ãß°¡
+					keyCode = KeyCode::Prior;
 					break;
 				case DigitalButton::PageDown:
-					// TODO: Ãß°¡
+					keyCode = KeyCode::Next;
 					break;
 				case DigitalButton::End:
 					keyCode = KeyCode::End;
@@ -244,19 +244,19 @@ namespace cube
 					keyCode = KeyCode::LeftShift;
 					break;
 				case DigitalButton::RightShift:
-					// TODO: Ãß°¡
+					// TODO: ì¶”ê°€
 					break;
 				case DigitalButton::LeftCtrl:
 					keyCode = KeyCode::LeftControl;
 					break;
 				case DigitalButton::RightCtrl:
-					// TODO: Ãß°¡
+					// TODO: ì¶”ê°€
 					break;
 				case DigitalButton::LeftAlt:
 					keyCode = KeyCode::LeftAlt;
 					break;
 				case DigitalButton::RightAlt:
-					// TODO: Ãß°¡
+					// TODO: ì¶”ê°€
 					break;
 				case DigitalButton::F1:
 					keyCode = KeyCode::F1;

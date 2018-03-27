@@ -1,4 +1,4 @@
-#include "RendererManager.h"
+ï»¿#include "RendererManager.h"
 
 #include "Platform.h"
 #include "../LogWriter.h"
@@ -35,7 +35,7 @@ namespace cube
 
 			auto createAPIFunction = RCast(CreateAPIFunction)(mRenderDLib->GetFunction(CUBE_T("CreateAPI")));
 
-			// TODO: Á» ´õ ÁÁÀº ¹æ¹ıÀº ¾øÀ»±î?
+			// TODO: ì¢€ ë” ì¢‹ì€ ë°©ë²•ì€ ì—†ì„ê¹Œ?
 			SPtr<BaseRenderAPI> temp(createAPIFunction());
 			mRenderAPI = std::move(temp);
 
@@ -46,7 +46,8 @@ namespace cube
 
 			CreateDepthBuffer();
 
-			CreateSwapchain();
+			mSwapchain = mRenderAPI->CreateSwapchain();
+			mSwapchain->Recreate(2, mWidth, mHeight, true);
 
 			CreateRenderpass();
 
@@ -162,16 +163,18 @@ namespace cube
 
 			mSwapchain->AcquireNextImageIndex(mGetImageSemaphore);
 
-			RewriteCommandBuffer(); // TODO: ÀÌ°É ÇÊ¿äÇÒ ¶§¸¸ ¾²µµ·Ï
+			RewriteCommandBuffer();
 
 			mMainCommandBufferSubmitFence->Reset();
 			auto temp = std::make_pair(mGetImageSemaphore, PipelineStageBits::ColorAttachmentOutputBit);
 			mMainCommandBuffer->Submit(mGraphicsQueue, 1, &temp, 0, nullptr, mMainCommandBufferSubmitFence);
-			// TODO: ¿¹¿ÜÃ³¸®
+			
 			bool r = mMainCommandBufferSubmitFence->Wait(100000000);
-
 			if(r == true)
 				mSwapchain->Present(0, nullptr);
+			else {
+				CUBE_LOG(LogType::Error, "Main command buffer submit fence time out");
+			}
 		}
 
 		void RendererManager::Resize(uint32_t width, uint32_t height)
@@ -210,12 +213,6 @@ namespace cube
 			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
 			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
 			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
-		}
-
-		void RendererManager::CreateSwapchain()
-		{
-			mSwapchain = mRenderAPI->CreateSwapchain();
-			mSwapchain->Recreate(2, mWidth, mHeight, true);
 		}
 
 		void RendererManager::CreateRenderpass()
@@ -302,8 +299,9 @@ namespace cube
 				//mMaterialCommandBuffers[i]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
 			}
 
-			// TODO: MaterialInstance¸¦ ¸ÕÀú Ã£°í ±×°Í¿¡ µî·ÏµÈ rendererµéÀ» Ã£´Â ¹æ½ÄÀ¸·Î
-			//       ±×·¸°ÔÇÏ¸é BindDescriptorSets È½¼ö¸¦ ÁÙÀÏ ¼ö ÀÖÀ½
+			// TODO: MaterialInstanceë¥¼ ë¨¼ì € ì°¾ê³  ê·¸ê²ƒì— ë“±ë¡ëœ rendererë“¤ì„ ì°¾ëŠ” ë°©ì‹ìœ¼ë¡œ
+			//       ê·¸ë ‡ê²Œí•˜ë©´ BindDescriptorSets íšŸìˆ˜ë¥¼ ì¤„ì¼ ìˆ˜ ìˆìŒ
+			//       ê·¸ëŸ´ëŸ¬ë©´ Materialì—ì„œ Instanceë¥¼ ìƒì„±í•  ë•Œ ì €ì¥í•´ë‘¬ì•¼ í•¨
 			for(auto& renderer : mRenderers) {
 				SPtr<MaterialInstance> materialIns = renderer->GetMaterialInstance();
 				int materialIndex = materialIns->GetMaterial()->mIndex;
@@ -408,5 +406,5 @@ namespace cube
 
 			return mRenderAPI->CreateGraphicsPipeline(initializer);
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

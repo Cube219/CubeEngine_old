@@ -51,7 +51,6 @@ namespace cube
 
 		private:
 			void CreateDepthBuffer();
-			void CreateSwapchain();
 			void CreateRenderpass();
 
 			void RewriteCommandBuffer();
@@ -94,5 +93,5 @@ namespace cube
 			uint32_t mWidth;
 			uint32_t mHeight;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube
