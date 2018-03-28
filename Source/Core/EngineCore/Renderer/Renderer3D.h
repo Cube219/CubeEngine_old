@@ -14,7 +14,7 @@ namespace cube
 {
 	namespace core
 	{
-		class Renderer3D
+		class ENGINE_CORE_EXPORT Renderer3D
 		{
 		public:
 			Renderer3D(SPtr<BaseRenderAPI>& renderAPI, SPtr<BaseRenderDescriptorSetLayout>& mPerObjectDescriptorSetLayout);

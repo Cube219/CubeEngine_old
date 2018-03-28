@@ -9,7 +9,7 @@
 
 namespace cube
 {
-	class CameraComponent : public core::Component
+	class CUBE_ENGINE_EXPORT CameraComponent : public core::Component
 	{
 	public:
 		static const String& GetName() { return mName; }

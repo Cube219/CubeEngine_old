@@ -12,9 +12,13 @@ namespace cube
 		class ENGINE_CORE_EXPORT GameObject
 		{
 		public:
+			static SPtr<GameObject> Create();
+
+		private:
+			static SPtr<GameObjectManager> mManager;
+
+		public:
 			GameObject();
-			GameObject(SPtr<Renderer3D> renderer3D);
-			GameObject(SPtr<CameraRenderer3D> cameraRenderer3D);
 			~GameObject();
 
 			void SetPosition(Vector3 position);
@@ -28,8 +32,6 @@ namespace cube
 			Vector3 GetForward() const { return mForward; }
 			Vector3 GetUp() const { return mUp; }
 			Vector3 GetRight() const { return mRight; }
-
-			SPtr<Renderer3D> GetRenderer() const { return mRenderer3D; }
 
 			SPtr<Component> GetComponent(const String& name);
 			template <typename T>
@@ -52,9 +54,11 @@ namespace cube
 			void Update(float dt);
 
 		private:
+			friend class GameObjectManager;
+
+			uint32_t mID;
 
 			SPtr<Renderer3D> mRenderer3D;
-			SPtr<CameraRenderer3D> mCameraRenderer3D;
 
 			// Variables related to transform
 			Vector3 mPosition;

@@ -1,0 +1,35 @@
+#pragma once
+
+#include "../CubeEngineHeader.h"
+
+#include "EngineCore/Component/Component.h"
+
+namespace cube
+{
+	class CUBE_ENGINE_EXPORT Renderer3DComponent : public core::Component
+	{
+	public:
+		static const String& GetName() { return mName; }
+
+	private:
+		static String mName;
+
+	public:
+		Renderer3DComponent();
+		virtual ~Renderer3DComponent();
+
+		void OnInit() override;
+		void OnUpdate(float dt) override;
+		void OnDestroy() override;
+
+		void SetMesh(SPtr<core::Mesh>& mesh);
+		void SetMaterialInstance(SPtr<core::MaterialInstance>& materialIns);
+
+	private:
+		friend class core::GameObject;
+
+		SPtr<core::Renderer3D> mRenderer3D;
+
+		SPtr<core::RendererManager> mRendererManager;
+	};
+} // namespace cube

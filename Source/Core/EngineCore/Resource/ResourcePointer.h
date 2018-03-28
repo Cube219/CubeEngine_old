@@ -12,7 +12,7 @@ namespace cube
 		class ResourceImporter;
 
 		template <typename T>
-		class ENGINE_CORE_EXPORT ResourcePointer
+		class ResourcePointer
 		{
 		public:
 			ResourcePointer() : 

@@ -2,6 +2,7 @@
 
 #include "LogWriter.h"
 #include "EngineCore.h"
+#include "GameObjectManager.h"
 #include "Component/Component.h"
 #include "Component/ComponentManager.h"
 #include "Renderer/Renderer3D.h"
@@ -12,27 +13,32 @@ namespace cube
 {
 	namespace core
 	{
+		SPtr<GameObjectManager> GameObject::mManager = nullptr;
+
+		SPtr<GameObject> GameObject::Create()
+		{
+			if(mManager == nullptr)
+				mManager = ECore()->GetGameObjectManager();
+
+			SPtr<GameObject> go = std::make_shared<GameObject>();
+			mManager->RegisterGameObject(go);
+
+			return go;
+		}
+
 		GameObject::GameObject() :
-			mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
+			mID(0), mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
 			mIsTransformChanged(true), mScaleMatrix(1.0f), mModelMatrix(1.0f),
 			mForward(0.0f, 0.0f, 1.0f), mUp(0.0f, 1.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f)
 		{
 			mRenderer3D = nullptr;
-			mCameraRenderer3D = nullptr;
-		}
-
-		GameObject::GameObject(SPtr<Renderer3D> renderer3D) : GameObject()
-		{
-			mRenderer3D = renderer3D;
-		}
-
-		GameObject::GameObject(SPtr<CameraRenderer3D> cameraRenderer3D) : GameObject()
-		{
-			mCameraRenderer3D = cameraRenderer3D;
 		}
 
 		GameObject::~GameObject()
 		{
+			for(auto& com : mComponents) {
+				com->OnDestroy();
+			}
 		}
 
 		void GameObject::SetPosition(Vector3 position)
@@ -153,7 +159,7 @@ namespace cube
 				mModelMatrix *= mScaleMatrix;
 
 				if(mRenderer3D != nullptr)
-					mRenderer3D->SetModelMatrix(mModelMatrix);
+					mRenderer3D->SetModelMatrix(mModelMatrix); // RN: Transform Component를 만들어서 이동을 거기서 처리
 
 				mIsTransformChanged = false;
 			}

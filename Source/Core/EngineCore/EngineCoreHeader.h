@@ -56,6 +56,7 @@ namespace cube
 
 		class ModuleManager;
 
+		class GameObjectManager;
 		class GameObject;
 
 		class ComponentManager;

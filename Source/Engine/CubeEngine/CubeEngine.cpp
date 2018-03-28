@@ -2,9 +2,9 @@
 
 #include "Platform.h"
 #include "EngineCore/Component/ComponentManager.h"
+#include "Component/Renderer3DComponent.h"
 #include "Component/CameraComponent.h"
 #include "Component/MoveComponent.h"
-#include "EngineCore/GameObject.h"
 
 namespace cube
 {
@@ -21,10 +21,6 @@ namespace cube
 		core::ECore()->SetFPSLimit(60);
 
 		InitComponents();
-
-		// TODO: 임시로 한 것. 차후 main으로 이런 로직들을 옮기면서 지워질 예정
-		core::ECore()->mCameraGo->AddComponent<MoveComponent>();
-		core::ECore()->mCameraGo->AddComponent<CameraComponent>();
 	}
 
 	void CubeEngine::Run()
@@ -41,6 +37,7 @@ namespace cube
 	{
 		SPtr<core::ComponentManager> comManager = core::ECore()->GetComponentManager();
 
+		comManager->RegisterComponent<Renderer3DComponent>();
 		comManager->RegisterComponent<CameraComponent>();
 		comManager->RegisterComponent<MoveComponent>();
 	}
@@ -51,7 +48,7 @@ namespace cube
 
 #ifdef _WIN32
 
-}
+} // namespace cube
 
 #include "Win32/Win32Platform.h"
 
@@ -67,4 +64,4 @@ namespace cube{
 
 #endif // _WIN32
 
-}
+} // namespace cube

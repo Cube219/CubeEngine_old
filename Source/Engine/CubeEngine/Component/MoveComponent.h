@@ -7,7 +7,7 @@
 
 namespace cube
 {
-	class MoveComponent : public core::Component
+	class CUBE_ENGINE_EXPORT MoveComponent : public core::Component
 	{
 	public:
 		static const String& GetName() { return mName; }

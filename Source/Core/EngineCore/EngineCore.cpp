@@ -7,18 +7,12 @@
 #include "Thread/ThreadManager.h"
 #include "LogWriter.h"
 #include "Renderer/RendererManager.h"
-#include "Renderer/Mesh.h"
-#include "Renderer/BaseMeshGenerator.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Material/Shader.h"
-#include "Renderer/Material/Material.h"
-#include "Renderer/Material/MaterialInstance.h"
 #include "Resource/ResourceManager.h"
 #include "ModuleManager.h"
-#include "GameObject.h"
+#include "GameObjectManager.h"
 #include "Component/ComponentManager.h"
-#include "Renderer/Renderer3D.h"
-#include "Renderer/CameraRenderer3D.h"
 
 namespace cube
 {
@@ -63,72 +57,14 @@ namespace cube
 
 			mComponentManager = std::make_shared<ComponentManager>();
 
-			// Create mesh / texture
-			mBoxMesh = BaseMeshGenerator::GetBoxMesh();
-
-			String texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
-			mTexture = mResourceManager->LoadResource<Texture>(texturePath);
-			texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture2.png");
-			mTexture2 = mResourceManager->LoadResource<Texture>(texturePath);
-
-			// Load shader
-			String shaderPath = CUBE_T("../../../SampleResources/Shaders/Vertex.glsl");
-			mMaterialVertexShader = mResourceManager->LoadResource<Shader>(shaderPath);
-
-			shaderPath = CUBE_T("../../../SampleResources/Shaders/Fragment.glsl");
-			mMaterialFragmentShader = mResourceManager->LoadResource<Shader>(shaderPath);
-
-			// Create material
-			MaterialInitializer matInit;
-			matInit.shaders.push_back(mMaterialVertexShader);
-			matInit.shaders.push_back(mMaterialFragmentShader);
-			matInit.parameters.push_back({CUBE_T("Texture"), MaterialParameterType::Texture, 0});
-			mMaterial = std::make_shared<Material>(mRendererManager->GetRenderAPI(), matInit);
-			mRendererManager->RegisterMaterial(mMaterial);
-
-			// Create materialInstances
-			mMaterialIns1 = mMaterial->CreateInstance();
-			String t = CUBE_T("Texture");
-			mMaterialIns1->SetParameterData<RPtr<Texture>>(t, mTexture);
-
-			mMaterialIns2 = mMaterial->CreateInstance();
-			mMaterialIns2->SetParameterData<RPtr<Texture>>(t, mTexture2);
-
-			int flag = -1;
-			// Create gameobjects
-			for(int i = -1; i <= 1; i++) {
-				for(int j = -1; j <= 1; j++) {
-					for(int k = -1; k <= 1; k++) {
-						if(i == 0 && j == 0 && k == 0)
-							continue;
-
-						auto go = std::make_shared<GameObject>(mRendererManager->CreateRenderer3D());
-						Vector3 v(i*2, j*2, k*2);
-						go->SetPosition(v);
-
-						auto renderer = go->GetRenderer();
-						renderer->SetMesh(mBoxMesh);
-						if(flag == -1)
-							renderer->SetMaterialInstance(mMaterialIns1);
-						else
-							renderer->SetMaterialInstance(mMaterialIns2);
-						flag *= -1;
-
-						mGos.push_back(go);
-
-						mRendererManager->RegisterRenderer3D(renderer);
-					}
-				}
-			}
-
-			mCameraGo = std::make_shared<GameObject>(mRendererManager->GetCameraRenderer3D());
+			mGameObjectManager = std::make_shared<GameObjectManager>();
 		}
 
 		void EngineCore::Run()
 		{
 			mTimeManager->Start();
 
-			mCameraGo->Start();
+			mGameObjectManager->Start();
 
 			platform::Platform::StartLoop();
 		}
@@ -154,11 +90,7 @@ namespace cube
 
 			mModuleManager->UpdateAllModules(dt);
 
-			for(auto& go : mGos) {
-				go->Update(dt);
-			}
-
-			mCameraGo->Update(dt);
+			mGameObjectManager->Update(dt);
 			
 			mRendererManager->DrawAll();
 
