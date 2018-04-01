@@ -1,5 +1,7 @@
 #include "Material.h"
 
+#include "../../EngineCore.h"
+#include "../RendererManager.h"
 #include "Shader.h"
 #include "MaterialInstance.h"
 
@@ -7,7 +9,17 @@ namespace cube
 {
 	namespace core
 	{
-		Material::Material(SPtr<BaseRenderAPI>& renderAPI, MaterialInitializer& init) : 
+		SPtr<Material> Material::Create(const MaterialInitializer& init)
+		{
+			auto rendererManager = ECore()->GetRendererManager();
+
+			SPtr<Material> mat = std::make_shared<Material>(rendererManager->GetRenderAPI(), init);
+			rendererManager->RegisterMaterial(mat);
+
+			return mat;
+		}
+
+		Material::Material(SPtr<BaseRenderAPI>& renderAPI, const MaterialInitializer& init) : 
 			mRenderAPI_ref(renderAPI)
 		{
 			mParamInfos = init.parameters;
@@ -46,5 +58,5 @@ namespace cube
 			SPtr<MaterialInstance> ins(new MaterialInstance(mRenderAPI_ref, shared_from_this()));
 			return ins;
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

@@ -36,24 +36,23 @@ namespace cube
 		boxMesh = BaseMeshGenerator::GetBoxMesh();
 
 		String texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
-		texture = ECore()->GetResourceManager()->LoadResource<Texture>(texturePath);
+		texture = Texture::Load(texturePath);
 		texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture2.png");
-		texture2 = ECore()->GetResourceManager()->LoadResource<Texture>(texturePath);
+		texture2 = Texture::Load(texturePath);
 
 		// Load shader
 		String shaderPath = CUBE_T("../../../SampleResources/Shaders/Vertex.glsl");
-		vertexShader = ECore()->GetResourceManager()->LoadResource<Shader>(shaderPath);
+		vertexShader = Shader::Load(shaderPath);
 
 		shaderPath = CUBE_T("../../../SampleResources/Shaders/Fragment.glsl");
-		fragmentShader = ECore()->GetResourceManager()->LoadResource<Shader>(shaderPath);
+		fragmentShader = Shader::Load(shaderPath);
 
 		// Create material
 		MaterialInitializer matInit;
 		matInit.shaders.push_back(vertexShader);
 		matInit.shaders.push_back(fragmentShader);
 		matInit.parameters.push_back({CUBE_T("Texture"), MaterialParameterType::Texture, 0});
-		material = std::make_shared<Material>(ECore()->GetRendererManager()->GetRenderAPI(), matInit);
-		ECore()->GetRendererManager()->RegisterMaterial(material);
+		material = Material::Create(matInit);
 
 		// Create materialInstances
 		materialIns1 = material->CreateInstance();
@@ -111,7 +110,7 @@ namespace cube
 		materialIns1 = nullptr;
 		materialIns2 = nullptr;
 	}
-}
+} // namespace cube
 
 #ifdef _WIN32
 #include <Windows.h>

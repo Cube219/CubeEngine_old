@@ -20,7 +20,7 @@ namespace cube
 			mImporters.push_back(std::move(importer));
 		}
 		
-		RPtr<Resource> ResourceManager::LoadResource(String& path)
+		RPtr<Resource> ResourceManager::LoadResource(const String& path)
 		{
 			using namespace platform;
 

@@ -32,7 +32,10 @@ namespace cube
 		class ENGINE_CORE_EXPORT Material : public std::enable_shared_from_this<Material>
 		{
 		public:
-			Material(SPtr<BaseRenderAPI>& renderAPI, MaterialInitializer& init);
+			static SPtr<Material> Create(const MaterialInitializer& init);
+
+		public:
+			Material(SPtr<BaseRenderAPI>& renderAPI, const MaterialInitializer& init);
 			~Material();
 
 			SPtr<MaterialInstance> CreateInstance();

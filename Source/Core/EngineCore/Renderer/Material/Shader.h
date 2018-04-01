@@ -36,6 +36,9 @@ namespace cube
 		class ENGINE_CORE_EXPORT Shader : public Resource
 		{
 		public:
+			static RPtr<Shader> Load(const String& path);
+
+		public:
 			~Shader();
 
 			ShaderLanguage GetLanguage() const { return mLanguage; }
