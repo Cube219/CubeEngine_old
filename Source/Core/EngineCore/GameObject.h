@@ -59,6 +59,7 @@ namespace cube
 
 		private:
 			friend class GameObjectManager;
+			friend class Renderer3DComponent;
 
 			uint32_t mID;
 			HGameObject mMyHandler;

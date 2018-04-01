@@ -3,8 +3,7 @@
 #include "EngineCore/EngineCore.h"
 #include "EngineCore/Renderer/Renderer3D.h"
 #include "EngineCore/Renderer/RendererManager.h"
-//#include "EngineCore/Renderer/Mesh.h"
-//#include "EngineCore/Renderer/Material/MaterialInstance.h"
+#include "EngineCore/GameObject.h"
 
 namespace cube
 {
@@ -23,7 +22,10 @@ namespace cube
 
 	void Renderer3DComponent::OnInit()
 	{
+		GetGameObject()->mRenderer3D = mRenderer3D;
 		mRendererManager->RegisterRenderer3D(mRenderer3D);
+
+		GetGameObject()->mIsTransformChanged = true; // Update model matrix
 	}
 
 	void Renderer3DComponent::OnUpdate(float dt)
@@ -32,6 +34,7 @@ namespace cube
 
 	void Renderer3DComponent::OnDestroy()
 	{
+		GetGameObject()->mRenderer3D = nullptr;
 		mRendererManager->UnregisterRenderer3D(mRenderer3D);
 	}
 

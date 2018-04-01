@@ -23,8 +23,6 @@ namespace cube
 		EngineCore::EngineCore() :
 			mFPSLimit(-1)
 		{
-			platform::Platform::SetLoopFunction(std::bind(&EngineCore::Loop, this));
-			platform::Platform::SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
 		}
 
 		EngineCore::~EngineCore()
@@ -33,6 +31,9 @@ namespace cube
 
 		void EngineCore::Prepare()
 		{
+			platform::Platform::SetLoopFunction(std::bind(&EngineCore::Loop, this));
+			platform::Platform::SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
+
 			LogWriter::Init();
 
 			mTimeManager = std::make_unique<TimeManager>();
@@ -52,12 +53,10 @@ namespace cube
 
 			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
 			mModuleManager->LoadModule(CUBE_T("InputModule"));
-
 			mModuleManager->InitModules();
 
-			mComponentManager = std::make_shared<ComponentManager>();
-
 			mGameObjectManager = std::make_shared<GameObjectManager>();
+			mComponentManager = std::make_shared<ComponentManager>();
 		}
 
 		void EngineCore::Run()

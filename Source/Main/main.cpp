@@ -80,7 +80,7 @@ namespace cube
 					Vector3 v(i * 2, j * 2, k * 2);
 					go->SetPosition(v);
 
-					auto renderer = go->AddComponent<Renderer3DComponent>();
+					auto renderer = go->AddComponent<cube::Renderer3DComponent>();
 					renderer->SetMesh(boxMesh);
 					if(flag == -1)
 						renderer->SetMaterialInstance(materialIns1);

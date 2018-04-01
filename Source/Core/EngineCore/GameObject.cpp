@@ -8,6 +8,7 @@
 #include "Renderer/Renderer3D.h"
 #include "Renderer/CameraRenderer3D.h"
 #include <gtc/matrix_transform.hpp>
+#include "CubeEngine/Component/Renderer3DComponent.h"
 
 namespace cube
 {
@@ -136,7 +137,7 @@ namespace cube
 				mModelMatrix[1][2] = (cosX * sinY * sinZ) + (sinX * cosZ);
 				mModelMatrix[2][2] = cosX * cosY;
 
-				// Update the vectors of dirction
+				// Update the vectors of direction
 				// TODO: Matrix 구현시 glm을 통하지 않고 바로 곱하게 만들기
 				glm::vec4 forward(0.0f, 0.0f, 1.0f, 0.0f);
 				glm::vec4 up(0.0f, 1.0f, 0.0f, 0.0f);
@@ -157,7 +158,7 @@ namespace cube
 				mModelMatrix *= mScaleMatrix;
 
 				if(mRenderer3D != nullptr)
-					mRenderer3D->SetModelMatrix(mModelMatrix); // RN: Transform Component를 만들어서 이동을 거기서 처리
+					mRenderer3D->SetModelMatrix(mModelMatrix);
 
 				mIsTransformChanged = false;
 			}

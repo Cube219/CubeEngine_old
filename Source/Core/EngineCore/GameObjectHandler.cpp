@@ -13,5 +13,5 @@ namespace cube
 				ECore()->GetGameObjectManager()->UnregisterGameObject(*this);
 			}
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

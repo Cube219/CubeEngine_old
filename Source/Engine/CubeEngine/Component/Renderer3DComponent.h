@@ -26,8 +26,6 @@ namespace cube
 		void SetMaterialInstance(SPtr<core::MaterialInstance>& materialIns);
 
 	private:
-		friend class core::GameObject;
-
 		SPtr<core::Renderer3D> mRenderer3D;
 
 		SPtr<core::RendererManager> mRendererManager;
