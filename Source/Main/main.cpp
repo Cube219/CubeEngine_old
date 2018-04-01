@@ -68,9 +68,6 @@ namespace cube
 		for(int i = -1; i <= 1; i++) {
 			for(int j = -1; j <= 1; j++) {
 				for(int k = -1; k <= 1; k++) {
-					if(i == 0 && j == 0 && k == 0)
-						continue;
-
 					auto go = GameObject::Create();
 					Vector3 v(i * 2, j * 2, k * 2);
 					go->SetPosition(v);

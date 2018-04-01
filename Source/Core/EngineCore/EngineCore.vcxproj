@@ -137,12 +137,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Assertion.h" />
+    <ClInclude Include="BasicHandler.h" />
     <ClInclude Include="Component\Component.h" />
     <ClInclude Include="Component\ComponentManager.h" />
     <ClInclude Include="EngineCore.h" />
     <ClInclude Include="EngineCoreHeader.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameObjectHandler.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="LogWriter.h" />
     <ClInclude Include="ModuleManager.h" />
@@ -178,7 +178,6 @@
     <ClCompile Include="Component\ComponentManager.cpp" />
     <ClCompile Include="EngineCore.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GameObjectHandler.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="LogWriter.cpp" />
     <ClCompile Include="ModuleManager.cpp" />

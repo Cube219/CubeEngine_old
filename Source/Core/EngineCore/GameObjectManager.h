@@ -2,8 +2,6 @@
 
 #include "EngineCoreHeader.h"
 
-#include "GameObjectHandler.h"
-
 namespace cube
 {
 	namespace core
@@ -26,7 +24,7 @@ namespace cube
 
 			uint32_t mNextID;
 
-			HashMap<uint32_t, SPtr<GameObjectHandlerData>> mGameObjects;
+			HashMap<uint32_t, SPtr<BasicHandlerData<GameObject>>> mGameObjects;
 		};
 	} // namespace core
 } // namespace cube

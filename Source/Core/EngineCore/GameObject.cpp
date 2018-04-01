@@ -163,5 +163,10 @@ namespace cube
 				mIsTransformChanged = false;
 			}
 		}
+
+		void GameObject::Destroy()
+		{
+			ECore()->GetGameObjectManager()->UnregisterGameObject(mMyHandler);
+		}
 	} // namespace core
 } // namespace cube

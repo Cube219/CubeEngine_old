@@ -2,7 +2,7 @@
 
 #include "EngineCoreHeader.h"
 
-#include "GameObjectHandler.h"
+#include "BasicHandler.h"
 #include "Base/Vector.h"
 #include <glm.hpp>
 
@@ -54,8 +54,7 @@ namespace cube
 
 			void Update(float dt);
 
-			void Destroy() { mMyHandler.Destroy(); }
-			bool IsDestroyed() const { return mMyHandler.IsDestroyed(); }
+			void Destroy();
 
 		private:
 			friend class GameObjectManager;

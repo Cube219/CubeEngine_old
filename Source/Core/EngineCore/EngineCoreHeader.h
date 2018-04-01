@@ -56,8 +56,14 @@ namespace cube
 
 		class ModuleManager;
 
+		template <typename T>
+		struct BasicHandlerData;
+		template <typename T>
+		class BasicHandler;
+
 		class GameObjectManager;
 		class GameObject;
+		using HGameObject = BasicHandler<GameObject>;
 
 		class ComponentManager;
 		class Component;

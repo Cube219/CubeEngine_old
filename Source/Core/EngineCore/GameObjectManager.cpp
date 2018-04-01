@@ -1,5 +1,6 @@
 #include "GameObjectManager.h"
 
+#include "BasicHandler.h"
 #include "GameObject.h"
 #include "LogWriter.h"
 
@@ -23,21 +24,21 @@ namespace cube
 		{
 			if(go->mID != 0) {
 				CUBE_LOG(LogType::Error, "Cannot register GameObject. Only GameObject with id=0 can be registered (id: {0})", go->mID);
-				return GameObjectHandler();
+				return HGameObject();
 			}
 
 			go->mID = mNextID;
 
-			SPtr<GameObjectHandlerData> goHandlerData = std::make_shared<GameObjectHandlerData>();
+			SPtr<BasicHandlerData<GameObject>> goHandlerData = std::make_shared<BasicHandlerData<GameObject>>();
 			goHandlerData->data = std::move(go);
 
 			mGameObjects[mNextID] = goHandlerData;
 
 			mNextID++;
 
-			goHandlerData->data->mMyHandler = GameObjectHandler(goHandlerData);
+			goHandlerData->data->mMyHandler = HGameObject(goHandlerData);
 
-			return GameObjectHandler(goHandlerData);
+			return HGameObject(goHandlerData);
 		}
 
 		void GameObjectManager::UnregisterGameObject(HGameObject& go)
