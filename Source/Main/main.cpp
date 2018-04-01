@@ -18,7 +18,7 @@ namespace cube
 
 	core::RPtr<core::Shader> vertexShader;
 	core::RPtr<core::Shader> fragmentShader;
-	SPtr<core::Material> material;
+	core::HMaterial material;
 	SPtr<core::MaterialInstance> materialIns1;
 	SPtr<core::MaterialInstance> materialIns2;
 	Vector<core::HGameObject> mGameObjects;
@@ -103,9 +103,9 @@ namespace cube
 		texture2 = nullptr;
 		vertexShader = nullptr;
 		fragmentShader = nullptr;
-		material = nullptr;
 		materialIns1 = nullptr;
 		materialIns2 = nullptr;
+		material->Destroy();
 	}
 
 	void MainImpl()

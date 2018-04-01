@@ -9,14 +9,13 @@ namespace cube
 {
 	namespace core
 	{
-		SPtr<Material> Material::Create(const MaterialInitializer& init)
+		HMaterial Material::Create(const MaterialInitializer& init)
 		{
 			auto rendererManager = ECore()->GetRendererManager();
 
-			SPtr<Material> mat = std::make_shared<Material>(rendererManager->GetRenderAPI(), init);
-			rendererManager->RegisterMaterial(mat);
+			UPtr<Material> mat(new Material(rendererManager->GetRenderAPI(), init));
 
-			return mat;
+			return rendererManager->RegisterMaterial(mat);
 		}
 
 		Material::Material(SPtr<BaseRenderAPI>& renderAPI, const MaterialInitializer& init) : 
@@ -55,8 +54,13 @@ namespace cube
 
 		SPtr<MaterialInstance> Material::CreateInstance()
 		{
-			SPtr<MaterialInstance> ins(new MaterialInstance(mRenderAPI_ref, shared_from_this()));
+			SPtr<MaterialInstance> ins(new MaterialInstance(mRenderAPI_ref, mMyHandler));
 			return ins;
+		}
+
+		void Material::Destroy()
+		{
+			ECore()->GetRendererManager()->UnregisterMaterial(mMyHandler);
 		}
 	} // namespace core
 } // namespace cube

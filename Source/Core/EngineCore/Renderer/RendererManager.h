@@ -32,8 +32,8 @@ namespace cube
 			RendererManager(RenderType type);
 			~RendererManager();
 
-			void RegisterMaterial(SPtr<Material>& material);
-			void UnregisterMaterial(SPtr<Material>& material);
+			HMaterial RegisterMaterial(UPtr<Material>& material);
+			void UnregisterMaterial(HMaterial& material);
 
 			void RegisterRenderer3D(SPtr<Renderer3D>& renderer);
 			void UnregisterRenderer3D(SPtr<Renderer3D>& renderer);
@@ -55,7 +55,7 @@ namespace cube
 
 			void RewriteCommandBuffer();
 
-			SPtr<BaseRenderGraphicsPipeline> CreatePipeline(SPtr<Material>& material);
+			SPtr<BaseRenderGraphicsPipeline> CreatePipeline(HMaterial& material);
 
 			SPtr<platform::DLib> mRenderDLib;
 			SPtr<BaseRenderAPI> mRenderAPI;
@@ -65,7 +65,7 @@ namespace cube
 			SPtr<CameraRenderer3D> mCameraRenderer;
 
 			Mutex mMaterialsMutex;
-			Vector<SPtr<Material>> mMaterials;
+			Vector<SPtr<MaterialData>> mMaterials;
 			Vector<SPtr<BaseRenderGraphicsPipeline>> mMaterialPipelines;
 			Vector<SPtr<BaseRenderCommandBuffer>> mMaterialCommandBuffers;
 

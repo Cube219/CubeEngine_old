@@ -29,6 +29,11 @@ namespace cube
 		class ImmutableString;
 		class StringManager;
 
+		template <typename T>
+		struct BasicHandlerData;
+		template <typename T>
+		class BasicHandler;
+
 		class Renderer3D;
 		class CameraRenderer3D;
 		enum class RenderType;
@@ -43,6 +48,8 @@ namespace cube
 		struct MaterialParameterInfo;
 		struct MaterialInitializer;
 		class Material;
+		using MaterialData = BasicHandlerData<Material>;
+		using HMaterial = BasicHandler<Material>;
 		class MaterialInstance;
 
 		class Shader;
@@ -55,11 +62,6 @@ namespace cube
 		class Texture;
 
 		class ModuleManager;
-
-		template <typename T>
-		struct BasicHandlerData;
-		template <typename T>
-		class BasicHandler;
 
 		class GameObjectManager;
 		class GameObject;

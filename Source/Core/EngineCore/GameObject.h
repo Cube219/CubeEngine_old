@@ -15,9 +15,6 @@ namespace cube
 		public:
 			static HGameObject Create();
 
-		private:
-			static SPtr<GameObjectManager> mManager;
-
 		public:
 			GameObject();
 			~GameObject();
