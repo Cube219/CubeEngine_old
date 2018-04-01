@@ -14,22 +14,33 @@ namespace cube
 
 		GameObjectManager::~GameObjectManager()
 		{
+			for(auto& go : mGameObjects) {
+				go.second->data = nullptr;
+			}
 		}
 
-		void GameObjectManager::RegisterGameObject(SPtr<GameObject>& go)
+		HGameObject GameObjectManager::RegisterGameObject(UPtr<GameObject>& go)
 		{
 			if(go->mID != 0) {
 				CUBE_LOG(LogType::Error, "Cannot register GameObject. Only GameObject with id=0 can be registered (id: {0})", go->mID);
-				return;
+				return GameObjectHandler();
 			}
 
-			mGameObjects[mNextID] = go;
 			go->mID = mNextID;
 
+			SPtr<GameObjectHandlerData> goHandlerData = std::make_shared<GameObjectHandlerData>();
+			goHandlerData->data = std::move(go);
+
+			mGameObjects[mNextID] = goHandlerData;
+
 			mNextID++;
+
+			goHandlerData->data->mMyHandler = GameObjectHandler(goHandlerData);
+
+			return GameObjectHandler(goHandlerData);
 		}
 
-		void GameObjectManager::UnregisterGameObject(SPtr<GameObject>& go)
+		void GameObjectManager::UnregisterGameObject(HGameObject& go)
 		{
 			uint32_t id = go->mID;
 
@@ -39,20 +50,21 @@ namespace cube
 				return;
 			}
 
+			goIter->second->data = nullptr;
 			mGameObjects.erase(goIter);
 		}
 
 		void GameObjectManager::Start()
 		{
 			for(auto& go : mGameObjects) {
-				go.second->Start();
+				go.second->data->Start();
 			}
 		}
 
 		void GameObjectManager::Update(float dt)
 		{
 			for(auto& go : mGameObjects) {
-				go.second->Update(dt);
+				go.second->data->Update(dt);
 			}
 		}
 	} // namespace core

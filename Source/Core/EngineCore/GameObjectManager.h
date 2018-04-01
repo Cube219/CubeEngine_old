@@ -2,6 +2,8 @@
 
 #include "EngineCoreHeader.h"
 
+#include "GameObjectHandler.h"
+
 namespace cube
 {
 	namespace core
@@ -12,8 +14,8 @@ namespace cube
 			GameObjectManager();
 			~GameObjectManager();
 
-			void RegisterGameObject(SPtr<GameObject>& go);
-			void UnregisterGameObject(SPtr<GameObject>& go);
+			HGameObject RegisterGameObject(UPtr<GameObject>& go);
+			void UnregisterGameObject(HGameObject& go);
 
 			void Start();
 
@@ -24,7 +26,7 @@ namespace cube
 
 			uint32_t mNextID;
 
-			HashMap<uint32_t, SPtr<GameObject>> mGameObjects;
+			HashMap<uint32_t, SPtr<GameObjectHandlerData>> mGameObjects;
 		};
 	} // namespace core
 } // namespace cube

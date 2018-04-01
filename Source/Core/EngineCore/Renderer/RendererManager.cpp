@@ -139,6 +139,7 @@ namespace cube
 			Lock(mRenderersMutex);
 
 			int lastIndex = mRenderers.back()->mIndex;
+			mRenderers[lastIndex]->mIndex = index;
 
 			std::swap(mRenderers[index], mRenderers[lastIndex]);
 			mRenderers.pop_back();

@@ -5,6 +5,7 @@
 #include "EngineCore/Resource/ResourceManager.h"
 #include "EngineCore/Resource/ResourcePointer.h"
 #include "EngineCore/Renderer/RendererManager.h"
+#include "EngineCore/GameObjectManager.h"
 #include "EngineCore/Renderer/BaseMeshGenerator.h"
 #include "EngineCore/Renderer/Material/Material.h"
 #include "EngineCore/Renderer/Material/MaterialInstance.h"
@@ -24,8 +25,8 @@ namespace cube
 	SPtr<core::Material> material;
 	SPtr<core::MaterialInstance> materialIns1;
 	SPtr<core::MaterialInstance> materialIns2;
-	Vector<SPtr<core::GameObject>> mGameObjects;
-	SPtr<core::GameObject> cameraGameObject;
+	Vector<core::HGameObject> mGameObjects;
+	core::HGameObject cameraGameObject;
 
 	void PrepareResources()
 	{
@@ -96,6 +97,20 @@ namespace cube
 		cameraGameObject->AddComponent<CameraComponent>();
 		cameraGameObject->AddComponent<MoveComponent>();
 	}
+
+	void DestroyAll()
+	{
+		using namespace core;
+		for(auto& go : mGameObjects) {
+			go->Destroy();
+		}
+		cameraGameObject->Destroy();
+
+		boxMesh = nullptr;
+		material = nullptr;
+		materialIns1 = nullptr;
+		materialIns2 = nullptr;
+	}
 }
 
 #ifdef _WIN32
@@ -119,6 +134,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	CreateGameObjects();
 
 	CubeEngine::Run();
+
+	DestroyAll();
 
 	CubeEngine::Destroy();
 

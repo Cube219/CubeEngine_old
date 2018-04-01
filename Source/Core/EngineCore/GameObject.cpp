@@ -15,15 +15,13 @@ namespace cube
 	{
 		SPtr<GameObjectManager> GameObject::mManager = nullptr;
 
-		SPtr<GameObject> GameObject::Create()
+		HGameObject GameObject::Create()
 		{
 			if(mManager == nullptr)
 				mManager = ECore()->GetGameObjectManager();
 
-			SPtr<GameObject> go = std::make_shared<GameObject>();
-			mManager->RegisterGameObject(go);
-
-			return go;
+			UPtr<GameObject> go = std::make_unique<GameObject>();
+			return mManager->RegisterGameObject(go);
 		}
 
 		GameObject::GameObject() :

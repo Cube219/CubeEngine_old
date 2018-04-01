@@ -2,6 +2,7 @@
 
 #include "EngineCoreHeader.h"
 
+#include "GameObjectHandler.h"
 #include "Base/Vector.h"
 #include <glm.hpp>
 
@@ -12,7 +13,7 @@ namespace cube
 		class ENGINE_CORE_EXPORT GameObject
 		{
 		public:
-			static SPtr<GameObject> Create();
+			static HGameObject Create();
 
 		private:
 			static SPtr<GameObjectManager> mManager;
@@ -53,10 +54,14 @@ namespace cube
 
 			void Update(float dt);
 
+			void Destroy() { mMyHandler.Destroy(); }
+			bool IsDestroyed() const { return mMyHandler.IsDestroyed(); }
+
 		private:
 			friend class GameObjectManager;
 
 			uint32_t mID;
+			HGameObject mMyHandler;
 
 			SPtr<Renderer3D> mRenderer3D;
 
