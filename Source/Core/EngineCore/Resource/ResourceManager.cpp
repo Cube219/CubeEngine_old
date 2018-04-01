@@ -14,6 +14,7 @@ namespace cube
 
 		ResourceManager::~ResourceManager()
 		{
+			UnloadUnusedResources();
 		}
 		void ResourceManager::RegisterImporter(UPtr<ResourceImporter> importer)
 		{
@@ -82,6 +83,11 @@ namespace cube
 			return RPtr<Resource>(loadedRes);
 		}
 		
+		void ResourceManager::ReleaseResource(const RPtr<Resource>& res)
+		{
+			Lock lock(mLoadedResourcesMutex);
+		}
+
 		void ResourceManager::UnloadUnusedResources()
 		{
 			Lock lock(mLoadedResourcesMutex);

@@ -1,11 +1,7 @@
-#include "Base/BaseTypes.h"
-#include "EngineCore/EngineCore.h"
+#include "CubeEngine/CubeEngine.h"
 #include "EngineCore/Renderer/Texture.h"
 #include "EngineCore/Renderer/Material/Shader.h"
-#include "EngineCore/Resource/ResourceManager.h"
 #include "EngineCore/Resource/ResourcePointer.h"
-#include "EngineCore/Renderer/RendererManager.h"
-#include "EngineCore/GameObjectManager.h"
 #include "EngineCore/Renderer/BaseMeshGenerator.h"
 #include "EngineCore/Renderer/Material/Material.h"
 #include "EngineCore/Renderer/Material/MaterialInstance.h"
@@ -106,37 +102,42 @@ namespace cube
 		cameraGameObject->Destroy();
 
 		boxMesh = nullptr;
+		texture = nullptr;
+		texture2 = nullptr;
+		vertexShader = nullptr;
+		fragmentShader = nullptr;
 		material = nullptr;
 		materialIns1 = nullptr;
 		materialIns2 = nullptr;
+	}
+
+	void MainImpl()
+	{
+		CubeEngineStartOption startOption;
+		startOption.title = CUBE_T("Test title");
+		startOption.windowWidth = 1024;
+		startOption.windowHeight = 768;
+		startOption.isWindowMode = true;
+
+		CubeEngine::Start(startOption);
+
+		PrepareResources();
+		CreateGameObjects();
+
+		CubeEngine::Run();
+
+		DestroyAll();
+
+		CubeEngine::Destroy();
 	}
 } // namespace cube
 
 #ifdef _WIN32
 #include <Windows.h>
 
-#include "CubeEngine/CubeEngine.h"
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 {
-	using namespace cube;
-
-	CubeEngineStartOption startOption;
-	startOption.title = CUBE_T("Test title");
-	startOption.windowWidth = 1024;
-	startOption.windowHeight = 768;
-	startOption.isWindowMode = true;
-
-	CubeEngine::Start(startOption);
-
-	PrepareResources();
-	CreateGameObjects();
-
-	CubeEngine::Run();
-
-	DestroyAll();
-
-	CubeEngine::Destroy();
+	cube::MainImpl();
 
 	return 0;
 }

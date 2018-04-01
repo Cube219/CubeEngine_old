@@ -15,8 +15,7 @@ namespace cube
 		class ResourcePointer
 		{
 		public:
-			ResourcePointer() : 
-				mRes(nullptr)
+			ResourcePointer() : mRes(nullptr)
 			{
 			}
 
@@ -26,15 +25,24 @@ namespace cube
 					mRes->mRefCount--;
 			}
 
+			ResourcePointer(nullptr_t nul) : mRes(nullptr)
+			{
+			}
+
 			ResourcePointer(const ResourcePointer& other)
 			{
 				mRes = other.mRes;
-				mRes->mRefCount++;
+				if(mRes != nullptr)
+					mRes->mRefCount++;
 			}
 			ResourcePointer& operator=(const ResourcePointer& rhs)
 			{
+				if(this == &rhs)
+					return *this;
+
 				mRes = rhs.mRes;
-				mRes->mRefCount++;
+				if(mRes != nullptr)
+					mRes->mRefCount++;
 
 				return *this;
 			}
@@ -44,6 +52,10 @@ namespace cube
 			{
 				ResourcePointer<T2> resPtr((T2*)mRes);
 				return resPtr;
+			}
+
+			void Release()
+			{
 			}
 
 			T* operator->() const

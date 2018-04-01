@@ -25,6 +25,8 @@ namespace cube
 				return LoadResource(path).Cast<T>();
 			}
 
+			void ReleaseResource(const RPtr<Resource>& res);
+
 			void UnloadUnusedResources();
 
 		private:
