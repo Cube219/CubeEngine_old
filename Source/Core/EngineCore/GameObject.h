@@ -31,20 +31,20 @@ namespace cube
 			Vector3 GetUp() const { return mUp; }
 			Vector3 GetRight() const { return mRight; }
 
-			SPtr<Component> GetComponent(const String& name);
+			HComponent GetComponent(const String& name);
 			template <typename T>
-			SPtr<T> GetComponent()
+			BasicHandler<T> GetComponent()
 			{
 				const String& nameToGet = T::GetName();
-				return DPCast(T)(GetComponent(nameToGet));
+				return GetComponent(nameToGet).Cast<T>();
 			}
 
-			SPtr<Component> AddComponent(const String& name);
+			HComponent AddComponent(const String& name);
 			template <typename T>
-			SPtr<T> AddComponent()
+			BasicHandler<T> AddComponent()
 			{
 				const String& nameToAdd = T::GetName();
-				return DPCast(T)(AddComponent(nameToAdd));
+				return AddComponent(nameToAdd).Cast<T>();
 			}
 
 			void Start();
@@ -74,7 +74,7 @@ namespace cube
 			Vector3 mUp;
 			Vector3 mRight;
 
-			Vector<SPtr<Component>> mComponents;
+			Vector<HComponent> mComponents;
 		};
 	} // namespace core
 } // namespace cube

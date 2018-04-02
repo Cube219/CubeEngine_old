@@ -30,4 +30,7 @@ namespace cube
 
 		SPtr<core::CameraRenderer3D> mCameraRenderer3D;
 	};
+
+	using CameraComponentData = core::BasicHandlerData<CameraComponent>;
+	using HCameraComponent = core::BasicHandler<CameraComponent>;
 } // namespace cube

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../EngineCoreHeader.h"
+#include "../BasicHandler.h"
 
 namespace cube
 {
@@ -26,8 +27,12 @@ namespace cube
 
 		private:
 			friend class GameObject;
+			friend class ComponentManager;
 
 			void AttachGameObject(GameObject* gameObject){ mAttachedGameObject = gameObject; }
+			void Destroy();
+
+			HComponent mMyHandler;
 
 			GameObject* mAttachedGameObject;
 		};

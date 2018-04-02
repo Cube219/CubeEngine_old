@@ -67,10 +67,13 @@ namespace cube
 
 		class GameObjectManager;
 		class GameObject;
+		using GameObjectData = BasicHandlerData<GameObject>;
 		using HGameObject = BasicHandler<GameObject>;
 
 		class ComponentManager;
 		class Component;
+		using ComponentData = BasicHandlerData<Component>;
+		using HComponent = BasicHandler<Component>;
 	}
 }
 

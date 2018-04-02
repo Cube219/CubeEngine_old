@@ -11,11 +11,11 @@ namespace cube
 		template <typename T>
 		struct BasicHandlerData
 		{
-			UPtr<T> data;
+			SPtr<T> data;
 		};
 
 		template <typename T>
-		class ENGINE_CORE_EXPORT BasicHandler
+		class BasicHandler
 		{
 		public:
 			BasicHandler() : mData(nullptr) {}
@@ -46,6 +46,15 @@ namespace cube
 			bool IsDestroyed() const
 			{
 				return mData->data == nullptr;
+			}
+
+			template <typename T2>
+			BasicHandler<T2> Cast() const
+			{
+				SPtr<BasicHandlerData<T2>> newDataPtr = std::make_shared<BasicHandlerData<T2>>();
+				newDataPtr->data = DPCast(T2)(mData->data);
+
+				return BasicHandler<T2>(newDataPtr);
 			}
 
 		protected:

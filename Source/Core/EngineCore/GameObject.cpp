@@ -18,7 +18,7 @@ namespace cube
 		{
 			SPtr<GameObjectManager> manager = ECore()->GetGameObjectManager();
 
-			UPtr<GameObject> go = std::make_unique<GameObject>();
+			SPtr<GameObject> go = std::make_shared<GameObject>();
 			return manager->RegisterGameObject(go);
 		}
 
@@ -32,9 +32,6 @@ namespace cube
 
 		GameObject::~GameObject()
 		{
-			for(auto& com : mComponents) {
-				com->OnDestroy();
-			}
 		}
 
 		void GameObject::SetPosition(Vector3 position)
@@ -55,9 +52,9 @@ namespace cube
 			mIsTransformChanged = true;
 		}
 
-		SPtr<Component> GameObject::GetComponent(const String& name)
+		HComponent GameObject::GetComponent(const String& name)
 		{
-			SPtr<Component> componentToGet = nullptr;
+			HComponent componentToGet;
 
 			for(auto& c : mComponents) {
 				if(c->GetName() == name) {
@@ -69,16 +66,16 @@ namespace cube
 			return componentToGet;
 		}
 
-		SPtr<Component> GameObject::AddComponent(const String& name)
+		HComponent GameObject::AddComponent(const String& name)
 		{
 			for(auto& com : mComponents) {
 				if(com->GetName() == name) {
 					CUBE_LOG(LogType::Error, "Cannot add component \"{0}\". The component already exists", name);
-					return nullptr;
+					return HComponent();
 				}
 			}
 
-			SPtr<Component> c = ECore()->GetComponentManager()->CreateComponent(name);
+			HComponent c = ECore()->GetComponentManager()->CreateComponent(name);
 			c->AttachGameObject(this);
 			mComponents.push_back(c);
 
@@ -163,6 +160,13 @@ namespace cube
 
 		void GameObject::Destroy()
 		{
+			for(auto& c : mComponents) {
+				c->OnDestroy();
+			}
+			for(auto& c : mComponents) {
+				c->Destroy();
+			}
+
 			ECore()->GetGameObjectManager()->UnregisterGameObject(mMyHandler);
 		}
 	} // namespace core

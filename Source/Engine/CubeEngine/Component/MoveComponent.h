@@ -26,4 +26,7 @@ namespace cube
 	private:
 		SPtr<module::InputModule> mInputModule;
 	};
+
+	using MoveComponentData = core::BasicHandlerData<MoveComponent>;
+	using HMoveComponent = core::BasicHandler<MoveComponent>;
 } // namespace cube

@@ -20,7 +20,7 @@ namespace cube
 			}
 		}
 
-		HGameObject GameObjectManager::RegisterGameObject(UPtr<GameObject>& go)
+		HGameObject GameObjectManager::RegisterGameObject(SPtr<GameObject>& go)
 		{
 			if(go->mID != 0) {
 				CUBE_LOG(LogType::Error, "Cannot register GameObject. Only GameObject with id=0 can be registered (id: {0})", go->mID);
@@ -29,16 +29,16 @@ namespace cube
 
 			go->mID = mNextID;
 
-			SPtr<BasicHandlerData<GameObject>> goHandlerData = std::make_shared<BasicHandlerData<GameObject>>();
-			goHandlerData->data = std::move(go);
+			SPtr<GameObjectData> goDataPtr = std::make_shared<GameObjectData>();
+			goDataPtr->data = std::move(go);
 
-			mGameObjects[mNextID] = goHandlerData;
+			mGameObjects[mNextID] = goDataPtr;
 
 			mNextID++;
 
-			goHandlerData->data->mMyHandler = HGameObject(goHandlerData);
+			goDataPtr->data->mMyHandler = HGameObject(goDataPtr);
 
-			return HGameObject(goHandlerData);
+			return HGameObject(goDataPtr);
 		}
 
 		void GameObjectManager::UnregisterGameObject(HGameObject& go)

@@ -12,7 +12,7 @@ namespace cube
 			GameObjectManager();
 			~GameObjectManager();
 
-			HGameObject RegisterGameObject(UPtr<GameObject>& go);
+			HGameObject RegisterGameObject(SPtr<GameObject>& go);
 			void UnregisterGameObject(HGameObject& go);
 
 			void Start();
@@ -24,7 +24,7 @@ namespace cube
 
 			uint32_t mNextID;
 
-			HashMap<uint32_t, SPtr<BasicHandlerData<GameObject>>> mGameObjects;
+			HashMap<uint32_t, SPtr<GameObjectData>> mGameObjects;
 		};
 	} // namespace core
 } // namespace cube

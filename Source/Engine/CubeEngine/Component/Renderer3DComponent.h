@@ -30,4 +30,7 @@ namespace cube
 
 		SPtr<core::RendererManager> mRendererManager;
 	};
+
+	using Renderer3DComponentData = core::BasicHandlerData<Renderer3DComponent>;
+	using HRenderer3DComponent = core::BasicHandler<Renderer3DComponent>;
 } // namespace cube

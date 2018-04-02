@@ -32,7 +32,7 @@ namespace cube
 			RendererManager(RenderType type);
 			~RendererManager();
 
-			HMaterial RegisterMaterial(UPtr<Material>& material);
+			HMaterial RegisterMaterial(SPtr<Material>& material);
 			void UnregisterMaterial(HMaterial& material);
 
 			void RegisterRenderer3D(SPtr<Renderer3D>& renderer);

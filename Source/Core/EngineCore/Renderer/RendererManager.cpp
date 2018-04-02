@@ -79,7 +79,7 @@ namespace cube
 			mRenderers.clear();
 		}
 
-		HMaterial RendererManager::RegisterMaterial(UPtr<Material>& material)
+		HMaterial RendererManager::RegisterMaterial(SPtr<Material>& material)
 		{
 			Lock(mMaterialsMutex);
 

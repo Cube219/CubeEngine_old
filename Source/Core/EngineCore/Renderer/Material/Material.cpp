@@ -13,7 +13,7 @@ namespace cube
 		{
 			auto rendererManager = ECore()->GetRendererManager();
 
-			UPtr<Material> mat(new Material(rendererManager->GetRenderAPI(), init));
+			SPtr<Material> mat(new Material(rendererManager->GetRenderAPI(), init));
 
 			return rendererManager->RegisterMaterial(mat);
 		}
