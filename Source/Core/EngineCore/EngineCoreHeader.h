@@ -22,8 +22,6 @@ namespace cube
 		template <typename T>
 		class ResourcePointer;
 
-		class LogWriter;
-
 		class BasicString;
 		class PathString;
 		class ImmutableString;
@@ -76,6 +74,7 @@ namespace cube
 		using HComponent = BasicHandler<Component>;
 	}
 }
+
 
 #ifdef ENGINE_CORE_EXPORTS
 	#define ENGINE_CORE_EXPORT __declspec(dllexport) 
