@@ -19,8 +19,8 @@ namespace cube
 	core::RPtr<core::Shader> vertexShader;
 	core::RPtr<core::Shader> fragmentShader;
 	core::HMaterial material;
-	SPtr<core::MaterialInstance> materialIns1;
-	SPtr<core::MaterialInstance> materialIns2;
+	core::HMaterialInstance materialIns1;
+	core::HMaterialInstance materialIns2;
 	Vector<core::HGameObject> mGameObjects;
 	core::HGameObject cameraGameObject;
 
@@ -103,8 +103,8 @@ namespace cube
 		texture2 = nullptr;
 		vertexShader = nullptr;
 		fragmentShader = nullptr;
-		materialIns1 = nullptr;
-		materialIns2 = nullptr;
+		materialIns1->Destroy();
+		materialIns2->Destroy();
 		material->Destroy();
 	}
 

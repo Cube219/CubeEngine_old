@@ -38,7 +38,7 @@ namespace cube
 		public:
 			~Material();
 
-			SPtr<MaterialInstance> CreateInstance();
+			HMaterialInstance CreateInstance();
 
 			const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
 

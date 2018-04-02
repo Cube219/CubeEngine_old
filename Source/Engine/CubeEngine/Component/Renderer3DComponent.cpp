@@ -43,7 +43,7 @@ namespace cube
 		mRenderer3D->SetMesh(mesh);
 	}
 
-	void Renderer3DComponent::SetMaterialInstance(SPtr<core::MaterialInstance>& materialIns)
+	void Renderer3DComponent::SetMaterialInstance(core::HMaterialInstance& materialIns)
 	{
 		mRenderer3D->SetMaterialInstance(materialIns);
 	}

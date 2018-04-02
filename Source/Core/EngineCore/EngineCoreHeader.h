@@ -51,6 +51,8 @@ namespace cube
 		using MaterialData = BasicHandlerData<Material>;
 		using HMaterial = BasicHandler<Material>;
 		class MaterialInstance;
+		using MaterialInstanceData = BasicHandlerData<MaterialInstance>;
+		using HMaterialInstance = BasicHandler<MaterialInstance>;
 
 		class Shader;
 

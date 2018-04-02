@@ -93,5 +93,10 @@ namespace cube
 
 			mDescriptorSet->WriteImagesInDescriptor(paramIndex, 1, &imageView, &sampler);
 		}
+
+		void MaterialInstance::Destroy()
+		{
+			mMyHandler.mData->data = nullptr;
+		}
 	} // namespace core
 } // namespace cube

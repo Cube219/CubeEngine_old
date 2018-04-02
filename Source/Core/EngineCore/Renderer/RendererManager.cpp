@@ -308,7 +308,7 @@ namespace cube
 			//       그렇게하면 BindDescriptorSets 횟수를 줄일 수 있음
 			//       그럴러면 Material에서 Instance를 생성할 때 저장해둬야 함
 			for(auto& renderer : mRenderers) {
-				SPtr<MaterialInstance> materialIns = renderer->GetMaterialInstance();
+				HMaterialInstance materialIns = renderer->GetMaterialInstance();
 				int materialIndex = materialIns->GetMaterial()->mIndex;
 				SPtr<BaseRenderDescriptorSet> materialInsDesc = materialIns->GetDescriptorSet();
 

@@ -23,7 +23,7 @@ namespace cube
 		void OnDestroy() override;
 
 		void SetMesh(SPtr<core::Mesh>& mesh);
-		void SetMaterialInstance(SPtr<core::MaterialInstance>& materialIns);
+		void SetMaterialInstance(core::HMaterialInstance& materialIns);
 
 	private:
 		SPtr<core::Renderer3D> mRenderer3D;

@@ -52,10 +52,13 @@ namespace cube
 		{
 		}
 
-		SPtr<MaterialInstance> Material::CreateInstance()
+		HMaterialInstance Material::CreateInstance()
 		{
-			SPtr<MaterialInstance> ins(new MaterialInstance(mRenderAPI_ref, mMyHandler));
-			return ins;
+			SPtr<MaterialInstanceData> matInsDataPtr = std::make_shared<MaterialInstanceData>();
+			matInsDataPtr->data = UPtr<MaterialInstance>(new MaterialInstance(mRenderAPI_ref, mMyHandler));
+			matInsDataPtr->data->mMyHandler = HMaterialInstance(matInsDataPtr);
+
+			return HMaterialInstance(matInsDataPtr);
 		}
 
 		void Material::Destroy()

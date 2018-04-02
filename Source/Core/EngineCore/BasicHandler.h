@@ -31,10 +31,11 @@ namespace cube
 
 			bool IsDestroyed() const
 			{
-				return mData->data != nullptr;
+				return mData->data == nullptr;
 			}
 
 		protected:
+			friend T;
 			SPtr<BasicHandlerData<T>> mData;
 		};
 	} // namespace core

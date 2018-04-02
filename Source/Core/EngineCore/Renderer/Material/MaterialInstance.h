@@ -34,9 +34,13 @@ namespace cube
 			template <>
 			void SetParameterData(String& name, RPtr<Texture>& texture);
 
+			void Destroy();
+
 		private:
 			friend class Material;
 			MaterialInstance(SPtr<BaseRenderAPI>& renderAPI, HMaterial mat);
+
+			HMaterialInstance mMyHandler;
 
 			HashMap<String, uint64_t> mParameterIndexLookupMap;
 
