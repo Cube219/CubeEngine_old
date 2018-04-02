@@ -15,6 +15,7 @@
     <ClInclude Include="Json.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="Matrix.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="format.cc" />

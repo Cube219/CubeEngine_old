@@ -124,6 +124,7 @@
     <ClInclude Include="Json.h" />
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Vector\VectorArray.h" />
