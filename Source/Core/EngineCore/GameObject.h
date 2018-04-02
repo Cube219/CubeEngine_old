@@ -2,6 +2,7 @@
 
 #include "EngineCoreHeader.h"
 
+#include "BasicHandler.h"
 #include "Base/Vector.h"
 #include <glm.hpp>
 
@@ -12,9 +13,10 @@ namespace cube
 		class ENGINE_CORE_EXPORT GameObject
 		{
 		public:
+			static HGameObject Create();
+
+		public:
 			GameObject();
-			GameObject(SPtr<Renderer3D> renderer3D);
-			GameObject(SPtr<CameraRenderer3D> cameraRenderer3D);
 			~GameObject();
 
 			void SetPosition(Vector3 position);
@@ -29,32 +31,36 @@ namespace cube
 			Vector3 GetUp() const { return mUp; }
 			Vector3 GetRight() const { return mRight; }
 
-			SPtr<Renderer3D> GetRenderer() const { return mRenderer3D; }
-
-			SPtr<Component> GetComponent(const String& name);
+			HComponent GetComponent(const String& name);
 			template <typename T>
-			SPtr<T> GetComponent()
+			BasicHandler<T> GetComponent()
 			{
 				const String& nameToGet = T::GetName();
-				return DPCast(T)(GetComponent(nameToGet));
+				return GetComponent(nameToGet).Cast<T>();
 			}
 
-			SPtr<Component> AddComponent(const String& name);
+			HComponent AddComponent(const String& name);
 			template <typename T>
-			SPtr<T> AddComponent()
+			BasicHandler<T> AddComponent()
 			{
 				const String& nameToAdd = T::GetName();
-				return DPCast(T)(AddComponent(nameToAdd));
+				return AddComponent(nameToAdd).Cast<T>();
 			}
 
 			void Start();
 
 			void Update(float dt);
 
+			void Destroy();
+
 		private:
+			friend class GameObjectManager;
+			friend class Renderer3DComponent;
+
+			uint32_t mID;
+			HGameObject mMyHandler;
 
 			SPtr<Renderer3D> mRenderer3D;
-			SPtr<CameraRenderer3D> mCameraRenderer3D;
 
 			// Variables related to transform
 			Vector3 mPosition;
@@ -68,7 +74,7 @@ namespace cube
 			Vector3 mUp;
 			Vector3 mRight;
 
-			Vector<SPtr<Component>> mComponents;
+			Vector<HComponent> mComponents;
 		};
 	} // namespace core
 } // namespace cube

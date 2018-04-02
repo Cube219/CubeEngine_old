@@ -2,33 +2,32 @@
 
 #include "LogWriter.h"
 #include "EngineCore.h"
+#include "GameObjectManager.h"
 #include "Component/Component.h"
 #include "Component/ComponentManager.h"
 #include "Renderer/Renderer3D.h"
 #include "Renderer/CameraRenderer3D.h"
 #include <gtc/matrix_transform.hpp>
+#include "CubeEngine/Component/Renderer3DComponent.h"
 
 namespace cube
 {
 	namespace core
 	{
+		HGameObject GameObject::Create()
+		{
+			SPtr<GameObjectManager> manager = ECore()->GetGameObjectManager();
+
+			SPtr<GameObject> go = std::make_shared<GameObject>();
+			return manager->RegisterGameObject(go);
+		}
+
 		GameObject::GameObject() :
-			mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
+			mID(0), mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
 			mIsTransformChanged(true), mScaleMatrix(1.0f), mModelMatrix(1.0f),
 			mForward(0.0f, 0.0f, 1.0f), mUp(0.0f, 1.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f)
 		{
 			mRenderer3D = nullptr;
-			mCameraRenderer3D = nullptr;
-		}
-
-		GameObject::GameObject(SPtr<Renderer3D> renderer3D) : GameObject()
-		{
-			mRenderer3D = renderer3D;
-		}
-
-		GameObject::GameObject(SPtr<CameraRenderer3D> cameraRenderer3D) : GameObject()
-		{
-			mCameraRenderer3D = cameraRenderer3D;
 		}
 
 		GameObject::~GameObject()
@@ -53,9 +52,9 @@ namespace cube
 			mIsTransformChanged = true;
 		}
 
-		SPtr<Component> GameObject::GetComponent(const String& name)
+		HComponent GameObject::GetComponent(const String& name)
 		{
-			SPtr<Component> componentToGet = nullptr;
+			HComponent componentToGet;
 
 			for(auto& c : mComponents) {
 				if(c->GetName() == name) {
@@ -67,16 +66,16 @@ namespace cube
 			return componentToGet;
 		}
 
-		SPtr<Component> GameObject::AddComponent(const String& name)
+		HComponent GameObject::AddComponent(const String& name)
 		{
 			for(auto& com : mComponents) {
 				if(com->GetName() == name) {
 					CUBE_LOG(LogType::Error, "Cannot add component \"{0}\". The component already exists", name);
-					return nullptr;
+					return HComponent();
 				}
 			}
 
-			SPtr<Component> c = ECore()->GetComponentManager()->CreateComponent(name);
+			HComponent c = ECore()->GetComponentManager()->CreateComponent(name);
 			c->AttachGameObject(this);
 			mComponents.push_back(c);
 
@@ -132,7 +131,7 @@ namespace cube
 				mModelMatrix[1][2] = (cosX * sinY * sinZ) + (sinX * cosZ);
 				mModelMatrix[2][2] = cosX * cosY;
 
-				// Update the vectors of dirction
+				// Update the vectors of direction
 				// TODO: Matrix 구현시 glm을 통하지 않고 바로 곱하게 만들기
 				glm::vec4 forward(0.0f, 0.0f, 1.0f, 0.0f);
 				glm::vec4 up(0.0f, 1.0f, 0.0f, 0.0f);
@@ -157,6 +156,18 @@ namespace cube
 
 				mIsTransformChanged = false;
 			}
+		}
+
+		void GameObject::Destroy()
+		{
+			for(auto& c : mComponents) {
+				c->OnDestroy();
+			}
+			for(auto& c : mComponents) {
+				c->Destroy();
+			}
+
+			ECore()->GetGameObjectManager()->UnregisterGameObject(mMyHandler);
 		}
 	} // namespace core
 } // namespace cube

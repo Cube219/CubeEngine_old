@@ -15,5 +15,10 @@ namespace cube
 		Component::~Component()
 		{
 		}
+
+		void Component::Destroy()
+		{
+			mMyHandler.mData->data = nullptr;
+		}
 	} // namespace core
 } // namespace cube

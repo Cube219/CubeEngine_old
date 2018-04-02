@@ -1,6 +1,7 @@
 #include "Shader.h"
 
 #include "../../EngineCore.h"
+#include "../../Resource/ResourceManager.h"
 #include "../RendererManager.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
 
@@ -64,6 +65,11 @@ namespace cube
 			desc.entryPoint = entryPoint;
 
 			return desc;
+		}
+
+		RPtr<Shader> Shader::Load(const String& path)
+		{
+			return ECore()->GetResourceManager()->LoadResource<Shader>(path);
 		}
 
 		Shader::~Shader()

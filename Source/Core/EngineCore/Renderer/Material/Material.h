@@ -3,6 +3,7 @@
 #include "../../EngineCoreHeader.h"
 
 #include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
+#include "../../BasicHandler.h"
 
 #include <glm.hpp>
 
@@ -29,21 +30,29 @@ namespace cube
 			Vector<MaterialParameterInfo> parameters;
 		};
 
-		class ENGINE_CORE_EXPORT Material : public std::enable_shared_from_this<Material>
+		class ENGINE_CORE_EXPORT Material
 		{
 		public:
-			Material(SPtr<BaseRenderAPI>& renderAPI, MaterialInitializer& init);
+			static HMaterial Create(const MaterialInitializer& init);
+
+		public:
 			~Material();
 
-			SPtr<MaterialInstance> CreateInstance();
+			HMaterialInstance CreateInstance();
 
 			const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
 
 			SPtr<BaseRenderDescriptorSetLayout> GetDescriptorSetLayout() const { return mDescriptorSetLayout; }
 
+			void Destroy();
+
 		private:
 			friend class RendererManager;
 			friend class MaterialInstance;
+
+			Material(SPtr<BaseRenderAPI>& renderAPI, const MaterialInitializer& init);
+
+			HMaterial mMyHandler;
 
 			int mIndex = -1; // Used in RendererManager
 

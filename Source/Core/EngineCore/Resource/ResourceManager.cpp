@@ -14,13 +14,14 @@ namespace cube
 
 		ResourceManager::~ResourceManager()
 		{
+			UnloadUnusedResources();
 		}
 		void ResourceManager::RegisterImporter(UPtr<ResourceImporter> importer)
 		{
 			mImporters.push_back(std::move(importer));
 		}
 		
-		RPtr<Resource> ResourceManager::LoadResource(String& path)
+		RPtr<Resource> ResourceManager::LoadResource(const String& path)
 		{
 			using namespace platform;
 
@@ -82,6 +83,11 @@ namespace cube
 			return RPtr<Resource>(loadedRes);
 		}
 		
+		void ResourceManager::ReleaseResource(const RPtr<Resource>& res)
+		{
+			Lock lock(mLoadedResourcesMutex);
+		}
+
 		void ResourceManager::UnloadUnusedResources()
 		{
 			Lock lock(mLoadedResourcesMutex);

@@ -132,11 +132,13 @@
   <ItemGroup>
     <ClCompile Include="Component\CameraComponent.cpp" />
     <ClCompile Include="Component\MoveComponent.cpp" />
+    <ClCompile Include="Component\Renderer3DComponent.cpp" />
     <ClCompile Include="CubeEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component\CameraComponent.h" />
     <ClInclude Include="Component\MoveComponent.h" />
+    <ClInclude Include="Component\Renderer3DComponent.h" />
     <ClInclude Include="CubeEngine.h" />
     <ClInclude Include="CubeEngineHeader.h" />
   </ItemGroup>

@@ -5,6 +5,7 @@
 #include <glm.hpp>
 
 #include "Vertex.h"
+#include "../BasicHandler.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderCommandBuffer.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
@@ -14,18 +15,18 @@ namespace cube
 {
 	namespace core
 	{
-		class Renderer3D
+		class ENGINE_CORE_EXPORT Renderer3D
 		{
 		public:
 			Renderer3D(SPtr<BaseRenderAPI>& renderAPI, SPtr<BaseRenderDescriptorSetLayout>& mPerObjectDescriptorSetLayout);
 			~Renderer3D();
 
-			SPtr<MaterialInstance> GetMaterialInstance() const { return mMaterialIns; }
+			HMaterialInstance GetMaterialInstance() const { return mMaterialIns; }
 
 			SPtr<BaseRenderDescriptorSet> GetDescriptorSet() const { return mDescriptorSet; };
 
 			void SetMesh(SPtr<Mesh>& mesh);
-			void SetMaterialInstance(SPtr<MaterialInstance>& materialIns);
+			void SetMaterialInstance(HMaterialInstance& materialIns);
 			void SetModelMatrix(glm::mat4 modelMatrix);
 
 			void Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
@@ -40,7 +41,7 @@ namespace cube
 			bool mIsMeshUpdated = false;
 			SPtr<Mesh> mMesh;
 			
-			SPtr<MaterialInstance> mMaterialIns;
+			HMaterialInstance mMaterialIns;
 
 			glm::mat4 mModelMatrix;
 			SPtr<BaseRenderDescriptorSet> mDescriptorSet;
@@ -52,5 +53,5 @@ namespace cube
 
 			SPtr<BaseRenderAPI> mRenderAPI_ref;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

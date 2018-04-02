@@ -22,12 +22,15 @@ namespace cube
 		template <typename T>
 		class ResourcePointer;
 
-		class LogWriter;
-
 		class BasicString;
 		class PathString;
 		class ImmutableString;
 		class StringManager;
+
+		template <typename T>
+		struct BasicHandlerData;
+		template <typename T>
+		class BasicHandler;
 
 		class Renderer3D;
 		class CameraRenderer3D;
@@ -43,7 +46,11 @@ namespace cube
 		struct MaterialParameterInfo;
 		struct MaterialInitializer;
 		class Material;
+		using MaterialData = BasicHandlerData<Material>;
+		using HMaterial = BasicHandler<Material>;
 		class MaterialInstance;
+		using MaterialInstanceData = BasicHandlerData<MaterialInstance>;
+		using HMaterialInstance = BasicHandler<MaterialInstance>;
 
 		class Shader;
 
@@ -56,12 +63,18 @@ namespace cube
 
 		class ModuleManager;
 
+		class GameObjectManager;
 		class GameObject;
+		using GameObjectData = BasicHandlerData<GameObject>;
+		using HGameObject = BasicHandler<GameObject>;
 
 		class ComponentManager;
 		class Component;
+		using ComponentData = BasicHandlerData<Component>;
+		using HComponent = BasicHandler<Component>;
 	}
 }
+
 
 #ifdef ENGINE_CORE_EXPORTS
 	#define ENGINE_CORE_EXPORT __declspec(dllexport) 

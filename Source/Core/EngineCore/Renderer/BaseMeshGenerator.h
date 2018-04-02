@@ -6,7 +6,7 @@ namespace cube
 {
 	namespace core
 	{
-		class BaseMeshGenerator
+		class ENGINE_CORE_EXPORT BaseMeshGenerator
 		{
 		public:
 			static SPtr<Mesh> GetBoxMesh();

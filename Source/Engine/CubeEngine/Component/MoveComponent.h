@@ -7,7 +7,7 @@
 
 namespace cube
 {
-	class MoveComponent : public core::Component
+	class CUBE_ENGINE_EXPORT MoveComponent : public core::Component
 	{
 	public:
 		static const String& GetName() { return mName; }
@@ -26,4 +26,7 @@ namespace cube
 	private:
 		SPtr<module::InputModule> mInputModule;
 	};
+
+	using MoveComponentData = core::BasicHandlerData<MoveComponent>;
+	using HMoveComponent = core::BasicHandler<MoveComponent>;
 } // namespace cube

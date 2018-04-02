@@ -30,6 +30,9 @@ namespace cube
 		class ENGINE_CORE_EXPORT Texture : public Resource
 		{
 		public:
+			static RPtr<Texture> Load(const String& path);
+
+		public:
 			virtual ~Texture();
 
 			void SendTextureData(SPtr<BaseRenderCommandBuffer>& commandBuffer);
@@ -55,5 +58,5 @@ namespace cube
 
 			SPtr<RendererManager> mManager_ref;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

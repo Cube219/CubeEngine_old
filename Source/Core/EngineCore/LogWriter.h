@@ -1,7 +1,12 @@
 ﻿#pragma once
 
-#include "EngineCoreHeader.h"
+#ifdef ENGINE_CORE_EXPORTS
+#define ENGINE_CORE_EXPORT __declspec(dllexport) 
+#else // ENGINE_CORE_EXPORTS
+#define ENGINE_CORE_EXPORT __declspec(dllimport) 
+#endif // ENGINE_CORE_EXPORTS
 
+#include "Base/BaseTypes.h"
 #include "Base/format.h"
 
 namespace cube
@@ -15,7 +20,6 @@ namespace cube
 	{
 		class ENGINE_CORE_EXPORT LogWriter
 		{
-			friend class EngineCore;
 		public:
 
 			template <typename ...Args>
@@ -35,6 +39,8 @@ namespace cube
 			LogWriter(const LogWriter& other) = delete;
 			LogWriter& operator=(const LogWriter& other) = delete;
 			
+			friend class EngineCore;
+
 			// Only can access to the friend class (EngineCore)
 			static void Init();
 

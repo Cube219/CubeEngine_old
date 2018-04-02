@@ -8,8 +8,8 @@ namespace cube
 {
 	namespace core
 	{
-		MaterialInstance::MaterialInstance(SPtr<BaseRenderAPI>& renderAPI, SPtr<Material> mat) :
-			mMaterialRef(mat)
+		MaterialInstance::MaterialInstance(SPtr<BaseRenderAPI>& renderAPI, HMaterial mat) :
+			mMaterial(mat)
 		{
 			mDescriptorSet = renderAPI->CreateDescriptorSet(mat->GetDescriptorSetLayout());
 
@@ -92,6 +92,11 @@ namespace cube
 			SPtr<BaseRenderSampler> sampler = texture->GetSampler();
 
 			mDescriptorSet->WriteImagesInDescriptor(paramIndex, 1, &imageView, &sampler);
+		}
+
+		void MaterialInstance::Destroy()
+		{
+			mMyHandler.mData->data = nullptr;
 		}
 	} // namespace core
 } // namespace cube

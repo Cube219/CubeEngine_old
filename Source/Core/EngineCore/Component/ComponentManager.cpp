@@ -1,6 +1,7 @@
 #include "ComponentManager.h"
 
 #include "../LogWriter.h"
+#include "Component.h"
 
 namespace cube
 {
@@ -14,12 +15,12 @@ namespace cube
 		{
 		}
 
-		SPtr<Component> ComponentManager::CreateComponent(const String& name)
+		HComponent ComponentManager::CreateComponent(const String& name)
 		{
 			auto findIter = mComponentCreators.find(name);
 			if(findIter == mComponentCreators.end()) {
 				CUBE_LOG(LogType::Error, "Cannot create component \"{0}\". It hasn't been registerd", name);
-				return nullptr;
+				return HComponent();
 			}
 
 			return findIter->second();

@@ -48,10 +48,12 @@ namespace cube
 			void SetFPSLimit(int limit);
 
 			SPtr<RendererManager> GetRendererManager() const { return mRendererManager; }
+			SPtr<ResourceManager> GetResourceManager() const { return mResourceManager; }
 			SPtr<TimeManager> GetTimeManager() const { return mTimeManager; }
 			SPtr<StringManager> GetStringManager() const { return mStringManager; }
 			SPtr<ModuleManager> GetModuleManager() const { return mModuleManager; }
 			SPtr<ComponentManager> GetComponentManager() const { return mComponentManager; }
+			SPtr<GameObjectManager> GetGameObjectManager() const { return mGameObjectManager;  }
 
 		private:
 			friend class CubeEngine;
@@ -69,18 +71,7 @@ namespace cube
 
 			SPtr<ModuleManager> mModuleManager;
 			SPtr<ComponentManager> mComponentManager;
-
-			SPtr<Mesh> mBoxMesh;
-			RPtr<Texture> mTexture;
-			RPtr<Texture> mTexture2;
-
-			RPtr<Shader> mMaterialVertexShader;
-			RPtr<Shader> mMaterialFragmentShader;
-			SPtr<Material> mMaterial;
-			SPtr<MaterialInstance> mMaterialIns1;
-			SPtr<MaterialInstance> mMaterialIns2;
-			Vector<SPtr<GameObject>> mGos;
-			SPtr<GameObject> mCameraGo;
+			SPtr<GameObjectManager> mGameObjectManager;
 
 			int mFPSLimit;
 		};

@@ -29,7 +29,7 @@ namespace cube
 			mIsMeshUpdated = true;
 		}
 
-		void Renderer3D::SetMaterialInstance(SPtr<MaterialInstance>& materialIns)
+		void Renderer3D::SetMaterialInstance(HMaterialInstance& materialIns)
 		{
 			mMaterialIns = materialIns;
 		}
@@ -41,7 +41,7 @@ namespace cube
 
 		void Renderer3D::Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
 		{
-			if(mMaterialIns == nullptr)
+			if(mMaterialIns.IsDestroyed() == true)
 				return;
 
 			Vector<Vertex>& vertices = mMesh->GetVertex();

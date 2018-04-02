@@ -5,6 +5,7 @@
 #include "BaseRenderAPI/BaseRenderAPI.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
+#include "../../BasicHandler.h"
 
 namespace cube
 {
@@ -23,7 +24,7 @@ namespace cube
 
 			~MaterialInstance();
 
-			SPtr<Material> GetMaterial() const { return mMaterialRef; }
+			HMaterial GetMaterial() const { return mMaterial; }
 			
 			SPtr<BaseRenderDescriptorSet> GetDescriptorSet() const { return mDescriptorSet; }
 
@@ -33,9 +34,13 @@ namespace cube
 			template <>
 			void SetParameterData(String& name, RPtr<Texture>& texture);
 
+			void Destroy();
+
 		private:
 			friend class Material;
-			MaterialInstance(SPtr<BaseRenderAPI>& renderAPI, SPtr<Material> mat);
+			MaterialInstance(SPtr<BaseRenderAPI>& renderAPI, HMaterial mat);
+
+			HMaterialInstance mMyHandler;
 
 			HashMap<String, uint64_t> mParameterIndexLookupMap;
 
@@ -46,7 +51,7 @@ namespace cube
 
 			SPtr<BaseRenderDescriptorSet> mDescriptorSet;
 
-			SPtr<Material> mMaterialRef;
+			HMaterial mMaterial;
 		};
 	} // namespace core
 } // namespace cube

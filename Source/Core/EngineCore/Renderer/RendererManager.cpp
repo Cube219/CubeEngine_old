@@ -79,21 +79,25 @@ namespace cube
 			mRenderers.clear();
 		}
 
-		void RendererManager::RegisterMaterial(SPtr<Material>& material)
+		HMaterial RendererManager::RegisterMaterial(SPtr<Material>& material)
 		{
-			if(material->mIndex != -1)
-				return;
-
 			Lock(mMaterialsMutex);
 
-			mMaterials.push_back(material);
-			material->mIndex = (int)mMaterials.size() - 1;
+			material->mIndex = (int)mMaterials.size();
+
+			SPtr<MaterialData> matDataPtr = std::make_shared<MaterialData>();
+			matDataPtr->data = std::move(material);
+			matDataPtr->data->mMyHandler = HMaterial(matDataPtr);
+			mMaterials.push_back(matDataPtr);
 			
-			mMaterialPipelines.push_back(CreatePipeline(material));
+			HMaterial hMat = HMaterial(matDataPtr);
+			mMaterialPipelines.push_back(CreatePipeline(hMat));
 			mMaterialCommandBuffers.push_back(mRenderAPI->CreateCommandBuffer(false));
+
+			return hMat;
 		}
 
-		void RendererManager::UnregisterMaterial(SPtr<Material>& material)
+		void RendererManager::UnregisterMaterial(HMaterial& material)
 		{
 			int index = material->mIndex;
 
@@ -104,16 +108,16 @@ namespace cube
 
 			Lock(mMaterialsMutex);
 
-			int lastIndex = mMaterials.back()->mIndex;
+			int lastIndex = mMaterials.back()->data->mIndex;
 			
+			mMaterials[index]->data = nullptr;
+
 			std::swap(mMaterials[index], mMaterials[lastIndex]);
 			std::swap(mMaterialPipelines[index], mMaterialPipelines[lastIndex]);
 			std::swap(mMaterialCommandBuffers[index], mMaterialCommandBuffers[lastIndex]);
 			mMaterials.pop_back();
 			mMaterialPipelines.pop_back();
 			mMaterialCommandBuffers.pop_back();
-			
-			material->mIndex = -1;
 		}
 
 		void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
@@ -139,6 +143,7 @@ namespace cube
 			Lock(mRenderersMutex);
 
 			int lastIndex = mRenderers.back()->mIndex;
+			mRenderers[lastIndex]->mIndex = index;
 
 			std::swap(mRenderers[index], mRenderers[lastIndex]);
 			mRenderers.pop_back();
@@ -303,7 +308,7 @@ namespace cube
 			//       그렇게하면 BindDescriptorSets 횟수를 줄일 수 있음
 			//       그럴러면 Material에서 Instance를 생성할 때 저장해둬야 함
 			for(auto& renderer : mRenderers) {
-				SPtr<MaterialInstance> materialIns = renderer->GetMaterialInstance();
+				HMaterialInstance materialIns = renderer->GetMaterialInstance();
 				int materialIndex = materialIns->GetMaterial()->mIndex;
 				SPtr<BaseRenderDescriptorSet> materialInsDesc = materialIns->GetDescriptorSet();
 
@@ -328,7 +333,7 @@ namespace cube
 			mMainCommandBuffer->End();
 		}
 
-		SPtr<BaseRenderGraphicsPipeline> RendererManager::CreatePipeline(SPtr<Material>& material)
+		SPtr<BaseRenderGraphicsPipeline> RendererManager::CreatePipeline(HMaterial& material)
 		{
 			BaseRenderGraphicsPipelineInitializer initializer;
 

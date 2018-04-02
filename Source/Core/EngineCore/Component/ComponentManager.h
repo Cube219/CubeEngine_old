@@ -22,17 +22,20 @@ namespace cube
 				CheckIfComponentExisted(name);
 
 				mComponentCreators[name] = []() {
-					SPtr<T> c(new T());
-					return c;
+					auto comDataPtr = std::make_shared<BasicHandlerData<Component>>();
+					comDataPtr->data = std::make_shared<T>();
+					comDataPtr->data->mMyHandler = HComponent(comDataPtr);
+
+					return HComponent(comDataPtr);
 				};
 			}
 
-			SPtr<Component> CreateComponent(const String& name);
+			HComponent CreateComponent(const String& name);
 
 		private:
 			void CheckIfComponentExisted(const String& name);
 
-			HashMap<String, std::function<SPtr<Component>()>> mComponentCreators;
+			HashMap<String, std::function<HComponent()>> mComponentCreators;
 		};
 	} // namespace core
 } // namespace cube
