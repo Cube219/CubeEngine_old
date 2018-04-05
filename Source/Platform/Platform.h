@@ -26,6 +26,10 @@ namespace cube
 			static void StartLoop();
 			static void Sleep(uint32_t time);
 
+			static void ShowCursor();
+			static void HideCursor();
+			static void MoveCursor(int x, int y);
+
 			static uint32_t GetWindowWidth() { return width; }
 			static uint32_t GetWindowHeight() { return height; }
 
@@ -77,6 +81,8 @@ namespace cube
 
 			static uint32_t width;
 			static uint32_t height;
+			static uint32_t windowPosX;
+			static uint32_t windowPosY;
 
 			static std::function<void(KeyCode)> keyDownFunction;
 			static std::function<void(KeyCode)> keyUpFunction;

@@ -20,6 +20,8 @@ namespace cube
 	{
 		String n = CUBE_T("InputModule");
 		mInputModule = DPCast(module::InputModule)(core::ECore()->GetModuleManager()->GetModule(n));
+
+		mInputModule->LockCursor();
 	}
 
 	void MoveComponent::OnUpdate(float dt)

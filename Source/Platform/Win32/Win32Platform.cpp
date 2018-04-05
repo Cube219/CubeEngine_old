@@ -27,6 +27,8 @@ namespace cube
 
 		uint32_t Platform::width;
 		uint32_t Platform::height;
+		uint32_t Platform::windowPosX;
+		uint32_t Platform::windowPosY;
 
 		std::function<void(KeyCode)> Platform::keyDownFunction;
 		std::function<void(KeyCode)> Platform::keyUpFunction;
@@ -121,6 +123,26 @@ namespace cube
 		void Platform::Sleep(uint32_t time)
 		{
 			::Sleep(time);
+		}
+
+		void Platform::ShowCursor()
+		{
+			::ShowCursor(TRUE);
+		}
+
+		void Platform::HideCursor()
+		{
+			::ShowCursor(FALSE);
+		}
+
+		void Platform::MoveCursor(int x, int y)
+		{
+			POINT p;
+			p.x = x;
+			p.y = y;
+
+			ClientToScreen(Platform::data.window, &p);
+			SetCursorPos(p.x, p.y);
 		}
 
 		SPtr<DLib> Platform::LoadDLib(const String& path)

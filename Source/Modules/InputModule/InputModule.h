@@ -61,6 +61,9 @@ namespace cube
 
 			float GetAxisValue(String& name);
 
+			void LockCursor();
+			void UnlockCursor();
+
 			void SendVibration(uint32_t playerIndex, float time, float intensity);
 			void SendVibration(uint32_t playerIndex, float time, float leftIntensity, float rightIntensity);
 

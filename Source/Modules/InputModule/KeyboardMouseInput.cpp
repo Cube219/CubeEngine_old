@@ -8,7 +8,8 @@ namespace cube
 {
 	namespace module
 	{
-		KeyboardMouseInput::KeyboardMouseInput()
+		KeyboardMouseInput::KeyboardMouseInput() : 
+			mIsCursorLocked(false)
 		{
 			platform::Platform::SetKeyDownFunction([this](KeyCode keyCode) {
 				mIsKeyPressed[SCast(int)(keyCode)] = true;
@@ -59,6 +60,18 @@ namespace cube
 			return mIsMousePressed[SCast(int)(buttonType)];
 		}
 
+		void KeyboardMouseInput::LockCursor()
+		{
+			platform::Platform::HideCursor();
+			mIsCursorLocked = true;
+		}
+
+		void KeyboardMouseInput::UnlockCursor()
+		{
+			platform::Platform::ShowCursor();
+			mIsCursorLocked = false;
+		}
+
 		Vector2 KeyboardMouseInput::GetMousePosition()
 		{
 			return mMousePos;
@@ -71,7 +84,16 @@ namespace cube
 
 		void KeyboardMouseInput::UpdateMouseDelta(float dt)
 		{
-			mMouseDeltaPos = (mMousePos - mLastMousePos) * dt * 3.0f;
+			if(mIsCursorLocked == false) {
+				mMouseDeltaPos = (mMousePos - mLastMousePos) * dt * 3.0f;
+			} else {
+				int width = platform::Platform::GetWindowWidth();
+				int height = platform::Platform::GetWindowHeight();
+
+				mMouseDeltaPos = (mMousePos - Vector2(width / 2, height / 2)) * dt * 3.0f;
+
+				platform::Platform::MoveCursor(width / 2, height / 2);
+			}
 
 			mLastMousePos = mMousePos;
 		}
@@ -331,5 +353,5 @@ namespace cube
 
 			return keyCode;
 		}
-	}
-}
+	} // namespace module
+} // namespace cube

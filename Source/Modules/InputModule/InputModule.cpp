@@ -211,6 +211,16 @@ namespace cube
 			return mAxes[name].currentValue;
 		}
 
+		void InputModule::LockCursor()
+		{
+			mKMInput->LockCursor();
+		}
+
+		void InputModule::UnlockCursor()
+		{
+			mKMInput->UnlockCursor();
+		}
+
 		void InputModule::SendVibration(uint32_t playerIndex, float time, float intensity)
 		{
 			mIsVibrated[playerIndex] = true;

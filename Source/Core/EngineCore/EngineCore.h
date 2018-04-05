@@ -78,5 +78,5 @@ namespace cube
 
 		// Helper function to get singleton instance easily
 		ENGINE_CORE_EXPORT EngineCore* ECore();
-	}
-}
+	} // namespace core
+} // namespace cube

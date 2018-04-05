@@ -33,6 +33,9 @@ namespace cube
 
 			bool IsMouseDown(MouseButtonType buttonType);
 
+			void LockCursor();
+			void UnlockCursor();
+
 			Vector2 GetMousePosition();
 
 			Vector2 GetMouseDeltaPosition();
@@ -45,10 +48,11 @@ namespace cube
 			bool mIsKeyPressed[MaxKeyCode];
 
 			bool mIsMousePressed[3];
+			bool mIsCursorLocked;
 
 			Vector2 mLastMousePos;
 			Vector2 mMousePos;
 			Vector2 mMouseDeltaPos;
 		};
-	}
-}
+	} // namespace module
+} // namespace cube
