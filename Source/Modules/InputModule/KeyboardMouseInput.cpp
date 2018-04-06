@@ -8,8 +8,8 @@ namespace cube
 {
 	namespace module
 	{
-		KeyboardMouseInput::KeyboardMouseInput() : 
-			mIsCursorLocked(false)
+		KeyboardMouseInput::KeyboardMouseInput() :
+			mIsCursorLocked(false), mIsKeyboardActivated(true), mIsMouseActivated(true)
 		{
 			platform::Platform::SetKeyDownFunction([this](KeyCode keyCode) {
 				mIsKeyPressed[SCast(int)(keyCode)] = true;
@@ -20,6 +20,9 @@ namespace cube
 			
 			platform::Platform::SetMouseDownFunction([this](MouseButtonType buttonType) {
 				mIsMousePressed[SCast(int)(buttonType)] = true;
+
+				if(mIsCursorLocked == true && mIsMouseActivated == false)
+					SetMouseActivate();
 			});
 			platform::Platform::SetMouseUpFunction([this](MouseButtonType buttonType) {
 				mIsMousePressed[SCast(int)(buttonType)] = false;
@@ -27,7 +30,26 @@ namespace cube
 			platform::Platform::SetMouseWheelFunction([this](int wheelDelta) {
 			});
 			platform::Platform::SetMousePosFunction([this](int x, int y) {
+				if(mIsMouseActivated == false)
+					return;
+
 				mMousePos = Vector2(SCast(float)(x), SCast(float)(y));
+			});
+
+			platform::Platform::SetActivatedFunction([this](platform::WindowActivatedState state) {
+				if(state == platform::WindowActivatedState::Active) {
+					mIsKeyboardActivated = true;
+					SetMouseActivate();
+				} else if(state == platform::WindowActivatedState::ClickActive) {
+					mIsKeyboardActivated = true;
+
+					if(mIsCursorLocked == false)
+						SetMouseActivate();
+					// Defer to activate the mouse when the cursor is locked. Activate it after clicking
+				} else if(state == platform::WindowActivatedState::Inactive) {
+					mIsKeyboardActivated = false;
+					SetMouseInactivate();
+				}
 			});
 
 			mMousePos = Vector2::Zero();
@@ -42,21 +64,31 @@ namespace cube
 			platform::Platform::SetMouseUpFunction(0);
 			platform::Platform::SetMouseWheelFunction(0);
 			platform::Platform::SetMousePosFunction(0);
+			platform::Platform::SetActivatedFunction(0);
 		}
 
 		bool KeyboardMouseInput::IsButtonPressed(DigitalButton button)
 		{
+			if(mIsKeyboardActivated == false)
+				return false;
+
 			KeyCode code = GetKeyCode(button);
 			return mIsKeyPressed[SCast(int)(code)];
 		}
 
 		bool KeyboardMouseInput::IsKeyPressed(KeyCode keyCode)
 		{
+			if(mIsKeyboardActivated == false)
+				return false;
+
 			return mIsKeyPressed[SCast(int)(keyCode)];
 		}
 
 		bool KeyboardMouseInput::IsMouseDown(MouseButtonType buttonType)
 		{
+			if(mIsMouseActivated == false)
+				return false;
+
 			return mIsMousePressed[SCast(int)(buttonType)];
 		}
 
@@ -84,6 +116,10 @@ namespace cube
 
 		void KeyboardMouseInput::UpdateMouseDelta(float dt)
 		{
+			if(mIsMouseActivated == false) {
+				return;
+			}
+
 			if(mIsCursorLocked == false) {
 				mMouseDeltaPos = (mMousePos - mLastMousePos) * dt * 3.0f;
 			} else {
@@ -96,6 +132,30 @@ namespace cube
 			}
 
 			mLastMousePos = mMousePos;
+		}
+
+		void KeyboardMouseInput::SetMouseActivate()
+		{
+			if(mIsCursorLocked == true) {
+				int width = platform::Platform::GetWindowWidth();
+				int height = platform::Platform::GetWindowHeight();
+
+				platform::Platform::MoveCursor(width / 2, height / 2);
+				platform::Platform::HideCursor();
+			}
+
+			mLastMousePos = mMousePos;
+			mIsMouseActivated = true;
+		}
+
+		void KeyboardMouseInput::SetMouseInactivate()
+		{
+			if(mIsCursorLocked == true) {
+				platform::Platform::ShowCursor();
+			}
+
+			mMouseDeltaPos = Vector2::Zero();
+			mIsMouseActivated = false;
 		}
 
 		KeyCode KeyboardMouseInput::GetKeyCode(DigitalButton button)

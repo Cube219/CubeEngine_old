@@ -15,6 +15,11 @@ namespace cube
 {
 	namespace platform
 	{
+		enum class WindowActivatedState
+		{
+			Active, ClickActive, Inactive
+		};
+
 		class PLATFORM_EXPORT Platform
 		{
 		public:
@@ -70,6 +75,10 @@ namespace cube
 			{
 				resizeFunction = pFunction;
 			}
+			static void SetActivatedFunction(std::function<void(WindowActivatedState)> pFunction)
+			{
+				activatedFunction = pFunction;
+			}
 
 			struct Data;
 			static Data data;
@@ -93,6 +102,7 @@ namespace cube
 
 			static std::function<void()> loopFunction;
 			static std::function<void(uint32_t, uint32_t)> resizeFunction;
+			static std::function<void(WindowActivatedState)> activatedFunction;
 
 		public:
 			Platform() = delete;

@@ -43,7 +43,13 @@ namespace cube
 			void UpdateMouseDelta(float dt);
 
 		private:
+			void SetMouseActivate();
+			void SetMouseInactivate();
+
 			KeyCode GetKeyCode(DigitalButton button);
+
+			bool mIsKeyboardActivated;
+			bool mIsMouseActivated;
 
 			bool mIsKeyPressed[MaxKeyCode];
 

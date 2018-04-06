@@ -39,6 +39,7 @@ namespace cube
 
 		std::function<void()> Platform::loopFunction;
 		std::function<void(uint32_t, uint32_t)> Platform::resizeFunction;
+		std::function<void(WindowActivatedState)> Platform::activatedFunction;
 
 		void Platform::Init()
 		{
@@ -132,7 +133,11 @@ namespace cube
 
 		void Platform::HideCursor()
 		{
-			::ShowCursor(FALSE);
+			while(1) {
+				int displayCount = ::ShowCursor(FALSE);
+				if(displayCount <= -1)
+					break;
+			}
 		}
 
 		void Platform::MoveCursor(int x, int y)
@@ -165,9 +170,40 @@ namespace cube
 			return Platform::data.window;
 		}
 
+		bool isActivatedByMouse = false;
+
 		LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			switch(uMsg) {
+				// Clicking the menu buttons on the header doesn't dispatch WA_CLICKACTIVE in WM_ACTIVATE.
+				// So using WM_MOUSEACTIVATE, check whether the window is activated by clicking.
+				case WM_MOUSEACTIVATE:
+					isActivatedByMouse = true;
+					break;
+
+				case WM_ACTIVATE:
+				{
+					WindowActivatedState state;
+					WORD s = LOWORD(wParam);
+
+					if(s == WA_ACTIVE)
+						state = (isActivatedByMouse == true) ? WindowActivatedState::ClickActive :  WindowActivatedState::Active;
+					else if(s == WA_CLICKACTIVE)
+						state = WindowActivatedState::ClickActive;
+					else if(s == WA_INACTIVE)
+						state = WindowActivatedState::Inactive;
+					else {
+						std::wcout << "Win32Platform: Invalid actiave state (" << s << ")" << std::endl;
+					}
+
+					if(Platform::activatedFunction != nullptr)
+						Platform::activatedFunction(state);
+
+					isActivatedByMouse = false;
+
+					break;
+				}
+
 				case WM_CLOSE:
 					PostQuitMessage(0);
 					break;
