@@ -31,92 +31,113 @@ namespace cube
 			WORD padBtn = mState[playerIndex].Gamepad.wButtons;
 
 			switch(button) {
-				case XboxControllerInput::X:
+				case DigitalButton::X:
 					if((padBtn & XINPUT_GAMEPAD_X) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::Y:
+				case DigitalButton::Y:
 					if((padBtn & XINPUT_GAMEPAD_Y) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::A:
+				case DigitalButton::A:
 					if((padBtn & XINPUT_GAMEPAD_A) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::B:
+				case DigitalButton::B:
 					if((padBtn & XINPUT_GAMEPAD_B) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::Back:
+				case DigitalButton::Back:
 					if((padBtn & XINPUT_GAMEPAD_BACK) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::Start:
+				case DigitalButton::Start:
 					if((padBtn & XINPUT_GAMEPAD_START) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::LeftButton:
+				case DigitalButton::LeftButton:
 					if((padBtn & XINPUT_GAMEPAD_LEFT_SHOULDER) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::RightButton:
+				case DigitalButton::RightButton:
 					if((padBtn & XINPUT_GAMEPAD_RIGHT_SHOULDER) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::DPadLeft:
+				case DigitalButton::DPadLeft:
 					if((padBtn & XINPUT_GAMEPAD_DPAD_LEFT) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::DPadRight:
+				case DigitalButton::DPadRight:
 					if((padBtn & XINPUT_GAMEPAD_DPAD_RIGHT) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::DPadUp:
+				case DigitalButton::DPadUp:
 					if((padBtn & XINPUT_GAMEPAD_DPAD_UP) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::DPadDown:
+				case DigitalButton::DPadDown:
 					if((padBtn & XINPUT_GAMEPAD_DPAD_DOWN) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::LeftStick:
+				case DigitalButton::LeftStick:
 					if((padBtn & XINPUT_GAMEPAD_LEFT_THUMB) > 0)
 						return true;
 					else
 						return false;
 				
-				case XboxControllerInput::RightStick:
+				case DigitalButton::RightStick:
 					if((padBtn & XINPUT_GAMEPAD_RIGHT_THUMB) > 0)
 						return true;
 					else
 						return false;
+
+				case DigitalButton::LeftTrigger:
+				{
+					BYTE triggerValue;
+					triggerValue = mState[playerIndex].Gamepad.bLeftTrigger;
+					if(triggerValue > 180)
+						return true;
+					else
+						return false;
+				}
+
+				case DigitalButton::RightTrigger:
+				{
+					BYTE triggerValue;
+					triggerValue = mState[playerIndex].Gamepad.bRightTrigger;
+					if(triggerValue > 180)
+						return true;
+					else
+						return false;
+				}
+					
 				
 				default:
-					CUBE_LOG(LogType::Error, "Invalid digital button ({0})", button);
+					CUBE_LOG(LogType::Error, "Invalid digital button ({0})", (int)button);
 					return false;
 			}
 
@@ -141,7 +162,7 @@ namespace cube
 			BYTE triggerValue;
 
 			switch(button) {
-				case XboxControllerInput::LeftStickX:
+				case AnalogButton::LeftStickX:
 					stickValue = mState[playerIndex].Gamepad.sThumbLX;
 					stickValueAbs = stickValue >= 0 ? stickValue : -stickValue;
 					if(stickValue != -32768 && stickValueAbs < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
@@ -149,7 +170,7 @@ namespace cube
 					
 					return static_cast<float>(stickValue) / 32767.0f;
 				
-				case XboxControllerInput::LeftStickY:
+				case AnalogButton::LeftStickY:
 					stickValue = mState[playerIndex].Gamepad.sThumbLY;
 					stickValueAbs = stickValue >= 0 ? stickValue : -stickValue;
 					if(stickValue != -32768 && stickValueAbs < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
@@ -157,7 +178,7 @@ namespace cube
 
 					return static_cast<float>(stickValue) / 32767.0f;
 				
-				case XboxControllerInput::RightStickX:
+				case AnalogButton::RightStickX:
 					stickValue = mState[playerIndex].Gamepad.sThumbRX;
 					stickValueAbs = stickValue >= 0 ? stickValue : -stickValue;
 					if(stickValue != -32768 && stickValueAbs < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
@@ -165,7 +186,7 @@ namespace cube
 
 					return static_cast<float>(stickValue) / 32767.0f;
 				
-				case XboxControllerInput::RightStickY:
+				case AnalogButton::RightStickY:
 					stickValue = mState[playerIndex].Gamepad.sThumbRY;
 					stickValueAbs = stickValue >= 0 ? stickValue : -stickValue;
 					if(stickValue != -32768 && stickValueAbs < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
@@ -173,20 +194,20 @@ namespace cube
 
 					return static_cast<float>(stickValue) / 32767.0f;
 				
-				case XboxControllerInput::LeftTrigger:
+				case AnalogButton::LeftTrigger:
 					triggerValue = mState[playerIndex].Gamepad.bLeftTrigger;
 					if(triggerValue <= XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 						triggerValue = 0;
 					return static_cast<float>(triggerValue) / 255.0f;
 				
-				case XboxControllerInput::RightTrigger:
+				case AnalogButton::RightTrigger:
 					triggerValue = mState[playerIndex].Gamepad.bRightTrigger;
 					if(triggerValue <= XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
 						triggerValue = 0;
 					return static_cast<float>(triggerValue) / 255.0f;
 				
 				default:
-					CUBE_LOG(LogType::Error, "Invalid analog button ({0})", button);
+					CUBE_LOG(LogType::Error, "Invalid analog button ({0})", (int)button);
 					return 0.0f;
 			}
 

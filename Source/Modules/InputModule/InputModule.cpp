@@ -67,6 +67,17 @@ namespace cube
 			moveVertically.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::LeftStickY));
 			mAxes[CUBE_T("MoveVertically")] = moveVertically;
 
+			Axis moveUpDown;
+			moveUpDown.isClamped = true;
+			moveUpDown.currentValue = 0.0f;
+			moveUpDown.deadZone = 0.001f;
+			moveUpDown.sensitivityToZero = 10.0f;
+			moveUpDown.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::E), 10.0f, 1.0f});
+			moveUpDown.bindedVirtualButtons.push_back({KM_DIGIT_BTN_INFO(KeyboardMouseInput::DigitalButton::Q), 10.0f, -1.0f});
+			moveUpDown.bindedVirtualButtons.push_back({XBOX_DIGIT_BTN_INFO(0, XboxControllerInput::DigitalButton::RightTrigger), 10.0f, 1.0f});
+			moveUpDown.bindedVirtualButtons.push_back({XBOX_DIGIT_BTN_INFO(0, XboxControllerInput::DigitalButton::LeftTrigger), 10.0f, -1.0f});
+			mAxes[CUBE_T("MoveUpDown")] = moveUpDown;
+
 			Axis lookHorizontally;
 			lookHorizontally.isClamped = false;
 			lookHorizontally.currentValue = 0.0f;

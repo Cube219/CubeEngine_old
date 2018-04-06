@@ -12,7 +12,7 @@ namespace cube
 		class INPUT_MODULE_EXPORT KeyboardMouseInput
 		{
 		public:
-			enum DigitalButton
+			enum class DigitalButton : int
 			{
 				MouseLeft, MouseRight, MoudeMiddle,
 				A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,

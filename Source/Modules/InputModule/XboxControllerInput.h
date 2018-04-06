@@ -14,13 +14,16 @@ namespace cube
 		class XboxControllerInput
 		{
 		public:
-			enum DigitalButton
+			enum class DigitalButton
 			{
 				X, Y, A, B, Back, Start, LeftButton, RightButton,
-				DPadLeft, DPadRight, DPadUp, DPadDown, LeftStick, RightStick
+				DPadLeft, DPadRight, DPadUp, DPadDown, LeftStick, RightStick,
+				LeftTrigger, RightTrigger, 
+				/*LeftStickLeft, LeftStickRight, LeftStickUp, LeftStickDown,
+				RightStickLeft, RightStickRight, RightStickUp, RightStickDown*/ // TODO: StickµÈ¿« Digital»≠
 			};
 
-			enum AnalogButton
+			enum class AnalogButton
 			{
 				LeftStickX, LeftStickY, RightStickX, RightStickY,
 				LeftTrigger, RightTrigger
@@ -43,5 +46,5 @@ namespace cube
 			bool mStateAvailable[XUSER_MAX_COUNT];
 #endif
 		};
-	}
-}
+	} // namespace module
+} // namespace cube
