@@ -17,6 +17,7 @@ namespace cube
 		{
 			HINSTANCE instance;
 			HWND window;
+			bool isCursorShown = true;
 		};
 
 		Platform::Data Platform::data;
@@ -128,15 +129,17 @@ namespace cube
 
 		void Platform::ShowCursor()
 		{
-			::ShowCursor(TRUE);
+			if(data.isCursorShown == false) {
+				::ShowCursor(TRUE);
+				data.isCursorShown = true;
+			}
 		}
 
 		void Platform::HideCursor()
 		{
-			while(1) {
-				int displayCount = ::ShowCursor(FALSE);
-				if(displayCount <= -1)
-					break;
+			if(data.isCursorShown == true) {
+				::ShowCursor(FALSE);
+				data.isCursorShown = false;
 			}
 		}
 
