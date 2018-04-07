@@ -51,9 +51,10 @@ namespace cube
 			template <typename T2>
 			BasicHandler<T2> Cast() const
 			{
-				SPtr<BasicHandlerData<T2>> newDataPtr = std::make_shared<BasicHandlerData<T2>>();
-				newDataPtr->data = DPCast(T2)(mData->data);
-
+				// Try to force casting using pointer
+				// Because BasicHandlerData should exist only one
+				// This code violate strict aliasing rule, but I think it is okay...
+				SPtr<BasicHandlerData<T2>> newDataPtr = *(SPtr<BasicHandlerData<T2>>*)(&mData);
 				return BasicHandler<T2>(newDataPtr);
 			}
 
