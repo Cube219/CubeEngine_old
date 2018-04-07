@@ -1,7 +1,5 @@
 ﻿#include "KeyboardMouseInput.h"
 
-#include "Platform.h"
-
 #include "EngineCore/LogWriter.h"
 
 namespace cube
@@ -11,32 +9,34 @@ namespace cube
 		KeyboardMouseInput::KeyboardMouseInput() :
 			mIsCursorLocked(false), mIsKeyboardActivated(true), mIsMouseActivated(true)
 		{
-			platform::Platform::SetKeyDownFunction([this](KeyCode keyCode) {
+			using namespace platform;
+
+			mKeyDownEventFunc = Platform::GetKeyDownEvent().AddListener([this](KeyCode keyCode) {
 				mIsKeyPressed[SCast(int)(keyCode)] = true;
 			});
-			platform::Platform::SetKeyUpFunction([this](KeyCode keyCode) {
+			mKeyUpEventFunc = Platform::GetKeyUpEvent().AddListener([this](KeyCode keyCode) {
 				mIsKeyPressed[SCast(int)(keyCode)] = false;
 			});
 			
-			platform::Platform::SetMouseDownFunction([this](MouseButtonType buttonType) {
+			mMouseDownEventFunc = Platform::GetMouseDownEvent().AddListener([this](MouseButtonType buttonType) {
 				mIsMousePressed[SCast(int)(buttonType)] = true;
 
 				if(mIsCursorLocked == true && mIsMouseActivated == false)
 					SetMouseActivate();
 			});
-			platform::Platform::SetMouseUpFunction([this](MouseButtonType buttonType) {
+			mMouseUpEventFunc = Platform::GetMouseUpEvent().AddListener([this](MouseButtonType buttonType) {
 				mIsMousePressed[SCast(int)(buttonType)] = false;
 			});
-			platform::Platform::SetMouseWheelFunction([this](int wheelDelta) {
+			mMouseWheelEventFunc = Platform::GetMouseWheelEvent().AddListener([this](int wheelDelta) {
 			});
-			platform::Platform::SetMousePosFunction([this](int x, int y) {
+			mMousePosEventFunc = Platform::GetMousePosEvent().AddListener([this](uint32_t x, uint32_t y) {
 				if(mIsMouseActivated == false)
 					return;
 
 				mMousePos = Vector2(SCast(float)(x), SCast(float)(y));
 			});
 
-			platform::Platform::SetActivatedFunction([this](platform::WindowActivatedState state) {
+			mActivatedEventFunc = Platform::GetActivatedEvent().AddListener([this](platform::WindowActivatedState state) {
 				if(state == platform::WindowActivatedState::Active) {
 					mIsKeyboardActivated = true;
 					SetMouseActivate();
@@ -58,13 +58,15 @@ namespace cube
 
 		KeyboardMouseInput::~KeyboardMouseInput()
 		{
-			platform::Platform::SetKeyDownFunction(0);
-			platform::Platform::SetKeyUpFunction(0);
-			platform::Platform::SetMouseDownFunction(0);
-			platform::Platform::SetMouseUpFunction(0);
-			platform::Platform::SetMouseWheelFunction(0);
-			platform::Platform::SetMousePosFunction(0);
-			platform::Platform::SetActivatedFunction(0);
+			using namespace platform;
+
+			Platform::GetKeyDownEvent().RemoveListener(mKeyDownEventFunc);
+			Platform::GetKeyUpEvent().RemoveListener(mKeyUpEventFunc);
+			Platform::GetMouseDownEvent().RemoveListener(mMouseDownEventFunc);
+			Platform::GetMouseUpEvent().RemoveListener(mMouseUpEventFunc);
+			Platform::GetMouseWheelEvent().RemoveListener(mMouseWheelEventFunc);
+			Platform::GetMousePosEvent().RemoveListener(mMousePosEventFunc);
+			Platform::GetActivatedEvent().RemoveListener(mActivatedEventFunc);
 		}
 
 		bool KeyboardMouseInput::IsButtonPressed(DigitalButton button)

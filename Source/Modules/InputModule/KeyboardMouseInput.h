@@ -4,6 +4,8 @@
 
 #include "Base/KeyCode.h"
 #include "Base/Vector.h"
+#include "Base/Event.h"
+#include "Platform.h"
 
 namespace cube
 {
@@ -47,6 +49,14 @@ namespace cube
 			void SetMouseInactivate();
 
 			KeyCode GetKeyCode(DigitalButton button);
+
+			EventFunction<void(KeyCode)> mKeyDownEventFunc;
+			EventFunction<void(KeyCode)> mKeyUpEventFunc;
+			EventFunction<void(MouseButtonType)> mMouseDownEventFunc;
+			EventFunction<void(MouseButtonType)> mMouseUpEventFunc;
+			EventFunction<void(int)> mMouseWheelEventFunc;
+			EventFunction<void(uint32_t, uint32_t)> mMousePosEventFunc;
+			EventFunction<void(platform::WindowActivatedState state)> mActivatedEventFunc;
 
 			bool mIsKeyboardActivated;
 			bool mIsMouseActivated;

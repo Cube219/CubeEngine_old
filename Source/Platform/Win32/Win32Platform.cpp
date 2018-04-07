@@ -31,16 +31,16 @@ namespace cube
 		uint32_t Platform::windowPosX;
 		uint32_t Platform::windowPosY;
 
-		std::function<void(KeyCode)> Platform::keyDownFunction;
-		std::function<void(KeyCode)> Platform::keyUpFunction;
-		std::function<void(MouseButtonType)> Platform::mouseDownFunction;
-		std::function<void(MouseButtonType)> Platform::mouseUpFunction;
-		std::function<void(int)> Platform::mouseWheelFunction;
-		std::function<void(uint32_t, uint32_t)> Platform::mousePosFunction;
+		Event<void(KeyCode)> Platform::keyDownEvent;
+		Event<void(KeyCode)> Platform::keyUpEvent;
+		Event<void(MouseButtonType)> Platform::mouseDownEvent;
+		Event<void(MouseButtonType)> Platform::mouseUpEvent;
+		Event<void(int)> Platform::mouseWheelEvent;
+		Event<void(uint32_t, uint32_t)> Platform::mousePosEvent;
 
-		std::function<void()> Platform::loopFunction;
-		std::function<void(uint32_t, uint32_t)> Platform::resizeFunction;
-		std::function<void(WindowActivatedState)> Platform::activatedFunction;
+		Event<void()> Platform::loopEvent;
+		Event<void(uint32_t, uint32_t)> Platform::resizeEvent;
+		Event<void(WindowActivatedState)> Platform::activatedEvent;
 
 		void Platform::Init()
 		{
@@ -117,7 +117,7 @@ namespace cube
 						DispatchMessage(&msg);
 					}
 				} else {
-					loopFunction();
+					loopEvent.Dispatch();
 				}
 			}
 		}
@@ -199,8 +199,7 @@ namespace cube
 						std::wcout << "Win32Platform: Invalid actiave state (" << s << ")" << std::endl;
 					}
 
-					if(Platform::activatedFunction != nullptr)
-						Platform::activatedFunction(state);
+					Platform::activatedEvent.Dispatch(state);
 
 					isActivatedByMouse = false;
 
@@ -216,48 +215,38 @@ namespace cube
 						Platform::width = lParam & 0xffff;
 						Platform::height = (lParam & 0xffff0000) >> 16;
 
-						if(Platform::resizeFunction != nullptr)
-							Platform::resizeFunction(Platform::width, Platform::height);
+						Platform::resizeEvent.Dispatch(Platform::width, Platform::height);
 					}
 					break;
 
 				case WM_KEYDOWN:
-					if(Platform::keyDownFunction != nullptr)
-						Platform::keyDownFunction(static_cast<KeyCode>(wParam));
+					Platform::keyDownEvent.Dispatch(static_cast<KeyCode>(wParam));
 					break;
 				case WM_KEYUP:
-					if(Platform::keyUpFunction != nullptr)
-						Platform::keyUpFunction(static_cast<KeyCode>(wParam));
+					Platform::keyUpEvent.Dispatch(static_cast<KeyCode>(wParam));
 					break;
 
 				case WM_LBUTTONDOWN:
-					if(Platform::mouseDownFunction != nullptr)
-						Platform::mouseDownFunction(MouseButtonType::Left);
+					Platform::mouseDownEvent.Dispatch(MouseButtonType::Left);
 					break;
 				case WM_LBUTTONUP:
-					if(Platform::mouseUpFunction != nullptr)
-						Platform::mouseUpFunction(MouseButtonType::Left);
+					Platform::mouseUpEvent.Dispatch(MouseButtonType::Left);
 					break;
 				case WM_RBUTTONDOWN:
-					if(Platform::mouseDownFunction != nullptr)
-						Platform::mouseDownFunction(MouseButtonType::Right);
+					Platform::mouseDownEvent.Dispatch(MouseButtonType::Right);
 					break;
 				case WM_RBUTTONUP:
-					if(Platform::mouseUpFunction != nullptr)
-						Platform::mouseUpFunction(MouseButtonType::Right);
+					Platform::mouseUpEvent.Dispatch(MouseButtonType::Right);
 					break;
 				case WM_MBUTTONDOWN:
-					if(Platform::mouseDownFunction != nullptr)
-						Platform::mouseDownFunction(MouseButtonType::Middle);
+					Platform::mouseDownEvent.Dispatch(MouseButtonType::Middle);
 					break;
 				case WM_MBUTTONUP:
-					if(Platform::mouseUpFunction != nullptr)
-						Platform::mouseUpFunction(MouseButtonType::Middle);
+					Platform::mouseUpEvent.Dispatch(MouseButtonType::Middle);
 					break;
 
 				case WM_MOUSEWHEEL:
-					if(Platform::mouseWheelFunction != nullptr)
-						Platform::mouseWheelFunction(GET_WHEEL_DELTA_WPARAM(wParam));
+					Platform::mouseWheelEvent.Dispatch(GET_WHEEL_DELTA_WPARAM(wParam));
 					break;
 
 				case WM_MOUSEMOVE:
@@ -265,8 +254,7 @@ namespace cube
 					int posX = LOWORD(lParam);
 					int posY = HIWORD(lParam);
 
-					if(Platform::mousePosFunction != nullptr)
-						Platform::mousePosFunction(posX, posY);
+					Platform::mousePosEvent.Dispatch(posX, posY);
 					break;
 				}
 			}

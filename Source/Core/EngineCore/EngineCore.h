@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "Base/Event.h"
+
 namespace cube
 {
 	namespace core
@@ -59,8 +61,10 @@ namespace cube
 			friend class CubeEngine;
 
 			void Loop();
+			EventFunction<void()> mLoopEventFunc;
 
 			void Resize(uint32_t width, uint32_t height);
+			EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
 
 			SPtr<RendererManager> mRendererManager;
 			SPtr<ResourceManager> mResourceManager;

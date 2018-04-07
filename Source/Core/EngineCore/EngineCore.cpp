@@ -27,12 +27,14 @@ namespace cube
 
 		EngineCore::~EngineCore()
 		{
+			platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
+			platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
 		}
 
 		void EngineCore::Prepare()
 		{
-			platform::Platform::SetLoopFunction(std::bind(&EngineCore::Loop, this));
-			platform::Platform::SetResizeFunction(std::bind(&EngineCore::Resize, this, _1, _2));
+			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(std::bind(&EngineCore::Loop, this));
+			mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(std::bind(&EngineCore::Resize, this, _1, _2));
 
 			LogWriter::Init();
 

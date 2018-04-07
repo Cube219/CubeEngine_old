@@ -7,8 +7,8 @@
 #include "PlatformString.h"
 #include "DLib.h"
 #include "FileSystem.h"
+#include "Base/Event.h"
 
-#include <functional>
 using namespace std::placeholders;
 
 namespace cube
@@ -41,44 +41,15 @@ namespace cube
 			static SPtr<DLib> LoadDLib(const String& path);
 			static SPtr<FileSystem> GetFileSystem() { return fileSystem; }
 
-			// TODO: C#의 Event처럼 여러 함수들을 등록할 수 있게 하기?
-			static void SetKeyDownFunction(std::function<void(KeyCode)> pFunction)
-			{
-				keyDownFunction = pFunction;
-			}
-			static void SetKeyUpFunction(std::function<void(KeyCode)> pFunction)
-			{
-				keyUpFunction = pFunction;
-			}
-			static void SetMouseDownFunction(std::function<void(MouseButtonType)> pFunction)
-			{
-				mouseDownFunction = pFunction;
-			}
-			static void SetMouseUpFunction(std::function<void(MouseButtonType)> pFunction)
-			{
-				mouseUpFunction = pFunction;
-			}
-			static void SetMouseWheelFunction(std::function<void(int)> pFunction)
-			{
-				mouseWheelFunction = pFunction;
-			}
-			static void SetMousePosFunction(std::function<void(uint32_t, uint32_t)> pFunction)
-			{
-				mousePosFunction = pFunction;
-			}
-
-			static void SetLoopFunction(std::function<void()> pFunction)
-			{
-				loopFunction = pFunction;
-			}
-			static void SetResizeFunction(std::function<void(uint32_t, uint32_t)> pFunction)
-			{
-				resizeFunction = pFunction;
-			}
-			static void SetActivatedFunction(std::function<void(WindowActivatedState)> pFunction)
-			{
-				activatedFunction = pFunction;
-			}
+			static auto& GetKeyDownEvent() { return keyDownEvent; }
+			static auto& GetKeyUpEvent() { return keyUpEvent; }
+			static auto& GetMouseDownEvent() { return mouseDownEvent; }
+			static auto& GetMouseUpEvent() { return mouseUpEvent; }
+			static auto& GetMouseWheelEvent() { return mouseWheelEvent; }
+			static auto& GetMousePosEvent() { return mousePosEvent; }
+			static auto& GetLoopEvent() { return loopEvent; }
+			static auto& GetResizeEvent() { return resizeEvent; }
+			static auto& GetActivatedEvent() { return activatedEvent; }
 
 			struct Data;
 			static Data data;
@@ -93,16 +64,16 @@ namespace cube
 			static uint32_t windowPosX;
 			static uint32_t windowPosY;
 
-			static std::function<void(KeyCode)> keyDownFunction;
-			static std::function<void(KeyCode)> keyUpFunction;
-			static std::function<void(MouseButtonType)> mouseDownFunction;
-			static std::function<void(MouseButtonType)> mouseUpFunction;
-			static std::function<void(int)> mouseWheelFunction;
-			static std::function<void(uint32_t, uint32_t)> mousePosFunction;
+			static Event<void(KeyCode)> keyDownEvent;
+			static Event<void(KeyCode)> keyUpEvent;
+			static Event<void(MouseButtonType)> mouseDownEvent;
+			static Event<void(MouseButtonType)> mouseUpEvent;
+			static Event<void(int)> mouseWheelEvent;
+			static Event<void(uint32_t, uint32_t)> mousePosEvent;
 
-			static std::function<void()> loopFunction;
-			static std::function<void(uint32_t, uint32_t)> resizeFunction;
-			static std::function<void(WindowActivatedState)> activatedFunction;
+			static Event<void()> loopEvent;
+			static Event<void(uint32_t, uint32_t)> resizeEvent;
+			static Event<void(WindowActivatedState)> activatedEvent;
 
 		public:
 			Platform() = delete;

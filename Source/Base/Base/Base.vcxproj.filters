@@ -14,6 +14,7 @@
     </ClInclude>
     <ClInclude Include="Json.h" />
     <ClInclude Include="String.h" />
+    <ClInclude Include="Event.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="format.cc" />
