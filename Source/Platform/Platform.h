@@ -34,6 +34,7 @@ namespace cube
 			static void ShowCursor();
 			static void HideCursor();
 			static void MoveCursor(int x, int y);
+			static void GetCursorPos(int& x, int& y);
 
 			static uint32_t GetWindowWidth() { return width; }
 			static uint32_t GetWindowHeight() { return height; }

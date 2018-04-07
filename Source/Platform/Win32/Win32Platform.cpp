@@ -153,6 +153,17 @@ namespace cube
 			SetCursorPos(p.x, p.y);
 		}
 
+		void Platform::GetCursorPos(int& x, int& y)
+		{
+			POINT p;
+			::GetCursorPos(&p);
+
+			ScreenToClient(data.window, &p);
+
+			x = p.x;
+			y = p.y;
+		}
+
 		SPtr<DLib> Platform::LoadDLib(const String& path)
 		{
 			return std::make_shared<Win32DLib>(path);

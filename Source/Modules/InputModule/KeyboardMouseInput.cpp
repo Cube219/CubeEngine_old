@@ -146,7 +146,9 @@ namespace cube
 				platform::Platform::HideCursor();
 			}
 
-			mLastMousePos = mMousePos;
+			int x, y;
+			platform::Platform::GetCursorPos(x, y);
+			mLastMousePos = mMousePos = Vector2(x, y);
 			mIsMouseActivated = true;
 		}
 
