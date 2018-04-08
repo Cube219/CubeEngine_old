@@ -2,7 +2,6 @@
 
 #include "../EngineCoreHeader.h"
 
-#include <glm.hpp>
 #include "Base/Matrix.h"
 
 namespace cube

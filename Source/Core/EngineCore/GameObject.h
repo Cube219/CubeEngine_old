@@ -4,7 +4,6 @@
 
 #include "BasicHandler.h"
 #include "Base/Vector.h"
-#include <glm.hpp>
 #include "Base/Matrix.h"
 
 namespace cube

@@ -5,8 +5,6 @@
 #include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
 #include "../../BasicHandler.h"
 
-#include <glm.hpp>
-
 namespace cube
 {
 	namespace core

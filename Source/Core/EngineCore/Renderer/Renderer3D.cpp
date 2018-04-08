@@ -1,14 +1,12 @@
 #include "Renderer3D.h"
 
+#include "Base/MatrixUtility.h"
 #include "Mesh.h"
 #include "Material/Material.h"
 #include "Material/MaterialInstance.h"
 #include "Texture.h"
 #include "Material/Shader.h"
 #include "CameraRenderer3D.h"
-
-#include <gtc/matrix_transform.hpp>
-#include "Base/MatrixUtility.h"
 
 namespace cube
 {
@@ -106,5 +104,5 @@ namespace cube
 
 			mDataBuffer->Map(mMVPIndex, mMVPIndex);
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

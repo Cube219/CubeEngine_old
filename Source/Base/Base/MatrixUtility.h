@@ -22,6 +22,7 @@ namespace cube
 
 		static Matrix GetLookAt(Vector3 eyePos, Vector3 targetPos, Vector3 upDir);
 		static Matrix GetPerspectiveFov(float fovAngleY, float aspectRatio, float nearZ, float farZ);
+		static Matrix GetPerspectiveFovWithReverseY(float fovAngleY, float aspectRatio, float nearZ, float farZ);
 	};
 } // namespace cube
 

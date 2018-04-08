@@ -277,6 +277,21 @@ namespace cube
 		
 		return m;
 	}
+
+	inline Matrix MatrixUtility::GetPerspectiveFovWithReverseY(float fovAngleY, float aspectRatio, float nearZ, float farZ)
+	{
+		float tanA = Math::Tan(fovAngleY / 2.0f);
+		float t = farZ / (farZ - nearZ);
+
+		Matrix m;
+
+		m[0] = Vector4(1 / (aspectRatio*tanA), 0, 0, 0);
+		m[1] = Vector4(0, -1 / tanA, 0, 0);
+		m[2] = Vector4(0, 0, t, 1);
+		m[3] = Vector4(0, 0, -nearZ * t, 0);
+
+		return m;
+	}
 } // namespace cube
 
 #endif // SIMD_SSE

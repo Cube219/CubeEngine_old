@@ -2,10 +2,8 @@
 
 #include "../EngineCoreHeader.h"
 
-#include <glm.hpp>
-#include "Base/Matrix.h"
-
 #include "Vertex.h"
+#include "Base/Matrix.h"
 #include "../BasicHandler.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
 #include "BaseRenderAPI/Wrapper/BaseRenderCommandBuffer.h"

@@ -105,7 +105,7 @@ namespace cube
 				Vector2 mouseDelta = mKMInput->GetMouseDeltaPosition();
 				Float2 f2;
 				f2 = mouseDelta.GetFloat2();
-				return -f2.y;
+				return f2.y;
 			}});
 			lookVertically.bindedAnalogButtons.push_back(XBOX_ANALOG_BTN_INFO(0, XboxControllerInput::AnalogButton::RightStickY));
 			mAxes[CUBE_T("LookVertically")] = lookVertically;
