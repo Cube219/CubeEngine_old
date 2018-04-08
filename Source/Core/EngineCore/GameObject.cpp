@@ -2,6 +2,7 @@
 
 #include "LogWriter.h"
 #include "EngineCore.h"
+#include "Base/Math.h"
 #include "Base/MatrixUtility.h"
 #include "GameObjectManager.h"
 #include "Component/Component.h"

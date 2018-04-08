@@ -34,7 +34,7 @@ namespace cube
 
 #elif defined(SIMD_NONE)
 
-#include "Matrix/MatrixUtilitySSE.h"
+#include "Matrix/MatrixUtilityArray.h"
 
 #endif
 

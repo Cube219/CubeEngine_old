@@ -10,9 +10,9 @@ namespace cube
 	{
 		Matrix r;
 		r.mRows[0] = VectorBase::Zero();
-		r.mRows[0] = VectorBase::Zero();
-		r.mRows[0] = VectorBase::Zero();
-		r.mRows[0] = VectorBase::Zero();
+		r.mRows[1] = VectorBase::Zero();
+		r.mRows[2] = VectorBase::Zero();
+		r.mRows[3] = VectorBase::Zero();
 
 		return r;
 	}
@@ -24,6 +24,8 @@ namespace cube
 		r.mRows[1] = VectorBase(0.0f, 1.0f, 0.0f, 0.0f);
 		r.mRows[2] = VectorBase(0.0f, 0.0f, 1.0f, 0.0f);
 		r.mRows[3] = VectorBase(0.0f, 0.0f, 0.0f, 1.0f);
+
+		return r;
 	}
 
 	inline Matrix::Matrix()

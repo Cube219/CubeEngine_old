@@ -4,8 +4,6 @@
 
 #ifdef SIMD_NONE
 
-#include <math.h>
-
 namespace cube
 {
 	inline VectorBase VectorBase::Zero()
