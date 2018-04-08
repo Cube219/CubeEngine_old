@@ -125,6 +125,11 @@
     <ClInclude Include="KeyCode.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MatrixUtility.h" />
+    <ClInclude Include="Matrix\MatrixArray.h" />
+    <ClInclude Include="Matrix\MatrixSSE.h" />
+    <ClInclude Include="Matrix\MatrixUtilityArray.h" />
+    <ClInclude Include="Matrix\MatrixUtilitySSE.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Vector\VectorArray.h" />

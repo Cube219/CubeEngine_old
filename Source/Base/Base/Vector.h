@@ -117,6 +117,7 @@ namespace cube
 	class VectorBase;
 	class Vector4;
 	class Matrix;
+	class MatrixUtility;
 	VectorBase operator*(const Vector4& lhs, const Matrix& rhs);
 
 	class VectorBase
@@ -160,6 +161,7 @@ namespace cube
 		friend class Vector3;
 		friend class Vector4;
 		friend class Matrix;
+		friend class MatrixUtility;
 
 		VectorData mData;
 

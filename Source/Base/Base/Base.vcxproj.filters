@@ -16,6 +16,19 @@
     <ClInclude Include="String.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MatrixUtility.h" />
+    <ClInclude Include="Matrix\MatrixSSE.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix\MatrixArray.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix\MatrixUtilitySSE.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix\MatrixUtilityArray.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="format.cc" />
@@ -25,6 +38,9 @@
   <ItemGroup>
     <Filter Include="Vector">
       <UniqueIdentifier>{1376f9b4-f7bf-4a9f-8f90-3ee649a27a9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Matrix">
+      <UniqueIdentifier>{e3d42564-82ea-4bd2-8b7a-51ef9c42d8ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
