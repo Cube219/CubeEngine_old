@@ -63,29 +63,56 @@ namespace cube
 	{
 		using namespace core;
 
-		int flag = -1;
-		// Create gameobjects
-		for(int i = -1; i <= 1; i++) {
-			for(int j = -1; j <= 1; j++) {
-				for(int k = -1; k <= 1; k++) {
-					auto go = GameObject::Create();
-					Vector3 v(i * 2, j * 2, k * 2);
-					go->SetPosition(v);
+		// Center
+		auto go = GameObject::Create();
+		Vector3 v(0, 0, 0);
+		go->SetPosition(v);
 
-					auto renderer = go->AddComponent<cube::Renderer3DComponent>();
-					renderer->SetMesh(boxMesh);
-					if(flag == -1)
-						renderer->SetMaterialInstance(materialIns1);
-					else
-						renderer->SetMaterialInstance(materialIns2);
-					flag *= -1;
+		auto renderer = go->AddComponent<cube::Renderer3DComponent>();
+		renderer->SetMesh(boxMesh);
+		renderer->SetMaterialInstance(materialIns2);
 
-					mGameObjects.push_back(go);
-				}
-			}
+		mGameObjects.push_back(go);
+
+		// X Axis(1)
+		go = GameObject::Create();
+		v = Vector3(1, 0, 0);
+		go->SetPosition(v);
+
+		renderer = go->AddComponent<cube::Renderer3DComponent>();
+		renderer->SetMesh(boxMesh);
+		renderer->SetMaterialInstance(materialIns1);
+
+		mGameObjects.push_back(go);
+
+		// Y Axis(2)
+		for(int i = 1; i <= 2; i++) {
+			go = GameObject::Create();
+			v = Vector3(0, i, 0);
+			go->SetPosition(v);
+
+			renderer = go->AddComponent<cube::Renderer3DComponent>();
+			renderer->SetMesh(boxMesh);
+			renderer->SetMaterialInstance(materialIns1);
+
+			mGameObjects.push_back(go);
+		}
+
+		// Z Axis(3)
+		for(int i = 1; i <= 3; i++) {
+			go = GameObject::Create();
+			v = Vector3(0, 0, i);
+			go->SetPosition(v);
+
+			renderer = go->AddComponent<cube::Renderer3DComponent>();
+			renderer->SetMesh(boxMesh);
+			renderer->SetMaterialInstance(materialIns1);
+
+			mGameObjects.push_back(go);
 		}
 
 		cameraGameObject = GameObject::Create();
+		cameraGameObject->SetPosition(Vector3(0, 0, -5));
 		cameraGameObject->AddComponent<CameraComponent>();
 		cameraGameObject->AddComponent<MoveComponent>();
 	}
