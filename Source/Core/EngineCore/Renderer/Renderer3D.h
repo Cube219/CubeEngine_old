@@ -3,6 +3,7 @@
 #include "../EngineCoreHeader.h"
 
 #include <glm.hpp>
+#include "Base/Matrix.h"
 
 #include "Vertex.h"
 #include "../BasicHandler.h"
@@ -27,7 +28,7 @@ namespace cube
 
 			void SetMesh(SPtr<Mesh>& mesh);
 			void SetMaterialInstance(HMaterialInstance& materialIns);
-			void SetModelMatrix(glm::mat4 modelMatrix);
+			void SetModelMatrix(const Matrix& modelMatrix);
 
 			void Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
 
@@ -43,7 +44,7 @@ namespace cube
 			
 			HMaterialInstance mMaterialIns;
 
-			glm::mat4 mModelMatrix;
+			Matrix mModelMatrix;
 			SPtr<BaseRenderDescriptorSet> mDescriptorSet;
 
 			SPtr<BaseRenderBuffer> mDataBuffer; // Combine vertex / index / mvp matrix

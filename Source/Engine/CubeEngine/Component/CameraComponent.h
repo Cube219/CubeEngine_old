@@ -6,6 +6,7 @@
 #include "EngineCore/Renderer/CameraRenderer3D.h"
 
 #include <glm.hpp>
+#include "Base/Matrix.h"
 
 namespace cube
 {
@@ -26,7 +27,7 @@ namespace cube
 		void OnDestroy() override;
 
 	private:
-		glm::mat4 mViewMatrix;
+		Matrix mViewMatrix;
 
 		SPtr<core::CameraRenderer3D> mCameraRenderer3D;
 	};

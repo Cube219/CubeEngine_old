@@ -82,7 +82,7 @@ namespace cube
 		  sinA     0  cosA     0
 		     0     0     0     1
 		*/
-		Matrix m;
+		Matrix m = Matrix::Identity();
 
 		float sinA = Math::Sin(angle);
 		float cosA = Math::Cos(angle);
@@ -101,7 +101,7 @@ namespace cube
 		     0     0     1     0
 		     0     0     0     1
 		*/
-		Matrix m;
+		Matrix m = Matrix::Identity();
 
 		float sinA = Math::Sin(angle);
 		float cosA = Math::Cos(angle);
@@ -201,11 +201,11 @@ namespace cube
 
 	inline Matrix MatrixUtility::GetTranslation(Vector3 vec)
 	{
-		Matrix m = Matrix::Zero();
+		Matrix m = Matrix::Identity();
 
 		Vector4 one = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		// z / z / 1 / 1
-		VectorData temp = _mm_shuffle_ps(one.mData, vec.mData, _MM_SHUFFLE(0, 0, 2, 2));
+		VectorData temp = _mm_shuffle_ps(vec.mData, one.mData, _MM_SHUFFLE(0, 0, 2, 2));
 		// x / y / z / 1
 		m[3].mData = _mm_shuffle_ps(vec.mData, temp, _MM_SHUFFLE(2, 0, 1, 0));
 

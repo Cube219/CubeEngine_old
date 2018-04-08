@@ -1,6 +1,7 @@
 #include "CameraComponent.h"
 
 #include <gtc/matrix_transform.hpp>
+#include "Base/MatrixUtility.h"
 
 #include "EngineCore/GameObject.h"
 #include "EngineCore/EngineCore.h"
@@ -34,10 +35,14 @@ namespace cube
 		Float3 posForwardF;
 		posForwardF = posForward.GetFloat3();
 
+		/*
 		mViewMatrix = glm::lookAt(
 			glm::vec3(posF.x, -posF.y, -posF.z), // Flip y, z
 			glm::vec3(posForwardF.x, -posForwardF.y, -posForwardF.z), // Flip y, z
 			glm::vec3(0, 1, 0)
+		);*/
+		mViewMatrix = MatrixUtility::GetLookAt(
+			pos, posForward, Vector3(0, 1, 0)
 		);
 
 		mCameraRenderer3D->SetViewMatrix(mViewMatrix);

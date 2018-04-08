@@ -8,6 +8,7 @@
 #include "Renderer/Renderer3D.h"
 #include "Renderer/CameraRenderer3D.h"
 #include <gtc/matrix_transform.hpp>
+#include "Base/MatrixUtility.h"
 #include "CubeEngine/Component/Renderer3DComponent.h"
 
 namespace cube
@@ -24,7 +25,7 @@ namespace cube
 
 		GameObject::GameObject() :
 			mID(0), mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
-			mIsTransformChanged(true), mScaleMatrix(1.0f), mModelMatrix(1.0f),
+			mIsTransformChanged(true),
 			mForward(0.0f, 0.0f, 1.0f), mUp(0.0f, 1.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f)
 		{
 			mRenderer3D = nullptr;
@@ -94,16 +95,17 @@ namespace cube
 			for(auto& com : mComponents) {
 				com->OnUpdate(dt);
 			}
-;
+
+			/*
 			Float3 pos, rotation, scale;
 			pos = mPosition.GetFloat3();
 			rotation = mRotation.GetFloat3();
-			scale = mScale.GetFloat3();
+			scale = mScale.GetFloat3();*/
 
 			// Update model matrix
 			if(mIsTransformChanged == true) {
 				// Position
-				mModelMatrix[3][0] = pos.x;
+				/*mModelMatrix[3][0] = pos.x;
 				mModelMatrix[3][1] = -pos.y;
 				mModelMatrix[3][2] = -pos.z; // Convert to left-hand coordinate
 
@@ -150,6 +152,20 @@ namespace cube
 				mScaleMatrix[2][2] = scale.z;
 
 				mModelMatrix *= mScaleMatrix;
+				*/
+
+				mModelMatrix = MatrixUtility::GetTranslation(mPosition);
+				mModelMatrix *= MatrixUtility::GetRotationXYZ(mRotation * Math::Pi / 180.0f);
+
+				// Update the vectors of direction
+				Vector4 forward(0, 0, 1, 0);
+				Vector4 up(0, 1, 0, 0);
+				Vector4 right(1, 0, 0, 0);
+				mForward = forward * mModelMatrix;
+				mUp = up * mModelMatrix;
+				mRight = right * mModelMatrix;
+
+				mModelMatrix *= MatrixUtility::GetScale(mScale);
 
 				if(mRenderer3D != nullptr)
 					mRenderer3D->SetModelMatrix(mModelMatrix);

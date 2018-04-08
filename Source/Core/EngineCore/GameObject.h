@@ -5,6 +5,7 @@
 #include "BasicHandler.h"
 #include "Base/Vector.h"
 #include <glm.hpp>
+#include "Base/Matrix.h"
 
 namespace cube
 {
@@ -67,8 +68,8 @@ namespace cube
 			Vector3 mRotation;
 			Vector3 mScale;
 			bool mIsTransformChanged;
-			glm::mat4 mScaleMatrix;
-			glm::mat4 mModelMatrix;
+			Matrix mScaleMatrix;
+			Matrix mModelMatrix;
 
 			Vector3 mForward;
 			Vector3 mUp;

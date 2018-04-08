@@ -8,6 +8,7 @@
 #include "CameraRenderer3D.h"
 
 #include <gtc/matrix_transform.hpp>
+#include "Base/MatrixUtility.h"
 
 namespace cube
 {
@@ -34,7 +35,7 @@ namespace cube
 			mMaterialIns = materialIns;
 		}
 
-		void Renderer3D::SetModelMatrix(glm::mat4 modelMatrix)
+		void Renderer3D::SetModelMatrix(const Matrix& modelMatrix)
 		{
 			mModelMatrix = modelMatrix;
 		}
@@ -63,7 +64,7 @@ namespace cube
 			}
 
 			// Update mvp matrix
-			auto mvpMatrix = camera->GetViewProjectionMatrix() * mModelMatrix;
+			auto mvpMatrix = mModelMatrix * camera->GetViewProjectionMatrix();
 			mDataBuffer->UpdateBufferData(mMVPIndex, &mvpMatrix, sizeof(mvpMatrix));
 
 			BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mMVPIndex);

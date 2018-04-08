@@ -3,6 +3,7 @@
 #include "../EngineCoreHeader.h"
 
 #include <glm.hpp>
+#include "Base/Matrix.h"
 
 namespace cube
 {
@@ -14,15 +15,13 @@ namespace cube
 			CameraRenderer3D();
 			~CameraRenderer3D();
 
-			glm::mat4 GetViewProjectionMatrix() const { return mProjectionMatrix * mViewMatrix; };
+			Matrix GetViewProjectionMatrix() const { return mViewMatrix * mProjectionMatrix; };
 
-			void SetViewMatrix(const glm::mat4& matrix);
+			void SetViewMatrix(const Matrix& matrix);
 
 		private:
-			glm::mat4 mProjectionMatrix;
-			glm::mat4 mViewMatrix;
-
-			float mAngleTemp;
+			Matrix mProjectionMatrix;
+			Matrix mViewMatrix;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube
