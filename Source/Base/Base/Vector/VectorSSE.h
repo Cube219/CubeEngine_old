@@ -110,8 +110,8 @@ namespace cube
 
 	inline VectorBase VectorBase::operator-() const
 	{
-		VectorBase res;
-		res.mData = _mm_mul_ps(res.mData, _mm_set1_ps(-1.0f));
+		VectorBase res = VectorBase::Zero();
+		res.mData = _mm_sub_ps(res.mData, mData);
 
 		return res;
 	}
