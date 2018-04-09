@@ -109,6 +109,7 @@ namespace cube
 			Lock(mMaterialsMutex);
 
 			int lastIndex = mMaterials.back()->data->mIndex;
+			mMaterials[lastIndex]->data->mIndex = index;
 			
 			mMaterials[index]->data = nullptr;
 
