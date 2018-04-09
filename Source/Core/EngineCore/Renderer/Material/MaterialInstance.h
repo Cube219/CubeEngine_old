@@ -2,9 +2,9 @@
 
 #include "../../EngineCoreHeader.h"
 
-#include "BaseRenderAPI/BaseRenderAPI.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
+#include "BaseRenderAPI/RenderAPI.h"
+#include "BaseRenderAPI/Wrapper/Buffer.h"
+#include "BaseRenderAPI/Wrapper/Descriptor.h"
 #include "../../BasicHandler.h"
 
 namespace cube
@@ -26,7 +26,7 @@ namespace cube
 
 			HMaterial GetMaterial() const { return mMaterial; }
 			
-			SPtr<BaseRenderDescriptorSet> GetDescriptorSet() const { return mDescriptorSet; }
+			SPtr<render::DescriptorSet> GetDescriptorSet() const { return mDescriptorSet; }
 
 			template <typename T>
 			void SetParameterData(String& name, T& data);
@@ -38,18 +38,18 @@ namespace cube
 
 		private:
 			friend class Material;
-			MaterialInstance(SPtr<BaseRenderAPI>& renderAPI, HMaterial mat);
+			MaterialInstance(SPtr<render::RenderAPI>& renderAPI, HMaterial mat);
 
 			HMaterialInstance mMyHandler;
 
 			HashMap<String, uint64_t> mParameterIndexLookupMap;
 
-			SPtr<BaseRenderBuffer> mParametersBuffer;
+			SPtr<render::Buffer> mParametersBuffer;
 #ifdef _DEBUG
 			Vector<MaterialParameterInfo> mParamInfos;
 #endif // _DEBUG
 
-			SPtr<BaseRenderDescriptorSet> mDescriptorSet;
+			SPtr<render::DescriptorSet> mDescriptorSet;
 
 			HMaterial mMaterial;
 		};

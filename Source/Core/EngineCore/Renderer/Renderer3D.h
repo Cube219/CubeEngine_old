@@ -5,10 +5,10 @@
 #include "Vertex.h"
 #include "Base/Matrix.h"
 #include "../BasicHandler.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderCommandBuffer.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
-#include "BaseRenderAPI/BaseRenderAPI.h"
+#include "BaseRenderAPI/Wrapper/Buffer.h"
+#include "BaseRenderAPI/Wrapper/CommandBuffer.h"
+#include "BaseRenderAPI/Wrapper/Descriptor.h"
+#include "BaseRenderAPI/RenderAPI.h"
 
 namespace cube
 {
@@ -17,18 +17,18 @@ namespace cube
 		class ENGINE_CORE_EXPORT Renderer3D
 		{
 		public:
-			Renderer3D(SPtr<BaseRenderAPI>& renderAPI, SPtr<BaseRenderDescriptorSetLayout>& mPerObjectDescriptorSetLayout);
+			Renderer3D(SPtr<render::RenderAPI>& renderAPI, SPtr<render::DescriptorSetLayout>& mPerObjectDescriptorSetLayout);
 			~Renderer3D();
 
 			HMaterialInstance GetMaterialInstance() const { return mMaterialIns; }
 
-			SPtr<BaseRenderDescriptorSet> GetDescriptorSet() const { return mDescriptorSet; };
+			SPtr<render::DescriptorSet> GetDescriptorSet() const { return mDescriptorSet; };
 
 			void SetMesh(SPtr<Mesh>& mesh);
 			void SetMaterialInstance(HMaterialInstance& materialIns);
 			void SetModelMatrix(const Matrix& modelMatrix);
 
-			void Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
+			void Draw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
 
 		private:
 			friend class RendererManager;
@@ -43,14 +43,14 @@ namespace cube
 			HMaterialInstance mMaterialIns;
 
 			Matrix mModelMatrix;
-			SPtr<BaseRenderDescriptorSet> mDescriptorSet;
+			SPtr<render::DescriptorSet> mDescriptorSet;
 
-			SPtr<BaseRenderBuffer> mDataBuffer; // Combine vertex / index / mvp matrix
+			SPtr<render::Buffer> mDataBuffer; // Combine vertex / index / mvp matrix
 			uint64_t mVertexIndex;
 			uint64_t mIndexIndex;
 			uint64_t mMVPIndex;
 
-			SPtr<BaseRenderAPI> mRenderAPI_ref;
+			SPtr<render::RenderAPI> mRenderAPI_ref;
 		};
 	} // namespace core
 } // namespace cube

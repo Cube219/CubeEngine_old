@@ -202,12 +202,4 @@
       <UniqueIdentifier>{cd517b62-17a3-465a-9ba5-f3d52f34b794}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Renderer\Vertex.glsl">
-      <Filter>Renderer</Filter>
-    </None>
-    <None Include="Renderer\Fragment.glsl">
-      <Filter>Renderer</Filter>
-    </None>
-  </ItemGroup>
 </Project>

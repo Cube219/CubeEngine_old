@@ -9,7 +9,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 #ifdef _WIN32
 		VulkanWindowSurface::VulkanWindowSurface(const SPtr<VulkanInstance>& instance, const SPtr<VulkanPhysicalDevice>& physicalDevice, const SPtr<VulkanDevice>& device) :
@@ -121,5 +121,5 @@ namespace cube
 
 			delete[] surfaceFormats;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

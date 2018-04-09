@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		enum class VulkanPhysicalDeviceFeature
 		{
@@ -80,5 +80,5 @@ namespace cube
 			VulkanPhysicalDevice(VkPhysicalDevice physicalDevice);
 			VkPhysicalDevice mPhysicalDevice;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

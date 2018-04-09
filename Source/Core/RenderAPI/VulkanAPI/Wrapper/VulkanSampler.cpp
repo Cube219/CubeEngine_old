@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanSampler::VulkanSampler(const SPtr<VulkanDevice>& device) : 
 			mDevice_ref(device)
@@ -39,5 +39,5 @@ namespace cube
 		{
 			vkDestroySampler(mDevice_ref->GetHandle(), mSampler, nullptr);
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

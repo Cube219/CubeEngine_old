@@ -8,7 +8,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanSwapchain::VulkanSwapchain(const SPtr<VulkanDevice>& device, const SPtr<VulkanWindowSurface>& surface,
 			uint32_t imageCount, uint32_t width, uint32_t height, bool vsync) :
@@ -27,7 +27,7 @@ namespace cube
 			vkDestroySwapchainKHR(mDevice_ref->GetHandle(), mSwapchain, nullptr);
 		}
 
-		uint32_t VulkanSwapchain::AcquireNextImageIndex(SPtr<BaseRenderSemaphore>& signalSemaphore)
+		uint32_t VulkanSwapchain::AcquireNextImageIndex(SPtr<Semaphore>& signalSemaphore)
 		{
 			VkResult res;
 
@@ -42,7 +42,7 @@ namespace cube
 			CreateSwapchain(true, imageCount, width, height, vsync);
 		}
 
-		void VulkanSwapchain::Present(uint32_t waitSemaphoreNum, SPtr<BaseRenderSemaphore>* waitSemaphores)
+		void VulkanSwapchain::Present(uint32_t waitSemaphoreNum, SPtr<Semaphore>* waitSemaphores)
 		{
 			VkResult res;
 
@@ -158,5 +158,5 @@ namespace cube
 			mWidth = width;
 			mHeight = height;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

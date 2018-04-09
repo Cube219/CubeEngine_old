@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../BaseRenderAPIHeader.h"
+#include "../RenderAPIHeader.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		// TODO: 나중에 Compute랑 나누기
 		enum class PipelineStageBits
@@ -29,7 +29,7 @@ namespace cube
 		};
 		SET_ENUM_AS_FLAGS(PipelineStageBits)
 
-		struct BaseRenderGraphicsPipelineInitializer
+		struct GraphicsPipelineInitializer
 		{
 			struct VertexInputAttribute
 			{
@@ -82,20 +82,20 @@ namespace cube
 			};
 			Vector<ColorBlendAttachment> colorBlendAttachments;
 
-			Vector<SPtr<BaseRenderShader>> shaders;
+			Vector<SPtr<Shader>> shaders;
 			
-			Vector<SPtr<BaseRenderDescriptorSetLayout>> descSetLayouts;
+			Vector<SPtr<DescriptorSetLayout>> descSetLayouts;
 
-			SPtr<BaseRenderRenderPass> renderPass;
+			SPtr<RenderPass> renderPass;
 		};
 
-		class BaseRenderGraphicsPipeline
+		class GraphicsPipeline
 		{
 		public:
-			virtual ~BaseRenderGraphicsPipeline(){ }
+			virtual ~GraphicsPipeline(){ }
 
 		protected:
-			BaseRenderGraphicsPipeline(){ }
+			GraphicsPipeline(){ }
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

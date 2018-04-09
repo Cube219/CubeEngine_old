@@ -12,7 +12,7 @@ namespace cube
 {
 	namespace core
 	{
-		Renderer3D::Renderer3D(SPtr<BaseRenderAPI>& renderAPI, SPtr<BaseRenderDescriptorSetLayout>& mPerObjectDescriptorSetLayout) : 
+		Renderer3D::Renderer3D(SPtr<render::RenderAPI>& renderAPI, SPtr<render::DescriptorSetLayout>& mPerObjectDescriptorSetLayout) : 
 			mRenderAPI_ref(renderAPI)
 		{
 			mDescriptorSet = renderAPI->CreateDescriptorSet(mPerObjectDescriptorSetLayout);
@@ -38,7 +38,7 @@ namespace cube
 			mModelMatrix = modelMatrix;
 		}
 
-		void Renderer3D::Draw(SPtr<BaseRenderCommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
+		void Renderer3D::Draw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
 		{
 			if(mMaterialIns.IsDestroyed() == true)
 				return;
@@ -65,11 +65,11 @@ namespace cube
 			auto mvpMatrix = mModelMatrix * camera->GetViewProjectionMatrix();
 			mDataBuffer->UpdateBufferData(mMVPIndex, &mvpMatrix, sizeof(mvpMatrix));
 
-			BaseRenderBufferInfo bufInfo = mDataBuffer->GetInfo(mMVPIndex);
+			render::BufferInfo bufInfo = mDataBuffer->GetInfo(mMVPIndex);
 			mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
 
 			// Write
-			commandBuffer->BindDescriptorSets(PipelineType::Graphics, 1, 1, &mDescriptorSet);
+			commandBuffer->BindDescriptorSets(render::PipelineType::Graphics, 1, 1, &mDescriptorSet);
 			uint64_t vertexOffset = mDataBuffer->GetInfo(mVertexIndex).offset;
 			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &vertexOffset);
 			commandBuffer->BindIndexBuffer(mDataBuffer, mDataBuffer->GetInfo(mIndexIndex).offset);
@@ -79,10 +79,10 @@ namespace cube
 
 		void Renderer3D::RecreateDataBuffer()
 		{
-			BaseRenderBufferInitializer init;
-			init.type = BufferTypeBits::Uniform | BufferTypeBits::Vertex | BufferTypeBits::Index;
+			render::BufferInitializer init;
+			init.type = render::BufferTypeBits::Uniform | render::BufferTypeBits::Vertex | render::BufferTypeBits::Index;
 
-			BaseRenderBufferInitializer::BufferData bufData;
+			render::BufferInitializer::BufferData bufData;
 			bufData.data = nullptr;
 
 			// 0. Vertex

@@ -2,18 +2,18 @@
 
 #include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderGraphicsPipeline.h"
+#include "BaseRenderAPI/Wrapper/GraphicsPipeline.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkPipelineStageFlags GetVkPipelineStageFlags(PipelineStageBits stageBits);
 
-		class VULKAN_API_EXPORT VulkanGraphicsPipeline : public BaseRenderGraphicsPipeline
+		class VULKAN_API_EXPORT VulkanGraphicsPipeline : public GraphicsPipeline
 		{
 		public:
-			VulkanGraphicsPipeline(const SPtr<VulkanDevice> device, BaseRenderGraphicsPipelineInitializer& initializer);
+			VulkanGraphicsPipeline(const SPtr<VulkanDevice> device, GraphicsPipelineInitializer& initializer);
 			virtual ~VulkanGraphicsPipeline();
 
 			VkPipeline GetHandle() const { return mPipeline; }
@@ -26,5 +26,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

@@ -18,14 +18,16 @@ namespace cube
 			return rendererManager->RegisterMaterial(mat);
 		}
 
-		Material::Material(SPtr<BaseRenderAPI>& renderAPI, const MaterialInitializer& init) : 
+		Material::Material(SPtr<render::RenderAPI>& renderAPI, const MaterialInitializer& init) : 
 			mRenderAPI_ref(renderAPI)
 		{
+			using namespace render;
+
 			mParamInfos = init.parameters;
 			mShaders = init.shaders;
 
-			BaseRenderDescriptorSetInitializer descSetInit;
-			BaseRenderDescriptorSetInitializer::Descriptor desc;
+			render::DescriptorSetInitializer descSetInit;
+			render::DescriptorSetInitializer::Descriptor desc;
 			desc.shaderType = ShaderTypeBits::Vertex | ShaderTypeBits::Fragment; // TODO: 사용자 설정으로
 			desc.count = 1;
 			for(uint32_t i = 0; i < mParamInfos.size(); i++) {

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../BaseRenderAPIHeader.h"
+#include "../RenderAPIHeader.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		enum class BufferTypeBits
 		{
@@ -15,14 +15,14 @@ namespace cube
 		};
 		SET_ENUM_AS_FLAGS(BufferTypeBits)
 
-		struct BaseRenderBufferInfo
+		struct BufferInfo
 		{
-			SPtr<const BaseRenderBuffer> buffer;
+			SPtr<const Buffer> buffer;
 			uint64_t offset;
 			uint64_t range;
 		};
 
-		struct BaseRenderBufferInitializer
+		struct BufferInitializer
 		{
 			BufferTypeBits type;
 
@@ -34,22 +34,22 @@ namespace cube
 			Vector<BufferData> bufferDatas;
 		};
 
-		class BaseRenderBuffer
+		class Buffer
 		{
 		public:
-			virtual ~BaseRenderBuffer(){ }
+			virtual ~Buffer(){ }
 
 			virtual void Map() = 0;
 			virtual void Map(uint64_t startIndex, uint64_t endIndex) = 0;
 			virtual void UpdateBufferData(uint64_t index, const void* data, size_t size) = 0;
 			virtual void Unmap() = 0;
 
-			virtual BaseRenderBufferInfo GetInfo(uint64_t index) const = 0;
+			virtual BufferInfo GetInfo(uint64_t index) const = 0;
 
 			size_t GetSize() const { return mSize; }
 
 		protected:
-			BaseRenderBuffer(){ }
+			Buffer(){ }
 
 			size_t mSize;
 		};

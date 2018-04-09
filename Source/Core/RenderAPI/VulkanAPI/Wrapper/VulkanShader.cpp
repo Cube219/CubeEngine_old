@@ -4,9 +4,9 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		VulkanShader::VulkanShader(const SPtr<VulkanDevice>& device, BaseRenderShaderInitializer& initializer) : 
+		VulkanShader::VulkanShader(const SPtr<VulkanDevice>& device, ShaderInitializer& initializer) : 
 			mDevice_ref(device)
 		{
 			VkShaderStageFlags stageFlagBits = GetVkShaderStageFlags(initializer.type);
@@ -56,12 +56,12 @@ namespace cube
 			mSpvShader.clear();
 		}
 
-		void VulkanShader::LoadFromSPIR_V(BaseRenderShaderInitializer& initializer)
+		void VulkanShader::LoadFromSPIR_V(ShaderInitializer& initializer)
 		{
 			// TODO
 		}
 
-		void VulkanShader::LoadFromGLSL(BaseRenderShaderInitializer& initializer, VkShaderStageFlags stageFlagBits)
+		void VulkanShader::LoadFromGLSL(ShaderInitializer& initializer, VkShaderStageFlags stageFlagBits)
 		{
 			TBuiltInResource resources = InitResource();
 
@@ -215,5 +215,5 @@ namespace cube
 
 			return res;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

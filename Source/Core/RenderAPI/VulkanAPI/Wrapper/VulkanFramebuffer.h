@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		struct VulkanFramebufferInitializer
 		{
@@ -30,5 +30,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

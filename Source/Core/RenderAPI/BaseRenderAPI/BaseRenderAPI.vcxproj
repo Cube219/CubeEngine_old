@@ -118,26 +118,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BaseRenderAPI.h" />
-    <ClInclude Include="BaseRenderAPIHeader.h" />
-    <ClInclude Include="BaseRenderUtility.h" />
-    <ClInclude Include="Wrapper\BaseRenderBuffer.h" />
-    <ClInclude Include="Wrapper\BaseRenderCommandBuffer.h" />
-    <ClInclude Include="Wrapper\BaseRenderDescriptor.h" />
-    <ClInclude Include="Wrapper\BaseRenderFence.h" />
-    <ClInclude Include="Wrapper\BaseRenderFramebuffer.h" />
-    <ClInclude Include="Wrapper\BaseRenderGraphicsPipeline.h" />
-    <ClInclude Include="Wrapper\BaseRenderImage.h" />
-    <ClInclude Include="Wrapper\BaseRenderQueue.h" />
-    <ClInclude Include="Wrapper\BaseRenderRenderPass.h" />
-    <ClInclude Include="Wrapper\BaseRenderSampler.h" />
-    <ClInclude Include="Wrapper\BaseRenderSemaphore.h" />
-    <ClInclude Include="Wrapper\BaseRenderShader.h" />
-    <ClInclude Include="Wrapper\BaseRenderSwapchain.h" />
-    <ClInclude Include="Wrapper\BaseRenderWindowSurface.h" />
+    <ClInclude Include="RenderAPI.h" />
+    <ClInclude Include="RenderAPIHeader.h" />
+    <ClInclude Include="RenderUtility.h" />
+    <ClInclude Include="Wrapper\Buffer.h" />
+    <ClInclude Include="Wrapper\CommandBuffer.h" />
+    <ClInclude Include="Wrapper\Descriptor.h" />
+    <ClInclude Include="Wrapper\Fence.h" />
+    <ClInclude Include="Wrapper\Framebuffer.h" />
+    <ClInclude Include="Wrapper\GraphicsPipeline.h" />
+    <ClInclude Include="Wrapper\Image.h" />
+    <ClInclude Include="Wrapper\Queue.h" />
+    <ClInclude Include="Wrapper\RenderPass.h" />
+    <ClInclude Include="Wrapper\Sampler.h" />
+    <ClInclude Include="Wrapper\Semaphore.h" />
+    <ClInclude Include="Wrapper\Shader.h" />
+    <ClInclude Include="Wrapper\Swapchain.h" />
+    <ClInclude Include="Wrapper\WindowSurface.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Wrapper\BaseRenderBuffer.cpp" />
+    <ClCompile Include="a.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -31,18 +31,18 @@ namespace cube
 					return;
 			}
 
-			using CreateAPIFunction = BaseRenderAPI*(*)();
+			using CreateAPIFunction = render::RenderAPI*(*)();
 
 			auto createAPIFunction = RCast(CreateAPIFunction)(mRenderDLib->GetFunction(CUBE_T("CreateAPI")));
 
 			// TODO: 좀 더 좋은 방법은 없을까?
-			SPtr<BaseRenderAPI> temp(createAPIFunction());
+			SPtr<render::RenderAPI> temp(createAPIFunction());
 			mRenderAPI = std::move(temp);
 
 			mRenderAPI->Init();
 
 			// Graphics queue
-			mGraphicsQueue = mRenderAPI->GetQueue(QueueTypeBits::GraphicsBit, 0);
+			mGraphicsQueue = mRenderAPI->GetQueue(render::QueueTypeBits::GraphicsBit, 0);
 
 			CreateDepthBuffer();
 
@@ -62,13 +62,13 @@ namespace cube
 			mCameraRenderer = std::make_shared<CameraRenderer3D>();
 
 			// Create Global / mPerObjectDescriptorSetLayout
-			BaseRenderDescriptorSetInitializer descSetInit;
+			render::DescriptorSetInitializer descSetInit;
 
 			mGlobalDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
 			mGlobalDescriptorSet = mRenderAPI->CreateDescriptorSet(mGlobalDescriptorSetLayout);
 
 			descSetInit.descriptors.clear();
-			descSetInit.descriptors.push_back({ShaderTypeBits::Vertex, DescriptorType::UniformBuffer, 0, 1});
+			descSetInit.descriptors.push_back({render::ShaderTypeBits::Vertex, render::DescriptorType::UniformBuffer, 0, 1});
 			mPerObjectDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
 
 			mIsPrepared = true;
@@ -172,7 +172,7 @@ namespace cube
 			RewriteCommandBuffer();
 
 			mMainCommandBufferSubmitFence->Reset();
-			auto temp = std::make_pair(mGetImageSemaphore, PipelineStageBits::ColorAttachmentOutputBit);
+			auto temp = std::make_pair(mGetImageSemaphore, render::PipelineStageBits::ColorAttachmentOutputBit);
 			mMainCommandBuffer->Submit(mGraphicsQueue, 1, &temp, 0, nullptr, mMainCommandBufferSubmitFence);
 			
 			bool r = mMainCommandBufferSubmitFence->Wait(100000000);
@@ -209,7 +209,9 @@ namespace cube
 
 		void RendererManager::CreateDepthBuffer()
 		{
-			BaseRenderImageInitializer imageInit;
+			using namespace render;
+
+			ImageInitializer imageInit;
 			imageInit.type = ImageType::Image2D;
 			imageInit.format = DataFormat::D16_Unorm;
 			imageInit.width = mWidth;
@@ -223,12 +225,14 @@ namespace cube
 
 		void RendererManager::CreateRenderpass()
 		{
+			using namespace render;
+
 			Color c;
 			DepthStencilValue v;
 
-			BaseRenderRenderPassInitializer renderPassInit;
+			render::RenderPassInitializer renderPassInit;
 			// Depth buffer attachment
-			BaseRenderRenderPassInitializer::Attachment att;
+			render::RenderPassInitializer::Attachment att;
 			att.imageView = mDepthBufferImageView;
 			att.format = DataFormat::D16_Unorm;
 			att.loadOp = LoadOperator::Clear;
@@ -247,7 +251,7 @@ namespace cube
 			renderPassInit.attachments.push_back(att);
 
 			// Swapchain attachment
-			BaseRenderRenderPassInitializer::SwapchainAttachment swapAtt;
+			render::RenderPassInitializer::SwapchainAttachment swapAtt;
 			swapAtt.swapchain = mSwapchain;
 			swapAtt.loadOp = LoadOperator::Clear;
 			swapAtt.storeOp = StoreOperator::Store;
@@ -259,7 +263,7 @@ namespace cube
 			renderPassInit.swapchainAttachment = swapAtt;
 
 			// Subpass
-			BaseRenderSubpass subpass;
+			render::Subpass subpass;
 			subpass.mColors.push_back({1, ImageLayout::ColorAttachmentOptimal});
 			subpass.mDepthStencil.index = 0;
 			subpass.mDepthStencil.layout = ImageLayout::DepthStencilAttachmentOptimal;
@@ -270,6 +274,8 @@ namespace cube
 
 		void RendererManager::RewriteCommandBuffer()
 		{
+			using namespace render;
+
 			Viewport vp;
 			vp.width = SCast(float)(mWidth);
 			vp.height = SCast(float)(mHeight);
@@ -311,7 +317,7 @@ namespace cube
 			for(auto& renderer : mRenderers) {
 				HMaterialInstance materialIns = renderer->GetMaterialInstance();
 				int materialIndex = materialIns->GetMaterial()->mIndex;
-				SPtr<BaseRenderDescriptorSet> materialInsDesc = materialIns->GetDescriptorSet();
+				SPtr<render::DescriptorSet> materialInsDesc = materialIns->GetDescriptorSet();
 
 				mMaterialCommandBuffers[materialIndex]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &materialInsDesc);
 
@@ -334,12 +340,14 @@ namespace cube
 			mMainCommandBuffer->End();
 		}
 
-		SPtr<BaseRenderGraphicsPipeline> RendererManager::CreatePipeline(HMaterial& material)
+		SPtr<render::GraphicsPipeline> RendererManager::CreatePipeline(HMaterial& material)
 		{
-			BaseRenderGraphicsPipelineInitializer initializer;
+			using namespace render;
+
+			render::GraphicsPipelineInitializer initializer;
 
 			uint32_t currentVertexOffset = 0;
-			BaseRenderGraphicsPipelineInitializer::VertexInputAttribute attr;
+			render::GraphicsPipelineInitializer::VertexInputAttribute attr;
 			attr.location = 0; // Position data
 			attr.format = DataFormat::R32G32B32A32_SFloat;
 			attr.offset = 0;
@@ -365,7 +373,7 @@ namespace cube
 
 			initializer.rasterizer = {PolygonMode::Fill, PolygonFrontFace::Clockwise, CullMode::Back};
 
-			BaseRenderGraphicsPipelineInitializer::ColorBlendAttachment colorAttr;
+			render::GraphicsPipelineInitializer::ColorBlendAttachment colorAttr;
 			colorAttr.blendEnable = false;
 			colorAttr.srcColorBlendFactor = BlendFactor::Zero;
 			colorAttr.dstColorBlendFactor = BlendFactor::Zero;

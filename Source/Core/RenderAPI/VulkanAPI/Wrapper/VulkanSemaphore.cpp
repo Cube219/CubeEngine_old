@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanSemaphore::VulkanSemaphore(SPtr<VulkanDevice>& device) :
 			mDevice_ref(device)
@@ -21,5 +21,5 @@ namespace cube
 		{
 			vkDestroySemaphore(mDevice_ref->GetHandle(), mSemaphore, nullptr);
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

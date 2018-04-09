@@ -75,7 +75,7 @@ void PrintVkFail(const char* fileName, int lineNum, cube::String msg, VkResult r
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkFormat GetVkFormat(DataFormat format)
 		{
@@ -563,5 +563,5 @@ namespace cube
 
 			return shaderStageFlags;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

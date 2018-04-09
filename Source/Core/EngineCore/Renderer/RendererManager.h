@@ -4,16 +4,16 @@
 
 #include "DLib.h"
 
-#include "BaseRenderAPI/BaseRenderAPI.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderShader.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderGraphicsPipeline.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderImage.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderSwapchain.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderCommandBuffer.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderQueue.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderSemaphore.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderFence.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderRenderPass.h"
+#include "BaseRenderAPI/RenderAPI.h"
+#include "BaseRenderAPI/Wrapper/Shader.h"
+#include "BaseRenderAPI/Wrapper/GraphicsPipeline.h"
+#include "BaseRenderAPI/Wrapper/Image.h"
+#include "BaseRenderAPI/Wrapper/Swapchain.h"
+#include "BaseRenderAPI/Wrapper/CommandBuffer.h"
+#include "BaseRenderAPI/Wrapper/Queue.h"
+#include "BaseRenderAPI/Wrapper/Semaphore.h"
+#include "BaseRenderAPI/Wrapper/Fence.h"
+#include "BaseRenderAPI/Wrapper/RenderPass.h"
 
 #include "../Thread/MutexLock.h"
 
@@ -41,7 +41,7 @@ namespace cube
 			SPtr<Renderer3D> CreateRenderer3D();
 			SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: 차후 저렇게 바꾸기
 
-			SPtr<BaseRenderAPI> GetRenderAPI() const { return mRenderAPI; }
+			SPtr<render::RenderAPI> GetRenderAPI() const { return mRenderAPI; }
 
 			void DrawAll();
 
@@ -55,10 +55,10 @@ namespace cube
 
 			void RewriteCommandBuffer();
 
-			SPtr<BaseRenderGraphicsPipeline> CreatePipeline(HMaterial& material);
+			SPtr<render::GraphicsPipeline> CreatePipeline(HMaterial& material);
 
 			SPtr<platform::DLib> mRenderDLib;
-			SPtr<BaseRenderAPI> mRenderAPI;
+			SPtr<render::RenderAPI> mRenderAPI;
 
 			Mutex mRenderersMutex;
 			Vector<SPtr<Renderer3D>> mRenderers;
@@ -66,26 +66,26 @@ namespace cube
 
 			Mutex mMaterialsMutex;
 			Vector<SPtr<MaterialData>> mMaterials;
-			Vector<SPtr<BaseRenderGraphicsPipeline>> mMaterialPipelines;
-			Vector<SPtr<BaseRenderCommandBuffer>> mMaterialCommandBuffers;
+			Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
+			Vector<SPtr<render::CommandBuffer>> mMaterialCommandBuffers;
 
-			SPtr<BaseRenderDescriptorSetLayout> mGlobalDescriptorSetLayout;
-			SPtr<BaseRenderDescriptorSet> mGlobalDescriptorSet;
-			SPtr<BaseRenderDescriptorSetLayout> mPerObjectDescriptorSetLayout;
+			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
+			SPtr<render::DescriptorSet> mGlobalDescriptorSet;
+			SPtr<render::DescriptorSetLayout> mPerObjectDescriptorSetLayout;
 
-			SPtr<BaseRenderImage> mDepthBufferImage;
-			SPtr<BaseRenderImageView> mDepthBufferImageView;
+			SPtr<render::Image> mDepthBufferImage;
+			SPtr<render::ImageView> mDepthBufferImageView;
 
-			SPtr<BaseRenderSwapchain> mSwapchain;
+			SPtr<render::Swapchain> mSwapchain;
 
-			SPtr<BaseRenderRenderPass> mRenderPass;
+			SPtr<render::RenderPass> mRenderPass;
 
-			SPtr<BaseRenderCommandBuffer> mMainCommandBuffer;
-			SPtr<BaseRenderFence> mMainCommandBufferSubmitFence;
+			SPtr<render::CommandBuffer> mMainCommandBuffer;
+			SPtr<render::Fence> mMainCommandBufferSubmitFence;
 
-			SPtr<BaseRenderQueue> mGraphicsQueue;
+			SPtr<render::Queue> mGraphicsQueue;
 
-			SPtr<BaseRenderSemaphore> mGetImageSemaphore;
+			SPtr<render::Semaphore> mGetImageSemaphore;
 
 			bool mIsPrepared;
 

@@ -2,13 +2,13 @@
 
 #include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderSemaphore.h"
+#include "BaseRenderAPI/Wrapper/Semaphore.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		class VULKAN_API_EXPORT VulkanSemaphore : public BaseRenderSemaphore
+		class VULKAN_API_EXPORT VulkanSemaphore : public Semaphore
 		{
 		public:
 			VulkanSemaphore(SPtr<VulkanDevice>& device);
@@ -21,5 +21,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

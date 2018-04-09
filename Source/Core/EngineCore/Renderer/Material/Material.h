@@ -2,7 +2,7 @@
 
 #include "../../EngineCoreHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
+#include "BaseRenderAPI/Wrapper/Descriptor.h"
 #include "../../BasicHandler.h"
 
 namespace cube
@@ -40,7 +40,7 @@ namespace cube
 
 			const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
 
-			SPtr<BaseRenderDescriptorSetLayout> GetDescriptorSetLayout() const { return mDescriptorSetLayout; }
+			SPtr<render::DescriptorSetLayout> GetDescriptorSetLayout() const { return mDescriptorSetLayout; }
 
 			void Destroy();
 
@@ -48,7 +48,7 @@ namespace cube
 			friend class RendererManager;
 			friend class MaterialInstance;
 
-			Material(SPtr<BaseRenderAPI>& renderAPI, const MaterialInitializer& init);
+			Material(SPtr<render::RenderAPI>& renderAPI, const MaterialInitializer& init);
 
 			HMaterial mMyHandler;
 
@@ -57,9 +57,9 @@ namespace cube
 			Vector<MaterialParameterInfo> mParamInfos;
 
 			Vector<RPtr<Shader>> mShaders;
-			SPtr<BaseRenderDescriptorSetLayout> mDescriptorSetLayout;
+			SPtr<render::DescriptorSetLayout> mDescriptorSetLayout;
 
-			SPtr<BaseRenderAPI> mRenderAPI_ref;
+			SPtr<render::RenderAPI> mRenderAPI_ref;
 		};
 	} // namespace core
 } // namespace cube

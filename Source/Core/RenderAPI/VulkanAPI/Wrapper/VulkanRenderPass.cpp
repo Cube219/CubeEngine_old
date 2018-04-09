@@ -8,7 +8,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkAttachmentLoadOp GetVkAttachmentLoadOp(LoadOperator loadOperator)
 		{
@@ -53,7 +53,7 @@ namespace cube
 			return o;
 		}
 
-		UPtr<VulkanSubpass> GetVulkanSubpass(BaseRenderSubpass subpass)
+		UPtr<VulkanSubpass> GetVulkanSubpass(Subpass subpass)
 		{
 			auto s = std::make_unique<VulkanSubpass>();
 
@@ -127,7 +127,7 @@ namespace cube
 		//                      VulkanRenderPass
 		// -----------------------------------------------------------
 
-		VulkanRenderPass::VulkanRenderPass(const SPtr<VulkanDevice>& device, BaseRenderRenderPassInitializer& initializer) :
+		VulkanRenderPass::VulkanRenderPass(const SPtr<VulkanDevice>& device, RenderPassInitializer& initializer) :
 			mDevice_ref(device), mSwapchain_ref(nullptr)
 		{
 			VkResult res;
@@ -271,5 +271,5 @@ namespace cube
 			else
 				return mFramebuffers[mSwapchain_ref->GetCurrentImageIndex()];
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

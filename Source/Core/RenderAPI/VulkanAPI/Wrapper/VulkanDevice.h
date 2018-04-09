@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		class VulkanDeviceInitializer
 		{
@@ -67,5 +67,5 @@ namespace cube
 
 			SPtr<VulkanPhysicalDevice> mPhysicalDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

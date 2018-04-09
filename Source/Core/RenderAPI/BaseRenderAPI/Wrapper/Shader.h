@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../BaseRenderAPIHeader.h"
+#include "../RenderAPIHeader.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		struct BaseRenderShaderInitializer
+		struct ShaderInitializer
 		{
 			ShaderLanguage language;
 			ShaderTypeBits type;
@@ -14,13 +14,13 @@ namespace cube
 			const char* entryPoint;
 		};
 
-		class BaseRenderShader
+		class Shader
 		{
 		public:
-			virtual ~BaseRenderShader(){ }
+			virtual ~Shader(){ }
 
 		protected:
-			BaseRenderShader(){ }
+			Shader(){ }
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

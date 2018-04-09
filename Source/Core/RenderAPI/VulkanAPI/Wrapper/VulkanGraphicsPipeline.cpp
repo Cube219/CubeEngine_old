@@ -7,7 +7,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkPipelineStageFlags GetVkPipelineStageFlags(PipelineStageBits stageBits)
 		{
@@ -67,7 +67,7 @@ namespace cube
 			return f;
 		}
 
-		VulkanGraphicsPipeline::VulkanGraphicsPipeline(const SPtr<VulkanDevice> device, BaseRenderGraphicsPipelineInitializer& initializer) :
+		VulkanGraphicsPipeline::VulkanGraphicsPipeline(const SPtr<VulkanDevice> device, GraphicsPipelineInitializer& initializer) :
 			mDevice_ref(device)
 		{
 			VkResult res;
@@ -268,5 +268,5 @@ namespace cube
 			vkDestroyPipelineLayout(mDevice_ref->GetHandle(), mPipelineLayout, nullptr);
 			vkDestroyPipeline(mDevice_ref->GetHandle(), mPipeline, nullptr);
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

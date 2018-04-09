@@ -6,7 +6,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkBufferUsageFlags GetVkBufferUsageFlags(BufferTypeBits typeBits)
 		{
@@ -24,7 +24,7 @@ namespace cube
 			return f;
 		}
 
-		VulkanBuffer::VulkanBuffer(const SPtr<VulkanDevice>& device, BaseRenderBufferInitializer& initializer) : 
+		VulkanBuffer::VulkanBuffer(const SPtr<VulkanDevice>& device, BufferInitializer& initializer) : 
 			mDevice_ref(device), mMappedData(nullptr)
 		{
 			VkResult res;
@@ -151,14 +151,14 @@ namespace cube
 			mMappedData = nullptr;
 		}
 
-		BaseRenderBufferInfo VulkanBuffer::GetInfo(uint64_t index) const
+		BufferInfo VulkanBuffer::GetInfo(uint64_t index) const
 		{
-			BaseRenderBufferInfo info;
+			BufferInfo info;
 			info.buffer = shared_from_this();
 			info.offset = mDataOffsets[index];
 			info.range = mDataSizes[index];
 
 			return info;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

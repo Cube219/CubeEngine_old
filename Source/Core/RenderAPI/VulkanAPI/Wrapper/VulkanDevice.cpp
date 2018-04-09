@@ -5,7 +5,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanDevice::VulkanDevice(const SPtr<VulkanPhysicalDevice>& physicalDevice, VulkanDeviceInitializer& initializer) :
 			mPhysicalDevice_ref(physicalDevice)
@@ -147,5 +147,5 @@ namespace cube
 			}
 			return -1;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

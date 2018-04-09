@@ -3,7 +3,7 @@
 #include "../../EngineCoreHeader.h"
 
 #include "../../Resource/BaseResource.h"
-#include "BaseRenderAPI/BaseRenderAPI.h"
+#include "BaseRenderAPI/RenderAPI.h"
 
 namespace cube
 {
@@ -11,15 +11,15 @@ namespace cube
 	{
 		struct ShaderCompileDesc
 		{
-			ShaderLanguage language;
-			ShaderTypeBits type;
+			render::ShaderLanguage language;
+			render::ShaderTypeBits type;
 			U8String entryPoint;
 		};
 
 		class ENGINE_CORE_EXPORT ShaderImporter : public ResourceImporter
 		{
 		public:
-			ShaderImporter(SPtr<BaseRenderAPI>& renderAPI) :
+			ShaderImporter(SPtr<render::RenderAPI>& renderAPI) :
 				mRenderAPI(renderAPI)
 			{
 				mResName = CUBE_T("shader");
@@ -30,7 +30,7 @@ namespace cube
 		private:
 			ShaderCompileDesc GetCompileDesc(Json& info);
 
-			SPtr<BaseRenderAPI> mRenderAPI;
+			SPtr<render::RenderAPI> mRenderAPI;
 		};
 
 		class ENGINE_CORE_EXPORT Shader : public Resource
@@ -41,20 +41,20 @@ namespace cube
 		public:
 			~Shader();
 
-			ShaderLanguage GetLanguage() const { return mLanguage; }
-			ShaderTypeBits GetType() const { return mType; }
+			render::ShaderLanguage GetLanguage() const { return mLanguage; }
+			render::ShaderTypeBits GetType() const { return mType; }
 
 		private:
 			friend class ShaderImporter;
 			Shader() { }
 
 			friend class RendererManager;
-			SPtr<BaseRenderShader> GetRenderShader() const { return mRenderShader; }
+			SPtr<render::Shader> GetRenderShader() const { return mRenderShader; }
 
-			ShaderLanguage mLanguage;
-			ShaderTypeBits mType;
+			render::ShaderLanguage mLanguage;
+			render::ShaderTypeBits mType;
 
-			SPtr<BaseRenderShader> mRenderShader;
+			SPtr<render::Shader> mRenderShader;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

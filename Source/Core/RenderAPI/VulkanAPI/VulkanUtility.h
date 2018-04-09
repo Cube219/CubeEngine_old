@@ -1,6 +1,6 @@
 #pragma once
 
-#include<vulkan\vulkan.h>
+#include<vulkan/vulkan.h>
 
 #include "EngineCore/LogWriter.h"
 
@@ -15,11 +15,11 @@ void PrintVkFail(const char* fileName, int lineNum, cube::String msg, VkResult r
 
 #endif // _DEBUG
 
-#include "BaseRenderAPI/BaseRenderUtility.h"
+#include "BaseRenderAPI/RenderUtility.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkFormat GetVkFormat(DataFormat format);
 		VkPrimitiveTopology GetVkPrimitiveTopology(VertexTopology topology);
@@ -38,5 +38,5 @@ namespace cube
 		VkClearDepthStencilValue GetVkClearDepthStencilValue(DepthStencilValue value);
 		VkAccessFlags GetVkAccessFlags(AccessBits access);
 		VkShaderStageFlags GetVkShaderStageFlags(ShaderTypeBits shaderType);
-	}
-}
+	} // namespace render
+} // namespace cube

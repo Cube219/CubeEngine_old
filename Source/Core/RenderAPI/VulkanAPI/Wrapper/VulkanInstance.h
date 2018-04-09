@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		struct VulkanInstanceInitializer
 		{
@@ -31,5 +31,5 @@ namespace cube
 		private:
 			VkInstance mInstance;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

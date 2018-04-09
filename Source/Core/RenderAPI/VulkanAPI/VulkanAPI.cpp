@@ -22,9 +22,9 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		BaseRenderAPI* CreateAPI()
+		RenderAPI* CreateAPI()
 		{
 			return new VulkanAPI();
 		}
@@ -81,47 +81,47 @@ namespace cube
 			mDescriptorPool = std::make_shared<VulkanDescriptorPool>(mDevice);
 		}
 
-		SPtr<BaseRenderBuffer> VulkanAPI::CreateBuffer(BaseRenderBufferInitializer& initializer)
+		SPtr<Buffer> VulkanAPI::CreateBuffer(BufferInitializer& initializer)
 		{
 			return std::make_shared<VulkanBuffer>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderDescriptorSetLayout> VulkanAPI::CreateDescriptorSetLayout(BaseRenderDescriptorSetInitializer& initializer)
+		SPtr<DescriptorSetLayout> VulkanAPI::CreateDescriptorSetLayout(DescriptorSetInitializer& initializer)
 		{
 			return std::make_shared<VulkanDescriptorSetLayout>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderDescriptorSet> VulkanAPI::CreateDescriptorSet(SPtr<BaseRenderDescriptorSetLayout>& layout)
+		SPtr<DescriptorSet> VulkanAPI::CreateDescriptorSet(SPtr<DescriptorSetLayout>& layout)
 		{
 			return std::make_shared<VulkanDescriptorSet>(mDevice, mDescriptorPool, layout);
 		}
 
-		SPtr<BaseRenderQueue> VulkanAPI::GetQueue(QueueTypeBits types, uint32_t index)
+		SPtr<Queue> VulkanAPI::GetQueue(QueueTypeBits types, uint32_t index)
 		{
 			return mDevice->GetQueue(GetVkQueueFlags(types), index);
 		}
 
-		SPtr<BaseRenderSwapchain> VulkanAPI::CreateSwapchain()
+		SPtr<Swapchain> VulkanAPI::CreateSwapchain()
 		{
 			return std::make_shared<VulkanSwapchain>(mDevice, mWindowSurface, 2, 10, 10, false);
 		}
 
-		SPtr<BaseRenderRenderPass> VulkanAPI::CreateRenderPass(BaseRenderRenderPassInitializer& initializer)
+		SPtr<RenderPass> VulkanAPI::CreateRenderPass(RenderPassInitializer& initializer)
 		{
 			return std::make_shared<VulkanRenderPass>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderShader> VulkanAPI::CreateShader(BaseRenderShaderInitializer& initializer)
+		SPtr<Shader> VulkanAPI::CreateShader(ShaderInitializer& initializer)
 		{
 			return std::make_shared<VulkanShader>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderGraphicsPipeline> VulkanAPI::CreateGraphicsPipeline(BaseRenderGraphicsPipelineInitializer& initializer)
+		SPtr<GraphicsPipeline> VulkanAPI::CreateGraphicsPipeline(GraphicsPipelineInitializer& initializer)
 		{
 			return std::make_shared<VulkanGraphicsPipeline>(mDevice, initializer);
 		}
 
-		SPtr<BaseRenderCommandBuffer> VulkanAPI::CreateCommandBuffer(bool isPrimary)
+		SPtr<CommandBuffer> VulkanAPI::CreateCommandBuffer(bool isPrimary)
 		{
 			VkCommandBufferLevel level;
 
@@ -133,23 +133,23 @@ namespace cube
 			return mCommandPool->AllocateCommandBuffer(level);
 		}
 
-		SPtr<BaseRenderImage> VulkanAPI::CreateImage(BaseRenderImageInitializer& initializer)
+		SPtr<Image> VulkanAPI::CreateImage(ImageInitializer& initializer)
 		{
 			return std::make_shared<VulkanImage>(mDevice, initializer);
 		}
-		SPtr<BaseRenderSampler> VulkanAPI::CreateSampler()
+		SPtr<Sampler> VulkanAPI::CreateSampler()
 		{
 			return std::make_shared<VulkanSampler>(mDevice);
 		}
 
-		SPtr<BaseRenderFence> VulkanAPI::CreateFence()
+		SPtr<Fence> VulkanAPI::CreateFence()
 		{
 			return std::make_shared<VulkanFence>(mDevice);
 		}
 
-		SPtr<BaseRenderSemaphore> VulkanAPI::CreateSemaphore()
+		SPtr<Semaphore> VulkanAPI::CreateSemaphore()
 		{
 			return std::make_shared<VulkanSemaphore>(mDevice);
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

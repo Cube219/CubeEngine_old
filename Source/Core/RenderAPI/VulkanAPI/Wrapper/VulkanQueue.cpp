@@ -2,7 +2,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkQueueFlags GetVkQueueFlags(QueueTypeBits type)
 		{
@@ -42,5 +42,5 @@ namespace cube
 		VulkanQueue::~VulkanQueue()
 		{
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

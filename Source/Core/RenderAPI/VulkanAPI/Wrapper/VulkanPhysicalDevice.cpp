@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanPhysicalDeviceFeatures::VulkanPhysicalDeviceFeatures()
 		{
@@ -241,5 +241,5 @@ namespace cube
 		VulkanPhysicalDevice::~VulkanPhysicalDevice()
 		{
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

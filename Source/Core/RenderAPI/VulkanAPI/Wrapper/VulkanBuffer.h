@@ -2,18 +2,18 @@
 
 #include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
+#include "BaseRenderAPI/Wrapper/Buffer.h"
 
 namespace cube
 {	
-	namespace core
+	namespace render
 	{
 		VkBufferUsageFlags GetVkBufferUsageFlags(BufferTypeBits typeBits);
 
-		class VULKAN_API_EXPORT VulkanBuffer : public BaseRenderBuffer, public std::enable_shared_from_this<VulkanBuffer>
+		class VULKAN_API_EXPORT VulkanBuffer : public Buffer, public std::enable_shared_from_this<VulkanBuffer>
 		{
 		public:
-			VulkanBuffer(const SPtr<VulkanDevice>& device, BaseRenderBufferInitializer& initializer);
+			VulkanBuffer(const SPtr<VulkanDevice>& device, BufferInitializer& initializer);
 			virtual ~VulkanBuffer();
 
 			VkBuffer GetHandle() const { return mBuffer; }
@@ -23,7 +23,7 @@ namespace cube
 			void UpdateBufferData(uint64_t index, const void* data, size_t size) final override;
 			void Unmap() final override;
 
-			BaseRenderBufferInfo GetInfo(uint64_t index) const final override;
+			BufferInfo GetInfo(uint64_t index) const final override;
 
 			const VkDescriptorBufferInfo GetVulkanInfo(uint64_t offset, uint64_t range) const
 			{
@@ -47,5 +47,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

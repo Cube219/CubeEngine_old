@@ -2,15 +2,15 @@
 
 #include "VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/BaseRenderAPI.h"
+#include "BaseRenderAPI/RenderAPI.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		extern "C" VULKAN_API_EXPORT BaseRenderAPI* CreateAPI();
+		extern "C" VULKAN_API_EXPORT RenderAPI* CreateAPI();
 
-		class VULKAN_API_EXPORT VulkanAPI : public BaseRenderAPI
+		class VULKAN_API_EXPORT VulkanAPI : public RenderAPI
 		{
 		public:
 			VulkanAPI();
@@ -18,31 +18,31 @@ namespace cube
 
 			void Init() final override;
 
-			SPtr<BaseRenderBuffer> CreateBuffer(BaseRenderBufferInitializer& initializer) final override;
+			SPtr<Buffer> CreateBuffer(BufferInitializer& initializer) final override;
 
-			SPtr<BaseRenderDescriptorSetLayout> CreateDescriptorSetLayout(BaseRenderDescriptorSetInitializer& initializer) final override;
+			SPtr<DescriptorSetLayout> CreateDescriptorSetLayout(DescriptorSetInitializer& initializer) final override;
 
-			SPtr<BaseRenderDescriptorSet> CreateDescriptorSet(SPtr<BaseRenderDescriptorSetLayout>& layout) final override;
+			SPtr<DescriptorSet> CreateDescriptorSet(SPtr<DescriptorSetLayout>& layout) final override;
 
-			SPtr<BaseRenderQueue> GetQueue(QueueTypeBits types, uint32_t index) final override;
+			SPtr<Queue> GetQueue(QueueTypeBits types, uint32_t index) final override;
 
-			SPtr<BaseRenderSwapchain> CreateSwapchain() final override;
+			SPtr<Swapchain> CreateSwapchain() final override;
 
-			SPtr<BaseRenderRenderPass> CreateRenderPass(BaseRenderRenderPassInitializer& initializer) final override;
+			SPtr<RenderPass> CreateRenderPass(RenderPassInitializer& initializer) final override;
 
-			SPtr<BaseRenderShader> CreateShader(BaseRenderShaderInitializer& initializer) final override;
+			SPtr<Shader> CreateShader(ShaderInitializer& initializer) final override;
 
-			SPtr<BaseRenderGraphicsPipeline> CreateGraphicsPipeline(BaseRenderGraphicsPipelineInitializer& initializer) final override;
+			SPtr<GraphicsPipeline> CreateGraphicsPipeline(GraphicsPipelineInitializer& initializer) final override;
 
-			SPtr<BaseRenderCommandBuffer> CreateCommandBuffer(bool isPrimary = true) final override;
+			SPtr<CommandBuffer> CreateCommandBuffer(bool isPrimary = true) final override;
 
-			SPtr<BaseRenderImage> CreateImage(BaseRenderImageInitializer& initializer) final override;
+			SPtr<Image> CreateImage(ImageInitializer& initializer) final override;
 
-			SPtr<BaseRenderSampler> CreateSampler() final override;
+			SPtr<Sampler> CreateSampler() final override;
 
-			SPtr<BaseRenderFence> CreateFence() final override;
+			SPtr<Fence> CreateFence() final override;
 #undef CreateSemaphore // Disable the macro defined in synchapi.h (WinAPI)
-			SPtr<BaseRenderSemaphore> CreateSemaphore() final override;
+			SPtr<Semaphore> CreateSemaphore() final override;
 
 		private:
 			SPtr<VulkanInstance> mInstance;
@@ -56,5 +56,5 @@ namespace cube
 
 			SPtr<VulkanDescriptorPool> mDescriptorPool;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

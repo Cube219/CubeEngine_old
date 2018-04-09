@@ -2,13 +2,13 @@
 
 #include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderFence.h"
+#include "BaseRenderAPI/Wrapper/Fence.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		class VULKAN_API_EXPORT VulkanFence : public BaseRenderFence
+		class VULKAN_API_EXPORT VulkanFence : public Fence
 		{
 		public:
 			VulkanFence(SPtr<VulkanDevice>& device);
@@ -24,5 +24,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../BaseRenderAPIHeader.h"
+#include "../RenderAPIHeader.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		enum class ImageType
 		{
@@ -57,17 +57,17 @@ namespace cube
 			SharedPresent
 		};
 
-		class BaseRenderImageView
+		class ImageView
 		{
 		public:
-			virtual ~BaseRenderImageView(){ }
+			virtual ~ImageView(){ }
 
 		protected:
-			BaseRenderImageView(){ }
+			ImageView(){ }
 
 		};
 
-		struct BaseRenderImageInitializer
+		struct ImageInitializer
 		{
 			ImageType type;
 			DataFormat format;
@@ -78,15 +78,15 @@ namespace cube
 			ImageUsageBits usage;
 		};
 
-		class BaseRenderImage
+		class Image
 		{
 		public:
-			virtual ~BaseRenderImage(){ }
+			virtual ~Image(){ }
 
-			virtual SPtr<BaseRenderImageView> GetImageView(DataFormat format, ImageAspectBits aspectBits, ImageViewType type) = 0;
+			virtual SPtr<ImageView> GetImageView(DataFormat format, ImageAspectBits aspectBits, ImageViewType type) = 0;
 
 		protected:
-			BaseRenderImage(){ }
+			Image(){ }
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

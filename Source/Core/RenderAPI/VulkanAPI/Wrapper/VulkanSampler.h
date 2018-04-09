@@ -2,13 +2,13 @@
 
 #include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderSampler.h"
+#include "BaseRenderAPI/Wrapper/Sampler.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		class VULKAN_API_EXPORT VulkanSampler : public BaseRenderSampler
+		class VULKAN_API_EXPORT VulkanSampler : public Sampler
 		{
 		public:
 			VulkanSampler(const SPtr<VulkanDevice>& device);
@@ -21,5 +21,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

@@ -8,16 +8,16 @@ namespace cube
 {
 	namespace core
 	{
-		MaterialInstance::MaterialInstance(SPtr<BaseRenderAPI>& renderAPI, HMaterial mat) :
+		MaterialInstance::MaterialInstance(SPtr<render::RenderAPI>& renderAPI, HMaterial mat) :
 			mMaterial(mat)
 		{
 			mDescriptorSet = renderAPI->CreateDescriptorSet(mat->GetDescriptorSetLayout());
 
 			// Create dataBuffer used in descriptor set based on parameterInfos
-			BaseRenderBufferInitializer bufInit;
-			bufInit.type = BufferTypeBits::Uniform;
+			render::BufferInitializer bufInit;
+			bufInit.type = render::BufferTypeBits::Uniform;
 
-			BaseRenderBufferInitializer::BufferData bufData;
+			render::BufferInitializer::BufferData bufData;
 			bufData.data = nullptr;
 
 			Vector<MaterialParameterInfo>& paramInfos = mat->mParamInfos;
@@ -88,8 +88,8 @@ namespace cube
 			}
 #endif // _DEBUG
 
-			SPtr<BaseRenderImageView> imageView = texture->GetImageView();
-			SPtr<BaseRenderSampler> sampler = texture->GetSampler();
+			SPtr<render::ImageView> imageView = texture->GetImageView();
+			SPtr<render::Sampler> sampler = texture->GetSampler();
 
 			mDescriptorSet->WriteImagesInDescriptor(paramIndex, 1, &imageView, &sampler);
 		}

@@ -9,7 +9,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		class VulkanAPI;
 
@@ -87,8 +87,8 @@ namespace cube
 		};
 		
 		class VulkanWindowSurface;
-	}
-}
+	} // namespace render
+} // namespace cube
 
 #ifdef VULKAN_API_EXPORTS
 #define VULKAN_API_EXPORT __declspec(dllexport) 

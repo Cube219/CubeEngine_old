@@ -4,16 +4,16 @@
 
 #include <SPIRV/GlslangToSpv.h>
 
-#include "BaseRenderAPI/Wrapper/BaseRenderShader.h"
+#include "BaseRenderAPI/Wrapper/Shader.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		class VULKAN_API_EXPORT VulkanShader : public BaseRenderShader
+		class VULKAN_API_EXPORT VulkanShader : public Shader
 		{
 		public:
-			VulkanShader(const SPtr<VulkanDevice>& device, BaseRenderShaderInitializer& initializer);
+			VulkanShader(const SPtr<VulkanDevice>& device, ShaderInitializer& initializer);
 			virtual ~VulkanShader();
 
 			VkShaderModule GetHandle() const { return mShaderModule; }
@@ -21,8 +21,8 @@ namespace cube
 			const VkPipelineShaderStageCreateInfo GetStageInfo() const { return mShaderStageInfo; }
 
 		private:
-			void LoadFromSPIR_V(BaseRenderShaderInitializer& initializer);
-			void LoadFromGLSL(BaseRenderShaderInitializer& initializer, VkShaderStageFlags stageFlagBits);
+			void LoadFromSPIR_V(ShaderInitializer& initializer);
+			void LoadFromGLSL(ShaderInitializer& initializer, VkShaderStageFlags stageFlagBits);
 
 			TBuiltInResource InitResource();
 
@@ -34,5 +34,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

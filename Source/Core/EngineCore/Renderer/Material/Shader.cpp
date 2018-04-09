@@ -3,7 +3,7 @@
 #include "../../EngineCore.h"
 #include "../../Resource/ResourceManager.h"
 #include "../RendererManager.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderDescriptor.h"
+#include "BaseRenderAPI/Wrapper/Descriptor.h"
 
 namespace cube
 {
@@ -20,7 +20,7 @@ namespace cube
 
 			ShaderCompileDesc desc = GetCompileDesc(info);
 
-			BaseRenderShaderInitializer shaderInit;
+			render::ShaderInitializer shaderInit;
 			shaderInit.language = desc.language;
 			shaderInit.type = desc.type;
 			shaderInit.entryPoint = desc.entryPoint.c_str();
@@ -38,6 +38,8 @@ namespace cube
 
 		ShaderCompileDesc ShaderImporter::GetCompileDesc(Json& info)
 		{
+			using namespace render;
+
 			ShaderCompileDesc desc;
 
 			U8String language = info["language"];
@@ -75,5 +77,5 @@ namespace cube
 		Shader::~Shader()
 		{
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

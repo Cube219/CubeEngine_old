@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanFence::VulkanFence(SPtr<VulkanDevice>& device) :
 			mDevice_ref(device)
@@ -44,5 +44,5 @@ namespace cube
 		{
 			vkResetFences(mDevice_ref->GetHandle(), 1, &mFence);
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

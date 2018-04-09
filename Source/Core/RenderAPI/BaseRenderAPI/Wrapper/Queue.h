@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../BaseRenderAPIHeader.h"
+#include "../RenderAPIHeader.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		enum class QueueTypeBits
 		{
@@ -15,19 +15,19 @@ namespace cube
 		};
 		SET_ENUM_AS_FLAGS(QueueTypeBits)
 
-		class BaseRenderQueue
+		class Queue
 		{
 		public:
-			virtual ~BaseRenderQueue(){ }
+			virtual ~Queue(){ }
 
 			QueueTypeBits GetTypes() const { return mTypes; }
 			uint32_t GetIndex() const { return mIndex; }
 
 		protected:
-			BaseRenderQueue(){ }
+			Queue(){ }
 
 			QueueTypeBits mTypes;
 			uint32_t mIndex;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

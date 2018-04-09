@@ -7,7 +7,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkDescriptorType GetVkDescriptorType(DescriptorType descType)
 		{
@@ -133,7 +133,7 @@ namespace cube
 		//               VulkanDescriptorSetLayout
 		// ------------------------------------------------
 
-		VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(const SPtr<VulkanDevice>& device, BaseRenderDescriptorSetInitializer& initializer) : 
+		VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(const SPtr<VulkanDevice>& device, DescriptorSetInitializer& initializer) : 
 			mDevice_ref(device)
 		{
 			VkResult res;
@@ -173,7 +173,7 @@ namespace cube
 		//               VulkanDescriptorSet
 		// ------------------------------------------------
 
-		VulkanDescriptorSet::VulkanDescriptorSet(const SPtr<VulkanDevice>& device, const SPtr<VulkanDescriptorPool>& pool, SPtr<BaseRenderDescriptorSetLayout>& layout) :
+		VulkanDescriptorSet::VulkanDescriptorSet(const SPtr<VulkanDevice>& device, const SPtr<VulkanDescriptorPool>& pool, SPtr<DescriptorSetLayout>& layout) :
 			mDevice_ref(device), mDescriptorPool_ref(pool)
 		{
 			VkResult res;
@@ -206,7 +206,7 @@ namespace cube
 			vkFreeDescriptorSets(mDevice_ref->GetHandle(), mDescriptorPool_ref->GetHandle(), 1, &mDescriptorSet);
 		}
 
-		void VulkanDescriptorSet::WriteBufferInDescriptor(uint32_t bindingIndex, uint32_t bufferNum, BaseRenderBufferInfo* buffers)
+		void VulkanDescriptorSet::WriteBufferInDescriptor(uint32_t bindingIndex, uint32_t bufferNum, BufferInfo* buffers)
 		{
 			VkDescriptorBufferInfo* bufInfos = new VkDescriptorBufferInfo[bufferNum];
 			for(uint32_t i = 0; i < bufferNum; i++) {
@@ -232,7 +232,7 @@ namespace cube
 			delete[] bufInfos;
 		}
 
-		void VulkanDescriptorSet::WriteImagesInDescriptor(uint32_t bindingIndex, uint32_t imageNum, SPtr<BaseRenderImageView>* imageViews, SPtr<BaseRenderSampler>* samplers)
+		void VulkanDescriptorSet::WriteImagesInDescriptor(uint32_t bindingIndex, uint32_t imageNum, SPtr<ImageView>* imageViews, SPtr<Sampler>* samplers)
 		{
 			VkDescriptorImageInfo* imageInfos = new VkDescriptorImageInfo[imageNum];
 			for(uint32_t i = 0; i < imageNum; i++) {
@@ -257,5 +257,5 @@ namespace cube
 
 			delete[] imageInfos;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

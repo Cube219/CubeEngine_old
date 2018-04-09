@@ -3,10 +3,11 @@
 #include "../EngineCoreHeader.h"
 
 #include "../Resource/BaseResource.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderBuffer.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderImage.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderSampler.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderCommandBuffer.h"
+#include "BaseRenderAPI/Wrapper/Buffer.h"
+#include "BaseRenderAPI/Wrapper/Image.h"
+#include "BaseRenderAPI/Wrapper/Sampler.h"
+#include "BaseRenderAPI/Wrapper/CommandBuffer.h"
+#include "BaseRenderAPI/RenderAPI.h"
 
 namespace cube
 {
@@ -15,7 +16,7 @@ namespace cube
 		class ENGINE_CORE_EXPORT TextureImporter : public ResourceImporter
 		{
 		public:
-			TextureImporter(SPtr<BaseRenderAPI>& renderAPI) : 
+			TextureImporter(SPtr<render::RenderAPI>& renderAPI) : 
 				mRenderAPI(renderAPI)
 			{
 				mResName = CUBE_T("texture");
@@ -24,7 +25,7 @@ namespace cube
 			Resource* Import(SPtr<platform::File>& file, Json info) final override;
 
 		private:
-			SPtr<BaseRenderAPI> mRenderAPI;
+			SPtr<render::RenderAPI> mRenderAPI;
 		};
 
 		class ENGINE_CORE_EXPORT Texture : public Resource
@@ -35,10 +36,10 @@ namespace cube
 		public:
 			virtual ~Texture();
 
-			void SendTextureData(SPtr<BaseRenderCommandBuffer>& commandBuffer);
+			void SendTextureData(SPtr<render::CommandBuffer>& commandBuffer);
 
-			SPtr<BaseRenderImageView> GetImageView() const { return mImageView; }
-			SPtr<BaseRenderSampler> GetSampler() const { return mSampler; }
+			SPtr<render::ImageView> GetImageView() const { return mImageView; }
+			SPtr<render::Sampler> GetSampler() const { return mSampler; }
 
 		private:
 			friend class TextureImporter;
@@ -51,10 +52,10 @@ namespace cube
 
 			uint32_t mMipLevel;
 
-			SPtr<BaseRenderBuffer> mStagingBuffer;
-			SPtr<BaseRenderImage> mImage;
-			SPtr<BaseRenderImageView> mImageView;
-			SPtr<BaseRenderSampler> mSampler;
+			SPtr<render::Buffer> mStagingBuffer;
+			SPtr<render::Image> mImage;
+			SPtr<render::ImageView> mImageView;
+			SPtr<render::Sampler> mSampler;
 
 			SPtr<RendererManager> mManager_ref;
 		};

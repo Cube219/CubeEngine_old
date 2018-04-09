@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanInstance::VulkanInstance(VulkanInstanceInitializer& initializer)
 		{
@@ -63,5 +63,5 @@ namespace cube
 
 			return physicalDevices;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

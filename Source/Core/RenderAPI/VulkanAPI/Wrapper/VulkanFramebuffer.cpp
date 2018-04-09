@@ -5,7 +5,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanFramebuffer::VulkanFramebuffer(const SPtr<VulkanDevice>& device, VulkanFramebufferInitializer& initializer) : 
 			mDevice_ref(device)
@@ -31,5 +31,5 @@ namespace cube
 		{
 			vkDestroyFramebuffer(mDevice_ref->GetHandle(), mFramebuffer, nullptr);
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

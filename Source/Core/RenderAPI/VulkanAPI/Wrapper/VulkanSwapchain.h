@@ -2,15 +2,15 @@
 
 #include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderSwapchain.h"
+#include "BaseRenderAPI/Wrapper/Swapchain.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		struct VulkanSwapchainImage; // Defined at VulkanAPIHeader.h
 
-		class VULKAN_API_EXPORT VulkanSwapchain : public BaseRenderSwapchain
+		class VULKAN_API_EXPORT VulkanSwapchain : public Swapchain
 		{
 		public:
 			VulkanSwapchain(const SPtr<VulkanDevice>& device, const SPtr<VulkanWindowSurface>& surface,
@@ -24,11 +24,11 @@ namespace cube
 
 			uint32_t GetCurrentImageIndex() const { return mCurrentImageIndex; }
 
-			uint32_t AcquireNextImageIndex(SPtr<BaseRenderSemaphore>& signalSemaphore) final override;
+			uint32_t AcquireNextImageIndex(SPtr<Semaphore>& signalSemaphore) final override;
 
 			void Recreate(uint32_t imageCount, uint32_t width, uint32_t height, bool vsync) final override;
 
-			void Present(uint32_t waitSemaphoreNum, SPtr<BaseRenderSemaphore>* waitSemaphores) final override;
+			void Present(uint32_t waitSemaphoreNum, SPtr<Semaphore>* waitSemaphores) final override;
 		private:
 			void CreateSwapchain(bool isRecreated, uint32_t imageCount, uint32_t width, uint32_t height, bool vsync);
 
@@ -46,5 +46,5 @@ namespace cube
 			SPtr<VulkanDevice> mDevice_ref;
 			SPtr<VulkanWindowSurface> mSurface_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

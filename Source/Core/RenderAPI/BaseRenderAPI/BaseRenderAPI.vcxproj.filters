@@ -1,60 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="BaseRenderAPI.h" />
-    <ClInclude Include="BaseRenderAPIHeader.h" />
-    <ClInclude Include="BaseRenderUtility.h" />
-    <ClInclude Include="Wrapper\BaseRenderBuffer.h">
+    <ClInclude Include="RenderUtility.h" />
+    <ClInclude Include="RenderAPIHeader.h" />
+    <ClInclude Include="RenderAPI.h" />
+    <ClInclude Include="Wrapper\Framebuffer.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderCommandBuffer.h">
+    <ClInclude Include="Wrapper\GraphicsPipeline.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderDescriptor.h">
+    <ClInclude Include="Wrapper\Image.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderFence.h">
+    <ClInclude Include="Wrapper\Queue.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderFramebuffer.h">
+    <ClInclude Include="Wrapper\RenderPass.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderGraphicsPipeline.h">
+    <ClInclude Include="Wrapper\Sampler.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderImage.h">
+    <ClInclude Include="Wrapper\Semaphore.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderQueue.h">
+    <ClInclude Include="Wrapper\Shader.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderRenderPass.h">
+    <ClInclude Include="Wrapper\Swapchain.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderSemaphore.h">
+    <ClInclude Include="Wrapper\WindowSurface.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderShader.h">
+    <ClInclude Include="Wrapper\Buffer.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderSwapchain.h">
+    <ClInclude Include="Wrapper\CommandBuffer.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderWindowSurface.h">
+    <ClInclude Include="Wrapper\Descriptor.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper\BaseRenderSampler.h">
+    <ClInclude Include="Wrapper\Fence.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Wrapper\BaseRenderBuffer.cpp">
-      <Filter>Wrapper</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Wrapper">
       <UniqueIdentifier>{b9246a46-6c1b-4636-836d-ce45b1b723de}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="a.cpp" />
   </ItemGroup>
 </Project>

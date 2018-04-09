@@ -2,13 +2,13 @@
 
 #include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderWindowSurface.h"
+#include "BaseRenderAPI/Wrapper/WindowSurface.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
-		class VULKAN_API_EXPORT VulkanWindowSurface : public BaseRenderWindowSurface
+		class VULKAN_API_EXPORT VulkanWindowSurface : public WindowSurface
 		{
 		public:
 #ifdef _WIN32
@@ -36,5 +36,5 @@ namespace cube
 			SPtr<VulkanPhysicalDevice> mPhysicalDevice_ref;
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

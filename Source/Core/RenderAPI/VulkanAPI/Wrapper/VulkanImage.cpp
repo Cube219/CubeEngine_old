@@ -4,7 +4,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkImageType GetVkImageType(ImageType type)
 		{
@@ -199,7 +199,7 @@ namespace cube
 			mImage = image;
 		}
 
-		VulkanImage::VulkanImage(const SPtr<VulkanDevice>& device, BaseRenderImageInitializer& initializer) :
+		VulkanImage::VulkanImage(const SPtr<VulkanDevice>& device, ImageInitializer& initializer) :
 			mDevice_ref(device)
 		{
 			VkResult res;
@@ -242,7 +242,7 @@ namespace cube
 			}
 		}
 
-		SPtr<BaseRenderImageView> VulkanImage::GetImageView(DataFormat format, ImageAspectBits aspectBits, ImageViewType type)
+		SPtr<ImageView> VulkanImage::GetImageView(DataFormat format, ImageAspectBits aspectBits, ImageViewType type)
 		{
 			// TODO: 차후 mapping 설정 추가...?
 			VkComponentMapping mapping = {VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A};
@@ -252,5 +252,5 @@ namespace cube
 			return std::make_shared<VulkanImageView>(mDevice_ref, shared_from_this(),
 				GetVkFormat(format), mapping, range, GetVkImageViewType(type));
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

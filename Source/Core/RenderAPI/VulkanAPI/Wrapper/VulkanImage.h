@@ -2,11 +2,11 @@
 
 #include "../VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/Wrapper/BaseRenderImage.h"
+#include "BaseRenderAPI/Wrapper/Image.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VkImageType GetVkImageType(ImageType type);
 		VkImageUsageFlags GetVkImageUsageFlags(ImageUsageBits usage);
@@ -14,7 +14,7 @@ namespace cube
 		VkImageAspectFlags GetVkImageAspectFlags(ImageAspectBits aspect);
 		VkImageLayout GetVkImageLayout(ImageLayout imageLayout);
 
-		class VULKAN_API_EXPORT VulkanImageView : public BaseRenderImageView
+		class VULKAN_API_EXPORT VulkanImageView : public ImageView
 		{
 		public:
 			VulkanImageView(const SPtr<VulkanDevice>& device, const SPtr<VulkanImage>& image,
@@ -34,16 +34,16 @@ namespace cube
 			SPtr<VulkanDevice> mDevice_ref;
 		};
 
-		class VULKAN_API_EXPORT VulkanImage : public BaseRenderImage, public std::enable_shared_from_this<VulkanImage>
+		class VULKAN_API_EXPORT VulkanImage : public Image, public std::enable_shared_from_this<VulkanImage>
 		{
 		public:
 			VulkanImage(const SPtr<VulkanDevice>& device, VkImage image);
-			VulkanImage(const SPtr<VulkanDevice>& device, BaseRenderImageInitializer& initializer);
+			VulkanImage(const SPtr<VulkanDevice>& device, ImageInitializer& initializer);
 			virtual ~VulkanImage();
 
 			VkImage GetHandle() const { return mImage; }
 
-			SPtr<BaseRenderImageView> GetImageView(DataFormat format, ImageAspectBits aspectBits, ImageViewType type) final override;
+			SPtr<ImageView> GetImageView(DataFormat format, ImageAspectBits aspectBits, ImageViewType type) final override;
 
 		private:
 			VkImage mImage;
@@ -51,5 +51,5 @@ namespace cube
 
 			SPtr<VulkanDevice> mDevice_ref;
 		};
-	}
-}
+	} // namespace render
+} // namespace cube

@@ -6,7 +6,7 @@
 #include "../EngineCore.h"
 #include "../Resource/ResourceManager.h"
 #include "RendererManager.h"
-#include "BaseRenderAPI/Wrapper/BaseRenderFence.h"
+#include "BaseRenderAPI/Wrapper/Fence.h"
 
 
 namespace cube
@@ -31,10 +31,10 @@ namespace cube
 			texture->mImageSize = width * height * 4;
 
 			// Add image data in buffer
-			BaseRenderBufferInitializer bufInit;
-			bufInit.type = BufferTypeBits::TransferSource;
+			render::BufferInitializer bufInit;
+			bufInit.type = render::BufferTypeBits::TransferSource;
 
-			BaseRenderBufferInitializer::BufferData bufData;
+			render::BufferInitializer::BufferData bufData;
 			bufData.data = nullptr;
 			bufData.size = texture->mImageSize;
 			bufInit.bufferDatas.push_back(bufData);
@@ -45,14 +45,14 @@ namespace cube
 			texture->mStagingBuffer->UpdateBufferData(0, imageData, texture->mImageSize);
 			texture->mStagingBuffer->Unmap();
 
-			BaseRenderImageInitializer init;
-			init.type = ImageType::Image2D;
-			init.format = DataFormat::R8G8B8A8_Unorm;
+			render::ImageInitializer init;
+			init.type = render::ImageType::Image2D;
+			init.format = render::DataFormat::R8G8B8A8_Unorm;
 			init.width = width;
 			init.height = height;
 			init.depth = 1;
 			init.mipLevels = 1;
-			init.usage = ImageUsageBits::TransferDestinationBit | ImageUsageBits::SampledBit;
+			init.usage = render::ImageUsageBits::TransferDestinationBit | render::ImageUsageBits::SampledBit;
 			texture->mImage = mRenderAPI->CreateImage(init);
 
 			// Copy buffer to image
@@ -60,7 +60,8 @@ namespace cube
 			auto cmdSubmitFence = mRenderAPI->CreateFence();
 			cmd->Begin();
 
-			cmd->PipelineImageMemoryBarrier(PipelineStageBits::TopBit, PipelineStageBits::TransferBit, AccessBits::None, AccessBits::TransferWriteBit,
+			using namespace render;
+			cmd->PipelineImageMemoryBarrier(render::PipelineStageBits::TopBit, PipelineStageBits::TransferBit, AccessBits::None, AccessBits::TransferWriteBit,
 				ImageLayout::Undefined, ImageLayout::TransferDestinationOptimal, texture->mImage); // Undefined -> transfer
 			cmd->CopyBufferToImage(texture->mStagingBuffer, 0, texture->mImage, 0, 0, 0, width, height, 1, ImageAspectBits::Color);
 			cmd->PipelineImageMemoryBarrier(PipelineStageBits::TransferBit, PipelineStageBits::FragmentShaderBit, AccessBits::TransferWriteBit, AccessBits::ShaderReadBit,
@@ -91,9 +92,9 @@ namespace cube
 			return ECore()->GetResourceManager()->LoadResource<Texture>(path);
 		}
 
-		void Texture::SendTextureData(SPtr<BaseRenderCommandBuffer>& commandBuffer)
+		void Texture::SendTextureData(SPtr<render::CommandBuffer>& commandBuffer)
 		{
-			commandBuffer->CopyBufferToImage(mStagingBuffer, 0, mImage, 0, 0, 0, mWidth, mHeight, 1, ImageAspectBits::Color);
+			commandBuffer->CopyBufferToImage(mStagingBuffer, 0, mImage, 0, 0, 0, mWidth, mHeight, 1, render::ImageAspectBits::Color);
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

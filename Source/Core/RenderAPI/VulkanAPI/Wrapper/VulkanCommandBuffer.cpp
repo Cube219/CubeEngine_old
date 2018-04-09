@@ -14,7 +14,7 @@
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		VulkanCommandBuffer::VulkanCommandBuffer(SPtr<VulkanDevice>& device, SPtr<VulkanCommandPool>& commandPool, VkCommandBuffer commandBuffer) :
 			mDevice_ref(device), mCommandPool_ref(commandPool),
@@ -56,8 +56,8 @@ namespace cube
 			CheckVkResult("Cannot begin the command buffer (Primary)", res);
 		}
 
-		void VulkanCommandBuffer::CopyBuffer(SPtr<BaseRenderBuffer>& source, uint64_t sourceOffset,
-			SPtr<BaseRenderBuffer>& destination, uint64_t destinationOffset, uint64_t size)
+		void VulkanCommandBuffer::CopyBuffer(SPtr<Buffer>& source, uint64_t sourceOffset,
+			SPtr<Buffer>& destination, uint64_t destinationOffset, uint64_t size)
 		{
 			VkBufferCopy copy;
 			copy.srcOffset = sourceOffset;
@@ -67,8 +67,8 @@ namespace cube
 			vkCmdCopyBuffer(mCommandBuffer, DPCast(VulkanBuffer)(source)->GetHandle(), DPCast(VulkanBuffer)(destination)->GetHandle(), 1, &copy);
 		}
 
-		void VulkanCommandBuffer::CopyBufferToImage(SPtr<BaseRenderBuffer>& buffer, uint64_t bufferOffset,
-			SPtr<BaseRenderImage>& image, int imageOffsetX, int imageOffsetY, int imageOffsetZ,
+		void VulkanCommandBuffer::CopyBufferToImage(SPtr<Buffer>& buffer, uint64_t bufferOffset,
+			SPtr<Image>& image, int imageOffsetX, int imageOffsetY, int imageOffsetZ,
 			uint32_t imageWidth, uint32_t imageHeight, uint32_t imageDepth, ImageAspectBits aspectBits)
 		{
 			VkBufferImageCopy region;
@@ -88,7 +88,7 @@ namespace cube
 				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 		}
 
-		void VulkanCommandBuffer::SetRenderPass(SPtr<BaseRenderRenderPass>& renderPass, Rect2D renderArea)
+		void VulkanCommandBuffer::SetRenderPass(SPtr<RenderPass>& renderPass, Rect2D renderArea)
 		{
 			auto vkRenderPass = DPCast(VulkanRenderPass)(renderPass);
 
@@ -137,7 +137,7 @@ namespace cube
 		}
 
 		void VulkanCommandBuffer::PipelineBufferMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
-			AccessBits srcAccess, AccessBits dstAccess, SPtr<BaseRenderBuffer>& buffer, uint64_t offset, uint64_t size)
+			AccessBits srcAccess, AccessBits dstAccess, SPtr<Buffer>& buffer, uint64_t offset, uint64_t size)
 		{
 			VkBufferMemoryBarrier barrier;
 			barrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
@@ -155,7 +155,7 @@ namespace cube
 
 		void VulkanCommandBuffer::PipelineImageMemoryBarrier(PipelineStageBits srcStage, PipelineStageBits dstStage,
 			AccessBits srcAccess, AccessBits dstAccess, ImageLayout oldLayout, ImageLayout newLayout,
-			SPtr<BaseRenderImage>& image)
+			SPtr<Image>& image)
 		{
 			VkImageMemoryBarrier barrier;
 			barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -209,7 +209,7 @@ namespace cube
 			delete[] scs;
 		}
 
-		void VulkanCommandBuffer::BindGraphicsPipeline(SPtr<BaseRenderGraphicsPipeline>& graphicsPipeline)
+		void VulkanCommandBuffer::BindGraphicsPipeline(SPtr<GraphicsPipeline>& graphicsPipeline)
 		{
 			mGraphicsPipeline = DPCast(VulkanGraphicsPipeline)(graphicsPipeline);
 
@@ -217,7 +217,7 @@ namespace cube
 		}
 
 		void VulkanCommandBuffer::BindDescriptorSets(PipelineType pipelineType, uint32_t firstSet,
-			uint32_t descriptorSetNum, SPtr<BaseRenderDescriptorSet>* descriptorSets)
+			uint32_t descriptorSetNum, SPtr<DescriptorSet>* descriptorSets)
 		{
 			VkDescriptorSet* sets = new VkDescriptorSet[descriptorSetNum];
 			for(uint32_t i = 0; i < descriptorSetNum; i++) {
@@ -229,7 +229,7 @@ namespace cube
 			delete[] sets;
 		}
 
-		void VulkanCommandBuffer::BindVertexBuffers(uint32_t bufferNum, SPtr<BaseRenderBuffer>* buffers, uint64_t* bufferOffsets)
+		void VulkanCommandBuffer::BindVertexBuffers(uint32_t bufferNum, SPtr<Buffer>* buffers, uint64_t* bufferOffsets)
 		{
 			VkBuffer* buf = new VkBuffer[bufferNum];
 			for(uint32_t i = 0; i < bufferNum; i++) {
@@ -241,7 +241,7 @@ namespace cube
 			delete[] buf;
 		}
 
-		void VulkanCommandBuffer::BindIndexBuffer(SPtr<BaseRenderBuffer> buffer, uint64_t bufferOffset)
+		void VulkanCommandBuffer::BindIndexBuffer(SPtr<Buffer> buffer, uint64_t bufferOffset)
 		{
 			vkCmdBindIndexBuffer(mCommandBuffer, SPCast(VulkanBuffer)(buffer)->GetHandle(), bufferOffset, VK_INDEX_TYPE_UINT32);
 		}
@@ -256,7 +256,7 @@ namespace cube
 			vkCmdDrawIndexed(mCommandBuffer, indexCount, instanceCount, indexOffset, vertexOffset, firstInstance);
 		}
 
-		void VulkanCommandBuffer::ExecuteCommands(uint32_t commandCount, SPtr<BaseRenderCommandBuffer>* commandBuffers)
+		void VulkanCommandBuffer::ExecuteCommands(uint32_t commandCount, SPtr<CommandBuffer>* commandBuffers)
 		{
 			VkCommandBuffer* cmds = new VkCommandBuffer[commandCount];
 			for(uint32_t i = 0; i < commandCount; i++) {
@@ -279,9 +279,9 @@ namespace cube
 			CheckVkResult("Cannot end the command buffer", res);
 		}
 
-		void VulkanCommandBuffer::Submit(SPtr<BaseRenderQueue>& queue,
-			uint32_t waitSemaphoreNum, std::pair<SPtr<BaseRenderSemaphore>, PipelineStageBits>* waitSemaphores,
-			uint32_t signalSemaphoreNum, SPtr<BaseRenderSemaphore>* signalSemaphores, SPtr<BaseRenderFence> waitFence)
+		void VulkanCommandBuffer::Submit(SPtr<Queue>& queue,
+			uint32_t waitSemaphoreNum, std::pair<SPtr<Semaphore>, PipelineStageBits>* waitSemaphores,
+			uint32_t signalSemaphoreNum, SPtr<Semaphore>* signalSemaphores, SPtr<Fence> waitFence)
 		{
 			VkResult res;
 
@@ -389,5 +389,5 @@ namespace cube
 
 			return cmdBuffer;
 		}
-	}
-}
+	} // namespace render
+} // namespace cube

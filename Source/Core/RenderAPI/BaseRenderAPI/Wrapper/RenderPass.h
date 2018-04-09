@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../BaseRenderAPIHeader.h"
+#include "../RenderAPIHeader.h"
 
 namespace cube
 {
-	namespace core
+	namespace render
 	{
 		enum class LoadOperator
 		{
@@ -19,7 +19,7 @@ namespace cube
 			DontCare
 		};
 
-		struct BaseRenderSubpass
+		struct Subpass
 		{
 			struct AttachmentRef
 			{
@@ -30,7 +30,7 @@ namespace cube
 			Vector<AttachmentRef> mColors;
 			AttachmentRef mDepthStencil;
 		};
-		struct BaseRenderSubpassDependency
+		struct SubpassDependency
 		{
 			uint32_t srcIndex;
 			uint32_t dstIndex;
@@ -44,11 +44,11 @@ namespace cube
 		//                 BaseRenderRenderPass
 		// ----------------------------------------------------
 		
-		struct BaseRenderRenderPassInitializer
+		struct RenderPassInitializer
 		{
 			struct Attachment
 			{
-				SPtr<BaseRenderImageView> imageView;
+				SPtr<ImageView> imageView;
 				DataFormat format;
 				LoadOperator loadOp;
 				StoreOperator storeOp;
@@ -65,7 +65,7 @@ namespace cube
 
 			struct SwapchainAttachment
 			{
-				SPtr<BaseRenderSwapchain> swapchain;
+				SPtr<Swapchain> swapchain;
 				LoadOperator loadOp;
 				StoreOperator storeOp;
 				Color clearColor;
@@ -75,17 +75,17 @@ namespace cube
 			bool hasSwapchain;
 			SwapchainAttachment swapchainAttachment;
 
-			Vector<BaseRenderSubpass> subpasses;
-			Vector<BaseRenderSubpassDependency> subpassDependencies;
+			Vector<Subpass> subpasses;
+			Vector<SubpassDependency> subpassDependencies;
 		};
 
-		class BaseRenderRenderPass
+		class RenderPass
 		{
 		public:
-			virtual ~BaseRenderRenderPass(){ }
+			virtual ~RenderPass(){ }
 
 		protected:
-			BaseRenderRenderPass(){ }
+			RenderPass(){ }
 		};
-	}
-}
+	} // namespace render
+} // namespace cube
