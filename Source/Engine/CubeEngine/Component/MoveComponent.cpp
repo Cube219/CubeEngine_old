@@ -49,7 +49,7 @@ namespace cube
 
 		Float3 rotF3 = rot.GetFloat3();
 		rotF3.y += lookX * 2.0f;
-		rotF3.x += lookY * 2.0f;
+		rotF3.x -= lookY * 2.0f;
 
 		if(rotF3.x >= 89.5f)
 			rotF3.x = 89.5f;
