@@ -13,6 +13,7 @@
 namespace cube
 {
 	SPtr<core::Mesh> boxMesh;
+	SPtr<core::Mesh> planeMesh;
 	core::RPtr<core::Texture> texture;
 	core::RPtr<core::Texture> texture2;
 
@@ -30,6 +31,7 @@ namespace cube
 
 		// Create mesh / texture
 		boxMesh = BaseMeshGenerator::GetBoxMesh();
+		planeMesh = BaseMeshGenerator::GetPlaneMesh();
 
 		String texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
 		texture = Texture::Load(texturePath);
@@ -110,6 +112,17 @@ namespace cube
 
 			mGameObjects.push_back(go);
 		}
+
+		// Plane
+		go = GameObject::Create();
+		v = Vector3(0, -2, 0);
+		go->SetPosition(v);
+
+		renderer = go->AddComponent<cube::Renderer3DComponent>();
+		renderer->SetMesh(planeMesh);
+		renderer->SetMaterialInstance(materialIns1);
+
+		mGameObjects.push_back(go);
 
 		cameraGameObject = GameObject::Create();
 		cameraGameObject->SetPosition(Vector3(0, 0, -5));

@@ -69,7 +69,7 @@ namespace cube
 			mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
 
 			// Write
-			commandBuffer->BindDescriptorSets(render::PipelineType::Graphics, 1, 1, &mDescriptorSet);
+			commandBuffer->BindDescriptorSets(render::PipelineType::Graphics, 2, 1, &mDescriptorSet);
 			uint64_t vertexOffset = mDataBuffer->GetInfo(mVertexIndex).offset;
 			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &vertexOffset);
 			commandBuffer->BindIndexBuffer(mDataBuffer, mDataBuffer->GetInfo(mIndexIndex).offset);

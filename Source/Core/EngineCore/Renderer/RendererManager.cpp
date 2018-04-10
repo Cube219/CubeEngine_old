@@ -308,7 +308,7 @@ namespace cube
 				mMaterialCommandBuffers[i]->SetViewport(0, 1, &vp);
 				mMaterialCommandBuffers[i]->SetScissor(0, 1, &scissor);
 
-				//mMaterialCommandBuffers[i]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
+				mMaterialCommandBuffers[i]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
 			}
 
 			// TODO: MaterialInstance를 먼저 찾고 그것에 등록된 renderer들을 찾는 방식으로
@@ -319,7 +319,7 @@ namespace cube
 				int materialIndex = materialIns->GetMaterial()->mIndex;
 				SPtr<render::DescriptorSet> materialInsDesc = materialIns->GetDescriptorSet();
 
-				mMaterialCommandBuffers[materialIndex]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &materialInsDesc);
+				mMaterialCommandBuffers[materialIndex]->BindDescriptorSets(PipelineType::Graphics, 1, 1, &materialInsDesc);
 
 				renderer->Draw(mMaterialCommandBuffers[materialIndex], mCameraRenderer);
 			}
@@ -412,7 +412,7 @@ namespace cube
 				initializer.shaders.push_back(shader->GetRenderShader());
 			}
 
-			//initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
+			initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
 			initializer.descSetLayouts.push_back(material->GetDescriptorSetLayout());
 			initializer.descSetLayouts.push_back(mPerObjectDescriptorSetLayout);
 

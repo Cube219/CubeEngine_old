@@ -239,7 +239,7 @@ namespace cube
 			vertices.push_back(v);
 
 			Vector<Index> indices = {
-				1,0,3,  1,3,2
+				0,1,2,  0,2,3
 			};
 
 			mesh->SetVertex(vertices);

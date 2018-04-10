@@ -3,7 +3,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
-layout (set = 1, binding = 0) uniform perObject {
+layout (set = 2, binding = 0) uniform perObject {
     mat4 mvp;
 } perObjects;
 
