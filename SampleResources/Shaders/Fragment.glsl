@@ -30,7 +30,7 @@ void main(void) {
 	
 	vec3 lightDir = -dirLight.direction;
 	float lightIntensity = clamp(dot(inNormal, lightDir), 0.0, 1.0);
-	vec4 lightColor = clamp(dirLight.diffuse * lightIntensity);
+	vec4 lightColor = clamp(dirLight.diffuse * lightIntensity, vec4(0.0, 0.0, 0.0, 0.0), vec4(1.0, 1.0, 1.0, 1.0));
 	
 	outColor = textureColor * lightColor;
 }

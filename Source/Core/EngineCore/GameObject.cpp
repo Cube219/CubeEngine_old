@@ -98,10 +98,6 @@ namespace cube
 
 			// Update model matrix
 			if(mIsTransformChanged == true) {
-				for(auto& com : mComponents) {
-					com->OnTransformChanged();
-				}
-
 				mModelMatrix = MatrixUtility::GetTranslation(mPosition);
 				mModelMatrix *= MatrixUtility::GetRotationXYZ(mRotation * (Math::Pi / 180.0f));
 
@@ -117,6 +113,10 @@ namespace cube
 
 				if(mRenderer3D != nullptr)
 					mRenderer3D->SetModelMatrix(mModelMatrix);
+
+				for(auto& com : mComponents) {
+					com->OnTransformChanged();
+				}
 
 				mIsTransformChanged = false;
 			}

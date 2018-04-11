@@ -35,7 +35,7 @@ namespace cube
 
 		void Renderer3D::SetModelMatrix(const Matrix& modelMatrix)
 		{
-			mModelMatrix = modelMatrix;
+			mUBOPerObject.modelMatrix = modelMatrix;
 		}
 
 		void Renderer3D::Draw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
@@ -56,16 +56,16 @@ namespace cube
 				mDataBuffer->UpdateBufferData(mIndexIndex, indices.data(), indices.size() * sizeof(Index));
 
 				mDataBuffer->Unmap();
-				mDataBuffer->Map(mMVPIndex, mMVPIndex);
+				mDataBuffer->Map(mUBOIndex, mUBOIndex);
 
 				mIsMeshUpdated = false;
 			}
 
 			// Update mvp matrix
-			auto mvpMatrix = mModelMatrix * camera->GetViewProjectionMatrix();
-			mDataBuffer->UpdateBufferData(mMVPIndex, &mvpMatrix, sizeof(mvpMatrix));
+			mUBOPerObject.mvp = mUBOPerObject.modelMatrix * camera->GetViewProjectionMatrix();
+			mDataBuffer->UpdateBufferData(mUBOIndex, &mUBOPerObject, sizeof(mUBOPerObject));
 
-			render::BufferInfo bufInfo = mDataBuffer->GetInfo(mMVPIndex);
+			render::BufferInfo bufInfo = mDataBuffer->GetInfo(mUBOIndex);
 			mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
 
 			// Write
@@ -95,14 +95,14 @@ namespace cube
 			init.bufferDatas.push_back(bufData);
 			mIndexIndex = 1;
 
-			// 2. MVP matrix
-			bufData.size = sizeof(mModelMatrix);
+			// 2. UBO
+			bufData.size = sizeof(UBOPerObject);
 			init.bufferDatas.push_back(bufData);
-			mMVPIndex = 2;
+			mUBOIndex = 2;
 
 			mDataBuffer = mRenderAPI_ref->CreateBuffer(init);
 
-			mDataBuffer->Map(mMVPIndex, mMVPIndex);
+			mDataBuffer->Map(mUBOIndex, mUBOIndex);
 		}
 	} // namespace core
 } // namespace cube

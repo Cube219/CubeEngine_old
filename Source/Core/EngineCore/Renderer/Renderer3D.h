@@ -14,6 +14,12 @@ namespace cube
 {
 	namespace core
 	{
+		struct UBOPerObject
+		{
+			Matrix mvp;
+			Matrix modelMatrix;
+		};
+
 		class ENGINE_CORE_EXPORT Renderer3D
 		{
 		public:
@@ -42,13 +48,13 @@ namespace cube
 			
 			HMaterialInstance mMaterialIns;
 
-			Matrix mModelMatrix;
+			UBOPerObject mUBOPerObject;
 			SPtr<render::DescriptorSet> mDescriptorSet;
 
-			SPtr<render::Buffer> mDataBuffer; // Combine vertex / index / mvp matrix
+			SPtr<render::Buffer> mDataBuffer; // Combine vertex / index / uboPerObject data
 			uint64_t mVertexIndex;
 			uint64_t mIndexIndex;
-			uint64_t mMVPIndex;
+			uint64_t mUBOIndex;
 
 			SPtr<render::RenderAPI> mRenderAPI_ref;
 		};

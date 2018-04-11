@@ -73,6 +73,7 @@ namespace cube
 			Vector<SPtr<render::CommandBuffer>> mMaterialCommandBuffers;
 
 			SPtr<DirectionalLight> mDirLight;
+			SPtr<render::Buffer> mDirLightBuffer;
 
 			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
 			SPtr<render::DescriptorSet> mGlobalDescriptorSet;

@@ -11,6 +11,8 @@
 #include "CubeEngine/Component/Renderer3DComponent.h"
 #include "CubeEngine/Component/DirectionalLightComponent.h"
 
+#include "EngineCore/Renderer/Mesh.h"
+
 namespace cube
 {
 	SPtr<core::Mesh> boxMesh;
@@ -134,7 +136,7 @@ namespace cube
 
 		// Directional light
 		dirLightGameObject = GameObject::Create();
-		dirLightGameObject->SetRotation(Vector3(45, 0, 0));
+		dirLightGameObject->SetRotation(Vector3(90, 0, 0));
 		HDirectionalLightComponent dirLightCom = dirLightGameObject->AddComponent<DirectionalLightComponent>();
 		dirLightCom->SetDiffuse(Vector4(1, 1, 1, 1));
 	}

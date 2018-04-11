@@ -16,6 +16,12 @@ namespace cube
 {
 	namespace core
 	{
+		struct UBODirLight
+		{
+			Vector4 diffuse;
+			Vector3 direction;
+		};
+
 		RendererManager::RendererManager(RenderType type) :
 			mIsPrepared(false), mDirLight(nullptr)
 		{
@@ -64,6 +70,13 @@ namespace cube
 
 			// Create Global / mPerObjectDescriptorSetLayout
 			render::DescriptorSetInitializer descSetInit;
+
+			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 0, 1}); // dirLight
+			render::BufferInitializer dirLightBufInit;
+			dirLightBufInit.type = render::BufferTypeBits::Uniform;
+			dirLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBODirLight)}); // diffuse
+			mDirLightBuffer = mRenderAPI->CreateBuffer(dirLightBufInit);
+			mDirLightBuffer->Map();
 
 			mGlobalDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
 			mGlobalDescriptorSet = mRenderAPI->CreateDescriptorSet(mGlobalDescriptorSetLayout);
@@ -316,6 +329,18 @@ namespace cube
 			renderArea.y = 0;
 			renderArea.width = mWidth;
 			renderArea.height = mHeight;
+
+			// Update lights
+			if(mDirLight != nullptr) {
+				UBODirLight uboDirLight;
+				uboDirLight.diffuse = mDirLight->GetDiffuse();
+				uboDirLight.direction = mDirLight->GetDirection();
+
+				mDirLightBuffer->UpdateBufferData(0, &uboDirLight, sizeof(UBODirLight));
+
+				render::BufferInfo bufInfo = mDirLightBuffer->GetInfo(0);
+				mGlobalDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
+			}
 
 			// Prepare all command buffers of each material
 			for(uint32_t i = 0; i < mMaterialCommandBuffers.size(); i++) {

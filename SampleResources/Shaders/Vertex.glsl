@@ -3,8 +3,10 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
-layout (set = 2, binding = 0) uniform mat4 mvp;
-layout (set = 2, binding = 1) uniform mat4 modelMatrix;
+layout (set = 2, binding = 0) uniform _perObject {
+	mat4 mvp;
+	mat4 modelMatrix;
+} perObject;
 
 /////////////////
 // VertexInput //
@@ -25,7 +27,7 @@ void main(void) {
     outColor = inColor;
     outTexCoord = inTexCoord;
 	
-	outNormal = (mat3)modelMatrix * inNormal;
+	outNormal = normalize(mat3(perObject.modelMatrix) * inNormal);
 	
-    gl_Position = perObjects.mvp * inPos;
+    gl_Position = perObject.mvp * inPos;
 }
