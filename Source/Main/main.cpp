@@ -9,6 +9,7 @@
 #include "CubeEngine/Component/CameraComponent.h"
 #include "CubeEngine/Component/MoveComponent.h"
 #include "CubeEngine/Component/Renderer3DComponent.h"
+#include "CubeEngine/Component/DirectionalLightComponent.h"
 
 namespace cube
 {
@@ -24,6 +25,7 @@ namespace cube
 	core::HMaterialInstance materialIns2;
 	Vector<core::HGameObject> mGameObjects;
 	core::HGameObject cameraGameObject;
+	core::HGameObject dirLightGameObject;
 
 	void PrepareResources()
 	{
@@ -124,10 +126,17 @@ namespace cube
 
 		mGameObjects.push_back(go);
 
+		// Camera
 		cameraGameObject = GameObject::Create();
 		cameraGameObject->SetPosition(Vector3(0, 0, -5));
 		cameraGameObject->AddComponent<CameraComponent>();
 		cameraGameObject->AddComponent<MoveComponent>();
+
+		// Directional light
+		dirLightGameObject = GameObject::Create();
+		dirLightGameObject->SetRotation(Vector3(45, 0, 0));
+		HDirectionalLightComponent dirLightCom = dirLightGameObject->AddComponent<DirectionalLightComponent>();
+		dirLightCom->SetDiffuse(Vector4(1, 1, 1, 1));
 	}
 
 	void DestroyAll()
@@ -137,6 +146,7 @@ namespace cube
 			go->Destroy();
 		}
 		cameraGameObject->Destroy();
+		dirLightGameObject->Destroy();
 
 		boxMesh = nullptr;
 		texture = nullptr;

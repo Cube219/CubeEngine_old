@@ -9,6 +9,8 @@ namespace cube
 
 	class CameraComponent;
 	class MoveComponent;
+	class Renderer3DComponent;
+	class DirectionalLightComponent;
 }
 
 #ifdef CUBE_ENGINE_EXPORTS

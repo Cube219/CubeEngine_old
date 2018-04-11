@@ -11,5 +11,5 @@ namespace cube
 		DirectionalLight::~DirectionalLight()
 		{
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

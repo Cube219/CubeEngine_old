@@ -38,6 +38,10 @@ namespace cube
 		mRendererManager->UnregisterRenderer3D(mRenderer3D);
 	}
 
+	void Renderer3DComponent::OnTransformChanged()
+	{
+	}
+
 	void Renderer3DComponent::SetMesh(SPtr<core::Mesh>& mesh)
 	{
 		mRenderer3D->SetMesh(mesh);

@@ -5,6 +5,7 @@
 #include "Component/Renderer3DComponent.h"
 #include "Component/CameraComponent.h"
 #include "Component/MoveComponent.h"
+#include "Component/DirectionalLightComponent.h"
 
 namespace cube
 {
@@ -40,6 +41,7 @@ namespace cube
 		comManager->RegisterComponent<Renderer3DComponent>();
 		comManager->RegisterComponent<CameraComponent>();
 		comManager->RegisterComponent<MoveComponent>();
+		comManager->RegisterComponent<DirectionalLightComponent>();
 	}
 
 	////////////////////////////////

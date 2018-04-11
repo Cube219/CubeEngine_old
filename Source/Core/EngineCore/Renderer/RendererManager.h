@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -38,8 +38,11 @@ namespace cube
 			void RegisterRenderer3D(SPtr<Renderer3D>& renderer);
 			void UnregisterRenderer3D(SPtr<Renderer3D>& renderer);
 
+			void RegisterLight(SPtr<DirectionalLight>& dirLight);
+			void UnregisterLight(SPtr<DirectionalLight>& dirLight);
+
 			SPtr<Renderer3D> CreateRenderer3D();
-			SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: Â÷ÈÄ Àú·¸°Ô ¹Ù²Ù±â
+			SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: ì°¨í›„ ì €ë ‡ê²Œ ë°”ê¾¸ê¸°
 
 			SPtr<render::RenderAPI> GetRenderAPI() const { return mRenderAPI; }
 
@@ -68,6 +71,8 @@ namespace cube
 			Vector<SPtr<MaterialData>> mMaterials;
 			Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
 			Vector<SPtr<render::CommandBuffer>> mMaterialCommandBuffers;
+
+			SPtr<DirectionalLight> mDirLight;
 
 			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
 			SPtr<render::DescriptorSet> mGlobalDescriptorSet;

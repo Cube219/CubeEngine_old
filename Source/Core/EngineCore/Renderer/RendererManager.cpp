@@ -4,6 +4,7 @@
 #include "../LogWriter.h"
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
+#include "Light/DirectionalLight.h"
 #include "Material/Shader.h"
 #include "Material/Material.h"
 #include "Material/MaterialInstance.h"
@@ -16,7 +17,7 @@ namespace cube
 	namespace core
 	{
 		RendererManager::RendererManager(RenderType type) :
-			mIsPrepared(false)
+			mIsPrepared(false), mDirLight(nullptr)
 		{
 			mWidth = platform::Platform::GetWindowWidth();
 			mHeight = platform::Platform::GetWindowHeight();
@@ -150,6 +151,26 @@ namespace cube
 			mRenderers.pop_back();
 
 			renderer->mIndex = -1;
+		}
+
+		void RendererManager::RegisterLight(SPtr<DirectionalLight>& dirLight)
+		{
+			if(mDirLight != nullptr) {
+				CUBE_LOG(LogType::Error, "DirectionalLight is already registed.");
+				return;
+			}
+
+			mDirLight = dirLight;
+		}
+
+		void RendererManager::UnregisterLight(SPtr<DirectionalLight>& dirLight)
+		{
+			if(mDirLight != dirLight) {
+				CUBE_LOG(LogType::Error, "This directional light is not registered.");
+				return;
+			}
+
+			mDirLight = nullptr;
 		}
 
 		SPtr<Renderer3D> RendererManager::CreateRenderer3D()

@@ -24,6 +24,7 @@ namespace cube
 		void OnInit() override;
 		void OnUpdate(float dt) override;
 		void OnDestroy() override;
+		void OnTransformChanged() override;
 
 	private:
 		Matrix mViewMatrix;
