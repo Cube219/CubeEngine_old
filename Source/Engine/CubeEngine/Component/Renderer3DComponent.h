@@ -23,7 +23,7 @@ namespace cube
 		void OnDestroy() override;
 		void OnTransformChanged() override;
 
-		void SetMesh(SPtr<core::Mesh>& mesh);
+		void SetMesh(core::RPtr<core::Mesh>& mesh);
 		void SetMaterialInstance(core::HMaterialInstance& materialIns);
 
 	private:

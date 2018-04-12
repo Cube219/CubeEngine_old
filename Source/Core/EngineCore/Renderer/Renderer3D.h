@@ -30,7 +30,7 @@ namespace cube
 
 			SPtr<render::DescriptorSet> GetDescriptorSet() const { return mDescriptorSet; };
 
-			void SetMesh(SPtr<Mesh>& mesh);
+			void SetMesh(RPtr<Mesh>& mesh);
 			void SetMaterialInstance(HMaterialInstance& materialIns);
 			void SetModelMatrix(const Matrix& modelMatrix);
 
@@ -44,7 +44,7 @@ namespace cube
 			int mIndex = -1; // Used in RendererManager
 
 			bool mIsMeshUpdated = false;
-			SPtr<Mesh> mMesh;
+			RPtr<Mesh> mMesh;
 			
 			HMaterialInstance mMaterialIns;
 

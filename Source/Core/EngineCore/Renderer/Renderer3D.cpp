@@ -22,7 +22,7 @@ namespace cube
 		{
 		}
 
-		void Renderer3D::SetMesh(SPtr<Mesh>& mesh)
+		void Renderer3D::SetMesh(RPtr<Mesh>& mesh)
 		{
 			mMesh = mesh;
 			mIsMeshUpdated = true;

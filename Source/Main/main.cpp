@@ -15,8 +15,8 @@
 
 namespace cube
 {
-	SPtr<core::Mesh> boxMesh;
-	SPtr<core::Mesh> planeMesh;
+	core::RPtr<core::Mesh> boxMesh;
+	core::RPtr<core::Mesh> planeMesh;
 	core::RPtr<core::Texture> texture;
 	core::RPtr<core::Texture> texture2;
 

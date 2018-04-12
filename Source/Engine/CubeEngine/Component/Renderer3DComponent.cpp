@@ -42,7 +42,7 @@ namespace cube
 	{
 	}
 
-	void Renderer3DComponent::SetMesh(SPtr<core::Mesh>& mesh)
+	void Renderer3DComponent::SetMesh(core::RPtr<core::Mesh>& mesh)
 	{
 		mRenderer3D->SetMesh(mesh);
 	}

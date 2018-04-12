@@ -1,15 +1,16 @@
 #include "Mesh.h"
 
+#include "../LogWriter.h"
+
 namespace cube
 {
 	namespace core
 	{
-		Mesh::Mesh()
+		Resource* MeshImporter::Import(SPtr<platform::File>& file, Json info)
 		{
-		}
-
-		Mesh::~Mesh()
-		{
+			CUBE_LOG(LogType::Error, "Mesh can not be imported into the importer. Use BaseMeshGenerator instead.");
+			
+			return nullptr;
 		}
 
 		void Mesh::SetVertex(Vector<Vertex>& vertices)
@@ -21,5 +22,5 @@ namespace cube
 		{
 			mIndices = indices;
 		}
-	}
-}
+	} // namespace core
+} // namespace cube
