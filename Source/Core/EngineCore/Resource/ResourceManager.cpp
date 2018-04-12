@@ -38,7 +38,7 @@ namespace cube
 
 			// Get a metadata
 			String metaPath = path;
-			metaPath.append(CUBE_T(".meta"));
+			metaPath.append(CUBE_T(".cmeta"));
 			SPtr<File> metaFile = mFileSystem->OpenFile(metaPath, FileAccessModeBits::Read);
 
 			uint64_t size = metaFile->GetFileSize();

@@ -1,0 +1,9 @@
+{
+    "version": 0,
+	"res_name": "shader",
+	"res_info": {
+	    "language": "glsl",
+		"type": "fragment",
+		"entry_point": "main"
+	}
+}
