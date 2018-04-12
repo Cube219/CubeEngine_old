@@ -24,6 +24,9 @@ namespace cube
 
 	void DirectionalLightComponent::OnUpdate(float dt)
 	{
+		Vector3 rot = GetGameObject()->GetRotation();
+		rot += Vector3(1, 0, 0) * 50.0f * dt;
+		GetGameObject()->SetRotation(rot);
 	}
 
 	void DirectionalLightComponent::OnDestroy()
