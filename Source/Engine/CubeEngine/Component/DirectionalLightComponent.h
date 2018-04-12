@@ -24,6 +24,7 @@ namespace cube
 		void OnDestroy() override;
 		void OnTransformChanged() override;
 
+		void SetAmbient(const Vector4& ambient);
 		void SetDiffuse(const Vector4& diffuse);
 
 	private:

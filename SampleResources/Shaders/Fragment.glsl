@@ -4,6 +4,7 @@
 // Global //
 ////////////
 layout (set = 0, binding = 0) uniform _dirLight {
+	vec4 ambient;
 	vec4 diffuse;
 	vec3 direction;
 } dirLight;
@@ -27,10 +28,17 @@ layout (location = 0) out vec4 outColor;
 
 void main(void) {
     vec4 textureColor = texture(texSampler, inTexCoord);
+
+	vec4 lightColor = dirLight.ambient;
 	
 	vec3 lightDir = -dirLight.direction;
 	float lightIntensity = clamp(dot(inNormal, lightDir), 0.0, 1.0);
-	vec4 lightColor = clamp(dirLight.diffuse * lightIntensity, vec4(0.0, 0.0, 0.0, 0.0), vec4(1.0, 1.0, 1.0, 1.0));
+	
+	if(lightIntensity > 0.0f) {
+		lightColor += (dirLight.diffuse * lightIntensity);
+	}
+	
+	lightColor = clamp(lightColor, vec4(0.0, 0.0, 0.0, 0.0), vec4(1.0, 1.0, 1.0, 1.0));
 	
 	outColor = textureColor * lightColor;
 }

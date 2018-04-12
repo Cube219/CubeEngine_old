@@ -18,6 +18,7 @@ namespace cube
 	{
 		struct UBODirLight
 		{
+			Vector4 ambient;
 			Vector4 diffuse;
 			Vector3 direction;
 		};
@@ -333,6 +334,7 @@ namespace cube
 			// Update lights
 			if(mDirLight != nullptr) {
 				UBODirLight uboDirLight;
+				uboDirLight.ambient = mDirLight->GetAmbient();
 				uboDirLight.diffuse = mDirLight->GetDiffuse();
 				uboDirLight.direction = mDirLight->GetDirection();
 

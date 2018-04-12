@@ -14,8 +14,10 @@ namespace cube
 			BaseLight();
 			virtual ~BaseLight();
 
+			void SetAmbient(const Vector4& ambient) { mAmbient = ambient; }
 			void SetDiffuse(const Vector4& diffuse) { mDiffuse = diffuse; }
 
+			Vector4 GetAmbient() const { return mAmbient; }
 			Vector4 GetDiffuse() const { return mDiffuse; }
 			Vector3 GetPosition() const { return mPosition; }
 
@@ -24,6 +26,7 @@ namespace cube
 
 			int mIndex = -1; // Used in RendererManager
 
+			Vector4 mAmbient;
 			Vector4 mDiffuse;
 			
 			Vector3 mPosition;
