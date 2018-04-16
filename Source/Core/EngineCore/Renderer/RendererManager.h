@@ -77,6 +77,7 @@ namespace cube
 
 			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
 			SPtr<render::DescriptorSet> mGlobalDescriptorSet;
+			SPtr<render::Buffer> mGlobalUBOBuffer;
 			SPtr<render::DescriptorSetLayout> mPerObjectDescriptorSetLayout;
 
 			SPtr<render::Image> mDepthBufferImage;

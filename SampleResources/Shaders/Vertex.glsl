@@ -20,11 +20,13 @@ layout (location = 3) in vec2 inTexCoord;
 // FragmentInput //
 ///////////////////
 layout (location = 0) out vec4 outColor;
-layout (location = 1) out vec2 outTexCoord;
-layout (location = 2) out vec3 outNormal;
+layout (location = 1) out vec3 outWorldPos;
+layout (location = 2) out vec2 outTexCoord;
+layout (location = 3) out vec3 outNormal;
 
 void main(void) {
     outColor = inColor;
+	outWorldPos = vec3(perObject.modelMatrix * inPos);
     outTexCoord = inTexCoord;
 	
 	outNormal = normalize(mat3(perObject.modelMatrix) * inNormal);

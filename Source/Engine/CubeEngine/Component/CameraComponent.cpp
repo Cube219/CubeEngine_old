@@ -47,5 +47,6 @@ namespace cube
 		);
 
 		mCameraRenderer3D->SetViewMatrix(mViewMatrix);
+		mCameraRenderer3D->SetPosition(pos);
 	}
 } // namespace cube

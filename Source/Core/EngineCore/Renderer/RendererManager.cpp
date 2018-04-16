@@ -16,10 +16,14 @@ namespace cube
 {
 	namespace core
 	{
+		struct UBOGlobal
+		{
+			Vector3 cameraPos;
+		};
+
 		struct UBODirLight
 		{
-			Vector4 ambient;
-			Vector4 diffuse;
+			Vector4 color;
 			Vector3 direction;
 		};
 
@@ -72,7 +76,14 @@ namespace cube
 			// Create Global / mPerObjectDescriptorSetLayout
 			render::DescriptorSetInitializer descSetInit;
 
-			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 0, 1}); // dirLight
+			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 0, 1}); // global
+			render::BufferInitializer globalUBOBufInit;
+			globalUBOBufInit.type = render::BufferTypeBits::Uniform;
+			globalUBOBufInit.bufferDatas.push_back({nullptr, sizeof(UBOGlobal)});
+			mGlobalUBOBuffer = mRenderAPI->CreateBuffer(globalUBOBufInit);
+			mGlobalUBOBuffer->Map();
+
+			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 1, 1}); // dirLight
 			render::BufferInitializer dirLightBufInit;
 			dirLightBufInit.type = render::BufferTypeBits::Uniform;
 			dirLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBODirLight)}); // diffuse
@@ -290,7 +301,7 @@ namespace cube
 			swapAtt.swapchain = mSwapchain;
 			swapAtt.loadOp = LoadOperator::Clear;
 			swapAtt.storeOp = StoreOperator::Store;
-			c.float32 = {0.3f, 0.3f, 0.3f, 0};
+			c.float32 = {0.02f, 0.02f, 0.02f, 0};
 			swapAtt.clearColor = c;
 			swapAtt.initialLayout = ImageLayout::Undefined;
 			swapAtt.finalLayout = ImageLayout::PresentSource;
@@ -331,17 +342,24 @@ namespace cube
 			renderArea.width = mWidth;
 			renderArea.height = mHeight;
 
+			// Update global
+			UBOGlobal uboGlobal;
+			uboGlobal.cameraPos = mCameraRenderer->GetPosition();
+
+			mGlobalUBOBuffer->UpdateBufferData(0, &uboGlobal, sizeof(UBOGlobal));
+			render::BufferInfo globalUBOBufInfo = mGlobalUBOBuffer->GetInfo(0);
+			mGlobalDescriptorSet->WriteBufferInDescriptor(0, 1, &globalUBOBufInfo);
+
 			// Update lights
 			if(mDirLight != nullptr) {
 				UBODirLight uboDirLight;
-				uboDirLight.ambient = mDirLight->GetAmbient();
-				uboDirLight.diffuse = mDirLight->GetDiffuse();
+				uboDirLight.color = mDirLight->GetColor();
 				uboDirLight.direction = mDirLight->GetDirection();
 
 				mDirLightBuffer->UpdateBufferData(0, &uboDirLight, sizeof(UBODirLight));
 
 				render::BufferInfo bufInfo = mDirLightBuffer->GetInfo(0);
-				mGlobalDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
+				mGlobalDescriptorSet->WriteBufferInDescriptor(1, 1, &bufInfo);
 			}
 
 			// Prepare all command buffers of each material

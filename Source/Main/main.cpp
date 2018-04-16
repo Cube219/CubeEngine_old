@@ -15,7 +15,15 @@
 
 namespace cube
 {
+	struct MaterialUBO
+	{
+		Vector4 albedo;
+		float roughness;
+		float metallic;
+	};
+
 	core::RPtr<core::Mesh> boxMesh;
+	core::RPtr<core::Mesh> sphereMesh;
 	core::RPtr<core::Mesh> planeMesh;
 	core::RPtr<core::Texture> texture;
 	core::RPtr<core::Texture> texture2;
@@ -23,8 +31,7 @@ namespace cube
 	core::RPtr<core::Shader> vertexShader;
 	core::RPtr<core::Shader> fragmentShader;
 	core::HMaterial material;
-	core::HMaterialInstance materialIns1;
-	core::HMaterialInstance materialIns2;
+	Vector<core::HMaterialInstance> materialInses;
 	Vector<core::HGameObject> mGameObjects;
 	core::HGameObject cameraGameObject;
 	core::HGameObject dirLightGameObject;
@@ -35,6 +42,7 @@ namespace cube
 
 		// Create mesh / texture
 		boxMesh = BaseMeshGenerator::GetBoxMesh();
+		sphereMesh = BaseMeshGenerator::GetSphereMesh();
 		planeMesh = BaseMeshGenerator::GetPlaneMesh();
 
 		String texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
@@ -53,80 +61,55 @@ namespace cube
 		MaterialInitializer matInit;
 		matInit.shaders.push_back(vertexShader);
 		matInit.shaders.push_back(fragmentShader);
-		matInit.parameters.push_back({CUBE_T("Texture"), MaterialParameterType::Texture, 0});
+		matInit.parameters.push_back({CUBE_T("UBO"), MaterialParameterType::Data, sizeof(MaterialUBO)});
+		matInit.parameters.push_back({CUBE_T("Texture"), MaterialParameterType::Texture, 1});
 		material = Material::Create(matInit);
 
 		// Create materialInstances
-		materialIns1 = material->CreateInstance();
-		String t = CUBE_T("Texture");
-		materialIns1->SetParameterData<RPtr<Texture>>(t, texture);
+		MaterialUBO matUBO;
+		matUBO.albedo = Vector4(0.5f, 0, 0, 1);
+		matUBO.metallic = 0.5f;
+		matUBO.roughness = 0.5f;
+		
+		String t;
+		for(int i = 0; i <= 5; i++) {
+			for(int j = 0; j <= 5; j++) {
+				HMaterialInstance ins = material->CreateInstance();
+				matUBO.metallic = 0.2f * i;
+				matUBO.roughness = 0.2f * j;
 
-		materialIns2 = material->CreateInstance();
-		materialIns2->SetParameterData<RPtr<Texture>>(t, texture2);
+				t = CUBE_T("UBO");
+				ins->SetParameterData(t, matUBO);
+				t = CUBE_T("Texture");
+				ins->SetParameterData(t, texture);
+
+				materialInses.push_back(ins);
+			}
+		}
 	}
 
 	void CreateGameObjects()
 	{
 		using namespace core;
 
-		// Center
-		auto go = GameObject::Create();
-		Vector3 v(0, 0, 0);
-		go->SetPosition(v);
+		HGameObject go;
+		Vector3 v;
+		HRenderer3DComponent renderer;
 
-		auto renderer = go->AddComponent<cube::Renderer3DComponent>();
-		renderer->SetMesh(boxMesh);
-		renderer->SetMaterialInstance(materialIns2);
+		int insIndex = 0;
 
-		mGameObjects.push_back(go);
+		for(int i = 0; i <= 5; i++) {
+			for(int j = 0; j <= 5; j++) {
+				go = GameObject::Create();
+				v = Vector3(i * 2 - 5, j * 2 - 5, 0);
+				go->SetPosition(v);
 
-		// X Axis(1)
-		go = GameObject::Create();
-		v = Vector3(1, 0, 0);
-		go->SetPosition(v);
-
-		renderer = go->AddComponent<cube::Renderer3DComponent>();
-		renderer->SetMesh(boxMesh);
-		renderer->SetMaterialInstance(materialIns1);
-
-		mGameObjects.push_back(go);
-
-		// Y Axis(2)
-		for(int i = 1; i <= 2; i++) {
-			go = GameObject::Create();
-			v = Vector3(0, i, 0);
-			go->SetPosition(v);
-
-			renderer = go->AddComponent<cube::Renderer3DComponent>();
-			renderer->SetMesh(boxMesh);
-			renderer->SetMaterialInstance(materialIns1);
-
-			mGameObjects.push_back(go);
+				renderer = go->AddComponent<cube::Renderer3DComponent>();
+				renderer->SetMesh(sphereMesh);
+				renderer->SetMaterialInstance(materialInses[insIndex]);
+				insIndex++;
+			}
 		}
-
-		// Z Axis(3)
-		for(int i = 1; i <= 3; i++) {
-			go = GameObject::Create();
-			v = Vector3(0, 0, i);
-			go->SetPosition(v);
-
-			renderer = go->AddComponent<cube::Renderer3DComponent>();
-			renderer->SetMesh(boxMesh);
-			renderer->SetMaterialInstance(materialIns1);
-
-			mGameObjects.push_back(go);
-		}
-
-		// Plane
-		go = GameObject::Create();
-		v = Vector3(0, -2, 0);
-		go->SetPosition(v);
-
-		renderer = go->AddComponent<cube::Renderer3DComponent>();
-		renderer->SetMesh(planeMesh);
-		renderer->SetMaterialInstance(materialIns1);
-
-		mGameObjects.push_back(go);
 
 		// Camera
 		cameraGameObject = GameObject::Create();
@@ -138,8 +121,7 @@ namespace cube
 		dirLightGameObject = GameObject::Create();
 		dirLightGameObject->SetRotation(Vector3(90, 0, 0));
 		HDirectionalLightComponent dirLightCom = dirLightGameObject->AddComponent<DirectionalLightComponent>();
-		dirLightCom->SetDiffuse(Vector4(1, 1, 1, 1));
-		dirLightCom->SetAmbient(Vector4(0.15f, 0.15f, 0.15f, 1.0f));
+		dirLightCom->SetColor(Vector4(20, 20, 20, 1));
 	}
 
 	void DestroyAll()
@@ -156,8 +138,9 @@ namespace cube
 		texture2 = nullptr;
 		vertexShader = nullptr;
 		fragmentShader = nullptr;
-		materialIns1->Destroy();
-		materialIns2->Destroy();
+		for(auto& ins : materialInses) {
+			ins->Destroy();
+		}
 		material->Destroy();
 	}
 

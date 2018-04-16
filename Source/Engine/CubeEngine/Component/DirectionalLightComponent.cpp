@@ -39,13 +39,8 @@ namespace cube
 		mDirLight->SetDirection(GetGameObject()->GetForward());
 	}
 
-	void DirectionalLightComponent::SetAmbient(const Vector4& ambient)
+	void DirectionalLightComponent::SetColor(const Vector4& color)
 	{
-		mDirLight->SetAmbient(ambient);
-	}
-
-	void DirectionalLightComponent::SetDiffuse(const Vector4& diffuse)
-	{
-		mDirLight->SetDiffuse(diffuse);
+		mDirLight->SetColor(color);
 	}
 } // namespace cube

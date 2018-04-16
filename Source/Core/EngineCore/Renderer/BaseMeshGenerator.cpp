@@ -4,6 +4,7 @@
 #include "Base/Math.h"
 #include "../EngineCore.h"
 #include "../Resource/ResourceManager.h"
+#include "../LogWriter.h"
 
 namespace cube
 {
@@ -74,13 +75,13 @@ namespace cube
 			// Side
 			float dTheta = 2.0f * Math::Pi / sliceCount;
 			for(int i = 0; i < sliceCount; i++) {
-				// Up
-				vertices[i * 2].pos = {0.5f * Math::Cos(dTheta * i), 1.0f, 0.5f * Math::Sin(dTheta * i), 1.0f};
+				// Down
+				vertices[i * 2].pos = {0.5f * Math::Cos(dTheta * i), -1.0f, 0.5f * Math::Sin(dTheta * i), 1.0f};
 				vertices[i * 2].color = {1.0f, 1.0f, 1.0f, 1.0f};
 				vertices[i * 2].texCoord = {0.0f, 0.0f};
 
-				// Down
-				vertices[i * 2 + 1].pos = {0.5f * Math::Cos(dTheta * i), -1.0f, 0.5f * Math::Sin(dTheta * i), 1.0f};
+				// Up
+				vertices[i * 2 + 1].pos = {0.5f * Math::Cos(dTheta * i), 1.0f, 0.5f * Math::Sin(dTheta * i), 1.0f};
 				vertices[i * 2 + 1].color = {1.0f, 1.0f, 1.0f, 1.0f};
 				vertices[i * 2 + 1].texCoord = {0.0f, 0.0f};
 			}
@@ -105,9 +106,9 @@ namespace cube
 			indices[(sliceCount - 1) * 6 + 4] = (sliceCount - 1) * 2 + 1;
 			indices[(sliceCount - 1) * 6 + 5] = 1;
 
-			// Top
+			// Bottom
 			Vertex v;
-			v.pos = {0.0f, 1.0f, 0.0f, 1.0f};
+			v.pos = {0.0f, -1.0f, 0.0f, 1.0f};
 			v.color = {1.0f, 1.0f, 1.0f, 1.0f};
 			v.texCoord = {0.0f, 0.0f};
 			vertices.push_back(v); // index: sliceCount * 2
@@ -121,8 +122,8 @@ namespace cube
 			indices.push_back((sliceCount - 1) * 2);
 			indices.push_back(0);
 
-			// Bottom
-			v.pos = {0.0f, -1.0f, 0.0f, 1.0f};
+			// Top
+			v.pos = {0.0f, 1.0f, 0.0f, 1.0f};
 			v.color = {1.0f, 1.0f, 1.0f, 1.0f};
 			v.texCoord = {0.0f, 0.0f};
 			vertices.push_back(v); // index: sliceCount * 2 + 1
@@ -156,7 +157,7 @@ namespace cube
 		{
 			Mesh* meshPtr = new Mesh();
 
-			constexpr int divisionNum = 3;
+			constexpr int divisionNum = 4;
 
 			// Create icosahedron
 			constexpr float x = 0.525731f;
@@ -201,7 +202,7 @@ namespace cube
 
 			meshPtr->SetVertex(vertices);
 			meshPtr->SetIndex(indices);
-
+			
 			// Divide vertices from 1 to 4
 			for(int i = 0; i < divisionNum; i++) {
 				SubDivide(meshPtr);
@@ -212,15 +213,16 @@ namespace cube
 			for(uint64_t i = 0; i < meshVertices.size(); i++) {
 				Vector3 v;
 				v = meshVertices[i].pos;
-
-				auto vLength = v.Length();
-				v /= vLength;
+				v.Normalize();
 				v *= 0.5f;
 
-				meshVertices[i].pos = v;
+				Float3 vF = v.GetFloat3();
+
+				meshVertices[i].pos = Vector4(vF.x, vF.y, vF.z, 1.0f);
+				meshVertices[i].normal = Vector3(vF.x, vF.y, vF.z);
 			}
 
-			SetNormalVector(meshPtr);
+			//SetNormalVector(meshPtr);
 
 			return RegisterToResourceManager(meshPtr);
 		}
@@ -285,12 +287,12 @@ namespace cube
 
 				m2.pos = (v0.pos + v2.pos) / 2.0f;
 
-				newVertices.push_back(v0);
-				newVertices.push_back(v1);
-				newVertices.push_back(v2);
-				newVertices.push_back(m0);
-				newVertices.push_back(m1);
-				newVertices.push_back(m2);
+				newVertices.push_back(v0); // 0
+				newVertices.push_back(v1); // 1
+				newVertices.push_back(v2); // 2
+				newVertices.push_back(m0); // 3
+				newVertices.push_back(m1); // 4
+				newVertices.push_back(m2); // 5
 
 				newIndices.push_back(i * 6);
 				newIndices.push_back(i * 6 + 3);
