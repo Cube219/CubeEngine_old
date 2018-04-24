@@ -6,6 +6,7 @@
 #include "Component/CameraComponent.h"
 #include "Component/MoveComponent.h"
 #include "Component/DirectionalLightComponent.h"
+#include "Component/PointLightComponent.h"
 
 namespace cube
 {
@@ -42,6 +43,7 @@ namespace cube
 		comManager->RegisterComponent<CameraComponent>();
 		comManager->RegisterComponent<MoveComponent>();
 		comManager->RegisterComponent<DirectionalLightComponent>();
+		comManager->RegisterComponent<PointLightComponent>();
 	}
 
 	////////////////////////////////

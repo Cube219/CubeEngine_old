@@ -10,6 +10,7 @@
 #include "CubeEngine/Component/MoveComponent.h"
 #include "CubeEngine/Component/Renderer3DComponent.h"
 #include "CubeEngine/Component/DirectionalLightComponent.h"
+#include "CubeEngine/Component/PointLightComponent.h"
 
 #include "EngineCore/Renderer/Mesh.h"
 
@@ -34,7 +35,7 @@ namespace cube
 	Vector<core::HMaterialInstance> materialInses;
 	Vector<core::HGameObject> mGameObjects;
 	core::HGameObject cameraGameObject;
-	core::HGameObject dirLightGameObject;
+	Vector<core::HGameObject> pointLightGameObjects;
 
 	void PrepareResources()
 	{
@@ -75,8 +76,8 @@ namespace cube
 		for(int i = 0; i <= 5; i++) {
 			for(int j = 0; j <= 5; j++) {
 				HMaterialInstance ins = material->CreateInstance();
-				matUBO.metallic = 0.2f * i;
-				matUBO.roughness = 0.2f * j;
+				matUBO.metallic = 0.20f * j;
+				matUBO.roughness = 0.20f * i + 0.1f;
 
 				t = CUBE_T("UBO");
 				ins->SetParameterData(t, matUBO);
@@ -108,6 +109,8 @@ namespace cube
 				renderer->SetMesh(sphereMesh);
 				renderer->SetMaterialInstance(materialInses[insIndex]);
 				insIndex++;
+
+				mGameObjects.push_back(go);
 			}
 		}
 
@@ -117,11 +120,37 @@ namespace cube
 		cameraGameObject->AddComponent<CameraComponent>();
 		cameraGameObject->AddComponent<MoveComponent>();
 
-		// Directional light
-		dirLightGameObject = GameObject::Create();
-		dirLightGameObject->SetRotation(Vector3(90, 0, 0));
+		// Point light
+		/*dirLightGameObject = GameObject::Create();
+		dirLightGameObject->SetRotation(Vector3(90, 0, -45));
 		HDirectionalLightComponent dirLightCom = dirLightGameObject->AddComponent<DirectionalLightComponent>();
-		dirLightCom->SetColor(Vector4(20, 20, 20, 1));
+		dirLightCom->SetColor(Vector4(10, 10, 10, 1));*/
+
+		HPointLightComponent pointLight;
+
+		go = GameObject::Create();
+		go->SetPosition(Vector3(10, 10, -2));
+		pointLight = go->AddComponent<PointLightComponent>();
+		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
+		pointLightGameObjects.push_back(go);
+		
+		go = GameObject::Create();
+		go->SetPosition(Vector3(-10, 10, -2));
+		pointLight = go->AddComponent<PointLightComponent>();
+		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
+		pointLightGameObjects.push_back(go);
+
+		go = GameObject::Create();
+		go->SetPosition(Vector3(10, -10, -2));
+		pointLight = go->AddComponent<PointLightComponent>();
+		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
+		pointLightGameObjects.push_back(go);
+
+		go = GameObject::Create();
+		go->SetPosition(Vector3(-10, -10, -2));
+		pointLight = go->AddComponent<PointLightComponent>();
+		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
+		pointLightGameObjects.push_back(go);
 	}
 
 	void DestroyAll()
@@ -131,7 +160,9 @@ namespace cube
 			go->Destroy();
 		}
 		cameraGameObject->Destroy();
-		dirLightGameObject->Destroy();
+		for(auto& go : pointLightGameObjects) {
+			go->Destroy();
+		}
 
 		boxMesh = nullptr;
 		texture = nullptr;
@@ -148,8 +179,8 @@ namespace cube
 	{
 		CubeEngineStartOption startOption;
 		startOption.title = CUBE_T("Test title");
-		startOption.windowWidth = 1024;
-		startOption.windowHeight = 768;
+		startOption.windowWidth = 1040;
+		startOption.windowHeight = 807;
 		startOption.isWindowMode = true;
 
 		CubeEngine::Start(startOption);

@@ -14,6 +14,9 @@
     <ClCompile Include="Component\DirectionalLightComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="Component\PointLightComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CubeEngine.h" />
@@ -28,6 +31,9 @@
       <Filter>Component</Filter>
     </ClInclude>
     <ClInclude Include="Component\DirectionalLightComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\PointLightComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>

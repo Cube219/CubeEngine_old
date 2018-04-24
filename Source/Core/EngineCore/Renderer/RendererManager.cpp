@@ -5,12 +5,10 @@
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
 #include "Light/DirectionalLight.h"
+#include "Light/PointLight.h"
 #include "Material/Shader.h"
 #include "Material/Material.h"
 #include "Material/MaterialInstance.h"
-
-#include <fstream>
-#include <sstream>
 
 namespace cube
 {
@@ -25,6 +23,14 @@ namespace cube
 		{
 			Vector4 color;
 			Vector3 direction;
+			int isExisted;
+		};
+
+		struct UBOPointLights
+		{
+			int num;
+			Vector4 color[RendererManager::maxPointLightNum];
+			Vector3 position[RendererManager::maxPointLightNum];
 		};
 
 		RendererManager::RendererManager(RenderType type) :
@@ -86,9 +92,16 @@ namespace cube
 			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 1, 1}); // dirLight
 			render::BufferInitializer dirLightBufInit;
 			dirLightBufInit.type = render::BufferTypeBits::Uniform;
-			dirLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBODirLight)}); // diffuse
+			dirLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBODirLight)});
 			mDirLightBuffer = mRenderAPI->CreateBuffer(dirLightBufInit);
 			mDirLightBuffer->Map();
+
+			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 2, 1}); // pointLights
+			render::BufferInitializer pointLightBufInit;
+			pointLightBufInit.type = render::BufferTypeBits::Uniform;
+			pointLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBOPointLights)});
+			mPointLightsBuffer = mRenderAPI->CreateBuffer(pointLightBufInit);
+			mPointLightsBuffer->Map();
 
 			mGlobalDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
 			mGlobalDescriptorSet = mRenderAPI->CreateDescriptorSet(mGlobalDescriptorSetLayout);
@@ -196,6 +209,28 @@ namespace cube
 			}
 
 			mDirLight = nullptr;
+		}
+
+		void RendererManager::RegisterLight(SPtr<PointLight>& pointLight)
+		{
+			if(mPointLights.size() >= maxPointLightNum) {
+				CUBE_LOG(LogType::Error, "PointLight cannot be registerd more than 50.");
+				return;
+			}
+
+			mPointLights.push_back(pointLight);
+		}
+
+		void RendererManager::UnregisterLight(SPtr<PointLight>& pointLight)
+		{
+			auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight);
+
+			if(findIter == mPointLights.cend()) {
+				CUBE_LOG(LogType::Error, "This point light is not registered.");
+				return;
+			}
+
+			mPointLights.erase(findIter);
 		}
 
 		SPtr<Renderer3D> RendererManager::CreateRenderer3D()
@@ -350,17 +385,31 @@ namespace cube
 			render::BufferInfo globalUBOBufInfo = mGlobalUBOBuffer->GetInfo(0);
 			mGlobalDescriptorSet->WriteBufferInDescriptor(0, 1, &globalUBOBufInfo);
 
-			// Update lights
+			// Update directional lights
+			UBODirLight uboDirLight;
 			if(mDirLight != nullptr) {
-				UBODirLight uboDirLight;
 				uboDirLight.color = mDirLight->GetColor();
 				uboDirLight.direction = mDirLight->GetDirection();
-
-				mDirLightBuffer->UpdateBufferData(0, &uboDirLight, sizeof(UBODirLight));
-
-				render::BufferInfo bufInfo = mDirLightBuffer->GetInfo(0);
-				mGlobalDescriptorSet->WriteBufferInDescriptor(1, 1, &bufInfo);
+				uboDirLight.isExisted = 1;
+			} else {
+				uboDirLight.isExisted = 0;
 			}
+			mDirLightBuffer->UpdateBufferData(0, &uboDirLight, sizeof(UBODirLight));
+
+			render::BufferInfo bufInfo = mDirLightBuffer->GetInfo(0);
+			mGlobalDescriptorSet->WriteBufferInDescriptor(1, 1, &bufInfo);
+
+			// Update point lights
+			UBOPointLights uboPointLights;
+			uboPointLights.num = (int)mPointLights.size();
+			for(int i = 0; i < uboPointLights.num; i++) {
+				uboPointLights.color[i] = mPointLights[i]->GetColor();
+				uboPointLights.position[i] = mPointLights[i]->GetPosition();
+			}
+			mPointLightsBuffer->UpdateBufferData(0, &uboPointLights, sizeof(UBOPointLights));
+			
+			render::BufferInfo pointLightBufInfo = mPointLightsBuffer->GetInfo(0);
+			mGlobalDescriptorSet->WriteBufferInDescriptor(2, 1, &pointLightBufInfo);
 
 			// Prepare all command buffers of each material
 			for(uint32_t i = 0; i < mMaterialCommandBuffers.size(); i++) {

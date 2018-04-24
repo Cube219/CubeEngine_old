@@ -62,6 +62,9 @@ namespace cube
 			// Create a device
 			VulkanDeviceInitializer deviceInitializer;
 			deviceInitializer.AddExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+#ifdef _DEBUG
+			deviceInitializer.AddExtension(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
+#endif // _DEBUG
 
 			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::TessellationShader, true, true);
 			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::GeometryShader, true, true);

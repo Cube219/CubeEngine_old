@@ -29,6 +29,9 @@ namespace cube
 		class ENGINE_CORE_EXPORT RendererManager
 		{
 		public:
+			constexpr static int maxPointLightNum = 10;
+
+		public:
 			RendererManager(RenderType type);
 			~RendererManager();
 
@@ -40,6 +43,8 @@ namespace cube
 
 			void RegisterLight(SPtr<DirectionalLight>& dirLight);
 			void UnregisterLight(SPtr<DirectionalLight>& dirLight);
+			void RegisterLight(SPtr<PointLight>& pointLight);
+			void UnregisterLight(SPtr<PointLight>& pointLight);
 
 			SPtr<Renderer3D> CreateRenderer3D();
 			SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: 차후 저렇게 바꾸기
@@ -74,6 +79,9 @@ namespace cube
 
 			SPtr<DirectionalLight> mDirLight;
 			SPtr<render::Buffer> mDirLightBuffer;
+
+			Vector<SPtr<PointLight>> mPointLights;
+			SPtr<render::Buffer> mPointLightsBuffer;
 
 			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
 			SPtr<render::DescriptorSet> mGlobalDescriptorSet;

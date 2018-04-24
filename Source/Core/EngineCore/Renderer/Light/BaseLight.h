@@ -14,21 +14,18 @@ namespace cube
 			BaseLight();
 			virtual ~BaseLight();
 
-			void SetAmbient(const Vector4& ambient) { mAmbient = ambient; }
-			void SetDiffuse(const Vector4& diffuse) { mDiffuse = diffuse; }
+			void SetColor(const Vector4& color) { mColor = color; }
+			void SetPosition(const Vector3& pos) { mPosition = pos; }
 
-			Vector4 GetAmbient() const { return mAmbient; }
-			Vector4 GetDiffuse() const { return mDiffuse; }
+			Vector4 GetColor() const { return mColor; }
 			Vector3 GetPosition() const { return mPosition; }
 
 		protected:
 			friend class RendererManager;
 
 			int mIndex = -1; // Used in RendererManager
-
-			Vector4 mAmbient;
-			Vector4 mDiffuse;
 			
+			Vector4 mColor;
 			Vector3 mPosition;
 		};
 	} // namespace core

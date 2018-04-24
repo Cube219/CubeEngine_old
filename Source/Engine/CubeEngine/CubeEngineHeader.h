@@ -11,6 +11,7 @@ namespace cube
 	class MoveComponent;
 	class Renderer3DComponent;
 	class DirectionalLightComponent;
+	class PointLightComponent;
 }
 
 #ifdef CUBE_ENGINE_EXPORTS

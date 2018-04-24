@@ -226,10 +226,10 @@ namespace cube
 			colorBlendStateCreateInfo.logicOp = VK_LOGIC_OP_NO_OP;
 			colorBlendStateCreateInfo.attachmentCount = SCast(uint32_t)(colorBlendAttachments.size());
 			colorBlendStateCreateInfo.pAttachments = colorBlendAttachments.data();
-			colorBlendStateCreateInfo.blendConstants[0] = 1.0f;
-			colorBlendStateCreateInfo.blendConstants[1] = 1.0f;
-			colorBlendStateCreateInfo.blendConstants[2] = 1.0f;
-			colorBlendStateCreateInfo.blendConstants[3] = 1.0f;
+			colorBlendStateCreateInfo.blendConstants[0] = 0.0f;
+			colorBlendStateCreateInfo.blendConstants[1] = 0.0f;
+			colorBlendStateCreateInfo.blendConstants[2] = 0.0f;
+			colorBlendStateCreateInfo.blendConstants[3] = 0.0f;
 
 			// Shader
 			Vector<VkPipelineShaderStageCreateInfo> shaderStages;

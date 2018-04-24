@@ -10,7 +10,14 @@ layout (set = 0, binding = 0) uniform _global {
 layout (set = 0, binding = 1) uniform _dirLight {
 	vec4 color;
 	vec3 direction;
+	int isExisted;
 } dirLight;
+
+layout (set = 0, binding = 2) uniform _pointLights {
+	int num;
+	vec4 color[10];
+	vec3 position[10];
+} pointLights;
 
 /////////////////
 // PerMaterial //
@@ -83,15 +90,15 @@ vec3 BRDF(vec3 L, vec3 V, vec3 N, vec3 albedo, float metallic, float roughness)
 	
 	vec3 F0 = vec3(0.04);
 	F0 = mix(F0, albedo, metallic);
-	vec3 F = fresnaelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
+	vec3 F = fresnaelSchlick(clamp(dot(N, V), 0.0, 1.0), F0);
 	
 	float D = DistributionGGX(N, H, roughness);
 	float G = GeometrySmith(N, V, L, roughness);
 	
 	vec3 nom = D * G * F;
-	float denom = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+	float denom = 4.0 * clamp(dot(N, V), 0.0, 1.0) * clamp(dot(N, L), 0.0, 1.0);
 	
-	vec3 specular = nom / max(denom, 0.001);
+	vec3 specular = nom / max(denom, 0.00001);
 	
 	vec3 kS = F;
 	vec3 kD = vec3(1.0) - kS;
@@ -99,7 +106,7 @@ vec3 BRDF(vec3 L, vec3 V, vec3 N, vec3 albedo, float metallic, float roughness)
 	kD *= 1.0 - metallic;
 	
 	vec3 Lo = (kD * (albedo / PI) + specular);
-	
+
 	return Lo;
 }
 
@@ -109,18 +116,43 @@ void main(void) {
 	// Light
 	vec3 lightColor = vec3(0.0);
 	
-	vec3 N = inNormal;
+	vec3 N = normalize(inNormal);
 	vec3 V = normalize(global.cameraPos - inWorldPos);
 	
 	// Dir light
-	vec3 L = normalize(-dirLight.direction);
-	lightColor = BRDF(L, V, N, vec3(perMaterial.albedo), perMaterial.metallic, perMaterial.roughness);
+	if(dirLight.isExisted == 1) {
+		vec3 L = normalize(-dirLight.direction);
+
+		vec3 Lo = BRDF(L, V, N, vec3(perMaterial.albedo), perMaterial.metallic, perMaterial.roughness);
 	
-	float NdotL = max(dot(N, L), 0.0);
-	lightColor *= vec3(dirLight.color) * NdotL;
+		float NdotL = max(dot(N, L), 0.0);
+		Lo *= vec3(dirLight.color) * NdotL;
+
+		lightColor += Lo;
+	}
+
+	// Point lights
+	for(int i = 0; i < pointLights.num; i++) {
+		vec3 L = normalize(pointLights.position[i] - inWorldPos);
+
+		vec3 Lo = BRDF(L, V, N, vec3(perMaterial.albedo), perMaterial.metallic, perMaterial.roughness);
+
+		float distance = length(pointLights.position[i] - inWorldPos);
+		float attenuation = 1.0 / (distance * distance);
+		float cosT = max(dot(N, L), 0.0);
+		vec3 radiance = vec3(pointLights.color[i]) * attenuation * cosT;
+
+		float NdotL = max(dot(N, L), 0.0);
+		Lo *= radiance * NdotL;
+
+		lightColor += Lo;
+	}
+
+	vec3 ambient = vec3(0.03) * vec3(perMaterial.albedo);
+	vec3 color = ambient + lightColor;
+
+	//color = color / (color + vec3(1.0));
+	color = pow(color, vec3(1.0/2.2)); 
 	
-	//vec3 ambient = vec3(0.03) * vec3(perMaterial.albedo);
-	//lightColor += ambient;
-	
-	outColor = vec4(lightColor, 1.0);
+	outColor = vec4(color, 1.0);
 }

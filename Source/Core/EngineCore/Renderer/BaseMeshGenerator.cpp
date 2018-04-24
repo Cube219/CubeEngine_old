@@ -157,7 +157,7 @@ namespace cube
 		{
 			Mesh* meshPtr = new Mesh();
 
-			constexpr int divisionNum = 4;
+			constexpr int divisionNum = 3;
 
 			// Create icosahedron
 			constexpr float x = 0.525731f;
@@ -220,6 +220,7 @@ namespace cube
 
 				meshVertices[i].pos = Vector4(vF.x, vF.y, vF.z, 1.0f);
 				meshVertices[i].normal = Vector3(vF.x, vF.y, vF.z);
+				meshVertices[i].normal.Normalize();
 			}
 
 			//SetNormalVector(meshPtr);

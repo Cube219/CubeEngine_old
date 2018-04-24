@@ -11,5 +11,5 @@ namespace cube
 		PointLight::~PointLight()
 		{
 		}
-	}
-}
+	} // namespace core
+} // namespace cube
