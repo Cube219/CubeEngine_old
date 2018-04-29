@@ -17,6 +17,12 @@
     <ClCompile Include="Component\PointLightComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceImporter\ShaderImporter.cpp">
+      <Filter>ResourceImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceImporter\TextureImporter.cpp">
+      <Filter>ResourceImporter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CubeEngine.h" />
@@ -36,10 +42,19 @@
     <ClInclude Include="Component\PointLightComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceImporter\ShaderImporter.h">
+      <Filter>ResourceImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceImporter\TextureImporter.h">
+      <Filter>ResourceImporter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Component">
       <UniqueIdentifier>{52166d0e-e4a1-423c-ba03-d42b5d5d643d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourceImporter">
+      <UniqueIdentifier>{d5ee238c-f44b-4436-8141-0b4b80949ef8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

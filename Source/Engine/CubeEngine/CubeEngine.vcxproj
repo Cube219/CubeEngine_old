@@ -71,11 +71,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(SolutionDir)Dependencies\stb\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\glm\include;$(SolutionDir)Dependencies\stb\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -136,6 +136,8 @@
     <ClCompile Include="Component\PointLightComponent.cpp" />
     <ClCompile Include="Component\Renderer3DComponent.cpp" />
     <ClCompile Include="CubeEngine.cpp" />
+    <ClCompile Include="ResourceImporter\ShaderImporter.cpp" />
+    <ClCompile Include="ResourceImporter\TextureImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component\CameraComponent.h" />
@@ -145,6 +147,8 @@
     <ClInclude Include="Component\Renderer3DComponent.h" />
     <ClInclude Include="CubeEngine.h" />
     <ClInclude Include="CubeEngineHeader.h" />
+    <ClInclude Include="ResourceImporter\ShaderImporter.h" />
+    <ClInclude Include="ResourceImporter\TextureImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Base\Base\Base.vcxproj">

@@ -44,12 +44,6 @@ namespace cube
 			mRendererManager = std::make_unique<RendererManager>(RenderType::Vulkan);
 
 			mResourceManager = std::make_unique<ResourceManager>(platform::Platform::GetFileSystem());
-			mResourceManager->RegisterImporter(
-				std::make_unique<TextureImporter>(mRendererManager->GetRenderAPI())
-			);
-			mResourceManager->RegisterImporter(
-				std::make_unique<ShaderImporter>(mRendererManager->GetRenderAPI())
-			);
 
 			mThreadManager = std::make_shared<ThreadManager>();
 

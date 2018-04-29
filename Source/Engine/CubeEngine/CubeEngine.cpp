@@ -1,6 +1,11 @@
 #include "CubeEngine.h"
 
 #include "Platform.h"
+#include "EngineCore/Resource/ResourceManager.h"
+#include "EngineCore/Renderer/RendererManager.h"
+#include "BaseRenderAPI/RenderAPI.h"
+#include "ResourceImporter/ShaderImporter.h"
+#include "ResourceImporter/TextureImporter.h"
 #include "EngineCore/Component/ComponentManager.h"
 #include "Component/Renderer3DComponent.h"
 #include "Component/CameraComponent.h"
@@ -22,6 +27,7 @@ namespace cube
 		core::ECore()->Prepare();
 		core::ECore()->SetFPSLimit(60);
 
+		RegisterImporters();
 		InitComponents();
 	}
 
@@ -33,6 +39,19 @@ namespace cube
 	void CubeEngine::Destroy()
 	{
 		core::ECore()->DestroyInstance();
+	}
+
+	void CubeEngine::RegisterImporters()
+	{
+		SPtr<core::ResourceManager> resManager = core::ECore()->GetResourceManager();
+		SPtr<render::RenderAPI> renderAPI  = core::ECore()->GetRendererManager()->GetRenderAPI();
+
+		resManager->RegisterImporter(
+			std::make_unique<TextureImporter>(renderAPI)
+		);
+		resManager->RegisterImporter(
+			std::make_unique<ShaderImporter>(renderAPI)
+		);
 	}
 
 	void CubeEngine::InitComponents()

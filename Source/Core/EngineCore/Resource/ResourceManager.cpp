@@ -58,7 +58,7 @@ namespace cube
 			// Find importer to import the resource
 			bool isFindImporter = false;
 			for(auto& importer : mImporters) {
-				if(importer->GetResourceName() == resName) {
+				if(importer->GetName() == resName) {
 					SPtr<File> resFile = mFileSystem->OpenFile(path, FileAccessModeBits::Read);
 					Json resInfo = metaJson["res_info"];
 

@@ -25,6 +25,8 @@ namespace cube
 		static void Destroy();
 
 	private:
+		static void RegisterImporters();
+
 		static void InitComponents();
 
 		static void InitPlatform();

@@ -16,7 +16,7 @@ namespace cube
 		public:
 			MeshImporter()
 			{
-				mResName = CUBE_T("mesh");
+				mName = CUBE_T("mesh");
 			}
 
 			Resource* Import(SPtr<platform::File>& file, Json info) final override;
@@ -25,6 +25,7 @@ namespace cube
 		class ENGINE_CORE_EXPORT Mesh : public Resource
 		{
 		public:
+			Mesh(){ }
 			virtual ~Mesh(){ }
 
 			void SetVertex(Vector<Vertex>& vertices);
@@ -34,9 +35,7 @@ namespace cube
 			Vector<uint32_t>& GetIndex() { return mIndices; }
 
 		private:
-			friend class MeshImporter;
 			friend class BaseMeshGenerator;
-			Mesh(){ }
 
 			Vector<Vertex> mVertices;
 			Vector<uint32_t> mIndices;

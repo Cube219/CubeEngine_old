@@ -7,6 +7,9 @@ namespace cube
 {
 	class CubeEngine;
 
+	class ShaderImporter;
+	class TextureImporter;
+
 	class CameraComponent;
 	class MoveComponent;
 	class Renderer3DComponent;
