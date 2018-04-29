@@ -6,6 +6,7 @@
 #include "BaseRenderAPI/RenderAPI.h"
 #include "ResourceImporter/ShaderImporter.h"
 #include "ResourceImporter/TextureImporter.h"
+#include "ResourceImporter/ObjImporter.h"
 #include "EngineCore/Component/ComponentManager.h"
 #include "Component/Renderer3DComponent.h"
 #include "Component/CameraComponent.h"
@@ -51,6 +52,9 @@ namespace cube
 		);
 		resManager->RegisterImporter(
 			std::make_unique<ShaderImporter>(renderAPI)
+		);
+		resManager->RegisterImporter(
+			std::make_unique<ObjImporter>()
 		);
 	}
 

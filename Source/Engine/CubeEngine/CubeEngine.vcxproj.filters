@@ -23,6 +23,9 @@
     <ClCompile Include="ResourceImporter\TextureImporter.cpp">
       <Filter>ResourceImporter</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceImporter\ObjImporter.cpp">
+      <Filter>ResourceImporter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CubeEngine.h" />
@@ -46,6 +49,9 @@
       <Filter>ResourceImporter</Filter>
     </ClInclude>
     <ClInclude Include="ResourceImporter\TextureImporter.h">
+      <Filter>ResourceImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceImporter\ObjImporter.h">
       <Filter>ResourceImporter</Filter>
     </ClInclude>
   </ItemGroup>

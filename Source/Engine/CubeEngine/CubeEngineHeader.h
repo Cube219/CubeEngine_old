@@ -9,6 +9,7 @@ namespace cube
 
 	class ShaderImporter;
 	class TextureImporter;
+	class ObjImporter;
 
 	class CameraComponent;
 	class MoveComponent;
