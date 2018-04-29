@@ -20,7 +20,7 @@ namespace cube
 		ShaderImporter(SPtr<render::RenderAPI>& renderAPI) :
 			mRenderAPI(renderAPI)
 		{
-			mName = CUBE_T("shader");
+			mName = CUBE_T("ShaderImporter");
 		}
 
 		core::Resource* Import(SPtr<platform::File>& file, Json info) final override;

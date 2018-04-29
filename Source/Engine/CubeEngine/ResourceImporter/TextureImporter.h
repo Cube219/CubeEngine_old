@@ -13,7 +13,7 @@ namespace cube
 		TextureImporter(SPtr<render::RenderAPI>& renderAPI) :
 			mRenderAPI(renderAPI)
 		{
-			mName = CUBE_T("texture");
+			mName = CUBE_T("TextureImporter");
 		}
 
 		core::Resource* Import(SPtr<platform::File>& file, Json info) final override;
