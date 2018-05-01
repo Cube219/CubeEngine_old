@@ -1,26 +1,30 @@
 #include "Mesh.h"
 
-#include "../LogWriter.h"
+#include "../EngineCore.h"
+#include "../Resource/ResourceManager.h"
 
 namespace cube
 {
 	namespace core
 	{
-		Resource* MeshImporter::Import(SPtr<platform::File>& file, Json info)
+		RPtr<Mesh> Mesh::Load(const String& path)
 		{
-			CUBE_LOG(LogType::Error, "Mesh can not be imported into the importer. Use BaseMeshGenerator instead.");
-			
-			return nullptr;
+			return ECore()->GetResourceManager()->LoadResource<Mesh>(path);
 		}
 
-		void Mesh::SetVertex(Vector<Vertex>& vertices)
+		void Mesh::SetVertex(const Vector<Vertex>& vertices)
 		{
 			mVertices = vertices;
 		}
 
-		void Mesh::SetIndex(Vector<uint32_t>& indices)
+		void Mesh::SetIndex(const Vector<Index>& indices)
 		{
 			mIndices = indices;
+		}
+
+		void Mesh::AddSubMesh(const SubMesh& subMesh)
+		{
+			mSubMeshes.push_back(subMesh);
 		}
 	} // namespace core
 } // namespace cube

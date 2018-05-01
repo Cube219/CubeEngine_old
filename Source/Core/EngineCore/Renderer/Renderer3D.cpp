@@ -74,7 +74,14 @@ namespace cube
 			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &vertexOffset);
 			commandBuffer->BindIndexBuffer(mDataBuffer, mDataBuffer->GetInfo(mIndexIndex).offset);
 
-			commandBuffer->DrawIndexed(SCast(uint32_t)(indices.size()), 0, 0, 1, 0);
+			Vector<SubMesh> subMeshes = mMesh->GetSubMeshes();
+			for(uint32_t i = 0; i < subMeshes.size(); i++) {
+				commandBuffer->DrawIndexed(
+					SCast(uint32_t)(subMeshes[i].indexCount),
+					SCast(uint32_t)(subMeshes[i].indexOffset),
+					SCast(uint32_t)(subMeshes[i].vertexOffset),
+					1, 0);
+			}
 		}
 
 		void Renderer3D::RecreateDataBuffer()

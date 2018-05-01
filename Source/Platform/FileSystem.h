@@ -24,7 +24,7 @@ namespace cube
 			void SetFilePointer(uint64_t offset);
 			void MoveFilePointer(int64_t distance);
 
-			void Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t readBufferSize);
+			void Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize);
 
 			void Write(void* pWriteBuffer, uint64_t bufferSize);
 

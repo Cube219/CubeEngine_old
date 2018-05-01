@@ -60,6 +60,13 @@ namespace cube
 
 			SetNormalVector(meshPtr);
 
+			SubMesh subMesh;
+			subMesh.name = CUBE_T("Box");
+			subMesh.vertexOffset = 0;
+			subMesh.indexOffset = 0;
+			subMesh.indexCount = indices.size();
+			meshPtr->AddSubMesh(subMesh);
+
 			return RegisterToResourceManager(meshPtr);
 		}
 
@@ -141,6 +148,13 @@ namespace cube
 			meshPtr->SetIndex(indices);
 
 			SetNormalVector(meshPtr);
+
+			SubMesh subMesh;
+			subMesh.name = CUBE_T("Cylinder");
+			subMesh.vertexOffset = 0;
+			subMesh.indexOffset = 0;
+			subMesh.indexCount = indices.size();
+			meshPtr->AddSubMesh(subMesh);
 
 			return RegisterToResourceManager(meshPtr);
 		}
@@ -225,6 +239,13 @@ namespace cube
 
 			//SetNormalVector(meshPtr);
 
+			SubMesh subMesh;
+			subMesh.name = CUBE_T("Sphere");
+			subMesh.vertexOffset = 0;
+			subMesh.indexOffset = 0;
+			subMesh.indexCount = meshPtr->GetIndex().size();
+			meshPtr->AddSubMesh(subMesh);
+
 			return RegisterToResourceManager(meshPtr);
 		}
 
@@ -254,6 +275,13 @@ namespace cube
 			meshPtr->SetIndex(indices);
 
 			SetNormalVector(meshPtr);
+
+			SubMesh subMesh;
+			subMesh.name = CUBE_T("Plane");
+			subMesh.vertexOffset = 0;
+			subMesh.indexOffset = 0;
+			subMesh.indexCount = indices.size();
+			meshPtr->AddSubMesh(subMesh);
 
 			return RegisterToResourceManager(meshPtr);
 		}

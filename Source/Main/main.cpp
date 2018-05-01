@@ -26,6 +26,7 @@ namespace cube
 	core::RPtr<core::Mesh> boxMesh;
 	core::RPtr<core::Mesh> sphereMesh;
 	core::RPtr<core::Mesh> planeMesh;
+	core::RPtr<core::Mesh> nanosuitMesh;
 	core::RPtr<core::Texture> texture;
 	core::RPtr<core::Texture> texture2;
 
@@ -36,15 +37,20 @@ namespace cube
 	Vector<core::HGameObject> mGameObjects;
 	core::HGameObject cameraGameObject;
 	Vector<core::HGameObject> pointLightGameObjects;
+	
+	core::HMaterialInstance nanosuitMatIns;
+	core::HGameObject nanosuitGameObject;
 
 	void PrepareResources()
 	{
 		using namespace core;
 
-		// Create mesh / texture
+		// Load mesh / texture
 		boxMesh = BaseMeshGenerator::GetBoxMesh();
 		sphereMesh = BaseMeshGenerator::GetSphereMesh();
 		planeMesh = BaseMeshGenerator::GetPlaneMesh();
+		String meshPath = CUBE_T("../../../SampleResources/Models/nanosuit.obj");
+		nanosuitMesh = Mesh::Load(meshPath);
 
 		String texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
 		texture = Texture::Load(texturePath);
@@ -87,6 +93,15 @@ namespace cube
 				materialInses.push_back(ins);
 			}
 		}
+
+		nanosuitMatIns = material->CreateInstance();
+		matUBO.metallic = 0.5f;
+		matUBO.roughness = 0.1f;
+
+		t = CUBE_T("UBO");
+		nanosuitMatIns->SetParameterData(t, matUBO);
+		t = CUBE_T("Texture");
+		nanosuitMatIns->SetParameterData(t, texture);
 	}
 
 	void CreateGameObjects()
@@ -151,6 +166,15 @@ namespace cube
 		pointLight = go->AddComponent<PointLightComponent>();
 		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
 		pointLightGameObjects.push_back(go);
+
+		// Nano suit
+		nanosuitGameObject = GameObject::Create();
+		nanosuitGameObject->SetPosition(Vector3(0, 0, -5));
+		nanosuitGameObject->SetRotation(Vector3(0, 180, 0));
+
+		renderer = nanosuitGameObject->AddComponent<cube::Renderer3DComponent>();
+		renderer->SetMesh(nanosuitMesh);
+		renderer->SetMaterialInstance(nanosuitMatIns);
 	}
 
 	void DestroyAll()
@@ -163,6 +187,7 @@ namespace cube
 		for(auto& go : pointLightGameObjects) {
 			go->Destroy();
 		}
+		nanosuitGameObject->Destroy();
 
 		boxMesh = nullptr;
 		texture = nullptr;
@@ -172,6 +197,7 @@ namespace cube
 		for(auto& ins : materialInses) {
 			ins->Destroy();
 		}
+		nanosuitMatIns->Destroy();
 		material->Destroy();
 	}
 

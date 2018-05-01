@@ -11,34 +11,38 @@ namespace cube
 	{
 		using Index = uint32_t;
 
-		class ENGINE_CORE_EXPORT MeshImporter : public ResourceImporter
+		struct ENGINE_CORE_EXPORT SubMesh
 		{
-		public:
-			MeshImporter()
-			{
-				mName = CUBE_T("mesh");
-			}
-
-			Resource* Import(SPtr<platform::File>& file, Json info) final override;
+			String name;
+			uint64_t vertexOffset;
+			uint64_t indexOffset;
+			uint64_t indexCount;
 		};
 
 		class ENGINE_CORE_EXPORT Mesh : public Resource
 		{
 		public:
+			static RPtr<Mesh> Load(const String& path);
+
+		public:
 			Mesh(){ }
 			virtual ~Mesh(){ }
 
-			void SetVertex(Vector<Vertex>& vertices);
-			void SetIndex(Vector<uint32_t>& indices);
+			void SetVertex(const Vector<Vertex>& vertices);
+			void SetIndex(const Vector<Index>& indices);
+			void AddSubMesh(const SubMesh& subMesh);
 
 			Vector<Vertex>& GetVertex() { return mVertices; }
-			Vector<uint32_t>& GetIndex() { return mIndices; }
+			Vector<Index>& GetIndex() { return mIndices; }
+			Vector<SubMesh>& GetSubMeshes() { return mSubMeshes; }
 
 		private:
 			friend class BaseMeshGenerator;
 
 			Vector<Vertex> mVertices;
-			Vector<uint32_t> mIndices;
+			Vector<Index> mIndices;
+
+			Vector<SubMesh> mSubMeshes;
 		};
 	} // namespace core
 } // namespace cube
