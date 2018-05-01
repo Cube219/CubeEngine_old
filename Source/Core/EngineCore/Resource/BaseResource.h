@@ -18,23 +18,22 @@ namespace cube
 
 			virtual Resource* Import(SPtr<platform::File>& file, Json info) = 0;
 
-			const String& GetResourceName() const { return mResName; }
+			const String& GetName() const { return mName; }
 
 		protected:
-			String mResName;
+			String mName;
 		};
 
 		class ENGINE_CORE_EXPORT Resource
 		{
 		public:
+			Resource(){ }
 			virtual ~Resource(){ }
 
 		protected:
 			friend class ResourceManager;
 			template <typename T>
 			friend class ResourcePointer;
-
-			Resource(){ }
 
 			Atomic<uint32_t> mRefCount;
 		};

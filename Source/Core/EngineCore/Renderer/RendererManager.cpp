@@ -2,24 +2,46 @@
 
 #include "Platform.h"
 #include "../LogWriter.h"
+#include "Mesh.h"
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
+#include "Light/DirectionalLight.h"
+#include "Light/PointLight.h"
 #include "Material/Shader.h"
 #include "Material/Material.h"
 #include "Material/MaterialInstance.h"
-
-#include <fstream>
-#include <sstream>
 
 namespace cube
 {
 	namespace core
 	{
+		struct UBOGlobal
+		{
+			Vector3 cameraPos;
+		};
+
+		struct UBODirLight
+		{
+			Vector4 color;
+			Vector3 direction;
+			int isExisted;
+		};
+
+		struct UBOPointLights
+		{
+			int num;
+			Vector4 color[RendererManager::maxPointLightNum];
+			Vector3 position[RendererManager::maxPointLightNum];
+		};
+
 		RendererManager::RendererManager(RenderType type) :
-			mIsPrepared(false)
+			mIsPrepared(false), mDirLight(nullptr)
 		{
 			mWidth = platform::Platform::GetWindowWidth();
 			mHeight = platform::Platform::GetWindowHeight();
+
+			// TODO: multiple thread rendering
+			mNumThreads = 1;
 
 			switch(type) {
 				case RenderType::Vulkan:
@@ -55,6 +77,11 @@ namespace cube
 			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
 			mMainCommandBufferSubmitFence = mRenderAPI->CreateFence();
 
+			for(uint32_t i = 0; i < mNumThreads; i++) {
+				mCommandBuffers.push_back(mRenderAPI->CreateCommandBuffer(false));
+				mCommandBuffersCurrentMaterialIndex.push_back(-1);
+			}
+
 			mGetImageSemaphore = mRenderAPI->CreateSemaphore();
 
 			// Create camera renderer
@@ -63,6 +90,27 @@ namespace cube
 
 			// Create Global / mPerObjectDescriptorSetLayout
 			render::DescriptorSetInitializer descSetInit;
+
+			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 0, 1}); // global
+			render::BufferInitializer globalUBOBufInit;
+			globalUBOBufInit.type = render::BufferTypeBits::Uniform;
+			globalUBOBufInit.bufferDatas.push_back({nullptr, sizeof(UBOGlobal)});
+			mGlobalUBOBuffer = mRenderAPI->CreateBuffer(globalUBOBufInit);
+			mGlobalUBOBuffer->Map();
+
+			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 1, 1}); // dirLight
+			render::BufferInitializer dirLightBufInit;
+			dirLightBufInit.type = render::BufferTypeBits::Uniform;
+			dirLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBODirLight)});
+			mDirLightBuffer = mRenderAPI->CreateBuffer(dirLightBufInit);
+			mDirLightBuffer->Map();
+
+			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 2, 1}); // pointLights
+			render::BufferInitializer pointLightBufInit;
+			pointLightBufInit.type = render::BufferTypeBits::Uniform;
+			pointLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBOPointLights)});
+			mPointLightsBuffer = mRenderAPI->CreateBuffer(pointLightBufInit);
+			mPointLightsBuffer->Map();
 
 			mGlobalDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
 			mGlobalDescriptorSet = mRenderAPI->CreateDescriptorSet(mGlobalDescriptorSetLayout);
@@ -92,7 +140,6 @@ namespace cube
 			
 			HMaterial hMat = HMaterial(matDataPtr);
 			mMaterialPipelines.push_back(CreatePipeline(hMat));
-			mMaterialCommandBuffers.push_back(mRenderAPI->CreateCommandBuffer(false));
 
 			return hMat;
 		}
@@ -115,10 +162,8 @@ namespace cube
 
 			std::swap(mMaterials[index], mMaterials[lastIndex]);
 			std::swap(mMaterialPipelines[index], mMaterialPipelines[lastIndex]);
-			std::swap(mMaterialCommandBuffers[index], mMaterialCommandBuffers[lastIndex]);
 			mMaterials.pop_back();
 			mMaterialPipelines.pop_back();
-			mMaterialCommandBuffers.pop_back();
 		}
 
 		void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
@@ -150,6 +195,48 @@ namespace cube
 			mRenderers.pop_back();
 
 			renderer->mIndex = -1;
+		}
+
+		void RendererManager::RegisterLight(SPtr<DirectionalLight>& dirLight)
+		{
+			if(mDirLight != nullptr) {
+				CUBE_LOG(LogType::Error, "DirectionalLight is already registed.");
+				return;
+			}
+
+			mDirLight = dirLight;
+		}
+
+		void RendererManager::UnregisterLight(SPtr<DirectionalLight>& dirLight)
+		{
+			if(mDirLight != dirLight) {
+				CUBE_LOG(LogType::Error, "This directional light is not registered.");
+				return;
+			}
+
+			mDirLight = nullptr;
+		}
+
+		void RendererManager::RegisterLight(SPtr<PointLight>& pointLight)
+		{
+			if(mPointLights.size() >= maxPointLightNum) {
+				CUBE_LOG(LogType::Error, "PointLight cannot be registerd more than 50.");
+				return;
+			}
+
+			mPointLights.push_back(pointLight);
+		}
+
+		void RendererManager::UnregisterLight(SPtr<PointLight>& pointLight)
+		{
+			auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight);
+
+			if(findIter == mPointLights.cend()) {
+				CUBE_LOG(LogType::Error, "This point light is not registered.");
+				return;
+			}
+
+			mPointLights.erase(findIter);
 		}
 
 		SPtr<Renderer3D> RendererManager::CreateRenderer3D()
@@ -255,7 +342,7 @@ namespace cube
 			swapAtt.swapchain = mSwapchain;
 			swapAtt.loadOp = LoadOperator::Clear;
 			swapAtt.storeOp = StoreOperator::Store;
-			c.float32 = {0.3f, 0.3f, 0.3f, 0};
+			c.float32 = {0.02f, 0.02f, 0.02f, 0};
 			swapAtt.clearColor = c;
 			swapAtt.initialLayout = ImageLayout::Undefined;
 			swapAtt.finalLayout = ImageLayout::PresentSource;
@@ -296,35 +383,59 @@ namespace cube
 			renderArea.width = mWidth;
 			renderArea.height = mHeight;
 
-			// Prepare all command buffers of each material
-			for(uint32_t i = 0; i < mMaterialCommandBuffers.size(); i++) {
-				mMaterialCommandBuffers[i]->Reset();
-				mMaterialCommandBuffers[i]->Begin();
+			// Update global
+			UBOGlobal uboGlobal;
+			uboGlobal.cameraPos = mCameraRenderer->GetPosition();
 
-				mMaterialCommandBuffers[i]->SetRenderPass(mRenderPass, renderArea);
+			mGlobalUBOBuffer->UpdateBufferData(0, &uboGlobal, sizeof(UBOGlobal));
+			render::BufferInfo globalUBOBufInfo = mGlobalUBOBuffer->GetInfo(0);
+			mGlobalDescriptorSet->WriteBufferInDescriptor(0, 1, &globalUBOBufInfo);
 
-				mMaterialCommandBuffers[i]->BindGraphicsPipeline(mMaterialPipelines[i]);
+			// Update directional lights
+			UBODirLight uboDirLight;
+			if(mDirLight != nullptr) {
+				uboDirLight.color = mDirLight->GetColor();
+				uboDirLight.direction = mDirLight->GetDirection();
+				uboDirLight.isExisted = 1;
+			} else {
+				uboDirLight.isExisted = 0;
+			}
+			mDirLightBuffer->UpdateBufferData(0, &uboDirLight, sizeof(UBODirLight));
 
-				mMaterialCommandBuffers[i]->SetViewport(0, 1, &vp);
-				mMaterialCommandBuffers[i]->SetScissor(0, 1, &scissor);
+			render::BufferInfo bufInfo = mDirLightBuffer->GetInfo(0);
+			mGlobalDescriptorSet->WriteBufferInDescriptor(1, 1, &bufInfo);
 
-				//mMaterialCommandBuffers[i]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
+			// Update point lights
+			UBOPointLights uboPointLights;
+			uboPointLights.num = (int)mPointLights.size();
+			for(int i = 0; i < uboPointLights.num; i++) {
+				uboPointLights.color[i] = mPointLights[i]->GetColor();
+				uboPointLights.position[i] = mPointLights[i]->GetPosition();
+			}
+			mPointLightsBuffer->UpdateBufferData(0, &uboPointLights, sizeof(UBOPointLights));
+			
+			render::BufferInfo pointLightBufInfo = mPointLightsBuffer->GetInfo(0);
+			mGlobalDescriptorSet->WriteBufferInDescriptor(2, 1, &pointLightBufInfo);
+
+			// Prepare command buffers
+			for(uint32_t i = 0; i < mCommandBuffers.size(); i++) {
+				mCommandBuffers[i]->Reset();
+				mCommandBuffers[i]->Begin();
+
+				mCommandBuffers[i]->SetRenderPass(mRenderPass, renderArea);
+
+				mCommandBuffers[i]->SetViewport(0, 1, &vp);
+				mCommandBuffers[i]->SetScissor(0, 1, &scissor);
+
+				mCommandBuffersCurrentMaterialIndex[i] = -1;
 			}
 
-			// TODO: MaterialInstance를 먼저 찾고 그것에 등록된 renderer들을 찾는 방식으로
-			//       그렇게하면 BindDescriptorSets 횟수를 줄일 수 있음
-			//       그럴러면 Material에서 Instance를 생성할 때 저장해둬야 함
+			// TODO: multiple thread rendering
 			for(auto& renderer : mRenderers) {
-				HMaterialInstance materialIns = renderer->GetMaterialInstance();
-				int materialIndex = materialIns->GetMaterial()->mIndex;
-				SPtr<render::DescriptorSet> materialInsDesc = materialIns->GetDescriptorSet();
-
-				mMaterialCommandBuffers[materialIndex]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &materialInsDesc);
-
-				renderer->Draw(mMaterialCommandBuffers[materialIndex], mCameraRenderer);
+				DrawRenderer3D(0, renderer);
 			}
 
-			for(auto& cmd : mMaterialCommandBuffers) {
+			for(auto& cmd : mCommandBuffers) {
 				cmd->End();
 			}
 
@@ -335,9 +446,42 @@ namespace cube
 
 			mMainCommandBuffer->SetRenderPass(mRenderPass, renderArea);
 
-			mMainCommandBuffer->ExecuteCommands((uint32_t)mMaterialCommandBuffers.size(), mMaterialCommandBuffers.data());
+			mMainCommandBuffer->ExecuteCommands((uint32_t)mCommandBuffers.size(), mCommandBuffers.data());
 
 			mMainCommandBuffer->End();
+		}
+
+		void RendererManager::DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D>& renderer)
+		{
+			using namespace render;
+
+			SPtr<CommandBuffer>& cmd = mCommandBuffers[commandBufferIndex];
+			int& currentMatIndex = mCommandBuffersCurrentMaterialIndex[commandBufferIndex];
+
+			renderer->PrepareDraw(cmd, mCameraRenderer);
+
+			Vector<SubMesh>& subMeshes = renderer->mMesh->GetSubMeshes();
+			for(uint32_t i = 0; i < subMeshes.size(); i++) {
+				HMaterialInstance matIns = renderer->mMaterialInses[i];
+				int matIndex = matIns->GetMaterial()->mIndex;
+
+				if(matIndex != currentMatIndex) {
+					cmd->BindGraphicsPipeline(mMaterialPipelines[matIndex]);
+					currentMatIndex = matIndex;
+				}
+
+				SPtr<DescriptorSet> matInsDesc = matIns->GetDescriptorSet();
+
+				cmd->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
+				cmd->BindDescriptorSets(PipelineType::Graphics, 1, 1, &matInsDesc);
+				cmd->BindDescriptorSets(render::PipelineType::Graphics, 2, 1, &(renderer->mDescriptorSet));
+
+				cmd->DrawIndexed(
+					SCast(uint32_t)(subMeshes[i].indexCount),
+					SCast(uint32_t)(subMeshes[i].indexOffset),
+					SCast(uint32_t)(subMeshes[i].vertexOffset),
+					1, 0);
+			}
 		}
 
 		SPtr<render::GraphicsPipeline> RendererManager::CreatePipeline(HMaterial& material)
@@ -412,7 +556,7 @@ namespace cube
 				initializer.shaders.push_back(shader->GetRenderShader());
 			}
 
-			//initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
+			initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
 			initializer.descSetLayouts.push_back(material->GetDescriptorSetLayout());
 			initializer.descSetLayouts.push_back(mPerObjectDescriptorSetLayout);
 

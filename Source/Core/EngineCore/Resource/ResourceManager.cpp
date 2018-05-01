@@ -51,18 +51,18 @@ namespace cube
 			Json metaJson = Json::parse(metaString);
 			free(metaString);
 			
-			U8String resNameU8 = metaJson["res_name"];
-			String resName = ToString(resNameU8);
+			U8String importerNameU8 = metaJson["importer_name"];
+			String importerName = ToString(importerNameU8);
 
 			Resource* loadedRes = nullptr;
 			// Find importer to import the resource
 			bool isFindImporter = false;
 			for(auto& importer : mImporters) {
-				if(importer->GetResourceName() == resName) {
+				if(importer->GetName() == importerName) {
 					SPtr<File> resFile = mFileSystem->OpenFile(path, FileAccessModeBits::Read);
-					Json resInfo = metaJson["res_info"];
+					Json info = metaJson["info"];
 
-					loadedRes = importer->Import(resFile, resInfo);
+					loadedRes = importer->Import(resFile, info);
 					isFindImporter = true;
 					break;
 				}
@@ -70,7 +70,7 @@ namespace cube
 
 			if(loadedRes == nullptr) {
 				if(isFindImporter == true)
-					CUBE_LOG(LogType::Error, "Cannot find the importer whose res_name is \"{0}\".", resName);
+					CUBE_LOG(LogType::Error, "Cannot find the importer whose name is \"{0}\".", importerName);
 
 				return nullptr;
 			}

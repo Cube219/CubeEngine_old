@@ -11,5 +11,5 @@ namespace cube
 		BaseLight::~BaseLight()
 		{
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

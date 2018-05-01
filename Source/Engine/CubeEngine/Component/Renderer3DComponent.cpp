@@ -38,13 +38,17 @@ namespace cube
 		mRendererManager->UnregisterRenderer3D(mRenderer3D);
 	}
 
-	void Renderer3DComponent::SetMesh(SPtr<core::Mesh>& mesh)
+	void Renderer3DComponent::OnTransformChanged()
+	{
+	}
+
+	void Renderer3DComponent::SetMesh(core::RPtr<core::Mesh>& mesh)
 	{
 		mRenderer3D->SetMesh(mesh);
 	}
 
-	void Renderer3DComponent::SetMaterialInstance(core::HMaterialInstance& materialIns)
+	void Renderer3DComponent::SetMaterialInstance(core::HMaterialInstance& materialIns, uint32_t index)
 	{
-		mRenderer3D->SetMaterialInstance(materialIns);
+		mRenderer3D->SetMaterialInstance(materialIns, index);
 	}
 } // namespace cube

@@ -21,9 +21,10 @@ namespace cube
 		void OnInit() override;
 		void OnUpdate(float dt) override;
 		void OnDestroy() override;
+		void OnTransformChanged() override;
 
-		void SetMesh(SPtr<core::Mesh>& mesh);
-		void SetMaterialInstance(core::HMaterialInstance& materialIns);
+		void SetMesh(core::RPtr<core::Mesh>& mesh);
+		void SetMaterialInstance(core::HMaterialInstance& materialIns, uint32_t index);
 
 	private:
 		SPtr<core::Renderer3D> mRenderer3D;

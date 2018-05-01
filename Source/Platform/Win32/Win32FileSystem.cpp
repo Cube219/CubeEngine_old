@@ -58,7 +58,7 @@ namespace cube
 			}
 		}
 
-		void File::Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t readBufferSize)
+		void File::Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize)
 		{
 			BOOL res = ReadFile(mData->fileHandle, pReadBuffer, (DWORD)bufferSizeToRead, (LPDWORD)&readBufferSize, NULL);
 

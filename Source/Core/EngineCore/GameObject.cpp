@@ -114,6 +114,10 @@ namespace cube
 				if(mRenderer3D != nullptr)
 					mRenderer3D->SetModelMatrix(mModelMatrix);
 
+				for(auto& com : mComponents) {
+					com->OnTransformChanged();
+				}
+
 				mIsTransformChanged = false;
 			}
 		}

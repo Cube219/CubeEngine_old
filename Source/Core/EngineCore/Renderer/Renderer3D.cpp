@@ -22,31 +22,29 @@ namespace cube
 		{
 		}
 
-		void Renderer3D::SetMesh(SPtr<Mesh>& mesh)
+		void Renderer3D::SetMesh(RPtr<Mesh>& mesh)
 		{
 			mMesh = mesh;
+			mMaterialInses.resize(mMesh->GetSubMeshes().size());
 			mIsMeshUpdated = true;
 		}
 
-		void Renderer3D::SetMaterialInstance(HMaterialInstance& materialIns)
+		void Renderer3D::SetMaterialInstance(HMaterialInstance& materialIns, uint32_t index)
 		{
-			mMaterialIns = materialIns;
+			mMaterialInses[index] = materialIns;
 		}
 
 		void Renderer3D::SetModelMatrix(const Matrix& modelMatrix)
 		{
-			mModelMatrix = modelMatrix;
+			mUBOPerObject.modelMatrix = modelMatrix;
 		}
 
-		void Renderer3D::Draw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
+		void Renderer3D::PrepareDraw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
 		{
-			if(mMaterialIns.IsDestroyed() == true)
-				return;
-
-			Vector<Vertex>& vertices = mMesh->GetVertex();
-			Vector<Index>& indices = mMesh->GetIndex();
-
 			if(mIsMeshUpdated == true) {
+				Vector<Vertex>& vertices = mMesh->GetVertex();
+				Vector<Index>& indices = mMesh->GetIndex();
+
 				RecreateDataBuffer();
 
 				mDataBuffer->Unmap();
@@ -56,25 +54,22 @@ namespace cube
 				mDataBuffer->UpdateBufferData(mIndexIndex, indices.data(), indices.size() * sizeof(Index));
 
 				mDataBuffer->Unmap();
-				mDataBuffer->Map(mMVPIndex, mMVPIndex);
+				mDataBuffer->Map(mUBOIndex, mUBOIndex);
 
 				mIsMeshUpdated = false;
 			}
 
 			// Update mvp matrix
-			auto mvpMatrix = mModelMatrix * camera->GetViewProjectionMatrix();
-			mDataBuffer->UpdateBufferData(mMVPIndex, &mvpMatrix, sizeof(mvpMatrix));
+			mUBOPerObject.mvp = mUBOPerObject.modelMatrix * camera->GetViewProjectionMatrix();
+			mDataBuffer->UpdateBufferData(mUBOIndex, &mUBOPerObject, sizeof(mUBOPerObject));
 
-			render::BufferInfo bufInfo = mDataBuffer->GetInfo(mMVPIndex);
+			render::BufferInfo bufInfo = mDataBuffer->GetInfo(mUBOIndex);
 			mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
 
-			// Write
-			commandBuffer->BindDescriptorSets(render::PipelineType::Graphics, 1, 1, &mDescriptorSet);
+			// Bind vertex / index data
 			uint64_t vertexOffset = mDataBuffer->GetInfo(mVertexIndex).offset;
 			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &vertexOffset);
 			commandBuffer->BindIndexBuffer(mDataBuffer, mDataBuffer->GetInfo(mIndexIndex).offset);
-
-			commandBuffer->DrawIndexed(SCast(uint32_t)(indices.size()), 0, 0, 1, 0);
 		}
 
 		void Renderer3D::RecreateDataBuffer()
@@ -95,14 +90,14 @@ namespace cube
 			init.bufferDatas.push_back(bufData);
 			mIndexIndex = 1;
 
-			// 2. MVP matrix
-			bufData.size = sizeof(mModelMatrix);
+			// 2. UBO
+			bufData.size = sizeof(UBOPerObject);
 			init.bufferDatas.push_back(bufData);
-			mMVPIndex = 2;
+			mUBOIndex = 2;
 
 			mDataBuffer = mRenderAPI_ref->CreateBuffer(init);
 
-			mDataBuffer->Map(mMVPIndex, mMVPIndex);
+			mDataBuffer->Map(mUBOIndex, mUBOIndex);
 		}
 	} // namespace core
 } // namespace cube

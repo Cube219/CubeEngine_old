@@ -9,20 +9,24 @@ namespace cube
 		class ENGINE_CORE_EXPORT BaseMeshGenerator
 		{
 		public:
-			static SPtr<Mesh> GetBoxMesh();
+			static RPtr<Mesh> GetBoxMesh();
 
-			static SPtr<Mesh> GetCylinderMesh();
+			static RPtr<Mesh> GetCylinderMesh();
 
-			static SPtr<Mesh> GetCapsuleMesh(); // TODO: 차후 구현
+			static RPtr<Mesh> GetCapsuleMesh(); // TODO: 차후 구현
 
-			static SPtr<Mesh> GetSphereMesh();
+			static RPtr<Mesh> GetSphereMesh();
 
-			static SPtr<Mesh> GetPlaneMesh();
+			static RPtr<Mesh> GetPlaneMesh();
 
 		private:
-			static void SubDivide(SPtr<Mesh>& mesh);
+			static void SubDivide(Mesh* mesh);
 
-			static void SetNormalVector(SPtr<Mesh>& mesh);
+			static void SetNormalVector(Mesh* mesh);
+
+			static RPtr<Mesh> RegisterToResourceManager(Mesh* mesh);
+
+			static uint32_t	nextTempID;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

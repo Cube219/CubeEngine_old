@@ -69,6 +69,7 @@ namespace cube
 
 		private:
 			friend class ResourceManager;
+			friend class BaseMeshGenerator;
 			friend class ResourceImporter;
 			template <typename T2>
 			friend class ResourcePointer;

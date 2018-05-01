@@ -65,4 +65,8 @@ namespace cube
 	void MoveComponent::OnDestroy()
 	{
 	}
+
+	void MoveComponent::OnTransformChanged()
+	{
+	}
 } // namespace cube

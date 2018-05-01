@@ -2,6 +2,7 @@
 
 #include "../EngineCoreHeader.h"
 
+#include "../Resource/BaseResource.h"
 #include "Vertex.h"
 
 namespace cube
@@ -10,21 +11,38 @@ namespace cube
 	{
 		using Index = uint32_t;
 
-		class ENGINE_CORE_EXPORT Mesh
+		struct ENGINE_CORE_EXPORT SubMesh
+		{
+			String name;
+			uint64_t vertexOffset;
+			uint64_t indexOffset;
+			uint64_t indexCount;
+		};
+
+		class ENGINE_CORE_EXPORT Mesh : public Resource
 		{
 		public:
-			Mesh();
-			~Mesh();
+			static RPtr<Mesh> Load(const String& path);
 
-			void SetVertex(Vector<Vertex>& vertices);
-			void SetIndex(Vector<uint32_t>& indices);
+		public:
+			Mesh(){ }
+			virtual ~Mesh(){ }
+
+			void SetVertex(const Vector<Vertex>& vertices);
+			void SetIndex(const Vector<Index>& indices);
+			void AddSubMesh(const SubMesh& subMesh);
 
 			Vector<Vertex>& GetVertex() { return mVertices; }
-			Vector<uint32_t>& GetIndex() { return mIndices; }
+			Vector<Index>& GetIndex() { return mIndices; }
+			Vector<SubMesh>& GetSubMeshes() { return mSubMeshes; }
 
 		private:
+			friend class BaseMeshGenerator;
+
 			Vector<Vertex> mVertices;
-			Vector<uint32_t> mIndices;
+			Vector<Index> mIndices;
+
+			Vector<SubMesh> mSubMeshes;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

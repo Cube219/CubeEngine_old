@@ -43,8 +43,7 @@ namespace cube
 		{
 		}
 
-		template<typename T>
-		void MaterialInstance::SetParameterData(String& name, T& data)
+		void MaterialInstance::SetParamData(String& name, void* pData, uint64_t dataSize)
 		{
 			auto res = mParameterIndexLookupMap.find(name);
 			if(res == mParameterIndexLookupMap.end()) {
@@ -54,19 +53,18 @@ namespace cube
 
 			uint64_t paramIndex = res->second;
 
-			uint64_t dataSize = sizeof(data);
 #ifdef _DEBUG
-			if(dataSize != mParamInfos[paramIndex].size) {
-				CUBE_LOG(LogType::Error, "Wrong parameter size({0} != {1}).", param.size, dataSize);
+			if(dataSize != mParamInfos[paramIndex].dataSize) {
+				CUBE_LOG(LogType::Error, "Wrong parameter size({0} != {1}).", mParamInfos[paramIndex].dataSize, dataSize);
 				return;
 			}
 #endif // _DEBUG
 
 			mParametersBuffer->Map();
-			mParametersBuffer->UpdateBufferData(paramIndex, &data, dataSize);
+			mParametersBuffer->UpdateBufferData(paramIndex, pData, dataSize);
 			mParametersBuffer->Unmap();
 
-			BaseRenderBufferInfo bufInfo = mParametersBuffer->GetInfo(paramIndex);
+			render::BufferInfo bufInfo = mParametersBuffer->GetInfo(paramIndex);
 			mDescriptorSet->WriteBufferInDescriptor(paramIndex, 1, &bufInfo);
 		}
 

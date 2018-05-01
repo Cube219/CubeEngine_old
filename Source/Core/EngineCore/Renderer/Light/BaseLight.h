@@ -14,22 +14,19 @@ namespace cube
 			BaseLight();
 			virtual ~BaseLight();
 
-			void SetAmbient(Vector4& ambient) { mAmbient = ambient; }
-			void SetDiffuse(Vector4& diffuse) { mDiffuse = diffuse; }
-			void SetSpecular(Vector4& specular) { mSpecular = specular; }
-			void SetPosition(Vector3& position) { mPosition = position; }
+			void SetColor(const Vector4& color) { mColor = color; }
+			void SetPosition(const Vector3& pos) { mPosition = pos; }
 
-			Vector4 GetAmbient() const { return mAmbient; }
-			Vector4 GetDiffuse() const { return mDiffuse; }
-			Vector4 GetSpecular() const { return mSpecular; }
+			Vector4 GetColor() const { return mColor; }
 			Vector3 GetPosition() const { return mPosition; }
 
 		protected:
-			Vector4 mAmbient;
-			Vector4 mDiffuse;
-			Vector4 mSpecular;
+			friend class RendererManager;
+
+			int mIndex = -1; // Used in RendererManager
 			
+			Vector4 mColor;
 			Vector3 mPosition;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

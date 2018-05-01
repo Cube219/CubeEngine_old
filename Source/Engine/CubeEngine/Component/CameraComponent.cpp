@@ -26,6 +26,14 @@ namespace cube
 
 	void CameraComponent::OnUpdate(float dt)
 	{
+	}
+
+	void CameraComponent::OnDestroy()
+	{
+	}
+
+	void CameraComponent::OnTransformChanged()
+	{
 		Vector3 pos = GetGameObject()->GetPosition();
 		Float3 posF;
 		posF = pos.GetFloat3();
@@ -39,9 +47,6 @@ namespace cube
 		);
 
 		mCameraRenderer3D->SetViewMatrix(mViewMatrix);
-	}
-
-	void CameraComponent::OnDestroy()
-	{
+		mCameraRenderer3D->SetPosition(pos);
 	}
 } // namespace cube

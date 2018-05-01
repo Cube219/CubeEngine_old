@@ -29,7 +29,11 @@ namespace cube
 			SPtr<render::DescriptorSet> GetDescriptorSet() const { return mDescriptorSet; }
 
 			template <typename T>
-			void SetParameterData(String& name, T& data);
+			void SetParameterData(String& name, T& data)
+			{
+				T& t = data;
+				SetParamData(name, &data, sizeof(T));
+			}
 
 			template <>
 			void SetParameterData(String& name, RPtr<Texture>& texture);
@@ -39,6 +43,8 @@ namespace cube
 		private:
 			friend class Material;
 			MaterialInstance(SPtr<render::RenderAPI>& renderAPI, HMaterial mat);
+
+			void SetParamData(String& name, void* pData, uint64_t dataSize);
 
 			HMaterialInstance mMyHandler;
 

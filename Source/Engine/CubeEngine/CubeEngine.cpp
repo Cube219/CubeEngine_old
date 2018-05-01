@@ -1,10 +1,18 @@
 #include "CubeEngine.h"
 
 #include "Platform.h"
+#include "EngineCore/Resource/ResourceManager.h"
+#include "EngineCore/Renderer/RendererManager.h"
+#include "BaseRenderAPI/RenderAPI.h"
+#include "ResourceImporter/ShaderImporter.h"
+#include "ResourceImporter/TextureImporter.h"
+#include "ResourceImporter/ObjImporter.h"
 #include "EngineCore/Component/ComponentManager.h"
 #include "Component/Renderer3DComponent.h"
 #include "Component/CameraComponent.h"
 #include "Component/MoveComponent.h"
+#include "Component/DirectionalLightComponent.h"
+#include "Component/PointLightComponent.h"
 
 namespace cube
 {
@@ -20,6 +28,7 @@ namespace cube
 		core::ECore()->Prepare();
 		core::ECore()->SetFPSLimit(60);
 
+		RegisterImporters();
 		InitComponents();
 	}
 
@@ -33,6 +42,22 @@ namespace cube
 		core::ECore()->DestroyInstance();
 	}
 
+	void CubeEngine::RegisterImporters()
+	{
+		SPtr<core::ResourceManager> resManager = core::ECore()->GetResourceManager();
+		SPtr<render::RenderAPI> renderAPI  = core::ECore()->GetRendererManager()->GetRenderAPI();
+
+		resManager->RegisterImporter(
+			std::make_unique<TextureImporter>(renderAPI)
+		);
+		resManager->RegisterImporter(
+			std::make_unique<ShaderImporter>(renderAPI)
+		);
+		resManager->RegisterImporter(
+			std::make_unique<ObjImporter>()
+		);
+	}
+
 	void CubeEngine::InitComponents()
 	{
 		SPtr<core::ComponentManager> comManager = core::ECore()->GetComponentManager();
@@ -40,6 +65,8 @@ namespace cube
 		comManager->RegisterComponent<Renderer3DComponent>();
 		comManager->RegisterComponent<CameraComponent>();
 		comManager->RegisterComponent<MoveComponent>();
+		comManager->RegisterComponent<DirectionalLightComponent>();
+		comManager->RegisterComponent<PointLightComponent>();
 	}
 
 	////////////////////////////////

@@ -30,6 +30,8 @@ namespace cube
 			void UnloadUnusedResources();
 
 		private:
+			friend class BaseMeshGenerator;
+
 			Vector<UPtr<ResourceImporter>> mImporters;
 
 			Mutex mLoadedResourcesMutex;

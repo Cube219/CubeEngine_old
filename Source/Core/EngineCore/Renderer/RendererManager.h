@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -29,6 +29,9 @@ namespace cube
 		class ENGINE_CORE_EXPORT RendererManager
 		{
 		public:
+			constexpr static int maxPointLightNum = 10;
+
+		public:
 			RendererManager(RenderType type);
 			~RendererManager();
 
@@ -38,8 +41,13 @@ namespace cube
 			void RegisterRenderer3D(SPtr<Renderer3D>& renderer);
 			void UnregisterRenderer3D(SPtr<Renderer3D>& renderer);
 
+			void RegisterLight(SPtr<DirectionalLight>& dirLight);
+			void UnregisterLight(SPtr<DirectionalLight>& dirLight);
+			void RegisterLight(SPtr<PointLight>& pointLight);
+			void UnregisterLight(SPtr<PointLight>& pointLight);
+
 			SPtr<Renderer3D> CreateRenderer3D();
-			SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: Â÷ÈÄ Àú·¸°Ô ¹Ù²Ù±â
+			SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: ì°¨í›„ ì €ë ‡ê²Œ ë°”ê¾¸ê¸°
 
 			SPtr<render::RenderAPI> GetRenderAPI() const { return mRenderAPI; }
 
@@ -54,6 +62,7 @@ namespace cube
 			void CreateRenderpass();
 
 			void RewriteCommandBuffer();
+			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D>& renderer);
 
 			SPtr<render::GraphicsPipeline> CreatePipeline(HMaterial& material);
 
@@ -67,10 +76,16 @@ namespace cube
 			Mutex mMaterialsMutex;
 			Vector<SPtr<MaterialData>> mMaterials;
 			Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
-			Vector<SPtr<render::CommandBuffer>> mMaterialCommandBuffers;
+
+			SPtr<DirectionalLight> mDirLight;
+			SPtr<render::Buffer> mDirLightBuffer;
+
+			Vector<SPtr<PointLight>> mPointLights;
+			SPtr<render::Buffer> mPointLightsBuffer;
 
 			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
 			SPtr<render::DescriptorSet> mGlobalDescriptorSet;
+			SPtr<render::Buffer> mGlobalUBOBuffer;
 			SPtr<render::DescriptorSetLayout> mPerObjectDescriptorSetLayout;
 
 			SPtr<render::Image> mDepthBufferImage;
@@ -80,6 +95,8 @@ namespace cube
 
 			SPtr<render::RenderPass> mRenderPass;
 
+			Vector<SPtr<render::CommandBuffer>> mCommandBuffers;
+			Vector<int> mCommandBuffersCurrentMaterialIndex;
 			SPtr<render::CommandBuffer> mMainCommandBuffer;
 			SPtr<render::Fence> mMainCommandBufferSubmitFence;
 
@@ -92,6 +109,8 @@ namespace cube
 			bool mVsync;
 			uint32_t mWidth;
 			uint32_t mHeight;
+
+			uint32_t mNumThreads;
 		};
 	} // namespace core
 } // namespace cube
