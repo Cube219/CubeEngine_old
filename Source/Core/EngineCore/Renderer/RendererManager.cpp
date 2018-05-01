@@ -140,7 +140,6 @@ namespace cube
 			
 			HMaterial hMat = HMaterial(matDataPtr);
 			mMaterialPipelines.push_back(CreatePipeline(hMat));
-			mMaterialCommandBuffers.push_back(mRenderAPI->CreateCommandBuffer(false));
 
 			return hMat;
 		}
@@ -163,10 +162,8 @@ namespace cube
 
 			std::swap(mMaterials[index], mMaterials[lastIndex]);
 			std::swap(mMaterialPipelines[index], mMaterialPipelines[lastIndex]);
-			std::swap(mMaterialCommandBuffers[index], mMaterialCommandBuffers[lastIndex]);
 			mMaterials.pop_back();
 			mMaterialPipelines.pop_back();
-			mMaterialCommandBuffers.pop_back();
 		}
 
 		void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
@@ -420,40 +417,7 @@ namespace cube
 			render::BufferInfo pointLightBufInfo = mPointLightsBuffer->GetInfo(0);
 			mGlobalDescriptorSet->WriteBufferInDescriptor(2, 1, &pointLightBufInfo);
 
-			/*
-			// Prepare all command buffers of each material
-			for(uint32_t i = 0; i < mMaterialCommandBuffers.size(); i++) {
-				mMaterialCommandBuffers[i]->Reset();
-				mMaterialCommandBuffers[i]->Begin();
-
-				mMaterialCommandBuffers[i]->SetRenderPass(mRenderPass, renderArea);
-
-				mMaterialCommandBuffers[i]->BindGraphicsPipeline(mMaterialPipelines[i]);
-
-				mMaterialCommandBuffers[i]->SetViewport(0, 1, &vp);
-				mMaterialCommandBuffers[i]->SetScissor(0, 1, &scissor);
-
-				mMaterialCommandBuffers[i]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
-			}
-
-			// TODO: MaterialInstance를 먼저 찾고 그것에 등록된 renderer들을 찾는 방식으로
-			//       그렇게하면 BindDescriptorSets 횟수를 줄일 수 있음
-			//       그럴러면 Material에서 Instance를 생성할 때 저장해둬야 함
-			for(auto& renderer : mRenderers) {
-				HMaterialInstance materialIns = renderer->GetMaterialInstance();
-				int materialIndex = materialIns->GetMaterial()->mIndex;
-				SPtr<render::DescriptorSet> materialInsDesc = materialIns->GetDescriptorSet();
-
-				mMaterialCommandBuffers[materialIndex]->BindDescriptorSets(PipelineType::Graphics, 1, 1, &materialInsDesc);
-
-				renderer->Draw(mMaterialCommandBuffers[materialIndex], mCameraRenderer);
-			}
-
-			for(auto& cmd : mMaterialCommandBuffers) {
-				cmd->End();
-			}
-			*/
-
+			// Prepare command buffers
 			for(uint32_t i = 0; i < mCommandBuffers.size(); i++) {
 				mCommandBuffers[i]->Reset();
 				mCommandBuffers[i]->Begin();
@@ -462,8 +426,6 @@ namespace cube
 
 				mCommandBuffers[i]->SetViewport(0, 1, &vp);
 				mCommandBuffers[i]->SetScissor(0, 1, &scissor);
-
-				// mCommandBuffers[i]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
 
 				mCommandBuffersCurrentMaterialIndex[i] = -1;
 			}

@@ -76,7 +76,6 @@ namespace cube
 			Mutex mMaterialsMutex;
 			Vector<SPtr<MaterialData>> mMaterials;
 			Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
-			Vector<SPtr<render::CommandBuffer>> mMaterialCommandBuffers;
 
 			SPtr<DirectionalLight> mDirLight;
 			SPtr<render::Buffer> mDirLightBuffer;
