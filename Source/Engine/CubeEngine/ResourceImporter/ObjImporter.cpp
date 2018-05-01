@@ -14,7 +14,7 @@ namespace cube
 		uint64_t readSize = 0;
 		file->Read(rawData, size, readSize);
 
-		const aiScene* scene = mImporter.ReadFileFromMemory(rawData, readSize, aiProcess_Triangulate);
+		const aiScene* scene = mImporter.ReadFileFromMemory(rawData, readSize, aiProcess_Triangulate | aiProcess_FlipUVs);
 		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			CUBE_LOG(LogType::Error, "Cannot import obj file");
 

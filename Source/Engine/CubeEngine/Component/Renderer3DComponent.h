@@ -24,7 +24,7 @@ namespace cube
 		void OnTransformChanged() override;
 
 		void SetMesh(core::RPtr<core::Mesh>& mesh);
-		void SetMaterialInstance(core::HMaterialInstance& materialIns);
+		void SetMaterialInstance(core::HMaterialInstance& materialIns, uint32_t index);
 
 	private:
 		SPtr<core::Renderer3D> mRenderer3D;

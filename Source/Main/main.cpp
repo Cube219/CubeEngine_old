@@ -33,13 +33,26 @@ namespace cube
 	core::RPtr<core::Shader> vertexShader;
 	core::RPtr<core::Shader> fragmentShader;
 	core::HMaterial material;
+	core::RPtr<core::Shader> fragmentTexturedShader;
+	core::HMaterial materialTextured;
 	Vector<core::HMaterialInstance> materialInses;
 	Vector<core::HGameObject> mGameObjects;
 	core::HGameObject cameraGameObject;
 	Vector<core::HGameObject> pointLightGameObjects;
 	
-	core::HMaterialInstance nanosuitMatIns;
 	core::HGameObject nanosuitGameObject;
+	core::HMaterialInstance armMatIns;
+	core::RPtr<core::Texture> armTexture;
+	core::HMaterialInstance bodyMatIns;
+	core::RPtr<core::Texture> bodyTexture;
+	core::HMaterialInstance glassMatIns;
+	core::RPtr<core::Texture> glassTexture;
+	core::HMaterialInstance handMatIns;
+	core::RPtr<core::Texture> handTexture;
+	core::HMaterialInstance helmetMatIns;
+	core::RPtr<core::Texture> helmetTexture;
+	core::HMaterialInstance legMatIns;
+	core::RPtr<core::Texture> legTexture;
 
 	void PrepareResources()
 	{
@@ -64,6 +77,9 @@ namespace cube
 		shaderPath = CUBE_T("../../../SampleResources/Shaders/Fragment.glsl");
 		fragmentShader = Shader::Load(shaderPath);
 
+		shaderPath = CUBE_T("../../../SampleResources/Shaders/Fragment-Textured.glsl");
+		fragmentTexturedShader = Shader::Load(shaderPath);
+
 		// Create material
 		MaterialInitializer matInit;
 		matInit.shaders.push_back(vertexShader);
@@ -71,6 +87,11 @@ namespace cube
 		matInit.parameters.push_back({CUBE_T("UBO"), MaterialParameterType::Data, sizeof(MaterialUBO)});
 		matInit.parameters.push_back({CUBE_T("Texture"), MaterialParameterType::Texture, 1});
 		material = Material::Create(matInit);
+
+		matInit.shaders.clear();
+		matInit.shaders.push_back(vertexShader);
+		matInit.shaders.push_back(fragmentTexturedShader);
+		materialTextured = Material::Create(matInit);
 
 		// Create materialInstances
 		MaterialUBO matUBO;
@@ -94,14 +115,57 @@ namespace cube
 			}
 		}
 
-		nanosuitMatIns = material->CreateInstance();
+		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/arm_showroom_spec.png");
+		armTexture = Texture::Load(texturePath);
+		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/body_showroom_spec.png");
+		bodyTexture = Texture::Load(texturePath);
+		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/glass_dif.png");
+		glassTexture = Texture::Load(texturePath);
+		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/hand_showroom_spec.png");
+		handTexture = Texture::Load(texturePath);
+		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/helmet_showroom_spec.png");
+		helmetTexture = Texture::Load(texturePath);
+		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/leg_showroom_spec.png");
+		legTexture = Texture::Load(texturePath);
+
 		matUBO.metallic = 0.5f;
 		matUBO.roughness = 0.1f;
 
+		armMatIns = materialTextured->CreateInstance();
 		t = CUBE_T("UBO");
-		nanosuitMatIns->SetParameterData(t, matUBO);
+		armMatIns->SetParameterData(t, matUBO);
 		t = CUBE_T("Texture");
-		nanosuitMatIns->SetParameterData(t, texture);
+		armMatIns->SetParameterData(t, armTexture);
+
+		bodyMatIns = materialTextured->CreateInstance();
+		t = CUBE_T("UBO");
+		bodyMatIns->SetParameterData(t, matUBO);
+		t = CUBE_T("Texture");
+		bodyMatIns->SetParameterData(t, bodyTexture);
+
+		glassMatIns = materialTextured->CreateInstance();
+		t = CUBE_T("UBO");
+		glassMatIns->SetParameterData(t, matUBO);
+		t = CUBE_T("Texture");
+		glassMatIns->SetParameterData(t, glassTexture);
+
+		handMatIns = materialTextured->CreateInstance();
+		t = CUBE_T("UBO");
+		handMatIns->SetParameterData(t, matUBO);
+		t = CUBE_T("Texture");
+		handMatIns->SetParameterData(t, handTexture);
+
+		helmetMatIns = materialTextured->CreateInstance();
+		t = CUBE_T("UBO");
+		helmetMatIns->SetParameterData(t, matUBO);
+		t = CUBE_T("Texture");
+		helmetMatIns->SetParameterData(t, helmetTexture);
+
+		legMatIns = materialTextured->CreateInstance();
+		t = CUBE_T("UBO");
+		legMatIns->SetParameterData(t, matUBO);
+		t = CUBE_T("Texture");
+		legMatIns->SetParameterData(t, legTexture);
 	}
 
 	void CreateGameObjects()
@@ -122,7 +186,7 @@ namespace cube
 
 				renderer = go->AddComponent<cube::Renderer3DComponent>();
 				renderer->SetMesh(sphereMesh);
-				renderer->SetMaterialInstance(materialInses[insIndex]);
+				renderer->SetMaterialInstance(materialInses[insIndex], 0);
 				insIndex++;
 
 				mGameObjects.push_back(go);
@@ -174,7 +238,13 @@ namespace cube
 
 		renderer = nanosuitGameObject->AddComponent<cube::Renderer3DComponent>();
 		renderer->SetMesh(nanosuitMesh);
-		renderer->SetMaterialInstance(nanosuitMatIns);
+		renderer->SetMaterialInstance(glassMatIns, 0);
+		renderer->SetMaterialInstance(legMatIns, 1);
+		renderer->SetMaterialInstance(handMatIns, 2);
+		renderer->SetMaterialInstance(glassMatIns, 3);
+		renderer->SetMaterialInstance(armMatIns, 4);
+		renderer->SetMaterialInstance(helmetMatIns, 5);
+		renderer->SetMaterialInstance(bodyMatIns, 6);
 	}
 
 	void DestroyAll()
@@ -197,8 +267,15 @@ namespace cube
 		for(auto& ins : materialInses) {
 			ins->Destroy();
 		}
-		nanosuitMatIns->Destroy();
 		material->Destroy();
+
+		armMatIns->Destroy();
+		bodyMatIns->Destroy();
+		glassMatIns->Destroy();
+		handMatIns->Destroy();
+		helmetMatIns->Destroy();
+		legMatIns->Destroy();
+		materialTextured->Destroy();
 	}
 
 	void MainImpl()

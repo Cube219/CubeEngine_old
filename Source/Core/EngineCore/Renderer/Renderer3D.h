@@ -26,15 +26,16 @@ namespace cube
 			Renderer3D(SPtr<render::RenderAPI>& renderAPI, SPtr<render::DescriptorSetLayout>& mPerObjectDescriptorSetLayout);
 			~Renderer3D();
 
-			HMaterialInstance GetMaterialInstance() const { return mMaterialIns; }
+			// HMaterialInstance GetMaterialInstance() const { return mMaterialIns; }
 
 			SPtr<render::DescriptorSet> GetDescriptorSet() const { return mDescriptorSet; };
 
 			void SetMesh(RPtr<Mesh>& mesh);
-			void SetMaterialInstance(HMaterialInstance& materialIns);
+			void SetMaterialInstance(HMaterialInstance& materialIns, uint32_t index);
 			void SetModelMatrix(const Matrix& modelMatrix);
 
-			void Draw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
+			void PrepareDraw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
+			//void Draw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera);
 
 		private:
 			friend class RendererManager;
@@ -46,7 +47,7 @@ namespace cube
 			bool mIsMeshUpdated = false;
 			RPtr<Mesh> mMesh;
 			
-			HMaterialInstance mMaterialIns;
+			Vector<HMaterialInstance> mMaterialInses;
 
 			UBOPerObject mUBOPerObject;
 			SPtr<render::DescriptorSet> mDescriptorSet;

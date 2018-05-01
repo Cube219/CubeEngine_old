@@ -47,8 +47,8 @@ namespace cube
 		mRenderer3D->SetMesh(mesh);
 	}
 
-	void Renderer3DComponent::SetMaterialInstance(core::HMaterialInstance& materialIns)
+	void Renderer3DComponent::SetMaterialInstance(core::HMaterialInstance& materialIns, uint32_t index)
 	{
-		mRenderer3D->SetMaterialInstance(materialIns);
+		mRenderer3D->SetMaterialInstance(materialIns, index);
 	}
 } // namespace cube

@@ -62,6 +62,7 @@ namespace cube
 			void CreateRenderpass();
 
 			void RewriteCommandBuffer();
+			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D>& renderer);
 
 			SPtr<render::GraphicsPipeline> CreatePipeline(HMaterial& material);
 
@@ -95,6 +96,8 @@ namespace cube
 
 			SPtr<render::RenderPass> mRenderPass;
 
+			Vector<SPtr<render::CommandBuffer>> mCommandBuffers;
+			Vector<int> mCommandBuffersCurrentMaterialIndex;
 			SPtr<render::CommandBuffer> mMainCommandBuffer;
 			SPtr<render::Fence> mMainCommandBufferSubmitFence;
 
@@ -107,6 +110,8 @@ namespace cube
 			bool mVsync;
 			uint32_t mWidth;
 			uint32_t mHeight;
+
+			uint32_t mNumThreads;
 		};
 	} // namespace core
 } // namespace cube

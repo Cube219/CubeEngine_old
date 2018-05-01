@@ -2,6 +2,7 @@
 
 #include "Platform.h"
 #include "../LogWriter.h"
+#include "Mesh.h"
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
 #include "Light/DirectionalLight.h"
@@ -39,6 +40,9 @@ namespace cube
 			mWidth = platform::Platform::GetWindowWidth();
 			mHeight = platform::Platform::GetWindowHeight();
 
+			// TODO: multiple thread rendering
+			mNumThreads = 1;
+
 			switch(type) {
 				case RenderType::Vulkan:
 					mRenderDLib = platform::Platform::LoadDLib(CUBE_T("VulkanAPI"));
@@ -72,6 +76,11 @@ namespace cube
 			// Get a main command buffer
 			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
 			mMainCommandBufferSubmitFence = mRenderAPI->CreateFence();
+
+			for(uint32_t i = 0; i < mNumThreads; i++) {
+				mCommandBuffers.push_back(mRenderAPI->CreateCommandBuffer(false));
+				mCommandBuffersCurrentMaterialIndex.push_back(-1);
+			}
 
 			mGetImageSemaphore = mRenderAPI->CreateSemaphore();
 
@@ -411,6 +420,7 @@ namespace cube
 			render::BufferInfo pointLightBufInfo = mPointLightsBuffer->GetInfo(0);
 			mGlobalDescriptorSet->WriteBufferInDescriptor(2, 1, &pointLightBufInfo);
 
+			/*
 			// Prepare all command buffers of each material
 			for(uint32_t i = 0; i < mMaterialCommandBuffers.size(); i++) {
 				mMaterialCommandBuffers[i]->Reset();
@@ -442,6 +452,30 @@ namespace cube
 			for(auto& cmd : mMaterialCommandBuffers) {
 				cmd->End();
 			}
+			*/
+
+			for(uint32_t i = 0; i < mCommandBuffers.size(); i++) {
+				mCommandBuffers[i]->Reset();
+				mCommandBuffers[i]->Begin();
+
+				mCommandBuffers[i]->SetRenderPass(mRenderPass, renderArea);
+
+				mCommandBuffers[i]->SetViewport(0, 1, &vp);
+				mCommandBuffers[i]->SetScissor(0, 1, &scissor);
+
+				// mCommandBuffers[i]->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
+
+				mCommandBuffersCurrentMaterialIndex[i] = -1;
+			}
+
+			// TODO: multiple thread rendering
+			for(auto& renderer : mRenderers) {
+				DrawRenderer3D(0, renderer);
+			}
+
+			for(auto& cmd : mCommandBuffers) {
+				cmd->End();
+			}
 
 			// Main command buffer
 			mMainCommandBuffer->Reset();
@@ -450,9 +484,42 @@ namespace cube
 
 			mMainCommandBuffer->SetRenderPass(mRenderPass, renderArea);
 
-			mMainCommandBuffer->ExecuteCommands((uint32_t)mMaterialCommandBuffers.size(), mMaterialCommandBuffers.data());
+			mMainCommandBuffer->ExecuteCommands((uint32_t)mCommandBuffers.size(), mCommandBuffers.data());
 
 			mMainCommandBuffer->End();
+		}
+
+		void RendererManager::DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D>& renderer)
+		{
+			using namespace render;
+
+			SPtr<CommandBuffer>& cmd = mCommandBuffers[commandBufferIndex];
+			int& currentMatIndex = mCommandBuffersCurrentMaterialIndex[commandBufferIndex];
+
+			renderer->PrepareDraw(cmd, mCameraRenderer);
+
+			Vector<SubMesh>& subMeshes = renderer->mMesh->GetSubMeshes();
+			for(uint32_t i = 0; i < subMeshes.size(); i++) {
+				HMaterialInstance matIns = renderer->mMaterialInses[i];
+				int matIndex = matIns->GetMaterial()->mIndex;
+
+				if(matIndex != currentMatIndex) {
+					cmd->BindGraphicsPipeline(mMaterialPipelines[matIndex]);
+					currentMatIndex = matIndex;
+				}
+
+				SPtr<DescriptorSet> matInsDesc = matIns->GetDescriptorSet();
+
+				cmd->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
+				cmd->BindDescriptorSets(PipelineType::Graphics, 1, 1, &matInsDesc);
+				cmd->BindDescriptorSets(render::PipelineType::Graphics, 2, 1, &(renderer->mDescriptorSet));
+
+				cmd->DrawIndexed(
+					SCast(uint32_t)(subMeshes[i].indexCount),
+					SCast(uint32_t)(subMeshes[i].indexOffset),
+					SCast(uint32_t)(subMeshes[i].vertexOffset),
+					1, 0);
+			}
 		}
 
 		SPtr<render::GraphicsPipeline> RendererManager::CreatePipeline(HMaterial& material)

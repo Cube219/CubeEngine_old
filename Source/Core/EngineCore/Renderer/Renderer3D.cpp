@@ -25,12 +25,13 @@ namespace cube
 		void Renderer3D::SetMesh(RPtr<Mesh>& mesh)
 		{
 			mMesh = mesh;
+			mMaterialInses.resize(mMesh->GetSubMeshes().size());
 			mIsMeshUpdated = true;
 		}
 
-		void Renderer3D::SetMaterialInstance(HMaterialInstance& materialIns)
+		void Renderer3D::SetMaterialInstance(HMaterialInstance& materialIns, uint32_t index)
 		{
-			mMaterialIns = materialIns;
+			mMaterialInses[index] = materialIns;
 		}
 
 		void Renderer3D::SetModelMatrix(const Matrix& modelMatrix)
@@ -38,6 +39,39 @@ namespace cube
 			mUBOPerObject.modelMatrix = modelMatrix;
 		}
 
+		void Renderer3D::PrepareDraw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
+		{
+			if(mIsMeshUpdated == true) {
+				Vector<Vertex>& vertices = mMesh->GetVertex();
+				Vector<Index>& indices = mMesh->GetIndex();
+
+				RecreateDataBuffer();
+
+				mDataBuffer->Unmap();
+				mDataBuffer->Map(mVertexIndex, mIndexIndex);
+
+				mDataBuffer->UpdateBufferData(mVertexIndex, vertices.data(), vertices.size() * sizeof(Vertex));
+				mDataBuffer->UpdateBufferData(mIndexIndex, indices.data(), indices.size() * sizeof(Index));
+
+				mDataBuffer->Unmap();
+				mDataBuffer->Map(mUBOIndex, mUBOIndex);
+
+				mIsMeshUpdated = false;
+			}
+
+			// Update mvp matrix
+			mUBOPerObject.mvp = mUBOPerObject.modelMatrix * camera->GetViewProjectionMatrix();
+			mDataBuffer->UpdateBufferData(mUBOIndex, &mUBOPerObject, sizeof(mUBOPerObject));
+
+			render::BufferInfo bufInfo = mDataBuffer->GetInfo(mUBOIndex);
+			mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
+
+			// Bind vertex / index data
+			uint64_t vertexOffset = mDataBuffer->GetInfo(mVertexIndex).offset;
+			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &vertexOffset);
+			commandBuffer->BindIndexBuffer(mDataBuffer, mDataBuffer->GetInfo(mIndexIndex).offset);
+		}
+		/*
 		void Renderer3D::Draw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D>& camera)
 		{
 			if(mMaterialIns.IsDestroyed() == true)
@@ -82,7 +116,7 @@ namespace cube
 					SCast(uint32_t)(subMeshes[i].vertexOffset),
 					1, 0);
 			}
-		}
+		}*/
 
 		void Renderer3D::RecreateDataBuffer()
 		{
