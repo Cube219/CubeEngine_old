@@ -1,6 +1,7 @@
 ﻿#include "RendererManager.h"
 
 #include "Platform.h"
+#include "../EngineCore.h"
 #include "../LogWriter.h"
 #include "Mesh.h"
 #include "Renderer3D.h"
@@ -34,8 +35,17 @@ namespace cube
 			Vector3 position[RendererManager::maxPointLightNum];
 		};
 
-		RendererManager::RendererManager(RenderType type) :
-			mIsPrepared(false), mDirLight(nullptr)
+		RendererManager::RendererManager(EngineCore* eCore) :
+			mECore(eCore), mIsPrepared(false), mDirLight(nullptr)
+		{
+		}
+
+		RendererManager::~RendererManager()
+		{
+			mRenderers.clear();
+		}
+
+		void RendererManager::Prepare(RenderType type)
 		{
 			mWidth = platform::Platform::GetWindowWidth();
 			mHeight = platform::Platform::GetWindowHeight();
@@ -120,11 +130,6 @@ namespace cube
 			mPerObjectDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
 
 			mIsPrepared = true;
-		}
-
-		RendererManager::~RendererManager()
-		{
-			mRenderers.clear();
 		}
 
 		HMaterial RendererManager::RegisterMaterial(SPtr<Material>& material)

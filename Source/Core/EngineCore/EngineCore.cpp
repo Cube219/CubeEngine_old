@@ -33,26 +33,14 @@ namespace cube
 
 		void EngineCore::Prepare()
 		{
+			mRendererManager = std::make_unique<RendererManager>(this);
+
+			//mThreadManager = std::make_shared<ThreadManager>();
+
 			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(std::bind(&EngineCore::Loop, this));
 			mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(std::bind(&EngineCore::Resize, this, _1, _2));
 
 			LogWriter::Init();
-
-			mTimeManager = std::make_unique<TimeManager>();
-			mStringManager = std::make_unique<StringManager>();
-
-			mRendererManager = std::make_unique<RendererManager>(RenderType::Vulkan);
-
-			mResourceManager = std::make_unique<ResourceManager>(platform::Platform::GetFileSystem());
-
-			mThreadManager = std::make_shared<ThreadManager>();
-
-			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
-			mModuleManager->LoadModule(CUBE_T("InputModule"));
-			mModuleManager->InitModules();
-
-			mGameObjectManager = std::make_shared<GameObjectManager>();
-			mComponentManager = std::make_shared<ComponentManager>();
 		}
 
 		void EngineCore::Run()
@@ -73,6 +61,21 @@ namespace cube
 		void EngineCore::SetFPSLimit(int limit)
 		{
 			mFPSLimit = limit;
+		}
+
+		void EngineCore::PrepareCore()
+		{
+			mTimeManager = std::make_unique<TimeManager>();
+			mStringManager = std::make_unique<StringManager>();
+
+			mResourceManager = std::make_unique<ResourceManager>(platform::Platform::GetFileSystem());
+
+			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
+			mModuleManager->LoadModule(CUBE_T("InputModule"));
+			mModuleManager->InitModules();
+
+			mGameObjectManager = std::make_shared<GameObjectManager>();
+			mComponentManager = std::make_shared<ComponentManager>();
 		}
 
 		void EngineCore::Loop()

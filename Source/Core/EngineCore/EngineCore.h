@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Base/Event.h"
+#include "Thread/MutexLock.h"
 
 namespace cube
 {
@@ -55,10 +56,14 @@ namespace cube
 			SPtr<StringManager> GetStringManager() const { return mStringManager; }
 			SPtr<ModuleManager> GetModuleManager() const { return mModuleManager; }
 			SPtr<ComponentManager> GetComponentManager() const { return mComponentManager; }
-			SPtr<GameObjectManager> GetGameObjectManager() const { return mGameObjectManager;  }
+			SPtr<GameObjectManager> GetGameObjectManager() const { return mGameObjectManager; }
 
 		private:
 			friend class CubeEngine;
+			friend class RendererManager;
+			friend class GameThread;
+
+			void PrepareCore();
 
 			void Loop();
 			EventFunction<void()> mLoopEventFunc;
@@ -66,7 +71,13 @@ namespace cube
 			void Resize(uint32_t width, uint32_t height);
 			EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
 
+			ThreadNotify mFinishPreparingNotify;
+			ThreadNotify mFinishSimulatingNotify;
+			ThreadNotify mFinishProcessingTaskBufferNotify;
+			ThreadNotify mFinishTerminating;
+
 			SPtr<RendererManager> mRendererManager;
+
 			SPtr<ResourceManager> mResourceManager;
 			SPtr<TimeManager> mTimeManager;
 			SPtr<StringManager> mStringManager;

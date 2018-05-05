@@ -1,6 +1,8 @@
 #include "CubeEngine.h"
 
 #include "Platform.h"
+#include "EngineCore/GameThread.h"
+#include "EngineCore/Renderer/RenderingThread.h"
 #include "EngineCore/Resource/ResourceManager.h"
 #include "EngineCore/Renderer/RendererManager.h"
 #include "BaseRenderAPI/RenderAPI.h"
@@ -26,10 +28,22 @@ namespace cube
 		core::EngineCore::CreateInstance();
 
 		core::ECore()->Prepare();
-		core::ECore()->SetFPSLimit(60);
+
+		auto rm = core::ECore()->GetRendererManager();
+		core::RenderingThread::Init(rm);
+		core::GameThread::Init(core::ECore());
+
+		core::AsyncState gameThreadAsync = core::GameThread::PrepareAsync();
+		core::RenderingThread::Prepare();
+
+		gameThreadAsync.WaitUntilFinished();
+
+		CUBE_LOG(LogType::Info, "Finished Prepareing CubeEngine");
 
 		RegisterImporters();
 		InitComponents();
+
+		core::ECore()->SetFPSLimit(60);
 	}
 
 	void CubeEngine::Run()

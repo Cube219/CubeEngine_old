@@ -93,6 +93,19 @@
     </ClInclude>
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="BasicHandler.h" />
+    <ClInclude Include="Renderer\RenderObject.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\TaskBuffer.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="GameThread.h" />
+    <ClInclude Include="Renderer\RenderingThread.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\Async.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -175,6 +188,16 @@
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="GameObjectManager.cpp" />
+    <ClCompile Include="Renderer\RenderObject.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="GameThread.cpp" />
+    <ClCompile Include="Renderer\RenderingThread.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\Async.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">

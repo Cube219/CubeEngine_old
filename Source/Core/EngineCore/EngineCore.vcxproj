@@ -144,6 +144,7 @@
     <ClInclude Include="EngineCoreHeader.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="GameThread.h" />
     <ClInclude Include="LogWriter.h" />
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="Renderer\BaseMeshGenerator.h" />
@@ -158,6 +159,8 @@
     <ClInclude Include="Renderer\Mesh.h" />
     <ClInclude Include="Renderer\Renderer3D.h" />
     <ClInclude Include="Renderer\RendererManager.h" />
+    <ClInclude Include="Renderer\RenderingThread.h" />
+    <ClInclude Include="Renderer\RenderObject.h" />
     <ClInclude Include="Renderer\Texture.h" />
     <ClInclude Include="Renderer\Vertex.h" />
     <ClInclude Include="Resource\BaseResource.h" />
@@ -167,7 +170,9 @@
     <ClInclude Include="String\PathString.h" />
     <ClInclude Include="String\BasicString.h" />
     <ClInclude Include="String\StringManager.h" />
+    <ClInclude Include="Thread\Async.h" />
     <ClInclude Include="Thread\MutexLock.h" />
+    <ClInclude Include="Thread\TaskBuffer.h" />
     <ClInclude Include="Thread\Thread.h" />
     <ClInclude Include="Thread\ThreadManager.h" />
     <ClInclude Include="Time\GameTime.h" />
@@ -179,6 +184,7 @@
     <ClCompile Include="EngineCore.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
+    <ClCompile Include="GameThread.cpp" />
     <ClCompile Include="LogWriter.cpp" />
     <ClCompile Include="ModuleManager.cpp" />
     <ClCompile Include="Renderer\BaseMeshGenerator.cpp" />
@@ -193,6 +199,8 @@
     <ClCompile Include="Renderer\Mesh.cpp" />
     <ClCompile Include="Renderer\Renderer3D.cpp" />
     <ClCompile Include="Renderer\RendererManager.cpp" />
+    <ClCompile Include="Renderer\RenderingThread.cpp" />
+    <ClCompile Include="Renderer\RenderObject.cpp" />
     <ClCompile Include="Renderer\Texture.cpp" />
     <ClCompile Include="Resource\BaseResource.cpp" />
     <ClCompile Include="Resource\ResourceManager.cpp" />
@@ -200,6 +208,7 @@
     <ClCompile Include="String\PathString.cpp" />
     <ClCompile Include="String\BasicString.cpp" />
     <ClCompile Include="String\StringManager.cpp" />
+    <ClCompile Include="Thread\Async.cpp" />
     <ClCompile Include="Thread\Thread.cpp" />
     <ClCompile Include="Thread\ThreadManager.cpp" />
     <ClCompile Include="Time\GameTime.cpp" />

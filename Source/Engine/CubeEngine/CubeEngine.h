@@ -2,6 +2,10 @@
 
 #include "CubeEngineHeader.h"
 
+#include "EngineCore/GameThread.h"
+#include "EngineCore/Renderer/RenderingThread.h"
+#include "EngineCore/Thread/MutexLock.h"
+
 namespace cube
 {
 	struct CUBE_ENGINE_EXPORT CubeEngineStartOption

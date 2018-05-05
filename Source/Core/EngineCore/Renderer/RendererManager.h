@@ -2,6 +2,8 @@
 
 #include "../EngineCoreHeader.h"
 
+#include <thread>
+
 #include "DLib.h"
 
 #include "BaseRenderAPI/RenderAPI.h"
@@ -32,8 +34,10 @@ namespace cube
 			constexpr static int maxPointLightNum = 10;
 
 		public:
-			RendererManager(RenderType type);
+			RendererManager(EngineCore* eCore);
 			~RendererManager();
+
+			void Prepare(RenderType type);
 
 			HMaterial RegisterMaterial(SPtr<Material>& material);
 			void UnregisterMaterial(HMaterial& material);
@@ -58,6 +62,8 @@ namespace cube
 			void SetVsync(bool vsync);
 
 		private:
+			friend class EngineCore;
+
 			void CreateDepthBuffer();
 			void CreateRenderpass();
 
@@ -65,6 +71,14 @@ namespace cube
 			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D>& renderer);
 
 			SPtr<render::GraphicsPipeline> CreatePipeline(HMaterial& material);
+
+			EngineCore* mECore;
+			std::thread mGameThread;
+
+			ThreadNotify mFinishPreparingNotify;
+			ThreadNotify mFinishRenderingNotify;
+			ThreadNotify mFinishProcessingTaskBufferNotify;
+			ThreadNotify mFinishTerminating;
 
 			SPtr<platform::DLib> mRenderDLib;
 			SPtr<render::RenderAPI> mRenderAPI;
