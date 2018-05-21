@@ -1,6 +1,8 @@
 #include "CubeEngine.h"
 
 #include "Platform.h"
+#include "EngineCore/GameThread.h"
+#include "EngineCore/Renderer/RenderingThread.h"
 #include "EngineCore/Resource/ResourceManager.h"
 #include "EngineCore/Renderer/RendererManager.h"
 #include "BaseRenderAPI/RenderAPI.h"
@@ -16,6 +18,8 @@
 
 namespace cube
 {
+	EventFunction<void()> CubeEngine::closingEventFunc;
+
 	void CubeEngine::Start(const CubeEngineStartOption& startOption)
 	{
 		InitPlatform();
@@ -26,20 +30,43 @@ namespace cube
 		core::EngineCore::CreateInstance();
 
 		core::ECore()->Prepare();
-		core::ECore()->SetFPSLimit(60);
+
+		auto rm = core::ECore()->GetRendererManager();
+		core::RenderingThread::Init(rm);
+		core::GameThread::Init(core::ECore());
+
+		core::AsyncState gameThreadAsync = core::GameThread::PrepareAsync();
+		core::RenderingThread::Prepare();
+
+		gameThreadAsync.WaitUntilFinished();
 
 		RegisterImporters();
 		InitComponents();
+
+		closingEventFunc = platform::Platform::GetClosingEvent().AddListener(&CubeEngine::DefaultClosingFunction);
+		core::ECore()->SetFPSLimit(60);
 	}
 
 	void CubeEngine::Run()
 	{
-		core::ECore()->Run();
+		core::GameThread::Run();
+		core::RenderingThread::Run();
 	}
 
 	void CubeEngine::Destroy()
 	{
+		platform::Platform::GetClosingEvent().RemoveListener(closingEventFunc);
+
+		// TODO: 좀 더 좋은 구조로 만들기
+		core::GameThread::Join();
+		core::RenderingThread::ExecuteLastTaskBuffer();
 		core::ECore()->DestroyInstance();
+	}
+
+	void CubeEngine::SetCustomClosingFunction(std::function<void()> func)
+	{
+		platform::Platform::GetClosingEvent().RemoveListener(closingEventFunc);
+		closingEventFunc = platform::Platform::GetClosingEvent().AddListener(func);
 	}
 
 	void CubeEngine::RegisterImporters()
@@ -67,6 +94,12 @@ namespace cube
 		comManager->RegisterComponent<MoveComponent>();
 		comManager->RegisterComponent<DirectionalLightComponent>();
 		comManager->RegisterComponent<PointLightComponent>();
+	}
+
+	void CubeEngine::DefaultClosingFunction()
+	{
+		CUBE_LOG(LogType::Info, "Call closing function");
+		core::ECore()->Destroy();
 	}
 
 	////////////////////////////////

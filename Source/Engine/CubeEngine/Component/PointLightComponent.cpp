@@ -10,7 +10,7 @@ namespace cube
 
 	PointLightComponent::PointLightComponent()
 	{
-		mPointLight = std::make_shared<core::PointLight>();
+		mPointLight = core::PointLight::Create();
 	}
 
 	PointLightComponent::~PointLightComponent()

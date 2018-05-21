@@ -13,14 +13,49 @@ namespace cube
 		{
 			auto rendererManager = ECore()->GetRendererManager();
 
-			SPtr<Material> mat(new Material(rendererManager->GetRenderAPI(), init));
+			SPtr<Material> mat(new Material(init));
+			mat->Initialize();
 
 			return rendererManager->RegisterMaterial(mat);
 		}
 
-		Material::Material(SPtr<render::RenderAPI>& renderAPI, const MaterialInitializer& init) : 
-			mRenderAPI_ref(renderAPI)
+		Material::Material(const MaterialInitializer& init) : 
+			mMaterialInit(init)
 		{
+		} 
+
+		Material::~Material()
+		{
+		}
+
+		SPtr<RenderObject_RT> Material::CreateRenderObject_RT() const
+		{
+			SPtr<Material_RT> mat_rt(new Material_RT(mMaterialInit));
+			mat_rt->Initialize();
+
+			return mat_rt;
+		}
+
+		HMaterialInstance Material::CreateInstance()
+		{
+			SPtr<MaterialInstanceData> matInsDataPtr = std::make_shared<MaterialInstanceData>();
+			matInsDataPtr->data = MaterialInstance::Create(mMyHandler);
+			matInsDataPtr->data->mMyHandler = HMaterialInstance(matInsDataPtr);
+
+			matInsDataPtr->data->GetRenderObject_RT()->mMaterial = GetRenderObject_RT();
+
+			return HMaterialInstance(matInsDataPtr);
+		}
+
+		void Material::Destroy()
+		{
+			ECore()->GetRendererManager()->UnregisterMaterial(mMyHandler);
+		}
+
+		Material_RT::Material_RT(const MaterialInitializer& init)
+		{
+			mRenderAPI_ref = ECore()->GetRendererManager()->GetRenderAPI();
+
 			using namespace render;
 
 			mParamInfos = init.parameters;
@@ -47,25 +82,7 @@ namespace cube
 				}
 				descSetInit.descriptors.push_back(desc);
 			}
-			mDescriptorSetLayout = renderAPI->CreateDescriptorSetLayout(descSetInit);
-		} 
-
-		Material::~Material()
-		{
-		}
-
-		HMaterialInstance Material::CreateInstance()
-		{
-			SPtr<MaterialInstanceData> matInsDataPtr = std::make_shared<MaterialInstanceData>();
-			matInsDataPtr->data = UPtr<MaterialInstance>(new MaterialInstance(mRenderAPI_ref, mMyHandler));
-			matInsDataPtr->data->mMyHandler = HMaterialInstance(matInsDataPtr);
-
-			return HMaterialInstance(matInsDataPtr);
-		}
-
-		void Material::Destroy()
-		{
-			ECore()->GetRendererManager()->UnregisterMaterial(mMyHandler);
+			mDescriptorSetLayout = mRenderAPI_ref->CreateDescriptorSetLayout(descSetInit);
 		}
 	} // namespace core
 } // namespace cube

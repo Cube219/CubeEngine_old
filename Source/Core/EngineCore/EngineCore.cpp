@@ -27,41 +27,25 @@ namespace cube
 
 		EngineCore::~EngineCore()
 		{
-			platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
-			platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
 		}
 
 		void EngineCore::Prepare()
 		{
-			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(std::bind(&EngineCore::Loop, this));
-			mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(std::bind(&EngineCore::Resize, this, _1, _2));
+			mRendererManager = std::make_unique<RendererManager>(this);
 
 			LogWriter::Init();
-
-			mTimeManager = std::make_unique<TimeManager>();
-			mStringManager = std::make_unique<StringManager>();
-
-			mRendererManager = std::make_unique<RendererManager>(RenderType::Vulkan);
-
-			mResourceManager = std::make_unique<ResourceManager>(platform::Platform::GetFileSystem());
-
-			mThreadManager = std::make_shared<ThreadManager>();
-
-			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
-			mModuleManager->LoadModule(CUBE_T("InputModule"));
-			mModuleManager->InitModules();
-
-			mGameObjectManager = std::make_shared<GameObjectManager>();
-			mComponentManager = std::make_shared<ComponentManager>();
 		}
 
-		void EngineCore::Run()
+		void EngineCore::Start()
 		{
 			mTimeManager->Start();
 
 			mGameObjectManager->Start();
+		}
 
-			platform::Platform::StartLoop();
+		void EngineCore::Destroy()
+		{
+			mWillBeDestroyed = true;
 		}
 
 		float EngineCore::GetCurrentFPS()
@@ -75,7 +59,22 @@ namespace cube
 			mFPSLimit = limit;
 		}
 
-		void EngineCore::Loop()
+		void EngineCore::PrepareCore()
+		{
+			mTimeManager = std::make_unique<TimeManager>();
+			mStringManager = std::make_unique<StringManager>();
+
+			mResourceManager = std::make_unique<ResourceManager>(platform::Platform::GetFileSystem());
+
+			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
+			mModuleManager->LoadModule(CUBE_T("InputModule"));
+			mModuleManager->InitModules();
+
+			mGameObjectManager = std::make_shared<GameObjectManager>();
+			mComponentManager = std::make_shared<ComponentManager>();
+		}
+
+		void EngineCore::Update()
 		{
 			mTimeManager->Update();
 
@@ -86,8 +85,6 @@ namespace cube
 			mModuleManager->UpdateAllModules(dt);
 
 			mGameObjectManager->Update(dt);
-			
-			mRendererManager->DrawAll();
 
 			// Limit FPS
 			if(mFPSLimit > 0) {

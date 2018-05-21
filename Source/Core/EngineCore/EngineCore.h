@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Base/Event.h"
+#include "Thread/MutexLock.h"
 
 namespace cube
 {
@@ -43,7 +44,9 @@ namespace cube
 		public:
 			void Prepare();
 
-			void Run();
+			void Start();
+
+			void Destroy();
 
 			float GetCurrentFPS();
 
@@ -55,18 +58,21 @@ namespace cube
 			SPtr<StringManager> GetStringManager() const { return mStringManager; }
 			SPtr<ModuleManager> GetModuleManager() const { return mModuleManager; }
 			SPtr<ComponentManager> GetComponentManager() const { return mComponentManager; }
-			SPtr<GameObjectManager> GetGameObjectManager() const { return mGameObjectManager;  }
+			SPtr<GameObjectManager> GetGameObjectManager() const { return mGameObjectManager; }
 
 		private:
 			friend class CubeEngine;
+			friend class RendererManager;
+			friend class GameThread;
 
-			void Loop();
-			EventFunction<void()> mLoopEventFunc;
+			void PrepareCore();
+
+			void Update();
 
 			void Resize(uint32_t width, uint32_t height);
-			EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
 
 			SPtr<RendererManager> mRendererManager;
+
 			SPtr<ResourceManager> mResourceManager;
 			SPtr<TimeManager> mTimeManager;
 			SPtr<StringManager> mStringManager;
@@ -78,6 +84,7 @@ namespace cube
 			SPtr<GameObjectManager> mGameObjectManager;
 
 			int mFPSLimit;
+			bool mWillBeDestroyed = false; // Used in GameThread
 		};
 
 		// Helper function to get singleton instance easily

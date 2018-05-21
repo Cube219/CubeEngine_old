@@ -29,6 +29,7 @@ namespace cube
 			static void ShowWindow();
 
 			static void StartLoop();
+			static void FinishLoop();
 			static void Sleep(uint32_t time);
 
 			static void ShowCursor();
@@ -51,6 +52,7 @@ namespace cube
 			static auto& GetLoopEvent() { return loopEvent; }
 			static auto& GetResizeEvent() { return resizeEvent; }
 			static auto& GetActivatedEvent() { return activatedEvent; }
+			static auto& GetClosingEvent() { return closingEvent; }
 
 			struct Data;
 			static Data data;
@@ -59,6 +61,8 @@ namespace cube
 			static SPtr<FileSystem> fileSystem;
 
 			static PString title;
+
+			static bool isFinished;
 
 			static uint32_t width;
 			static uint32_t height;
@@ -75,6 +79,7 @@ namespace cube
 			static Event<void()> loopEvent;
 			static Event<void(uint32_t, uint32_t)> resizeEvent;
 			static Event<void(WindowActivatedState)> activatedEvent;
+			static Event<void()> closingEvent;
 
 		public:
 			Platform() = delete;

@@ -2,6 +2,8 @@
 
 #include "../EngineCoreHeader.h"
 
+#include <thread>
+
 #include "DLib.h"
 
 #include "BaseRenderAPI/RenderAPI.h"
@@ -32,8 +34,10 @@ namespace cube
 			constexpr static int maxPointLightNum = 10;
 
 		public:
-			RendererManager(RenderType type);
+			RendererManager(EngineCore* eCore);
 			~RendererManager();
+
+			void Prepare(RenderType type);
 
 			HMaterial RegisterMaterial(SPtr<Material>& material);
 			void UnregisterMaterial(HMaterial& material);
@@ -57,30 +61,39 @@ namespace cube
 
 			void SetVsync(bool vsync);
 
+			SPtr<render::DescriptorSetLayout> _GetPerObjectDescriptorSetLayout(){ return mPerObjectDescriptorSetLayout; }
+
 		private:
+			friend class EngineCore;
+
 			void CreateDepthBuffer();
 			void CreateRenderpass();
 
 			void RewriteCommandBuffer();
-			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D>& renderer);
+			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D_RT>& renderer);
 
-			SPtr<render::GraphicsPipeline> CreatePipeline(HMaterial& material);
+			SPtr<render::GraphicsPipeline> CreatePipeline(SPtr<Material_RT> material);
+
+			EngineCore* mECore;
+			std::thread mGameThread;
 
 			SPtr<platform::DLib> mRenderDLib;
 			SPtr<render::RenderAPI> mRenderAPI;
 
 			Mutex mRenderersMutex;
-			Vector<SPtr<Renderer3D>> mRenderers;
-			SPtr<CameraRenderer3D> mCameraRenderer;
+			Vector<SPtr<Renderer3D_RT>> mRenderers;
+			SPtr<CameraRenderer3D_RT> mCameraRenderer;
+			SPtr<CameraRenderer3D> mCameraRenderer_NotRT;
 
 			Mutex mMaterialsMutex;
-			Vector<SPtr<MaterialData>> mMaterials;
+			Vector<SPtr<Material_RT>> mMaterials;
 			Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
 
-			SPtr<DirectionalLight> mDirLight;
+			SPtr<DirectionalLight_RT> mDirLight;
 			SPtr<render::Buffer> mDirLightBuffer;
 
-			Vector<SPtr<PointLight>> mPointLights;
+			Mutex mPointLightsMutex;
+			Vector<SPtr<PointLight_RT>> mPointLights;
 			SPtr<render::Buffer> mPointLightsBuffer;
 
 			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
