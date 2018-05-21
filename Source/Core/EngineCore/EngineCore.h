@@ -46,6 +46,8 @@ namespace cube
 
 			void Start();
 
+			void Destroy();
+
 			float GetCurrentFPS();
 
 			void SetFPSLimit(int limit);
@@ -66,10 +68,8 @@ namespace cube
 			void PrepareCore();
 
 			void Update();
-			EventFunction<void()> mLoopEventFunc;
 
 			void Resize(uint32_t width, uint32_t height);
-			EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
 
 			SPtr<RendererManager> mRendererManager;
 
@@ -84,6 +84,7 @@ namespace cube
 			SPtr<GameObjectManager> mGameObjectManager;
 
 			int mFPSLimit;
+			bool mWillBeDestroyed = false; // Used in GameThread
 		};
 
 		// Helper function to get singleton instance easily

@@ -8,7 +8,10 @@ namespace cube
 	{
 	public:
 		TaskBuffer(){ }
-		~TaskBuffer(){ }
+		~TaskBuffer()
+		{
+			Flush();
+		}
 
 		void WriteTask(std::function<void()> taskFunction)
 		{

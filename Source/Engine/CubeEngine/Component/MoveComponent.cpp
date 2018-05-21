@@ -60,6 +60,12 @@ namespace cube
 		rot = Vector3(rotF3.x, rotF3.y, rotF3.z);
 
 		GetGameObject()->SetRotation(rot);
+
+		String jumpStr = CUBE_T("Jump");
+		bool b = mInputModule->IsActionPressed(jumpStr);
+		if(b == true) {
+			core::ECore()->Destroy();
+		}
 	}
 
 	void MoveComponent::OnDestroy()

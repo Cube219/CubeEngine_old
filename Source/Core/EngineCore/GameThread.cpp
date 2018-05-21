@@ -18,12 +18,14 @@ namespace cube
 		AsyncStateData GameThread::mPrepareAsyncData;
 		AsyncStateData GameThread::mSimulateAsyncData;
 		AsyncStateData GameThread::mProcessTaskBuffersAndSimulateAsyncData;
+		AsyncStateData GameThread::mDestroyAsyncData;
 
 		AsyncStateData GameThread::mSimulateNotifyAsyncData;
 		AsyncState GameThread::mSimulateNotifyAsync(&GameThread::mSimulateNotifyAsyncData);
 		AsyncStateData GameThread::mProcessTaskBuffersAndSimulateNotifyAsyncData;
 		AsyncState GameThread::mProcessTaskBuffersAndSimulateNotifyAsync(&GameThread::mProcessTaskBuffersAndSimulateNotifyAsyncData);
-
+		AsyncStateData GameThread::mDestroyNotifyAsyncData;
+		AsyncState GameThread::mDestroyNotifyAsync(&GameThread::mDestroyNotifyAsyncData);
 
 		Mutex GameThread::mTaskBufferMutex;
 		TaskBuffer GameThread::mTaskBuffer;
@@ -50,6 +52,15 @@ namespace cube
 			mProcessTaskBuffersAndSimulateNotifyAsyncData.Reset();
 
 			mRunNotify.notify_all();
+		}
+
+		AsyncState GameThread::DestroyAsync()
+		{
+			mDestroyAsyncData.Reset();
+
+			mDestroyNotifyAsyncData.DispatchCompletion();
+
+			return AsyncState(&mDestroyAsyncData);
 		}
 
 		AsyncState GameThread::SimulateAsync()
@@ -101,6 +112,11 @@ namespace cube
 
 				ProcessTaskBuffers();
 				Simulate();
+
+				if(mECore->mWillBeDestroyed == true) {
+					break;
+				}
+
 				mProcessTaskBuffersAndSimulateAsyncData.DispatchCompletion();
 
 				mProcessTaskBuffersAndSimulateNotifyAsyncData.Reset();
@@ -114,6 +130,18 @@ namespace cube
 					Simulate();
 				}*/
 			}
+
+			AsyncState destroyRenderAsync = RenderingThread::DestroyAsync();
+			
+			mProcessTaskBuffersAndSimulateAsyncData.DispatchCompletion();
+
+			destroyRenderAsync.WaitUntilFinished();
+
+			/*mDestroyNotifyAsync.WaitUntilFinished();
+			CUBE_LOG(LogType::Info, "Start destroying");
+			mECore->DestroyInstance();
+			CUBE_LOG(LogType::Info, "Finish destroying");
+			mDestroyAsyncData.DispatchCompletion();*/
 		}
 
 		void GameThread::ProcessTaskBuffers()

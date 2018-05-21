@@ -18,6 +18,8 @@
 
 namespace cube
 {
+	EventFunction<void()> CubeEngine::closingEventFunc;
+
 	void CubeEngine::Start(const CubeEngineStartOption& startOption)
 	{
 		InitPlatform();
@@ -41,6 +43,7 @@ namespace cube
 		RegisterImporters();
 		InitComponents();
 
+		closingEventFunc = platform::Platform::GetClosingEvent().AddListener(&CubeEngine::DefaultClosingFunction);
 		core::ECore()->SetFPSLimit(60);
 	}
 
@@ -52,7 +55,18 @@ namespace cube
 
 	void CubeEngine::Destroy()
 	{
+		platform::Platform::GetClosingEvent().RemoveListener(closingEventFunc);
+
+		// TODO: 좀 더 좋은 구조로 만들기
+		core::GameThread::Join();
+		core::RenderingThread::ExecuteLastTaskBuffer();
 		core::ECore()->DestroyInstance();
+	}
+
+	void CubeEngine::SetCustomClosingFunction(std::function<void()> func)
+	{
+		platform::Platform::GetClosingEvent().RemoveListener(closingEventFunc);
+		closingEventFunc = platform::Platform::GetClosingEvent().AddListener(func);
 	}
 
 	void CubeEngine::RegisterImporters()
@@ -80,6 +94,12 @@ namespace cube
 		comManager->RegisterComponent<MoveComponent>();
 		comManager->RegisterComponent<DirectionalLightComponent>();
 		comManager->RegisterComponent<PointLightComponent>();
+	}
+
+	void CubeEngine::DefaultClosingFunction()
+	{
+		CUBE_LOG(LogType::Info, "Call closing function");
+		core::ECore()->Destroy();
 	}
 
 	////////////////////////////////

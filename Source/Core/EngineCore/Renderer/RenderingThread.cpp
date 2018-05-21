@@ -12,6 +12,12 @@ namespace cube
 		SPtr<RendererManager> RenderingThread::mRendererManager = nullptr;
 
 		EventFunction<void()> RenderingThread::mLoopEventFunc;
+		EventFunction<void(uint32_t, uint32_t)> RenderingThread::mResizeEventFunc;
+
+		AsyncStateData RenderingThread::mDestroyAsyncData;
+
+		AsyncStateData RenderingThread::mDestroyNotifyAsyncData;
+		AsyncState RenderingThread::mDestroyNotifyAsync(&RenderingThread::mDestroyNotifyAsyncData);
 
 		Mutex RenderingThread::mTaskBufferMutex;
 		TaskBuffer RenderingThread::mTaskBuffer;
@@ -26,6 +32,7 @@ namespace cube
 			mRendererManager->Prepare(RenderType::Vulkan);
 
 			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(&RenderingThread::Loop);
+			mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(&RenderingThread::OnResize);
 		}
 
 		void RenderingThread::Run()
@@ -36,9 +43,33 @@ namespace cube
 			platform::Platform::StartLoop();
 		}
 
+		AsyncState RenderingThread::DestroyAsync()
+		{
+			mDestroyAsyncData.Reset();
+
+			mDestroyNotifyAsyncData.DispatchCompletion();
+
+			return AsyncState(&mDestroyAsyncData);
+		}
+
+		void RenderingThread::ExecuteLastTaskBuffer()
+		{
+			ProcessTaskBuffers();
+		}
+
 		void RenderingThread::Loop()
 		{
 			ProcessTaskBuffers();
+
+			if(mDestroyNotifyAsync.IsDone() == true) {
+				mRendererManager = nullptr; // It is actually destroyed in EngineCore's destructor
+				// TODO: 따로 제거되게?
+
+				platform::Platform::FinishLoop();
+
+				mDestroyAsyncData.DispatchCompletion();
+				return;
+			}
 
 			AsyncState async = GameThread::ProcessTaskBuffersAndSimulateAsync();
 
@@ -49,23 +80,20 @@ namespace cube
 
 		void RenderingThread::ProcessTaskBuffers()
 		{
-			//CUBE_LOG(LogType::Info, "Start processing task buffer in GameThread...");
-			
 			TaskBuffer& buf = GameThread::_GetTaskBuffer();
 			buf.ExecuteAll();
 
 			buf.Flush();
-
-			//CUBE_LOG(LogType::Info, "Finished processing task buffer in GameThread...");
 		}
 
 		void RenderingThread::Rendering()
 		{
-			//CUBE_LOG(LogType::Info, "Start drawing...");
-
 			mRendererManager->DrawAll();
+		}
 
-			//CUBE_LOG(LogType::Info, "Finished drawing...");
+		void RenderingThread::OnResize(uint32_t width, uint32_t height)
+		{
+			mRendererManager->Resize(width, height);
 		}
 	} // namespace core
 } // namespace cube

@@ -5,6 +5,7 @@
 #include "Base/Event.h"
 #include "../Thread/MutexLock.h"
 #include "../Thread/TaskBuffer.h"
+#include "../Thread/Async.h"
 
 namespace cube
 {
@@ -19,6 +20,8 @@ namespace cube
 			static void Init(SPtr<RendererManager>& rendererManager);
 			static void Prepare();
 			static void Run();
+			static AsyncState DestroyAsync();
+			static void ExecuteLastTaskBuffer();
 
 			static void QueueTask(std::function<void()> taskFunc)
 			{
@@ -36,9 +39,17 @@ namespace cube
 			static void ProcessTaskBuffers();
 			static void Rendering();
 
+			static void OnResize(uint32_t width, uint32_t height);
+
 			static SPtr<RendererManager> mRendererManager;
 
 			static EventFunction<void()> mLoopEventFunc;
+			static EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
+
+			static AsyncStateData mDestroyAsyncData;
+
+			static AsyncStateData mDestroyNotifyAsyncData;
+			static AsyncState mDestroyNotifyAsync;
 
 			static Mutex mTaskBufferMutex;
 			static TaskBuffer mTaskBuffer;

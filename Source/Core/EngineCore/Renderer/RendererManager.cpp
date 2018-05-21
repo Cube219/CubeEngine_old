@@ -44,6 +44,8 @@ namespace cube
 		RendererManager::~RendererManager()
 		{
 			mRenderers.clear();
+
+			CUBE_LOG(LogType::Info, "Destroyed RendererManager");
 		}
 
 		void RendererManager::Prepare(RenderType type)
@@ -163,8 +165,10 @@ namespace cube
 				return;
 			}
 
-			GameThread::QueueTask([this, mat_rt, index]() {
+			GameThread::QueueTask([this, mat_rt]() {
 				Lock(mMaterialsMutex);
+
+				int index = mat_rt->mIndex;
 
 				int lastIndex = mMaterials.back()->mIndex;
 				mMaterials[lastIndex]->mIndex = index;
@@ -206,8 +210,10 @@ namespace cube
 				return;
 			}
 
-			GameThread::QueueTask([this, renderer_rt, index]() {
+			GameThread::QueueTask([this, renderer_rt]() {
 				Lock(mRenderersMutex);
+
+				int index = renderer_rt->mIndex;
 
 				int lastIndex = mRenderers.back()->mIndex;
 				mRenderers[lastIndex]->mIndex = index;

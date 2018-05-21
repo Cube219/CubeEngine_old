@@ -28,11 +28,17 @@ namespace cube
 
 		static void Destroy();
 
+		static void SetCustomClosingFunction(std::function<void()> func);
+
 	private:
 		static void RegisterImporters();
 
 		static void InitComponents();
 
 		static void InitPlatform();
+
+		static void DefaultClosingFunction();
+
+		static EventFunction<void()> closingEventFunc;
 	};
 } // namespace cube

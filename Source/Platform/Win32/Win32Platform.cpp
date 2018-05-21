@@ -26,6 +26,8 @@ namespace cube
 
 		PString Platform::title;
 
+		bool Platform::isFinished = false;
+
 		uint32_t Platform::width;
 		uint32_t Platform::height;
 		uint32_t Platform::windowPosX;
@@ -41,6 +43,7 @@ namespace cube
 		Event<void()> Platform::loopEvent;
 		Event<void(uint32_t, uint32_t)> Platform::resizeEvent;
 		Event<void(WindowActivatedState)> Platform::activatedEvent;
+		Event<void()> Platform::closingEvent;
 
 		void Platform::Init()
 		{
@@ -110,16 +113,20 @@ namespace cube
 
 			while(1) {
 				if(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-					if(msg.message == WM_QUIT)
-						break;
-					else {
-						TranslateMessage(&msg);
-						DispatchMessage(&msg);
-					}
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
 				} else {
+					if(isFinished == true)
+						break;
+
 					loopEvent.Dispatch();
 				}
 			}
+		}
+
+		void Platform::FinishLoop()
+		{
+			isFinished = true;
 		}
 
 		void Platform::Sleep(uint32_t time)
@@ -218,7 +225,9 @@ namespace cube
 				}
 
 				case WM_CLOSE:
-					PostQuitMessage(0);
+					//PostQuitMessage(0);
+					Platform::closingEvent.Dispatch();
+					return 0;
 					break;
 
 				case WM_SIZE:

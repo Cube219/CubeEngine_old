@@ -19,9 +19,12 @@ namespace cube
 			static void Init(EngineCore* eCore);
 			static AsyncState PrepareAsync();
 			static void Run();
+			static AsyncState DestroyAsync();
 
 			static AsyncState SimulateAsync();
 			static AsyncState ProcessTaskBuffersAndSimulateAsync();
+
+			static void Join(){ mMyThread.join(); }
 
 			static void QueueTask(std::function<void()> taskFunc)
 			{
@@ -51,11 +54,14 @@ namespace cube
 			static AsyncStateData mPrepareAsyncData;
 			static AsyncStateData mSimulateAsyncData;
 			static AsyncStateData mProcessTaskBuffersAndSimulateAsyncData;
+			static AsyncStateData mDestroyAsyncData;
 			
 			static AsyncStateData mSimulateNotifyAsyncData;
 			static AsyncState mSimulateNotifyAsync;
 			static AsyncStateData mProcessTaskBuffersAndSimulateNotifyAsyncData;
 			static AsyncState mProcessTaskBuffersAndSimulateNotifyAsync;
+			static AsyncStateData mDestroyNotifyAsyncData;
+			static AsyncState mDestroyNotifyAsync;
 
 			static Mutex mTaskBufferMutex;
 			static TaskBuffer mTaskBuffer;

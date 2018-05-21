@@ -27,18 +27,11 @@ namespace cube
 
 		EngineCore::~EngineCore()
 		{
-			// platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
-			// platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
 		}
 
 		void EngineCore::Prepare()
 		{
 			mRendererManager = std::make_unique<RendererManager>(this);
-
-			// mThreadManager = std::make_shared<ThreadManager>();
-
-			// mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(std::bind(&EngineCore::Loop, this));
-			// mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(std::bind(&EngineCore::Resize, this, _1, _2));
 
 			LogWriter::Init();
 		}
@@ -48,8 +41,11 @@ namespace cube
 			mTimeManager->Start();
 
 			mGameObjectManager->Start();
+		}
 
-			//platform::Platform::StartLoop();
+		void EngineCore::Destroy()
+		{
+			mWillBeDestroyed = true;
 		}
 
 		float EngineCore::GetCurrentFPS()
@@ -89,8 +85,6 @@ namespace cube
 			mModuleManager->UpdateAllModules(dt);
 
 			mGameObjectManager->Update(dt);
-			
-			// mRendererManager->DrawAll();
 
 			// Limit FPS
 			if(mFPSLimit > 0) {
