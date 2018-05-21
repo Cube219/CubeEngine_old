@@ -1,6 +1,7 @@
 ﻿#include "KeyboardMouseInput.h"
 
 #include "EngineCore/LogWriter.h"
+#include "EngineCore/GameThread.h"
 
 namespace cube
 {
@@ -96,13 +97,17 @@ namespace cube
 
 		void KeyboardMouseInput::LockCursor()
 		{
-			platform::Platform::HideCursor();
+			core::GameThread::QueueTask([]() {
+				platform::Platform::HideCursor();
+			});
 			mIsCursorLocked = true;
 		}
 
 		void KeyboardMouseInput::UnlockCursor()
 		{
-			platform::Platform::ShowCursor();
+			core::GameThread::QueueTask([]() {
+				platform::Platform::ShowCursor();
+			});
 			mIsCursorLocked = false;
 		}
 
