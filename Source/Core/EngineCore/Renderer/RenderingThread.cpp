@@ -24,12 +24,12 @@ namespace cube
 		void RenderingThread::Prepare()
 		{
 			mRendererManager->Prepare(RenderType::Vulkan);
+
+			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(&RenderingThread::Loop);
 		}
 
 		void RenderingThread::Run()
 		{
-			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(&RenderingThread::Loop);
-
 			AsyncState simulateAsync = GameThread::SimulateAsync();
 			simulateAsync.WaitUntilFinished();
 

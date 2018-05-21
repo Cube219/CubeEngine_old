@@ -3,6 +3,7 @@
 #include "Platform.h"
 #include "../EngineCore.h"
 #include "../LogWriter.h"
+#include "../GameThread.h"
 #include "Mesh.h"
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
@@ -135,41 +136,48 @@ namespace cube
 
 		HMaterial RendererManager::RegisterMaterial(SPtr<Material>& material)
 		{
-			Lock(mMaterialsMutex);
-
-			material->GetRenderObject_RT()->mIndex = (int)mMaterials.size();
-
 			SPtr<MaterialData> matDataPtr = std::make_shared<MaterialData>();
 			matDataPtr->data = std::move(material);
 			matDataPtr->data->mMyHandler = HMaterial(matDataPtr);
-			mMaterials.push_back(matDataPtr);
-			
-			HMaterial hMat = HMaterial(matDataPtr);
-			mMaterialPipelines.push_back(CreatePipeline(hMat));
 
+			SPtr<Material_RT> mat_rt = matDataPtr->data->GetRenderObject_RT();
+			GameThread::QueueTask([this, mat_rt]() {
+				Lock(mMaterialsMutex);
+
+				mat_rt->mIndex = (int)mMaterials.size();
+				mMaterials.push_back(mat_rt);
+				mMaterialPipelines.push_back(CreatePipeline(mat_rt));
+			});
+
+			HMaterial hMat = HMaterial(matDataPtr);
 			return hMat;
 		}
 
 		void RendererManager::UnregisterMaterial(HMaterial& material)
 		{
-			int index = material->GetRenderObject_RT()->mIndex;
+			SPtr<Material_RT> mat_rt = material->GetRenderObject_RT();
+			int index = mat_rt->mIndex;
 
 			if(index == -1) {
 				CUBE_LOG(LogType::Error, "This material is not registed.");
 				return;
 			}
 
-			Lock(mMaterialsMutex);
+			GameThread::QueueTask([this, mat_rt, index]() {
+				Lock(mMaterialsMutex);
 
-			int lastIndex = mMaterials.back()->data->GetRenderObject_RT()->mIndex;
-			mMaterials[lastIndex]->data->GetRenderObject_RT()->mIndex = index;
-			
-			mMaterials[index]->data = nullptr;
+				int lastIndex = mMaterials.back()->mIndex;
+				mMaterials[lastIndex]->mIndex = index;
 
-			std::swap(mMaterials[index], mMaterials[lastIndex]);
-			std::swap(mMaterialPipelines[index], mMaterialPipelines[lastIndex]);
-			mMaterials.pop_back();
-			mMaterialPipelines.pop_back();
+				mMaterials[index] = nullptr;
+
+				std::swap(mMaterials[index], mMaterials[lastIndex]);
+				std::swap(mMaterialPipelines[index], mMaterialPipelines[lastIndex]);
+				mMaterials.pop_back();
+				mMaterialPipelines.pop_back();
+
+				mat_rt->mIndex = -1;
+			});
 		}
 
 		void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
@@ -179,10 +187,12 @@ namespace cube
 			if(renderer_rt->mIndex != -1)
 				return;
 
-			Lock(mRenderersMutex);
+			GameThread::QueueTask([this, renderer_rt]() {
+				Lock(mRenderersMutex);
 
-			mRenderers.push_back(renderer_rt);
-			renderer_rt->mIndex = (int)mRenderers.size() - 1;
+				mRenderers.push_back(renderer_rt);
+				renderer_rt->mIndex = (int)mRenderers.size() - 1;
+			});
 		}
 
 		void RendererManager::UnregisterRenderer3D(SPtr<Renderer3D>& renderer)
@@ -196,15 +206,17 @@ namespace cube
 				return;
 			}
 
-			Lock(mRenderersMutex);
+			GameThread::QueueTask([this, renderer_rt, index]() {
+				Lock(mRenderersMutex);
 
-			int lastIndex = mRenderers.back()->mIndex;
-			mRenderers[lastIndex]->mIndex = index;
+				int lastIndex = mRenderers.back()->mIndex;
+				mRenderers[lastIndex]->mIndex = index;
 
-			std::swap(mRenderers[index], mRenderers[lastIndex]);
-			mRenderers.pop_back();
+				std::swap(mRenderers[index], mRenderers[lastIndex]);
+				mRenderers.pop_back();
 
-			renderer_rt->mIndex = -1;
+				renderer_rt->mIndex = -1;
+			});
 		}
 
 		void RendererManager::RegisterLight(SPtr<DirectionalLight>& dirLight)
@@ -214,7 +226,10 @@ namespace cube
 				return;
 			}
 
-			mDirLight = dirLight->GetRenderObject_RT();
+			SPtr<DirectionalLight_RT> dirLight_rt = dirLight->GetRenderObject_RT();
+			GameThread::QueueTask([this, dirLight_rt]() {
+				mDirLight = dirLight_rt;
+			});
 		}
 
 		void RendererManager::UnregisterLight(SPtr<DirectionalLight>& dirLight)
@@ -224,29 +239,45 @@ namespace cube
 				return;
 			}
 
-			mDirLight = nullptr;
+			GameThread::QueueTask([this]() {
+				mDirLight = nullptr;
+			});
 		}
 
 		void RendererManager::RegisterLight(SPtr<PointLight>& pointLight)
 		{
-			if(mPointLights.size() >= maxPointLightNum) {
-				CUBE_LOG(LogType::Error, "PointLight cannot be registerd more than 50.");
-				return;
+			{
+				Lock lock(mPointLightsMutex);
+
+				if(mPointLights.size() >= maxPointLightNum) {
+					CUBE_LOG(LogType::Error, "PointLight cannot be registerd more than 50.");
+					return;
+				}
 			}
 
-			mPointLights.push_back(pointLight->GetRenderObject_RT());
+			SPtr<PointLight_RT> pointLight_rt = pointLight->GetRenderObject_RT();
+			GameThread::QueueTask([this, pointLight_rt]() {
+				Lock lock(mPointLightsMutex);
+
+				mPointLights.push_back(pointLight_rt);
+			});
 		}
 
 		void RendererManager::UnregisterLight(SPtr<PointLight>& pointLight)
 		{
-			auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight->GetRenderObject_RT());
+			SPtr<PointLight_RT> pointLight_rt = pointLight->GetRenderObject_RT();
+			GameThread::QueueTask([this, pointLight_rt]() {
+				Lock lock(mPointLightsMutex);
 
-			if(findIter == mPointLights.cend()) {
-				CUBE_LOG(LogType::Error, "This point light is not registered.");
-				return;
-			}
+				auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight_rt);
 
-			mPointLights.erase(findIter);
+				if(findIter == mPointLights.cend()) {
+					CUBE_LOG(LogType::Error, "This point light is not registered.");
+					return;
+				}
+
+				mPointLights.erase(findIter);
+			});
 		}
 
 		SPtr<Renderer3D> RendererManager::CreateRenderer3D()
@@ -494,7 +525,7 @@ namespace cube
 			}
 		}
 
-		SPtr<render::GraphicsPipeline> RendererManager::CreatePipeline(HMaterial& material)
+		SPtr<render::GraphicsPipeline> RendererManager::CreatePipeline(SPtr<Material_RT> material)
 		{
 			using namespace render;
 
@@ -561,13 +592,13 @@ namespace cube
 			initializer.depthStencil.front = stencilOpState;
 			initializer.depthStencil.back = stencilOpState;
 
-			auto shaders = material->GetRenderObject_RT()->GetShaders();
+			auto shaders = material->GetShaders();
 			for(auto& shader : shaders) {
 				initializer.shaders.push_back(shader->GetRenderShader());
 			}
 
 			initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
-			initializer.descSetLayouts.push_back(material->GetRenderObject_RT()->GetDescriptorSetLayout());
+			initializer.descSetLayouts.push_back(material->GetDescriptorSetLayout());
 			initializer.descSetLayouts.push_back(mPerObjectDescriptorSetLayout);
 
 			initializer.renderPass = mRenderPass;

@@ -38,8 +38,6 @@ namespace cube
 
 		gameThreadAsync.WaitUntilFinished();
 
-		CUBE_LOG(LogType::Info, "Finished Prepareing CubeEngine");
-
 		RegisterImporters();
 		InitComponents();
 

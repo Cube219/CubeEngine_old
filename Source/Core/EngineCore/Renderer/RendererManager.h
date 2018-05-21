@@ -42,7 +42,7 @@ namespace cube
 			HMaterial RegisterMaterial(SPtr<Material>& material);
 			void UnregisterMaterial(HMaterial& material);
 
-			void RegisterRenderer3D(SPtr<Renderer3D>& renderer); // RN: SyncTask에 넣기
+			void RegisterRenderer3D(SPtr<Renderer3D>& renderer);
 			void UnregisterRenderer3D(SPtr<Renderer3D>& renderer);
 
 			void RegisterLight(SPtr<DirectionalLight>& dirLight);
@@ -72,7 +72,7 @@ namespace cube
 			void RewriteCommandBuffer();
 			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D_RT>& renderer);
 
-			SPtr<render::GraphicsPipeline> CreatePipeline(HMaterial& material);
+			SPtr<render::GraphicsPipeline> CreatePipeline(SPtr<Material_RT> material);
 
 			EngineCore* mECore;
 			std::thread mGameThread;
@@ -86,12 +86,13 @@ namespace cube
 			SPtr<CameraRenderer3D> mCameraRenderer_NotRT;
 
 			Mutex mMaterialsMutex;
-			Vector<SPtr<MaterialData>> mMaterials; // RN: 이거 처리
+			Vector<SPtr<Material_RT>> mMaterials;
 			Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
 
 			SPtr<DirectionalLight_RT> mDirLight;
 			SPtr<render::Buffer> mDirLightBuffer;
 
+			Mutex mPointLightsMutex;
 			Vector<SPtr<PointLight_RT>> mPointLights;
 			SPtr<render::Buffer> mPointLightsBuffer;
 
