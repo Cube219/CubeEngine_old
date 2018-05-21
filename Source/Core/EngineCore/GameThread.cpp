@@ -2,6 +2,7 @@
 
 #include "EngineCore.h"
 #include "LogWriter.h"
+#include "Renderer/RenderingThread.h"
 #include <chrono>
 
 namespace cube
@@ -11,7 +12,21 @@ namespace cube
 		EngineCore* GameThread::mECore = nullptr;
 		std::thread GameThread::mMyThread;
 
+		Mutex GameThread::mMutex;
+		ThreadNotify GameThread::mRunNotify;
+
 		AsyncStateData GameThread::mPrepareAsyncData;
+		AsyncStateData GameThread::mSimulateAsyncData;
+		AsyncStateData GameThread::mProcessTaskBuffersAndSimulateAsyncData;
+
+		AsyncStateData GameThread::mSimulateNotifyAsyncData;
+		AsyncState GameThread::mSimulateNotifyAsync(&GameThread::mSimulateNotifyAsyncData);
+		AsyncStateData GameThread::mProcessTaskBuffersAndSimulateNotifyAsyncData;
+		AsyncState GameThread::mProcessTaskBuffersAndSimulateNotifyAsync(&GameThread::mProcessTaskBuffersAndSimulateNotifyAsyncData);
+
+
+		Mutex GameThread::mTaskBufferMutex;
+		TaskBuffer GameThread::mTaskBuffer;
 
 		void GameThread::Init(EngineCore* eCore)
 		{
@@ -22,21 +37,96 @@ namespace cube
 		{
 			mPrepareAsyncData.Reset();
 
-			mMyThread = std::thread(&GameThread::PrepareInternal);
+			mMyThread = std::thread(&GameThread::ThreadFunc);
 
-			return AsyncState(mPrepareAsyncData);
+			return AsyncState(&mPrepareAsyncData);
+		}
+
+		void GameThread::Run()
+		{
+			Lock lock(mMutex);
+
+			mSimulateNotifyAsyncData.Reset();
+			mProcessTaskBuffersAndSimulateNotifyAsyncData.Reset();
+
+			mRunNotify.notify_all();
+		}
+
+		AsyncState GameThread::SimulateAsync()
+		{
+			mSimulateAsyncData.Reset();
+
+			mSimulateNotifyAsyncData.DispatchCompletion();
+
+			return AsyncState(&mSimulateAsyncData);
+		}
+
+		AsyncState GameThread::ProcessTaskBuffersAndSimulateAsync()
+		{
+			mProcessTaskBuffersAndSimulateAsyncData.Reset();
+
+			mProcessTaskBuffersAndSimulateNotifyAsyncData.DispatchCompletion();
+
+			return AsyncState(&mProcessTaskBuffersAndSimulateAsyncData);
+		}
+
+		void GameThread::ThreadFunc()
+		{
+			PrepareInternal();
+
+			{
+				Lock lock(mMutex);
+				mRunNotify.wait(lock);
+			}
+
+			RunInternal();
 		}
 
 		void GameThread::PrepareInternal()
 		{
-			CUBE_LOG(LogType::Info, "Preparing EngineCore...");
 			mECore->PrepareCore();
 
-			//using namespace std::chrono_literals;
-			//std::this_thread::sleep_for(8s);
+			mPrepareAsyncData.DispatchCompletion();		
+		}
 
-			mPrepareAsyncData.DispatchCompletion();
-			CUBE_LOG(LogType::Info, "Finished Preparing EngineCore");
+		void GameThread::RunInternal()
+		{
+			mSimulateNotifyAsync.WaitUntilFinished();
+
+			mECore->Start();
+			mSimulateAsyncData.DispatchCompletion();
+
+			while(1) {
+				mProcessTaskBuffersAndSimulateNotifyAsync.WaitUntilFinished();
+
+				ProcessTaskBuffers();
+				Simulate();
+				mProcessTaskBuffersAndSimulateAsyncData.DispatchCompletion();
+
+				mProcessTaskBuffersAndSimulateNotifyAsyncData.Reset();
+
+				/*
+				{
+					Lock lock(mMutex);
+
+					mSimulateNotify.wait(lock);
+
+					Simulate();
+				}*/
+			}
+		}
+
+		void GameThread::ProcessTaskBuffers()
+		{
+			TaskBuffer& buf = RenderingThread::_GetTaskBuffer();
+			buf.ExecuteAll();
+
+			buf.Flush();
+		}
+
+		void GameThread::Simulate()
+		{
+			mECore->Update();
 		}
 	} // namespace core
 } // namespace cube

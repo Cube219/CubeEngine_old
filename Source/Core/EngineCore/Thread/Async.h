@@ -30,32 +30,32 @@ namespace cube
 		class ENGINE_CORE_EXPORT AsyncState
 		{
 		public:
-			AsyncState(AsyncStateData& data) : mAsyncData(data)
+			AsyncState(AsyncStateData* dataPtr) : mAsyncDataPtr(dataPtr)
 			{ }
 
 			void WaitUntilFinished()
 			{
-				Lock lock(mAsyncData.mMutex);
+				Lock lock(mAsyncDataPtr->mMutex);
 
-				if(mAsyncData.mIsFinished == false) {
-					mAsyncData.mFinishNofity.wait(lock);
+				if(mAsyncDataPtr->mIsFinished == false) {
+					mAsyncDataPtr->mFinishNofity.wait(lock);
 				}
 			}
 			bool IsDone()
 			{
-				Lock lock(mAsyncData.mMutex);
+				Lock lock(mAsyncDataPtr->mMutex);
 
-				return mAsyncData.mIsFinished;
+				return mAsyncDataPtr->mIsFinished;
 			}
 			float GetProgress()
 			{
-				Lock lock(mAsyncData.mMutex);
+				Lock lock(mAsyncDataPtr->mMutex);
 
-				return mAsyncData.mProgress;
+				return mAsyncDataPtr->mProgress;
 			}
 
 		private:
-			AsyncStateData& mAsyncData;
+			AsyncStateData* mAsyncDataPtr;
 		};
 	} // namespace core
 } // namespace cube

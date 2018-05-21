@@ -27,29 +27,29 @@ namespace cube
 
 		EngineCore::~EngineCore()
 		{
-			platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
-			platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
+			// platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
+			// platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
 		}
 
 		void EngineCore::Prepare()
 		{
 			mRendererManager = std::make_unique<RendererManager>(this);
 
-			//mThreadManager = std::make_shared<ThreadManager>();
+			// mThreadManager = std::make_shared<ThreadManager>();
 
-			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(std::bind(&EngineCore::Loop, this));
-			mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(std::bind(&EngineCore::Resize, this, _1, _2));
+			// mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(std::bind(&EngineCore::Loop, this));
+			// mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(std::bind(&EngineCore::Resize, this, _1, _2));
 
 			LogWriter::Init();
 		}
 
-		void EngineCore::Run()
+		void EngineCore::Start()
 		{
 			mTimeManager->Start();
 
 			mGameObjectManager->Start();
 
-			platform::Platform::StartLoop();
+			//platform::Platform::StartLoop();
 		}
 
 		float EngineCore::GetCurrentFPS()
@@ -78,7 +78,7 @@ namespace cube
 			mComponentManager = std::make_shared<ComponentManager>();
 		}
 
-		void EngineCore::Loop()
+		void EngineCore::Update()
 		{
 			mTimeManager->Update();
 
@@ -90,7 +90,7 @@ namespace cube
 
 			mGameObjectManager->Update(dt);
 			
-			mRendererManager->DrawAll();
+			// mRendererManager->DrawAll();
 
 			// Limit FPS
 			if(mFPSLimit > 0) {

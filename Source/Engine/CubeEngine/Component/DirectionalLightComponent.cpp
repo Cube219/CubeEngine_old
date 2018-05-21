@@ -10,7 +10,7 @@ namespace cube
 
 	DirectionalLightComponent::DirectionalLightComponent()
 	{
-		mDirLight = std::make_shared<core::DirectionalLight>();
+		mDirLight = core::DirectionalLight::Create();
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()

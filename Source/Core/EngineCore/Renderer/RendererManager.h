@@ -42,7 +42,7 @@ namespace cube
 			HMaterial RegisterMaterial(SPtr<Material>& material);
 			void UnregisterMaterial(HMaterial& material);
 
-			void RegisterRenderer3D(SPtr<Renderer3D>& renderer);
+			void RegisterRenderer3D(SPtr<Renderer3D>& renderer); // RN: SyncTask에 넣기
 			void UnregisterRenderer3D(SPtr<Renderer3D>& renderer);
 
 			void RegisterLight(SPtr<DirectionalLight>& dirLight);
@@ -61,6 +61,8 @@ namespace cube
 
 			void SetVsync(bool vsync);
 
+			SPtr<render::DescriptorSetLayout> _GetPerObjectDescriptorSetLayout(){ return mPerObjectDescriptorSetLayout; }
+
 		private:
 			friend class EngineCore;
 
@@ -68,33 +70,29 @@ namespace cube
 			void CreateRenderpass();
 
 			void RewriteCommandBuffer();
-			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D>& renderer);
+			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D_RT>& renderer);
 
 			SPtr<render::GraphicsPipeline> CreatePipeline(HMaterial& material);
 
 			EngineCore* mECore;
 			std::thread mGameThread;
 
-			ThreadNotify mFinishPreparingNotify;
-			ThreadNotify mFinishRenderingNotify;
-			ThreadNotify mFinishProcessingTaskBufferNotify;
-			ThreadNotify mFinishTerminating;
-
 			SPtr<platform::DLib> mRenderDLib;
 			SPtr<render::RenderAPI> mRenderAPI;
 
 			Mutex mRenderersMutex;
-			Vector<SPtr<Renderer3D>> mRenderers;
-			SPtr<CameraRenderer3D> mCameraRenderer;
+			Vector<SPtr<Renderer3D_RT>> mRenderers;
+			SPtr<CameraRenderer3D_RT> mCameraRenderer;
+			SPtr<CameraRenderer3D> mCameraRenderer_NotRT;
 
 			Mutex mMaterialsMutex;
-			Vector<SPtr<MaterialData>> mMaterials;
+			Vector<SPtr<MaterialData>> mMaterials; // RN: 이거 처리
 			Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
 
-			SPtr<DirectionalLight> mDirLight;
+			SPtr<DirectionalLight_RT> mDirLight;
 			SPtr<render::Buffer> mDirLightBuffer;
 
-			Vector<SPtr<PointLight>> mPointLights;
+			Vector<SPtr<PointLight_RT>> mPointLights;
 			SPtr<render::Buffer> mPointLightsBuffer;
 
 			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;

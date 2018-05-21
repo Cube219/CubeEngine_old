@@ -14,9 +14,23 @@ namespace cube
 		{
 			mTasks.push_back(taskFunction);
 		}
+
+		void QueueAndFlush(TaskBuffer& buf)
+		{
+			buf.mTasks.insert(buf.mTasks.end(), mTasks.begin(), mTasks.end());
+			mTasks.clear();
+		}
+
 		void Flush()
 		{
 			mTasks.clear();
+		}
+
+		void ExecuteAll()
+		{
+			for(auto& fun : mTasks) {
+				fun();
+			}
 		}
 
 	private:

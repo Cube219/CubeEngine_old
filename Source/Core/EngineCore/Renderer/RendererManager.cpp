@@ -96,7 +96,8 @@ namespace cube
 
 			// Create camera renderer
 			// TODO: multiple camera
-			mCameraRenderer = std::make_shared<CameraRenderer3D>();
+			mCameraRenderer_NotRT = CameraRenderer3D::Create();
+			mCameraRenderer = mCameraRenderer_NotRT->GetRenderObject_RT();
 
 			// Create Global / mPerObjectDescriptorSetLayout
 			render::DescriptorSetInitializer descSetInit;
@@ -136,7 +137,7 @@ namespace cube
 		{
 			Lock(mMaterialsMutex);
 
-			material->mIndex = (int)mMaterials.size();
+			material->GetRenderObject_RT()->mIndex = (int)mMaterials.size();
 
 			SPtr<MaterialData> matDataPtr = std::make_shared<MaterialData>();
 			matDataPtr->data = std::move(material);
@@ -151,7 +152,7 @@ namespace cube
 
 		void RendererManager::UnregisterMaterial(HMaterial& material)
 		{
-			int index = material->mIndex;
+			int index = material->GetRenderObject_RT()->mIndex;
 
 			if(index == -1) {
 				CUBE_LOG(LogType::Error, "This material is not registed.");
@@ -160,8 +161,8 @@ namespace cube
 
 			Lock(mMaterialsMutex);
 
-			int lastIndex = mMaterials.back()->data->mIndex;
-			mMaterials[lastIndex]->data->mIndex = index;
+			int lastIndex = mMaterials.back()->data->GetRenderObject_RT()->mIndex;
+			mMaterials[lastIndex]->data->GetRenderObject_RT()->mIndex = index;
 			
 			mMaterials[index]->data = nullptr;
 
@@ -173,18 +174,22 @@ namespace cube
 
 		void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
 		{
-			if(renderer->mIndex != -1)
+			SPtr<Renderer3D_RT> renderer_rt = renderer->GetRenderObject_RT();
+
+			if(renderer_rt->mIndex != -1)
 				return;
 
 			Lock(mRenderersMutex);
 
-			mRenderers.push_back(renderer);
-			renderer->mIndex = (int)mRenderers.size() - 1;
+			mRenderers.push_back(renderer_rt);
+			renderer_rt->mIndex = (int)mRenderers.size() - 1;
 		}
 
 		void RendererManager::UnregisterRenderer3D(SPtr<Renderer3D>& renderer)
 		{
-			int index = renderer->mIndex;
+			SPtr<Renderer3D_RT> renderer_rt = renderer->GetRenderObject_RT();
+
+			int index = renderer_rt->mIndex;
 
 			if(index == -1) {
 				CUBE_LOG(LogType::Error, "This renderer is not registed.");
@@ -199,7 +204,7 @@ namespace cube
 			std::swap(mRenderers[index], mRenderers[lastIndex]);
 			mRenderers.pop_back();
 
-			renderer->mIndex = -1;
+			renderer_rt->mIndex = -1;
 		}
 
 		void RendererManager::RegisterLight(SPtr<DirectionalLight>& dirLight)
@@ -209,12 +214,12 @@ namespace cube
 				return;
 			}
 
-			mDirLight = dirLight;
+			mDirLight = dirLight->GetRenderObject_RT();
 		}
 
 		void RendererManager::UnregisterLight(SPtr<DirectionalLight>& dirLight)
 		{
-			if(mDirLight != dirLight) {
+			if(mDirLight != dirLight->GetRenderObject_RT()) {
 				CUBE_LOG(LogType::Error, "This directional light is not registered.");
 				return;
 			}
@@ -229,12 +234,12 @@ namespace cube
 				return;
 			}
 
-			mPointLights.push_back(pointLight);
+			mPointLights.push_back(pointLight->GetRenderObject_RT());
 		}
 
 		void RendererManager::UnregisterLight(SPtr<PointLight>& pointLight)
 		{
-			auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight);
+			auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight->GetRenderObject_RT());
 
 			if(findIter == mPointLights.cend()) {
 				CUBE_LOG(LogType::Error, "This point light is not registered.");
@@ -246,12 +251,12 @@ namespace cube
 
 		SPtr<Renderer3D> RendererManager::CreateRenderer3D()
 		{
-			return std::make_shared<Renderer3D>(mRenderAPI, mPerObjectDescriptorSetLayout);
+			return Renderer3D::Create();
 		}
 
 		SPtr<CameraRenderer3D> RendererManager::GetCameraRenderer3D()
 		{
-			return mCameraRenderer;
+			return mCameraRenderer_NotRT;
 		}
 
 		void RendererManager::DrawAll()
@@ -456,7 +461,7 @@ namespace cube
 			mMainCommandBuffer->End();
 		}
 
-		void RendererManager::DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D>& renderer)
+		void RendererManager::DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D_RT>& renderer)
 		{
 			using namespace render;
 
@@ -467,7 +472,7 @@ namespace cube
 
 			Vector<SubMesh>& subMeshes = renderer->mMesh->GetSubMeshes();
 			for(uint32_t i = 0; i < subMeshes.size(); i++) {
-				HMaterialInstance matIns = renderer->mMaterialInses[i];
+				SPtr<MaterialInstance_RT> matIns = renderer->mMaterialInses[i];
 				int matIndex = matIns->GetMaterial()->mIndex;
 
 				if(matIndex != currentMatIndex) {
@@ -556,13 +561,13 @@ namespace cube
 			initializer.depthStencil.front = stencilOpState;
 			initializer.depthStencil.back = stencilOpState;
 
-			auto shaders = material->GetShaders();
+			auto shaders = material->GetRenderObject_RT()->GetShaders();
 			for(auto& shader : shaders) {
 				initializer.shaders.push_back(shader->GetRenderShader());
 			}
 
 			initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
-			initializer.descSetLayouts.push_back(material->GetDescriptorSetLayout());
+			initializer.descSetLayouts.push_back(material->GetRenderObject_RT()->GetDescriptorSetLayout());
 			initializer.descSetLayouts.push_back(mPerObjectDescriptorSetLayout);
 
 			initializer.renderPass = mRenderPass;

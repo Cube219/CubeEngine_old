@@ -48,7 +48,8 @@ namespace cube
 
 	void CubeEngine::Run()
 	{
-		core::ECore()->Run();
+		core::GameThread::Run();
+		core::RenderingThread::Run();
 	}
 
 	void CubeEngine::Destroy()

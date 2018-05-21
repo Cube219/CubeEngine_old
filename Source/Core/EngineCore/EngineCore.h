@@ -44,7 +44,7 @@ namespace cube
 		public:
 			void Prepare();
 
-			void Run();
+			void Start();
 
 			float GetCurrentFPS();
 
@@ -65,16 +65,11 @@ namespace cube
 
 			void PrepareCore();
 
-			void Loop();
+			void Update();
 			EventFunction<void()> mLoopEventFunc;
 
 			void Resize(uint32_t width, uint32_t height);
 			EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
-
-			ThreadNotify mFinishPreparingNotify;
-			ThreadNotify mFinishSimulatingNotify;
-			ThreadNotify mFinishProcessingTaskBufferNotify;
-			ThreadNotify mFinishTerminating;
 
 			SPtr<RendererManager> mRendererManager;
 
