@@ -2,7 +2,12 @@
 
 #include <stdint.h>
 
+// After Visual Studio 15.8, to use extended alignment, you should define it.
+// This will occur when you make shared_ptr with the type of alignment over alignof(max_align_t) using std::make_shared
+// (https://developercommunity.visualstudio.com/content/problem/274945/stdmake-shared-is-not-honouring-alignment-of-a.html)
+#define _ENABLE_EXTENDED_ALIGNED_STORAGE
 #include <memory>
+
 #include <utility>
 // TODO: Release일 때 전부 RCast로
 #define DCast(T) dynamic_cast<T>
