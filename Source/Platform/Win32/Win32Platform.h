@@ -12,6 +12,13 @@ namespace cube
 {
 	namespace platform
 	{
+		struct Platform::Data
+		{
+			HINSTANCE instance;
+			HWND window;
+			bool isCursorShown = true;
+		};
+
 		class PLATFORM_EXPORT Win32Platform : public Platform
 		{
 		public:

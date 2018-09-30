@@ -12,6 +12,15 @@ namespace cube
 {
 	namespace platform
 	{
+		//////////
+		// File //
+		//////////
+
+		struct File::Data
+		{
+			HANDLE fileHandle;
+		};
+
 		class PLATFORM_EXPORT Win32File : public File
 		{
 		public:
@@ -19,7 +28,15 @@ namespace cube
 			virtual ~Win32File();
 		};
 
+		////////////////
+		// FileSystem //
+		////////////////
+
 		DWORD GetDwDesiredAccess(FileAccessModeBits accessMode);
+
+		struct FileSystem::Data
+		{
+		};
 
 		class Win32FileSystem : public FileSystem
 		{
