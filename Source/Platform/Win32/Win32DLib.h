@@ -12,6 +12,11 @@ namespace cube
 {
 	namespace platform
 	{
+		struct DLib::Data
+		{
+			HMODULE dLib;
+		};
+
 		class PLATFORM_EXPORT Win32DLib : public DLib
 		{
 		public:

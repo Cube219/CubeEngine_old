@@ -13,11 +13,6 @@ namespace cube
 		//////////
 		// File //
 		//////////
-		struct File::Data
-		{
-			HANDLE fileHandle;
-		};
-
 		uint64_t File::GetFileSize()
 		{
 			LARGE_INTEGER size_LI;
@@ -96,9 +91,6 @@ namespace cube
 		////////////////
 		// FileSystem //
 		////////////////
-		struct FileSystem::Data
-		{
-		};
 
 		DWORD GetDwDesiredAccess(FileAccessModeBits accessMode)
 		{

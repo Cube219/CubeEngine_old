@@ -13,13 +13,6 @@ namespace cube
 {
 	namespace platform
 	{
-		struct Platform::Data
-		{
-			HINSTANCE instance;
-			HWND window;
-			bool isCursorShown = true;
-		};
-
 		Platform::Data Platform::data;
 
 		SPtr<FileSystem> Platform::fileSystem;

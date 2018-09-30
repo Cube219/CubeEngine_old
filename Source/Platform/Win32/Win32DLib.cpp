@@ -10,11 +10,6 @@ namespace cube
 {
 	namespace platform
 	{
-		struct DLib::Data
-		{
-			HMODULE dLib;
-		};
-
 		void* DLib::GetFunction(const String& name)
 		{
 			if(!mData->dLib)
