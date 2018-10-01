@@ -85,8 +85,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32;VULKAN_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI_New;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>OSDependentd.lib;SPVRemapperd.lib;SPIRVd.lib;OGLCompilerd.lib;HLSLd.lib;glslangd.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -125,8 +125,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32;VULKAN_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI_New;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -153,6 +153,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />
+    <ClCompile Include="Interface\DeviceVk.cpp" />
+    <ClCompile Include="VulkanAPI.cpp" />
+    <ClCompile Include="VulkanUtility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interface\DeviceVk.h" />
+    <ClInclude Include="VulkanAPI.h" />
+    <ClInclude Include="VulkanAPIHeader.h" />
+    <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

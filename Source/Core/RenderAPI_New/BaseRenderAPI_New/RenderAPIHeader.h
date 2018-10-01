@@ -6,6 +6,10 @@ namespace cube
 {
 	namespace render
 	{
+		struct RenderAPIAttribute;
+		class RenderAPI;
+
+		struct DeviceAttribute;
 		class Device;
 
 		class Buffer;
