@@ -124,6 +124,18 @@
   <ItemGroup>
     <ClCompile Include="a.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interface\Buffer.h" />
+    <ClInclude Include="Interface\BufferView.h" />
+    <ClInclude Include="Interface\Device.h" />
+    <ClInclude Include="Interface\Fence.h" />
+    <ClInclude Include="Interface\GraphicsPipelineState.h" />
+    <ClInclude Include="Interface\Sampler.h" />
+    <ClInclude Include="Interface\Shader.h" />
+    <ClInclude Include="Interface\SwapChain.h" />
+    <ClInclude Include="Interface\Texture.h" />
+    <ClInclude Include="Interface\TextureView.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
