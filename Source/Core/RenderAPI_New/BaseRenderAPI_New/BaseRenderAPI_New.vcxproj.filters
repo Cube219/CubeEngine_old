@@ -42,5 +42,8 @@
     <ClInclude Include="RenderAPIHeader.h" />
     <ClInclude Include="RenderTypes.h" />
     <ClInclude Include="RenderAPI.h" />
+    <ClInclude Include="Interface\CommandList.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

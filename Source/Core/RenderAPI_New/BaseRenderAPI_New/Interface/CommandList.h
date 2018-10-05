@@ -6,17 +6,11 @@ namespace cube
 {
 	namespace render
 	{
-		struct DeviceAttribute
-		{
-			uint32_t GPUIndex;
-			bool enableDebugLayer;
-		};
-
-		class Device
+		class CommandList
 		{
 		public:
-			Device() {}
-			virtual ~Device() {}
+			CommandList() {}
+			virtual ~CommandList() {}
 		};
 	} // namespace render
 } // namespace cube

@@ -2,12 +2,16 @@
 #pragma warning(disable:4251)
 #pragma warning(disable:4275)
 
+#include "Base/BaseTypes.h"
+
 #include <vulkan/vulkan.h>
 
 namespace cube
 {
 	namespace render
 	{
+		class VulkanPhysicalDevice;
+
 		class DeviceVk;
 	} // namespace render
 } // namespace cube

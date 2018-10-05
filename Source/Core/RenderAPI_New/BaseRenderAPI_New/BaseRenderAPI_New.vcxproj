@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClInclude Include="Interface\Buffer.h" />
     <ClInclude Include="Interface\BufferView.h" />
+    <ClInclude Include="Interface\CommandList.h" />
     <ClInclude Include="Interface\Device.h" />
     <ClInclude Include="Interface\Fence.h" />
     <ClInclude Include="Interface\GraphicsPipelineState.h" />

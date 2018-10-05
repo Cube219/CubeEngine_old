@@ -1,6 +1,8 @@
 #include "VulkanAPI.h"
 
 #include "VulkanUtility.h"
+#include "Interface/DeviceVk.h"
+#include "VulkanPhysicalDevice.h"
 
 namespace cube
 {
@@ -19,11 +21,30 @@ namespace cube
 		void VulkanAPI::Init(const RenderAPIAttribute& attr)
 		{
 			CreateInstance(attr);
+
+			// Get PhysicalDevices(GPU)
+			VkResult res;
+			uint32_t physicalDeviceNum;
+			res = vkEnumeratePhysicalDevices(mInstance, &physicalDeviceNum, nullptr);
+			CheckVkResult("Failed to get physical device number", res);
+			Vector<VkPhysicalDevice> pd;
+			pd.resize(physicalDeviceNum);
+			res = vkEnumeratePhysicalDevices(mInstance, &physicalDeviceNum, pd.data());
+			CheckVkResult("Failed to enumerate physical devices", res);
+			for (size_t i = 0; i < pd.size(); i++) {
+				mPhysicalDevices.push_back(std::make_unique<VulkanPhysicalDevice>(pd[i]));
+			}
 		}
 
 		SPtr<Device> VulkanAPI::GetDevice(const DeviceAttribute& attr)
 		{
-			return SPtr<Device>();
+			VkPhysicalDeviceFeatures features;
+			features.tessellationShader = true;
+			features.geometryShader = true;
+			features.samplerAnisotropy = true;
+			features.multiDrawIndirect = true;
+
+			return std::make_shared<DeviceVk>(mPhysicalDevices[attr.GPUIndex], features, attr.enableDebugLayer);
 		}
 
 		void VulkanAPI::CreateInstance(const RenderAPIAttribute& attr)

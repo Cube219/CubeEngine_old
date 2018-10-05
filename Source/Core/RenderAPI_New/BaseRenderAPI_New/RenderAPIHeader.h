@@ -27,5 +27,7 @@ namespace cube
 		class Shader;
 
 		class Sampler;
+
+		class CommandList;
 	} // namespace render
 } // namespace cube

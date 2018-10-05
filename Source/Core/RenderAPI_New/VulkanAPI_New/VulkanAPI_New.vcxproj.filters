@@ -7,6 +7,7 @@
     </ClCompile>
     <ClCompile Include="VulkanAPI.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
+    <ClCompile Include="VulkanPhysicalDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -20,5 +21,6 @@
     <ClInclude Include="VulkanAPIHeader.h" />
     <ClInclude Include="VulkanAPI.h" />
     <ClInclude Include="VulkanUtility.h" />
+    <ClInclude Include="VulkanPhysicalDevice.h" />
   </ItemGroup>
 </Project>

@@ -155,12 +155,14 @@
     <ClCompile Include="a.cpp" />
     <ClCompile Include="Interface\DeviceVk.cpp" />
     <ClCompile Include="VulkanAPI.cpp" />
+    <ClCompile Include="VulkanPhysicalDevice.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interface\DeviceVk.h" />
     <ClInclude Include="VulkanAPI.h" />
     <ClInclude Include="VulkanAPIHeader.h" />
+    <ClInclude Include="VulkanPhysicalDevice.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
