@@ -38,14 +38,14 @@ namespace cube
 		class PLATFORM_EXPORT FileSystem
 		{
 		public:
-			FileSystem(){ }
-			virtual ~FileSystem(){ }
+			FileSystem() = delete;
+			~FileSystem() = delete;
 
-			SPtr<File> OpenFile(const String& path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
+			static SPtr<File> OpenFile(const String& path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
 
 		protected:
 			struct Data;
-			Data* mData;
+			static Data data;
 		};
 	} // namespace platform
 } // namespace cube

@@ -92,6 +92,8 @@ namespace cube
 		// FileSystem //
 		////////////////
 
+		FileSystem::Data FileSystem::data;
+
 		DWORD GetDwDesiredAccess(FileAccessModeBits accessMode)
 		{
 			DWORD d = 0;
