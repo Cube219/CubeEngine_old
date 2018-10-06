@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+#include "../PlatformAssertion.h"
 #include "../PlatformString.h"
 
 namespace cube
@@ -17,12 +18,7 @@ namespace cube
 		{
 			LARGE_INTEGER size_LI;
 			BOOL res = GetFileSizeEx(mFileHandle, &size_LI);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Failed to get file size. / ErrorCode: " << err << std::endl;
-				return 0;
-			}
+			CHECK(res, "Failed to get file size. (ErrorCode: {0})", GetLastError());
 
 			return size_LI.QuadPart;
 		}
@@ -33,11 +29,7 @@ namespace cube
 			distance_LI.QuadPart = offset;
 
 			BOOL res = SetFilePointerEx(mFileHandle, distance_LI, NULL, FILE_BEGIN);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Failed to set file pointer. / ErrorCode: " << err << std::endl;
-			}
+			CHECK(res, "Failed to set file pointer. (ErrorCode: {0})", GetLastError());
 		}
 
 		void Win32File::MoveFilePointerImpl(int64_t distance)
@@ -46,32 +38,20 @@ namespace cube
 			distance_LI.QuadPart = distance;
 
 			BOOL res = SetFilePointerEx(mFileHandle, distance_LI, NULL, FILE_CURRENT);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Failed to move file pointer. / ErrorCode: " << err << std::endl;
-			}
+			CHECK(res, "Failed to move file pointer. (ErrorCode: {0})", GetLastError());
 		}
 
 		void Win32File::ReadImpl(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize)
 		{
 			BOOL res = ReadFile(mFileHandle, pReadBuffer, (DWORD)bufferSizeToRead, (LPDWORD)&readBufferSize, NULL);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Failed to read the file. / ErrorCode: " << err << std::endl;
-			}
+			CHECK(res, "Failed to read the file. (ErrorCode: {0})", GetLastError());
 		}
 
 		void Win32File::WriteImpl(void* pWriteBuffer, uint64_t bufferSize)
 		{
 			DWORD writtenSize;
 			BOOL res = WriteFile(mFileHandle, pWriteBuffer, (DWORD)bufferSize, &writtenSize, nullptr);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Failed to write the file. / ErrorCode: " << err << std::endl;
-			}
+			CHECK(res, "Failed to write the file. (ErrorCode: {0})", GetLastError());
 		}
 
 		Win32File::Win32File(HANDLE fileHandle) : 
@@ -110,7 +90,7 @@ namespace cube
 				err = GetLastError();
 			}
 
-			std::wcout << L"Win32FileSystem: Cannot open a file. (" << pPath << L") / ErrorCode: " << err << std::endl;
+			CHECK(false, "Failed to open a file. ({0}) (ErrorCode: {1})", path, err);
 			return nullptr;
 		}
 

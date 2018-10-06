@@ -6,26 +6,20 @@
 #include <iostream>
 #include <mutex>
 
+#include "../PlatformAssertion.h"
+
 namespace cube
 {
 	PString ToPString(const U8String& str)
 	{
 		int pStrLength = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), nullptr, 0);
-
-		if(pStrLength == 0) {
-			std::wcout << L"Win32String: Failed to convert UTF8 to WString (Error code: " << GetLastError() << " )" << std::endl;
-			return 0;
-		}
+		CHECK(pStrLength > 0, "Failed to convert UTF8 to WString (Error code: {0})", GetLastError());
 
 		PString pStr;
 		pStr.resize(pStrLength);
 
 		int res = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), &pStr[0], pStrLength);
-
-		if(res == 0) {
-			std::wcout << L"Win32String: Failed to convert UTF8 to WString (Error code: " << GetLastError() << " )" << std::endl;
-			return 0;
-		}
+		CHECK(res != 0, "Failed to convert UTF8 to WString (Error code: {0})", GetLastError());
 
 		return pStr;
 	}
@@ -83,19 +77,13 @@ namespace cube
 	U8String ToU8String(const PString& str)
 	{
 		int u8StrLength = WideCharToMultiByte(CP_UTF8, 0, str.data(), (int)str.size(), nullptr, 0, NULL, NULL);
-		if(u8StrLength == 0) {
-			std::wcout << L"Win32String: Failed to convert WString to UTF8 (Error code: " << GetLastError() << " )" << std::endl;
-			return 0;
-		}
+		CHECK(u8StrLength > 0, "Failed to convert WString to UTF8 (Error code: {0})", GetLastError());
 
 		U8String u8Str;
 		u8Str.resize(u8StrLength);
 
 		int res = WideCharToMultiByte(CP_UTF8, 0, str.data(), (int)str.size(), &u8Str[0], u8StrLength, NULL, NULL);
-		if(res == 0) {
-			std::wcout << L"Win32String: Failed to convert WString to UTF8 (Error code: " << GetLastError() << " )" << std::endl;
-			return 0;
-		}
+		CHECK(res != 0, "Failed to convert WString to UTF8 (Error code: {0})", GetLastError());
 
 		return u8Str;
 	}
@@ -105,11 +93,11 @@ namespace cube
 		ucs2Str.reserve(str.size());
 
 		for(auto iter = str.cbegin(); iter != str.cend(); iter++) {
-			if((*iter & 0xFC00) == 0xD800) { // High surrogate
-				std::wcout << L"Win32String: The character placed in high surrogates (0xD800 ~ ). It can't be presented by UCS2.";
-			} else if((*iter & 0xFC00) == 0xDC00) { // Low surrogate
-				std::wcout << L"Win32String: The character placed in low surrogates (0xDC00 ~ ). It can't be presented by UCS2.";
-			}
+			// High surrogate
+			CHECK_LITE((*iter & 0xFC00) != 0xD800, "The character placed in high surrogates (0xD800 ~ ). It can't be presented by UCS2.");
+			// Low surrogate
+			CHECK_LITE((*iter & 0xFC00) == 0xDC00, "The character placed in low surrogates (0xDC00 ~ ). It can't be presented by UCS2.");
+
 			ucs2Str.push_back(*iter);
 		}
 

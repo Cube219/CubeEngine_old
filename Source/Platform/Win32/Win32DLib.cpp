@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+#include "../PlatformAssertion.h"
 #include "../PlatformString.h"
 
 namespace cube
@@ -15,19 +16,14 @@ namespace cube
 			PString pathWithExtension = ToPString(path) + L".dll";
 
 			mDLib = LoadLibrary(pathWithExtension.c_str());
-
-			if(mDLib == NULL) {
-				std::wcout << L"Win32DLib: Failed to load a DLib. (" << pathWithExtension << L")" << std::endl;
-			}
+			CHECK(mDLib, "Failed to load a DLib. ({0}.dll) (ErrorCode: {1})", path, GetLastError());
 		}
 
 		Win32DLib::~Win32DLib()
 		{
 			if(mDLib) {
 				BOOL r = FreeLibrary(mDLib);
-				if(r == 0) {
-					std::wcout << L"Win32DLib: Failed to unload the DLib." << std::endl;
-				}
+				CHECK(r, "Failed to unload the DLib. (ErrorCode: {0})", GetLastError());
 			}
 		}
 
@@ -38,10 +34,7 @@ namespace cube
 
 			std::string aName = ToASCIIString(name);
 			auto pFunction = GetProcAddress(mDLib, aName.c_str());
-			if(pFunction == NULL) {
-				std::wcout << L"Win32DLib: Failed to get the function. (Error: " << GetLastError() << ")" << std::endl;
-				return nullptr;
-			}
+			CHECK(pFunction, "Failed to get the function({0}). (ErrorCode: {1})", name, GetLastError());
 
 			return RCast(void*)(pFunction);
 		}

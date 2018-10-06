@@ -6,6 +6,7 @@
 #include <io.h> 
 #include <fcntl.h>
 
+#include "../PlatformAssertion.h"
 #include "Win32DLib.h"
 #include "Win32FileSystem.h"
 
@@ -82,9 +83,9 @@ namespace cube
 			winClass.lpszMenuName = nullptr;
 			winClass.lpszClassName = Platform::title.c_str();
 			winClass.hIconSm = LoadIcon(nullptr, IDI_WINLOGO);
-
-			if(!RegisterClassEx(&winClass))
-				std::wcout << L"Win32Platform: Failed to registration while initializing window" << std::endl;
+			
+			auto res = RegisterClassEx(&winClass);
+			CHECK(res, "Failed to registration while initializing window");
 		}
 
 		void Win32Platform::ShowWindowImpl()
@@ -96,9 +97,7 @@ namespace cube
 				100, 100, width, height,
 				nullptr, nullptr, instance, nullptr);
 
-			if(!window) {
-				std::wcout << L"WinPlatform: Failed to create a window" << std::endl;
-			}
+			CHECK(window, "Failed to create a window");
 		}
 
 		void Win32Platform::StartLoopImpl()
@@ -203,7 +202,7 @@ namespace cube
 					else if(s == WA_INACTIVE)
 						state = WindowActivatedState::Inactive;
 					else {
-						std::wcout << "Win32Platform: Invalid actiave state (" << s << ")" << std::endl;
+						CHECK_LITE(false, "Invalid activated state ({0})", s);
 					}
 
 					Platform::activatedEvent.Dispatch(state);
