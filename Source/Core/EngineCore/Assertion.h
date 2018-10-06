@@ -32,16 +32,9 @@ namespace cube
 		ASSERTION_FAILED(msg, ##__VA_ARGS__) \
 	}
 
-#define CHECK_LITE(expr, msg, ...)                                                           \
-	if(!(expr)) {                                                                            \
-		cube::String str = fmt::format(CUBE_T("Assertion_Lite Failed! : {0}"), CUBE_T(msg)); \
-		CUBE_LOG(cube::LogType::Warning, str, ##__VA_ARGS__);                                \
-	}
-
 #else // _DEBUG
 
 #define ASSERTION_FAILED(msg, ...)
 #define CHECK(expr, msg, ...)
-#define CHECK_LITE(expr, msg, ...)
 
 #endif // _DEBUG

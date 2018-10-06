@@ -13,13 +13,13 @@ namespace cube
 	PString ToPString(const U8String& str)
 	{
 		int pStrLength = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), nullptr, 0);
-		CHECK(pStrLength > 0, "Failed to convert UTF8 to WString (Error code: {0})", GetLastError());
+		PLATFORM_CHECK(pStrLength > 0, "Failed to convert UTF8 to WString (Error code: {0})", GetLastError());
 
 		PString pStr;
 		pStr.resize(pStrLength);
 
 		int res = MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), &pStr[0], pStrLength);
-		CHECK(res != 0, "Failed to convert UTF8 to WString (Error code: {0})", GetLastError());
+		PLATFORM_CHECK(res != 0, "Failed to convert UTF8 to WString (Error code: {0})", GetLastError());
 
 		return pStr;
 	}
@@ -77,13 +77,13 @@ namespace cube
 	U8String ToU8String(const PString& str)
 	{
 		int u8StrLength = WideCharToMultiByte(CP_UTF8, 0, str.data(), (int)str.size(), nullptr, 0, NULL, NULL);
-		CHECK(u8StrLength > 0, "Failed to convert WString to UTF8 (Error code: {0})", GetLastError());
+		PLATFORM_CHECK(u8StrLength > 0, "Failed to convert WString to UTF8 (Error code: {0})", GetLastError());
 
 		U8String u8Str;
 		u8Str.resize(u8StrLength);
 
 		int res = WideCharToMultiByte(CP_UTF8, 0, str.data(), (int)str.size(), &u8Str[0], u8StrLength, NULL, NULL);
-		CHECK(res != 0, "Failed to convert WString to UTF8 (Error code: {0})", GetLastError());
+		PLATFORM_CHECK(res != 0, "Failed to convert WString to UTF8 (Error code: {0})", GetLastError());
 
 		return u8Str;
 	}
@@ -93,10 +93,11 @@ namespace cube
 		ucs2Str.reserve(str.size());
 
 		for(auto iter = str.cbegin(); iter != str.cend(); iter++) {
-			// High surrogate
-			CHECK_LITE((*iter & 0xFC00) != 0xD800, "The character placed in high surrogates (0xD800 ~ ). It can't be presented by UCS2.");
-			// Low surrogate
-			CHECK_LITE((*iter & 0xFC00) == 0xDC00, "The character placed in low surrogates (0xDC00 ~ ). It can't be presented by UCS2.");
+			if((*iter & 0xFC00) == 0xD800) { // High surrogate
+				PLATFORM_PRINT_LOG("The character placed in high surrogates (0xD800 ~ ). It can't be presented by UCS2.");
+			} else if((*iter & 0xFC00) == 0xDC00) { // Low surrogate
+				PLATFORM_PRINT_LOG("The character placed in low surrogates (0xDC00 ~ ). It can't be presented by UCS2.");
+			}
 
 			ucs2Str.push_back(*iter);
 		}

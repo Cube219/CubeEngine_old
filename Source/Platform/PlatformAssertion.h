@@ -38,19 +38,21 @@ namespace cube
 
 #ifdef _DEBUG
 
-#define CHECK(expr, msg, ...)                                                            \
-	if(!(expr)){                                                                         \
-		cube::platform::AssertionFailed(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__); \
+#define PLATFORM_ASSERTION_FAILED(msg, ...)                                          \
+	cube::platform::AssertionFailed(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__);
+
+#define PLATFORM_CHECK(expr, msg, ...)                 \
+	if(!(expr)){                                       \
+		PLATFORM_ASSERTION_FAILED(msg, ##__VA_ARGS__); \
 	}
 
-#define CHECK_LITE(expr, msg, ...)                                                    \
-	if(!(expr)) {                                                                     \
-		cube::platform::PrintConsole(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__); \
-	}
+#define PLATFORM_PRINT_LOG(msg, ...)                                              \
+	cube::platform::PrintConsole(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__);
 
 #else // _DEBUG
 
-#define CHECK(expr, msg, ...)
-#define CHECK_LITE(expr, msg, ...)
+#define PLATFORM_ASSERTION_FAILED(msg, ...)
+#define PLATFORM_CHECK(expr, msg, ...)
+#define PLATFORM_PRINT_LOG(msg, ...)
 
 #endif // _DEBUG

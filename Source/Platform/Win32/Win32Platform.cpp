@@ -85,7 +85,7 @@ namespace cube
 			winClass.hIconSm = LoadIcon(nullptr, IDI_WINLOGO);
 			
 			auto res = RegisterClassEx(&winClass);
-			CHECK(res, "Failed to registration while initializing window");
+			PLATFORM_CHECK(res, "Failed to registration while initializing window");
 		}
 
 		void Win32Platform::ShowWindowImpl()
@@ -97,7 +97,7 @@ namespace cube
 				100, 100, width, height,
 				nullptr, nullptr, instance, nullptr);
 
-			CHECK(window, "Failed to create a window");
+			PLATFORM_CHECK(window, "Failed to create a window");
 		}
 
 		void Win32Platform::StartLoopImpl()
@@ -202,7 +202,7 @@ namespace cube
 					else if(s == WA_INACTIVE)
 						state = WindowActivatedState::Inactive;
 					else {
-						CHECK_LITE(false, "Invalid activated state ({0})", s);
+						PLATFORM_PRINT_LOG("Invalid activated state ({0})", s);
 					}
 
 					Platform::activatedEvent.Dispatch(state);

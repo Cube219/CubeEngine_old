@@ -18,7 +18,7 @@ namespace cube
 		{
 			LARGE_INTEGER size_LI;
 			BOOL res = GetFileSizeEx(mFileHandle, &size_LI);
-			CHECK(res, "Failed to get file size. (ErrorCode: {0})", GetLastError());
+			PLATFORM_CHECK(res, "Failed to get file size. (ErrorCode: {0})", GetLastError());
 
 			return size_LI.QuadPart;
 		}
@@ -29,7 +29,7 @@ namespace cube
 			distance_LI.QuadPart = offset;
 
 			BOOL res = SetFilePointerEx(mFileHandle, distance_LI, NULL, FILE_BEGIN);
-			CHECK(res, "Failed to set file pointer. (ErrorCode: {0})", GetLastError());
+			PLATFORM_CHECK(res, "Failed to set file pointer. (ErrorCode: {0})", GetLastError());
 		}
 
 		void Win32File::MoveFilePointerImpl(int64_t distance)
@@ -38,20 +38,20 @@ namespace cube
 			distance_LI.QuadPart = distance;
 
 			BOOL res = SetFilePointerEx(mFileHandle, distance_LI, NULL, FILE_CURRENT);
-			CHECK(res, "Failed to move file pointer. (ErrorCode: {0})", GetLastError());
+			PLATFORM_CHECK(res, "Failed to move file pointer. (ErrorCode: {0})", GetLastError());
 		}
 
 		void Win32File::ReadImpl(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize)
 		{
 			BOOL res = ReadFile(mFileHandle, pReadBuffer, (DWORD)bufferSizeToRead, (LPDWORD)&readBufferSize, NULL);
-			CHECK(res, "Failed to read the file. (ErrorCode: {0})", GetLastError());
+			PLATFORM_CHECK(res, "Failed to read the file. (ErrorCode: {0})", GetLastError());
 		}
 
 		void Win32File::WriteImpl(void* pWriteBuffer, uint64_t bufferSize)
 		{
 			DWORD writtenSize;
 			BOOL res = WriteFile(mFileHandle, pWriteBuffer, (DWORD)bufferSize, &writtenSize, nullptr);
-			CHECK(res, "Failed to write the file. (ErrorCode: {0})", GetLastError());
+			PLATFORM_CHECK(res, "Failed to write the file. (ErrorCode: {0})", GetLastError());
 		}
 
 		Win32File::Win32File(HANDLE fileHandle) : 
@@ -90,7 +90,7 @@ namespace cube
 				err = GetLastError();
 			}
 
-			CHECK(false, "Failed to open a file. ({0}) (ErrorCode: {1})", path, err);
+			PLATFORM_ASSERTION_FAILED("Failed to open a file. ({0}) (ErrorCode: {1})", path, err);
 			return nullptr;
 		}
 

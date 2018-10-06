@@ -16,14 +16,14 @@ namespace cube
 			PString pathWithExtension = ToPString(path) + L".dll";
 
 			mDLib = LoadLibrary(pathWithExtension.c_str());
-			CHECK(mDLib, "Failed to load a DLib. ({0}.dll) (ErrorCode: {1})", path, GetLastError());
+			PLATFORM_CHECK(mDLib, "Failed to load a DLib. ({0}.dll) (ErrorCode: {1})", path, GetLastError());
 		}
 
 		Win32DLib::~Win32DLib()
 		{
 			if(mDLib) {
 				BOOL r = FreeLibrary(mDLib);
-				CHECK(r, "Failed to unload the DLib. (ErrorCode: {0})", GetLastError());
+				PLATFORM_CHECK(r, "Failed to unload the DLib. (ErrorCode: {0})", GetLastError());
 			}
 		}
 
@@ -34,7 +34,7 @@ namespace cube
 
 			std::string aName = ToASCIIString(name);
 			auto pFunction = GetProcAddress(mDLib, aName.c_str());
-			CHECK(pFunction, "Failed to get the function({0}). (ErrorCode: {1})", name, GetLastError());
+			PLATFORM_CHECK(pFunction, "Failed to get the function({0}). (ErrorCode: {1})", name, GetLastError());
 
 			return RCast(void*)(pFunction);
 		}
