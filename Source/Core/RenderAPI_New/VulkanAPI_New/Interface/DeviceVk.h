@@ -11,7 +11,7 @@ namespace cube
 		class DeviceVk final : public Device
 		{
 		public:
-			DeviceVk(UPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
+			DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
 				bool enableDebugLayer);
 			virtual ~DeviceVk();
 

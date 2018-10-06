@@ -41,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseRenderAPI_New", "Source
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VulkanAPI_New", "Source\Core\RenderAPI_New\VulkanAPI_New\VulkanAPI_New.vcxproj", "{7593D4E0-6BA6-40A9-BB66-628234D34E0F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Source\Test\Test.vcxproj", "{B92210BA-118F-456F-99D5-3D995F87B377}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -145,6 +147,14 @@ Global
 		{7593D4E0-6BA6-40A9-BB66-628234D34E0F}.Release|x64.Build.0 = Release|x64
 		{7593D4E0-6BA6-40A9-BB66-628234D34E0F}.Release|x86.ActiveCfg = Release|Win32
 		{7593D4E0-6BA6-40A9-BB66-628234D34E0F}.Release|x86.Build.0 = Release|Win32
+		{B92210BA-118F-456F-99D5-3D995F87B377}.Debug|x64.ActiveCfg = Debug|x64
+		{B92210BA-118F-456F-99D5-3D995F87B377}.Debug|x64.Build.0 = Debug|x64
+		{B92210BA-118F-456F-99D5-3D995F87B377}.Debug|x86.ActiveCfg = Debug|Win32
+		{B92210BA-118F-456F-99D5-3D995F87B377}.Debug|x86.Build.0 = Debug|Win32
+		{B92210BA-118F-456F-99D5-3D995F87B377}.Release|x64.ActiveCfg = Release|x64
+		{B92210BA-118F-456F-99D5-3D995F87B377}.Release|x64.Build.0 = Release|x64
+		{B92210BA-118F-456F-99D5-3D995F87B377}.Release|x86.ActiveCfg = Release|Win32
+		{B92210BA-118F-456F-99D5-3D995F87B377}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

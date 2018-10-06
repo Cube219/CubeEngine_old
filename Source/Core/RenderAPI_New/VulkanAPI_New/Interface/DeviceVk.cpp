@@ -7,7 +7,7 @@ namespace cube
 {
 	namespace render
 	{
-		DeviceVk::DeviceVk(UPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
+		DeviceVk::DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
 			bool enableDebugLayer)
 		{
 			VkResult res;

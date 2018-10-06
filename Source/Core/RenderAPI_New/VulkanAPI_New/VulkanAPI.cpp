@@ -32,7 +32,7 @@ namespace cube
 			res = vkEnumeratePhysicalDevices(mInstance, &physicalDeviceNum, pd.data());
 			CheckVkResult("Failed to enumerate physical devices", res);
 			for (size_t i = 0; i < pd.size(); i++) {
-				mPhysicalDevices.push_back(std::make_unique<VulkanPhysicalDevice>(pd[i]));
+				mPhysicalDevices.push_back(std::make_shared<VulkanPhysicalDevice>(pd[i]));
 			}
 		}
 
