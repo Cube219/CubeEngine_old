@@ -13,10 +13,11 @@ namespace cube
 			virtual ~DLib(){ }
 
 			void* GetFunction(const String& name);
-
-		protected:
-			struct Data;
-			Data* mData;
 		};
+
+#define DLIB_DEFINITION(Child)                                 \
+		inline void* DLib::GetFunction(const String& name) {   \
+			return RCast(Child*)(this)->GetFunctionImpl(name); \
+		}
 	} // namespace platform
 } // namespace cube

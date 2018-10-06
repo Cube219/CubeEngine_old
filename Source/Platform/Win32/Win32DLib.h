@@ -12,17 +12,18 @@ namespace cube
 {
 	namespace platform
 	{
-		struct DLib::Data
-		{
-			HMODULE dLib;
-		};
-
 		class PLATFORM_EXPORT Win32DLib : public DLib
 		{
 		public:
 			Win32DLib(const String& path);
 			virtual ~Win32DLib();
+
+			void* GetFunctionImpl(const String& name);
+
+		private:
+			HMODULE mDLib;
 		};
+		DLIB_DEFINITION(Win32DLib);
 	} // namespace platform
 } // namespace cube
 
