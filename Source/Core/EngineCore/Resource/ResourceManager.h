@@ -2,7 +2,6 @@
 
 #include "../EngineCoreHeader.h"
 
-#include "FileSystem.h"
 #include "../Thread/MutexLock.h"
 
 namespace cube
@@ -12,7 +11,7 @@ namespace cube
 		class ENGINE_CORE_EXPORT ResourceManager
 		{
 		public:
-			ResourceManager(SPtr<platform::FileSystem>& fileSystem);
+			ResourceManager();
 			~ResourceManager();
 
 			void RegisterImporter(UPtr<ResourceImporter> importer);
@@ -36,8 +35,6 @@ namespace cube
 
 			Mutex mLoadedResourcesMutex;
 			HashMap<String, Resource*> mLoadedResources;
-
-			SPtr<platform::FileSystem> mFileSystem;
 		};
 	} // namespace core
 } // namespace cube
