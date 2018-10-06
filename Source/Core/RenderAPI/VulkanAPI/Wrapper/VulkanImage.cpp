@@ -1,5 +1,6 @@
 #include "VulkanImage.h"
 
+#include "EngineCore/Assertion.h"
 #include "VulkanDevice.h"
 
 namespace cube
@@ -22,7 +23,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown ImageType ({0})", (int)type);
+					ASSERTION_FAILED("Unknown ImageType ({0})", (int)type);
 					break;
 			}
 			return t;
@@ -87,7 +88,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown ImageViewType ({0})", (int)type);
+					ASSERTION_FAILED("Unknown ImageViewType ({0})", (int)type);
 					break;
 			}
 
@@ -153,7 +154,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown ImageLayout ({0})", (int)imageLayout);
+					ASSERTION_FAILED("Unknown ImageLayout ({0})", (int)imageLayout);
 					break;
 			}
 

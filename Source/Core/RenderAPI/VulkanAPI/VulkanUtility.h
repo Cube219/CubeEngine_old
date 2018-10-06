@@ -2,8 +2,6 @@
 
 #include<vulkan/vulkan.h>
 
-#include "EngineCore/LogWriter.h"
-
 #ifdef _DEBUG
 
 void PrintVkFail(const char* fileName, int lineNum, cube::String msg, VkResult res);

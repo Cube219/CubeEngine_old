@@ -24,9 +24,12 @@ namespace cube
 
 #ifdef _DEBUG
 
-#define CHECK(expr, msg, ...)                                                        \
-	if(!(expr)){                                                                     \
-		cube::core::AssertionFailed(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__); \
+#define ASSERTION_FAILED(msg, ...)                                               \
+	cube::core::AssertionFailed(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__);
+
+#define CHECK(expr, msg, ...)                \
+	if(!(expr)){                             \
+		ASSERTION_FAILED(msg, ##__VA_ARGS__) \
 	}
 
 #define CHECK_LITE(expr, msg, ...)                                                           \
@@ -37,6 +40,7 @@ namespace cube
 
 #else // _DEBUG
 
+#define ASSERTION_FAILED(msg, ...)
 #define CHECK(expr, msg, ...)
 #define CHECK_LITE(expr, msg, ...)
 

@@ -1,5 +1,6 @@
 #include "VulkanDevice.h"
 
+#include "EngineCore/Assertion.h"
 #include "VulkanPhysicalDevice.h"
 #include "VulkanQueue.h"
 
@@ -110,7 +111,7 @@ namespace cube
 				}
 			}
 
-			CUBE_LOG(cube::LogType::Error, "Cannot find a queueFamily (VkQueueFlags: {0})", type);
+			ASSERTION_FAILED("Failed to find a queueFamily. (VkQueueFlags: {0})", type);
 			return {};
 		}
 
@@ -123,15 +124,12 @@ namespace cube
 			memAllocateInfo.pNext = nullptr;
 			memAllocateInfo.allocationSize = require.size;
 			memAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(require.memoryTypeBits, memoryPropertyFlags);
-			if(memAllocateInfo.memoryTypeIndex == -1) {
-				CUBE_LOG(cube::LogType::Error, "Cannot find memory type to allocate (MemoryTypeBits: {0} / VkMemoryPropertyFlags: {1})",
-					require.memoryTypeBits, memoryPropertyFlags);
-				return nullptr;
-			}
+			CHECK(memAllocateInfo.memoryTypeIndex != -1, "Failed to find memory type to allocate (MemoryTypeBits: {0} / VkMemoryPropertyFlags: {1})",
+				require.memoryTypeBits, memoryPropertyFlags);
 
 			VkDeviceMemory mem;
 			res = vkAllocateMemory(mDevice, &memAllocateInfo, nullptr, &mem);
-			CheckVkResult("Cannot allocate DeviceMemory", res);
+			CheckVkResult("Failed to allocate DeviceMemory", res);
 			return mem;
 		}
 

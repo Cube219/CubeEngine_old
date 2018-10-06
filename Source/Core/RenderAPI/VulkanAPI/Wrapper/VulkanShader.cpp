@@ -1,5 +1,6 @@
 #include "VulkanShader.h"
 
+#include "EngineCore/Assertion.h"
 #include "VulkanDevice.h"
 
 namespace cube
@@ -21,7 +22,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unsupported shader language ({0})", (int)initializer.language);
+					ASSERTION_FAILED("Unsupported shader language ({0})", (int)initializer.language);
 					return;
 			}
 
@@ -99,17 +100,13 @@ namespace cube
 			shader.setEntryPoint(initializer.entryPoint);
 
 			EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
-			if(!shader.parse(&resources, 100, false, messages)) {
-				CUBE_LOG(cube::LogType::Error, "Cannot parse the glsl to spir-v ({0})", shader.getInfoLog());
-				return;
-			}
+			bool res = shader.parse(&resources, 100, false, messages);
+			CHECK(res, "Failed to parse the glsl to spir-v. ({0})", shader.getInfoLog());
 
 			program.addShader(&shader);
 
-			if(!program.link(messages)) {
-				CUBE_LOG(cube::LogType::Error, "Cannot link the glsl to spir-v ({0})", shader.getInfoLog());
-				return;
-			}
+			res = program.link(messages);
+			CHECK(res, "Failed to link the glsl to spir-v. ({0})", shader.getInfoLog());
 
 			glslang::GlslangToSpv(*program.getIntermediate(type), mSpvShader);
 

@@ -63,7 +63,7 @@ namespace cube
 			uint64_t paramIndex = res->second;
 
 			if(dataSize != mParameters[paramIndex].size) {
-				CUBE_LOG(LogType::Warning, "Wrong parameter size.\nExpected: {0} / Actual: {1}",
+				CUBE_LOG(LogType::Warning, "Wrong parameter size. (Expected: {0} / Actual: {1})",
 					mParameters[paramIndex].size, dataSize);
 			}
 
