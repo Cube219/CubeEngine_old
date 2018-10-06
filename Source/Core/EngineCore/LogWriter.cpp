@@ -1,6 +1,6 @@
 #include "LogWriter.h"
 
-#include "PlatformString.h"
+#include "PlatformDebugUtility.h"
 
 namespace cube
 {
@@ -51,7 +51,7 @@ namespace cube
 
 			String res = fmt::format(CUBE_T("{0} / {1}:{2}] : {3}"), prefix, SplitFileName(fileName), lineNum, msg);
 #ifdef _DEBUG
-			PrintToConsole(res);
+			platform::PlatformDebugUtility::PrintToConsole(res);
 #endif // _DEBUG
 		}
 	} // namespace core

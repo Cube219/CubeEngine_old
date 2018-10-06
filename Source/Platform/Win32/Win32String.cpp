@@ -154,37 +154,6 @@ namespace cube
 
 		return u32Str;
 	}
-
-	std::mutex printMutex;
-
-	void PrintToConsole(const U8String& str)
-	{
-		PString pStr = ToPString(str);
-
-		std::unique_lock<std::mutex> lock(printMutex);
-		std::wcout << pStr << std::endl;
-	}
-	void PrintToConsole(const UCS2String& str)
-	{
-		PString pStr = ToPString(str);
-
-		std::unique_lock<std::mutex> lock(printMutex);
-		std::wcout << pStr << std::endl;
-	}
-	void PrintToConsole(const U16String& str)
-	{
-		PString pStr = ToPString(str);
-
-		std::unique_lock<std::mutex> lock(printMutex);
-		std::wcout << pStr << std::endl;
-	}
-	void PrintToConsole(const U32String& str)
-	{
-		PString pStr = ToPString(str);
-
-		std::unique_lock<std::mutex> lock(printMutex);
-		std::wcout << pStr << std::endl;
-	}
 } // namespace cube
 
 #endif // _WIN32

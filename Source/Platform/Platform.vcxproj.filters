@@ -13,6 +13,12 @@
     <ClCompile Include="Win32\Win32String.cpp">
       <Filter>Win32</Filter>
     </ClCompile>
+    <ClCompile Include="Win32\Win32DebugUtility.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32\Win32Path.cpp">
+      <Filter>Win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Platform.h" />
@@ -29,6 +35,11 @@
     </ClInclude>
     <ClInclude Include="PlatformHeader.h" />
     <ClInclude Include="PlatformString.h" />
+    <ClInclude Include="PlatformDebugUtility.h" />
+    <ClInclude Include="Win32\Win32DebugUtility.h">
+      <Filter>Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Win32">

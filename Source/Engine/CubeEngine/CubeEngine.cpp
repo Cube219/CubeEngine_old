@@ -22,7 +22,7 @@ namespace cube
 
 	void CubeEngine::Start(const CubeEngineStartOption& startOption)
 	{
-		InitPlatform();
+		platform::Platform::Init();
 
 		platform::Platform::InitWindow(startOption.title, startOption.windowWidth, startOption.windowHeight);
 		platform::Platform::ShowWindow();
@@ -101,27 +101,4 @@ namespace cube
 		CUBE_LOG(LogType::Info, "Call closing function");
 		core::ECore()->Destroy();
 	}
-
-	////////////////////////////////
-	//           WIN32            //
-	////////////////////////////////
-
-#ifdef _WIN32
-
-} // namespace cube
-
-#include "Win32/Win32Platform.h"
-
-namespace cube{
-
-	void CubeEngine::InitPlatform()
-	{
-		HINSTANCE ins;
-		ins = GetModuleHandle(NULL);
-
-		platform::Win32Platform::Init(ins);
-	}
-
-#endif // _WIN32
-
 } // namespace cube

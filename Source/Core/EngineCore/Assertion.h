@@ -1,5 +1,5 @@
 #pragma once
-/*
+
 #include "LogWriter.h"
 #include "Base\format.h"
 
@@ -30,5 +30,5 @@
 	#define CHECK_ASSERTION_LITE_DEBUG(expr, msg)
 #endif // _DEBUG
 
-*/
+
 // TODO: 차후 개선
