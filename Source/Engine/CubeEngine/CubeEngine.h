@@ -35,8 +35,6 @@ namespace cube
 
 		static void InitComponents();
 
-		static void InitPlatform();
-
 		static void DefaultClosingFunction();
 
 		static EventFunction<void()> closingEventFunc;

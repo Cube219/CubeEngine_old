@@ -62,7 +62,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(LogType::Error, "Unknown renderer type");
+					CHECK(false, "Unknown renderer type ({0})", (int)type);
 					return;
 			}
 
@@ -159,11 +159,7 @@ namespace cube
 		{
 			SPtr<Material_RT> mat_rt = material->GetRenderObject_RT();
 			int index = mat_rt->mIndex;
-
-			if(index == -1) {
-				CUBE_LOG(LogType::Error, "This material is not registed.");
-				return;
-			}
+			CHECK(index != -1, "This material is not registed.");
 
 			GameThread::QueueTask([this, mat_rt]() {
 				Lock(mMaterialsMutex);
@@ -204,11 +200,7 @@ namespace cube
 			SPtr<Renderer3D_RT> renderer_rt = renderer->GetRenderObject_RT();
 
 			int index = renderer_rt->mIndex;
-
-			if(index == -1) {
-				CUBE_LOG(LogType::Error, "This renderer is not registed.");
-				return;
-			}
+			CHECK(index != -1, "This renderer is not registed.");
 
 			GameThread::QueueTask([this, renderer_rt]() {
 				Lock(mRenderersMutex);
@@ -227,10 +219,7 @@ namespace cube
 
 		void RendererManager::RegisterLight(SPtr<DirectionalLight>& dirLight)
 		{
-			if(mDirLight != nullptr) {
-				CUBE_LOG(LogType::Error, "DirectionalLight is already registed.");
-				return;
-			}
+			CHECK(mDirLight == nullptr, "DirectionalLight is already registed.");
 
 			SPtr<DirectionalLight_RT> dirLight_rt = dirLight->GetRenderObject_RT();
 			GameThread::QueueTask([this, dirLight_rt]() {
@@ -240,10 +229,7 @@ namespace cube
 
 		void RendererManager::UnregisterLight(SPtr<DirectionalLight>& dirLight)
 		{
-			if(mDirLight != dirLight->GetRenderObject_RT()) {
-				CUBE_LOG(LogType::Error, "This directional light is not registered.");
-				return;
-			}
+			CHECK(mDirLight == dirLight->GetRenderObject_RT(), "This directional light is not registed.");
 
 			GameThread::QueueTask([this]() {
 				mDirLight = nullptr;
@@ -255,10 +241,7 @@ namespace cube
 			{
 				Lock lock(mPointLightsMutex);
 
-				if(mPointLights.size() >= maxPointLightNum) {
-					CUBE_LOG(LogType::Error, "PointLight cannot be registerd more than 50.");
-					return;
-				}
+				CHECK(mPointLights.size() < maxPointLightNum, "PointLight cannot be registed more than 50.");
 			}
 
 			SPtr<PointLight_RT> pointLight_rt = pointLight->GetRenderObject_RT();
@@ -276,11 +259,7 @@ namespace cube
 				Lock lock(mPointLightsMutex);
 
 				auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight_rt);
-
-				if(findIter == mPointLights.cend()) {
-					CUBE_LOG(LogType::Error, "This point light is not registered.");
-					return;
-				}
+				CHECK(findIter != mPointLights.cend(), "This point light is not registed.");
 
 				mPointLights.erase(findIter);
 			});
@@ -310,11 +289,9 @@ namespace cube
 			mMainCommandBuffer->Submit(mGraphicsQueue, 1, &temp, 0, nullptr, mMainCommandBufferSubmitFence);
 			
 			bool r = mMainCommandBufferSubmitFence->Wait(100000000);
-			if(r == true)
-				mSwapchain->Present(0, nullptr);
-			else {
-				CUBE_LOG(LogType::Error, "Main command buffer submit fence time out");
-			}
+			CHECK(r == true, "Main command buffer submit fence time out");
+
+			mSwapchain->Present(0, nullptr);
 		}
 
 		void RendererManager::Resize(uint32_t width, uint32_t height)

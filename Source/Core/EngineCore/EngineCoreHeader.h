@@ -2,7 +2,6 @@
 #pragma warning(disable:4251)
 
 #include "Base/BaseTypes.h"
-#include "Assertion.h"
 
 namespace cube
 {

@@ -5,7 +5,7 @@
 #include "BaseRenderAPI/RenderAPI.h"
 #include "Material.h"
 #include "../Texture.h"
-#include "../../LogWriter.h"
+#include "../../Assertion.h"
 
 namespace cube
 {
@@ -58,19 +58,14 @@ namespace cube
 		void MaterialInstance::SetParamData(String& name, void* pData, uint64_t dataSize)
 		{
 			auto res = mParameterIndexLookupMap.find(name);
-			if(res == mParameterIndexLookupMap.end()) {
-				CUBE_LOG(LogType::Error, "Cannot find parameter name {0}.", name);
-				return;
-			}
+			CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name \"{0}\".", name);
 
 			uint64_t paramIndex = res->second;
 
-#ifdef _DEBUG
 			if(dataSize != mParameters[paramIndex].size) {
-				CUBE_LOG(LogType::Error, "Wrong parameter size({0} != {1}).", mParameters[paramIndex].size, dataSize);
-				return;
+				CUBE_LOG(LogType::Warning, "Wrong parameter size. (Expected: {0} / Actual: {1})",
+					mParameters[paramIndex].size, dataSize);
 			}
-#endif // _DEBUG
 
 			memcpy(mParameters[paramIndex].data, pData, dataSize);
 
@@ -83,19 +78,13 @@ namespace cube
 		void MaterialInstance::SetParameterData(String& name, RPtr<Texture>& texture)
 		{
 			auto res = mParameterIndexLookupMap.find(name);
-			if(res == mParameterIndexLookupMap.end()) {
-				CUBE_LOG(LogType::Error, "Cannot find parameter name {0}.", name);
-				return;
-			}
+			CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name \"{0}\".", name);
 
 			uint64_t paramIndex = res->second;
 
-#ifdef _DEBUG
-			if(mParameters[paramIndex].type != MaterialParameterType::Texture) {
-				CUBE_LOG(LogType::Error, "The Parameter {0} is not a Texture parameter.", name);
-				return;
-			}
-#endif // _DEBUG
+
+			CHECK(mParameters[paramIndex].type == MaterialParameterType::Texture,
+				"The Parameter \"{0}\" is not a Texture parameter.", name);
 
 			mParameters[paramIndex].texture = texture;
 

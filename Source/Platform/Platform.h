@@ -41,7 +41,6 @@ namespace cube
 			static uint32_t GetWindowHeight() { return height; }
 
 			static SPtr<DLib> LoadDLib(const String& path);
-			static SPtr<FileSystem> GetFileSystem() { return fileSystem; }
 
 			static auto& GetKeyDownEvent() { return keyDownEvent; }
 			static auto& GetKeyUpEvent() { return keyUpEvent; }
@@ -54,12 +53,7 @@ namespace cube
 			static auto& GetActivatedEvent() { return activatedEvent; }
 			static auto& GetClosingEvent() { return closingEvent; }
 
-			struct Data;
-			static Data data;
-
 		protected:
-			static SPtr<FileSystem> fileSystem;
-
 			static PString title;
 
 			static bool isFinished;
@@ -85,5 +79,45 @@ namespace cube
 			Platform() = delete;
 			~Platform() = delete;
 		};
+
+#define PLATFORM_DEFINITION(Child)                                   \
+		inline void Platform::Init() {                               \
+			Child::InitImpl();                                       \
+		}                                                            \
+		                                                             \
+		inline void Platform::InitWindow                             \
+			(const String& title, uint32_t width, uint32_t height) { \
+			Child::InitWindowImpl(title, width, height);             \
+		}                                                            \
+		inline void Platform::ShowWindow() {                         \
+			Child::ShowWindowImpl();                                 \
+		}                                                            \
+                                                                     \
+		inline void Platform::StartLoop() {                          \
+			Child::StartLoopImpl();                                  \
+		}                                                            \
+		inline void Platform::FinishLoop() {                         \
+			Child::FinishLoopImpl();                                 \
+		}                                                            \
+		inline void Platform::Sleep(uint32_t time) {                 \
+			Child::SleepImpl(time);                                  \
+		}                                                            \
+                                                                     \
+		inline void Platform::ShowCursor() {                         \
+			Child::ShowCursorImpl();                                 \
+		}                                                            \
+		inline void Platform::HideCursor() {                         \
+			Child::HideCursorImpl();                                 \
+		}                                                            \
+		inline void Platform::MoveCursor(int x, int y) {             \
+			Child::MoveCursorImpl(x, y);                             \
+		}                                                            \
+		inline void Platform::GetCursorPos(int& x, int& y) {         \
+			Child::GetCursorPosImpl(x, y);                           \
+		}                                                            \
+                                                                     \
+		inline SPtr<DLib> Platform::LoadDLib(const String& path) {   \
+			return Child::LoadDLibImpl(path);                        \
+		}
 	} // namespace platform
 } // namespace cube

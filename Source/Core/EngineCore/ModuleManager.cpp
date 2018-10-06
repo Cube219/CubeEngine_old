@@ -6,6 +6,7 @@
 #include "Thread/Thread.h"
 
 #include "LogWriter.h"
+#include "Assertion.h"
 
 namespace cube
 {
@@ -59,10 +60,7 @@ namespace cube
 		SPtr<module::BaseModule> ModuleManager::GetModule(String& name)
 		{
 			auto temp = mModuleLookup.find(name.c_str());
-			if(temp == mModuleLookup.end()) {
-				CUBE_LOG(LogType::Error, "Cannot find module \"{0}\".", name);
-				return nullptr;
-			}
+			CHECK(temp != mModuleLookup.end(), "Failed to find module \"{0}\".", name);
 
 			return temp->second;
 		}

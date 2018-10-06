@@ -6,6 +6,7 @@
 #include <io.h> 
 #include <fcntl.h>
 
+#include "../PlatformAssertion.h"
 #include "Win32DLib.h"
 #include "Win32FileSystem.h"
 
@@ -13,10 +14,6 @@ namespace cube
 {
 	namespace platform
 	{
-		Platform::Data Platform::data;
-
-		SPtr<FileSystem> Platform::fileSystem;
-
 		PString Platform::title;
 
 		bool Platform::isFinished = false;
@@ -38,12 +35,15 @@ namespace cube
 		Event<void(WindowActivatedState)> Platform::activatedEvent;
 		Event<void()> Platform::closingEvent;
 
-		void Platform::Init()
+		HINSTANCE Win32Platform::instance;
+		HWND Win32Platform::window;
+		bool Win32Platform::isCursorShown = true;
+
+		void Win32Platform::InitImpl()
 		{
-			fileSystem = std::make_shared<Win32FileSystem>();
 		}
 
-		void Platform::InitWindow(const String& title, uint32_t width, uint32_t height)
+		void Win32Platform::InitWindowImpl(const String& title, uint32_t width, uint32_t height)
 		{
 			// Show console if it is debug mode
 #ifdef _DEBUG
@@ -67,6 +67,8 @@ namespace cube
 			Platform::width = width;
 			Platform::height = height;
 
+			instance = GetModuleHandle(NULL);
+
 			// Register winClass
 			WNDCLASSEX winClass;
 			winClass.cbSize = sizeof(WNDCLASSEX);
@@ -74,33 +76,31 @@ namespace cube
 			winClass.lpfnWndProc = WndProc;
 			winClass.cbClsExtra = 0;
 			winClass.cbWndExtra = 0;
-			winClass.hInstance = data.instance;
+			winClass.hInstance = instance;
 			winClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 			winClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 			winClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 			winClass.lpszMenuName = nullptr;
 			winClass.lpszClassName = Platform::title.c_str();
 			winClass.hIconSm = LoadIcon(nullptr, IDI_WINLOGO);
-
-			if(!RegisterClassEx(&winClass))
-				std::wcout << L"Win32Platform: Failed to registration while initializing window" << std::endl;
+			
+			auto res = RegisterClassEx(&winClass);
+			PLATFORM_CHECK(res, "Failed to registration while initializing window");
 		}
 
-		void Platform::ShowWindow()
+		void Win32Platform::ShowWindowImpl()
 		{
 			// Create Window
-			data.window = CreateWindowEx(0,
+			window = CreateWindowEx(0,
 				title.c_str(), title.c_str(),
 				WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_SYSMENU,
 				100, 100, width, height,
-				nullptr, nullptr, data.instance, nullptr);
+				nullptr, nullptr, instance, nullptr);
 
-			if(!data.window) {
-				std::wcout << L"WinPlatform: Failed to create a window" << std::endl;
-			}
+			PLATFORM_CHECK(window, "Failed to create a window");
 		}
 
-		void Platform::StartLoop()
+		void Win32Platform::StartLoopImpl()
 		{
 			MSG msg;
 
@@ -117,71 +117,66 @@ namespace cube
 			}
 		}
 
-		void Platform::FinishLoop()
+		void Win32Platform::FinishLoopImpl()
 		{
 			isFinished = true;
 		}
 
-		void Platform::Sleep(uint32_t time)
+		void Win32Platform::SleepImpl(uint32_t time)
 		{
 			::Sleep(time);
 		}
 
-		void Platform::ShowCursor()
+		void Win32Platform::ShowCursorImpl()
 		{
-			if(data.isCursorShown == false) {
+			if(isCursorShown == false) {
 				::ShowCursor(TRUE);
-				data.isCursorShown = true;
+				isCursorShown = true;
 			}
 		}
 
-		void Platform::HideCursor()
+		void Win32Platform::HideCursorImpl()
 		{
-			if(data.isCursorShown == true) {
+			if(isCursorShown == true) {
 				::ShowCursor(FALSE);
-				data.isCursorShown = false;
+				isCursorShown = false;
 			}
 		}
 
-		void Platform::MoveCursor(int x, int y)
+		void Win32Platform::MoveCursorImpl(int x, int y)
 		{
 			POINT p;
 			p.x = x;
 			p.y = y;
 
-			ClientToScreen(Platform::data.window, &p);
+			ClientToScreen(window, &p);
 			SetCursorPos(p.x, p.y);
 		}
 
-		void Platform::GetCursorPos(int& x, int& y)
+		void Win32Platform::GetCursorPosImpl(int& x, int& y)
 		{
 			POINT p;
 			::GetCursorPos(&p);
 
-			ScreenToClient(data.window, &p);
+			ScreenToClient(window, &p);
 
 			x = p.x;
 			y = p.y;
 		}
 
-		SPtr<DLib> Platform::LoadDLib(const String& path)
+		SPtr<DLib> Win32Platform::LoadDLibImpl(const String& path)
 		{
 			return std::make_shared<Win32DLib>(path);
 		}
 
-		void Win32Platform::Init(HINSTANCE instance)
-		{
-			data.instance = instance;
-		}
-
 		HINSTANCE Win32Platform::GetInstance()
 		{
-			return Platform::data.instance;
+			return instance;
 		}
 
 		HWND Win32Platform::GetWindow()
 		{
-			return Platform::data.window;
+			return window;
 		}
 
 		bool isActivatedByMouse = false;
@@ -207,7 +202,7 @@ namespace cube
 					else if(s == WA_INACTIVE)
 						state = WindowActivatedState::Inactive;
 					else {
-						std::wcout << "Win32Platform: Invalid actiave state (" << s << ")" << std::endl;
+						PLATFORM_PRINT_LOG("Invalid activated state ({0})", s);
 					}
 
 					Platform::activatedEvent.Dispatch(state);

@@ -64,7 +64,7 @@ namespace cube
 			mTimeManager = std::make_unique<TimeManager>();
 			mStringManager = std::make_unique<StringManager>();
 
-			mResourceManager = std::make_unique<ResourceManager>(platform::Platform::GetFileSystem());
+			mResourceManager = std::make_unique<ResourceManager>();
 
 			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
 			mModuleManager->LoadModule(CUBE_T("InputModule"));

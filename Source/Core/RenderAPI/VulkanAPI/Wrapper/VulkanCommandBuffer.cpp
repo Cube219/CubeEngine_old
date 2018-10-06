@@ -1,5 +1,6 @@
 #include "VulkanCommandBuffer.h"
 
+#include "EngineCore/Assertion.h"
 #include "VulkanDevice.h"
 #include "VulkanQueue.h"
 #include "VulkanBuffer.h"
@@ -333,7 +334,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown PipelineType ({0})", (int)pipelineType);
+					ASSERTION_FAILED("Unknown PipelineType ({0})", (int)pipelineType);
 					break;
 			}
 

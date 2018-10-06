@@ -5,6 +5,7 @@
 namespace cube
 {
 #ifdef _WIN32
+	using PCharacter = wchar_t;
 	using PString = std::wstring;
 #endif
 
@@ -17,9 +18,4 @@ namespace cube
 	PLATFORM_EXPORT UCS2String ToUCS2String(const PString& str);
 	PLATFORM_EXPORT U16String ToU16String(const PString& str);
 	PLATFORM_EXPORT U32String ToU32String(const PString& str);
-
-	PLATFORM_EXPORT void PrintToConsole(const U8String& str);
-	PLATFORM_EXPORT void PrintToConsole(const UCS2String& str);
-	PLATFORM_EXPORT void PrintToConsole(const U16String& str);
-	PLATFORM_EXPORT void PrintToConsole(const U32String& str);
 } // namespace cube

@@ -1,5 +1,6 @@
 #include "VulkanDescriptor.h"
 
+#include "EngineCore/Assertion.h"
 #include "VulkanDevice.h"
 #include "VulkanBuffer.h"
 #include "VulkanImage.h"
@@ -49,7 +50,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown DescriptorType ({0})", (int)descType);
+					ASSERTION_FAILED("Unknown DescriptorType ({0})", (int)descType);
 					break;
 			}
 
