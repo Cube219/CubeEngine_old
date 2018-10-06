@@ -2,7 +2,7 @@
 
 #include "Thread.h"
 
-#include "../LogWriter.h"
+#include "../Assertion.h"
 
 using namespace std::placeholders;
 
