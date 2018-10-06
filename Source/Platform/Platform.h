@@ -41,7 +41,6 @@ namespace cube
 			static uint32_t GetWindowHeight() { return height; }
 
 			static SPtr<DLib> LoadDLib(const String& path);
-			static SPtr<FileSystem> GetFileSystem() { return fileSystem; }
 
 			static auto& GetKeyDownEvent() { return keyDownEvent; }
 			static auto& GetKeyUpEvent() { return keyUpEvent; }
@@ -55,8 +54,6 @@ namespace cube
 			static auto& GetClosingEvent() { return closingEvent; }
 
 		protected:
-			static SPtr<FileSystem> fileSystem;
-
 			static PString title;
 
 			static bool isFinished;

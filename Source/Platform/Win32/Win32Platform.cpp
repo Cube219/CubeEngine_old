@@ -13,8 +13,6 @@ namespace cube
 {
 	namespace platform
 	{
-		SPtr<FileSystem> Platform::fileSystem;
-
 		PString Platform::title;
 
 		bool Platform::isFinished = false;
@@ -42,7 +40,6 @@ namespace cube
 
 		void Win32Platform::InitImpl()
 		{
-			fileSystem = std::make_shared<Win32FileSystem>();
 		}
 
 		void Win32Platform::InitWindowImpl(const String& title, uint32_t width, uint32_t height)
