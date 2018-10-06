@@ -22,10 +22,7 @@ namespace cube
 
 		HGameObject GameObjectManager::RegisterGameObject(SPtr<GameObject>& go)
 		{
-			if(go->mID != 0) {
-				CUBE_LOG(LogType::Error, "Cannot register GameObject. Only GameObject with id=0 can be registered (id: {0})", go->mID);
-				return HGameObject();
-			}
+			CHECK(go->mID == 0, "Failed to register GameObject. Only GameObject with id=0 can be registered (id: {0})", go->mID);
 
 			go->mID = mNextID;
 
@@ -46,10 +43,7 @@ namespace cube
 			uint32_t id = go->mID;
 
 			auto goIter = mGameObjects.find(id);
-			if(goIter == mGameObjects.end()) {
-				CUBE_LOG(LogType::Error, "Cannot unregister GameObject. It is not registered.");
-				return;
-			}
+			CHECK(goIter != mGameObjects.end(), "Cannot unregister GameObject. It is not registered.");
 
 			goIter->second->data = nullptr;
 			mGameObjects.erase(goIter);

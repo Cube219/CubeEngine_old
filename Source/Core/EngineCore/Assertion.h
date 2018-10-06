@@ -24,15 +24,15 @@ namespace cube
 
 #ifdef _DEBUG
 
-#define CHECK(expr, msg, ...)                                                       \
-	if(!(expr)){                                                                    \
-		cube::core::AssertionFailed(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__) \
+#define CHECK(expr, msg, ...)                                                        \
+	if(!(expr)){                                                                     \
+		cube::core::AssertionFailed(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__); \
 	}
 
 #define CHECK_LITE(expr, msg, ...)                                                           \
 	if(!(expr)) {                                                                            \
 		cube::String str = fmt::format(CUBE_T("Assertion_Lite Failed! : {0}"), CUBE_T(msg)); \
-		CUBE_LOG(cube::LogType::Warning, str, ##__VA_ARGS__)                                 \
+		CUBE_LOG(cube::LogType::Warning, str, ##__VA_ARGS__);                                \
 	}
 
 #else // _DEBUG

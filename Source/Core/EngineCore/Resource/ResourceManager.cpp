@@ -1,6 +1,6 @@
 #include "ResourceManager.h"
 
-#include "../LogWriter.h"
+#include "../Assertion.h"
 #include "BaseResource.h"
 #include "FileSystem.h"
 
@@ -68,12 +68,8 @@ namespace cube
 				}
 			}
 
-			if(loadedRes == nullptr) {
-				if(isFindImporter == true)
-					CUBE_LOG(LogType::Error, "Cannot find the importer whose name is \"{0}\".", importerName);
-
-				return nullptr;
-			}
+			CHECK(isFindImporter == true, "Failed to find the importer \"{0}\".", importerName);
+			CHECK(loadedRes != nullptr, "Failed to load the resource.");
 
 			{
 				Lock lock(mLoadedResourcesMutex);

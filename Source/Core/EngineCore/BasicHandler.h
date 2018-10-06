@@ -2,7 +2,7 @@
 
 #include "EngineCoreHeader.h"
 
-#include "LogWriter.h"
+#include "Assertion.h"
 
 namespace cube
 {
@@ -24,22 +24,12 @@ namespace cube
 
 			T* operator->() const
 			{
-#ifdef _DEBUG
-				if(mData == nullptr || mData->data == nullptr) {
-					CUBE_LOG(LogType::Error, "Handler<{0}> does not have the data", typeid(T).name());
-					return nullptr;
-				}
-#endif // _DEBUG
+				CHECK(mData != nullptr && mData->data != nullptr, "Handler \"{0}\" does not have the data", typeid(T).name());
 				return &*(mData->data);
 			}
 			T& operator*() const
 			{
-#ifdef _DEBUG
-				if(mData == nullptr || mData->data == nullptr) {
-					CUBE_LOG(LogType::Error, "Handler<{0}> does not have the data", typeid(T).name());
-					return nullptr;
-				}
-#endif // _DEBUG
+				CHECK(mData != nullptr && mData->data != nullptr, "Handler \"{0}\" does not have the data", typeid(T).name());
 				return *(mData->data);
 			}
 

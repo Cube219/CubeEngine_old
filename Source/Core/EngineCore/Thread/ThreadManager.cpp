@@ -36,10 +36,7 @@ namespace cube
 			Lock lock(mMutex);
 
 			uint32_t nextIdleIndex = (mIdleThreadIndices_front + 1) % mThreads.size();
-			if(nextIdleIndex == mIdleThreadIndices_back) {
-				CUBE_LOG(LogType::Error, "There's no idle thread in the pool.");
-				return nullptr;
-			}
+			CHECK(nextIdleIndex != mIdleThreadIndices_back, "There's no idle thread in the pool");
 
 			uint32_t index = mIdleThreadIndices[mIdleThreadIndices_front];
 			mIdleThreadIndices_front = nextIdleIndex;
