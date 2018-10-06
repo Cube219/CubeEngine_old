@@ -2,7 +2,7 @@
 
 #include <assimp/postprocess.h>
 
-#include "EngineCore/LogWriter.h"
+#include "EngineCore/Assertion.h"
 
 namespace cube
 {
@@ -15,12 +15,7 @@ namespace cube
 		file->Read(rawData, size, readSize);
 
 		const aiScene* scene = mImporter.ReadFileFromMemory(rawData, readSize, aiProcess_Triangulate | aiProcess_FlipUVs);
-		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-			CUBE_LOG(LogType::Error, "Cannot import obj file");
-
-			free(rawData);
-			return nullptr;
-		}
+		CHECK(scene && scene->mRootNode, "Failed to import obj file.");
 
 		core::Mesh* meshPtr = new core::Mesh();
 		InsertMeshData(scene, meshPtr);

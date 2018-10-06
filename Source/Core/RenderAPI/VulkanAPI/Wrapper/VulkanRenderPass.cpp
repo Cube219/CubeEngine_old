@@ -1,5 +1,6 @@
 #include "VulkanRenderPass.h"
 
+#include "EngineCore/Assertion.h"
 #include "VulkanDevice.h"
 #include "VulkanFramebuffer.h"
 #include "VulkanImage.h"
@@ -26,7 +27,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown LoadOperator ({0})", (int)loadOperator);
+					ASSERTION_FAILED("Unknown LoadOperator ({0})", (int)loadOperator);
 					break;
 			}
 
@@ -46,7 +47,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown StoreOperator ({0})", (int)storeOperator);
+					ASSERTION_FAILED("Unknown StoreOperator ({0})", (int)storeOperator);
 					break;
 			}
 

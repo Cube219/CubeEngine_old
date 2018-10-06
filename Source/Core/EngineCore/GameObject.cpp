@@ -1,6 +1,6 @@
 ﻿#include "GameObject.h"
 
-#include "LogWriter.h"
+#include "Assertion.h"
 #include "EngineCore.h"
 #include "Base/Math.h"
 #include "Base/MatrixUtility.h"
@@ -70,10 +70,7 @@ namespace cube
 		HComponent GameObject::AddComponent(const String& name)
 		{
 			for(auto& com : mComponents) {
-				if(com->GetName() == name) {
-					CUBE_LOG(LogType::Error, "Cannot add component \"{0}\". The component already exists", name);
-					return HComponent();
-				}
+				CHECK(com->GetName() != name, "Cannot add component \"{0}\". The component already exists.", name);
 			}
 
 			HComponent c = ECore()->GetComponentManager()->CreateComponent(name);

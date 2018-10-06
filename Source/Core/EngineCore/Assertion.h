@@ -1,34 +1,40 @@
 #pragma once
-/*
+
 #include "LogWriter.h"
-#include "Base\format.h"
+#include "PlatformDebugUtility.h"
+#include "Base/format.h"
 
-#define CHECK_ASSERTION(expr, failMsg) \
-	if(!expr){ \
-		cube::core::LogWriter::WriteLog(fmt::format(L"Assertion failed! {0}({1}) : {2}", __FILE__, __LINE__, failMsg)); \
-		assert(expr && failMsg); \
-	}
+namespace cube
+{
+	namespace core
+	{
+		template <typename ...Args>
+		void AssertionFailed(const char* fileName, int lineNum, const String& msg, Args&&... args)
+		{
+			platform::PlatformDebugUtility::AssertionFailed(fmt::format(msg, std::forward<Args>(args)...), nullptr, fileName, lineNum);
+		}
 
-#define CHECK_ASSERTION_LITE(expr, failMsg) \
-	if(!expr){ \
-		cube::core::LogWriter::WriteLog(fmt::format(L"Assertion failed! {0}({1}) : {2}", __FILE__, __LINE__, failMsg)); \
-	}
+		template <typename ...Args>
+		void AssertionFailed(const char* fileName, int lineNum, const Character* msg, Args&&... args)
+		{
+			platform::PlatformDebugUtility::AssertionFailed(fmt::format(msg, std::forward<Args>(args)...), nullptr, fileName, lineNum);
+		}
+	} // namespace core
+} // namespace cube
 
 #ifdef _DEBUG
-	#define CHECK_ASSERTION_DEBUG(expr, failMsg) \
-		if(!expr){ \
-			cube::core::LogWriter::WriteDebugLog(fmt::format(L"Assertion failed! {0}({1}) : {2}", __FILE__, __LINE__, failMsg)); \
-			assert(expr && failMsg); \
-		}
 
-	#define CHECK_ASSERTION_LITE_DEBUG(expr, failMsg) \
-		if(!expr){ \
-			cube::core::LogWriter::WriteDebugLog(fmt::format(L"Assertion failed! {0}({1}) : {2}", __FILE__, __LINE__, failMsg)); \
-		}
+#define ASSERTION_FAILED(msg, ...)                                               \
+	cube::core::AssertionFailed(__FILE__, __LINE__, CUBE_T(msg), ##__VA_ARGS__);
+
+#define CHECK(expr, msg, ...)                \
+	if(!(expr)){                             \
+		ASSERTION_FAILED(msg, ##__VA_ARGS__) \
+	}
+
 #else // _DEBUG
-	#define CHECK_ASSERTION_DEBUG(expr, msg)
-	#define CHECK_ASSERTION_LITE_DEBUG(expr, msg)
-#endif // _DEBUG
 
-*/
-// TODO: 차후 개선
+#define ASSERTION_FAILED(msg, ...)
+#define CHECK(expr, msg, ...)
+
+#endif // _DEBUG

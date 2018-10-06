@@ -3,6 +3,7 @@
 #include <memory.h>
 
 #include "VulkanDevice.h"
+#include "EngineCore/Assertion.h"
 
 namespace cube
 {
@@ -128,15 +129,11 @@ namespace cube
 		{
 #ifdef _DEBUG
 			if(size != mDataSizes[index]) {
-				CUBE_LOG(cube::LogType::Error, "Wrong data size. (Expected: {0} / Actual: {1})", mDataSizes[index], size);
-				return;
+				CUBE_LOG(cube::LogType::Warning, "Wrong data size. (Expected: {0} / Actual: {1})", mDataSizes[index], size);
 			}
 #endif // _DEBUG
 
-			if(mMappedData == nullptr) {
-				CUBE_LOG(cube::LogType::Error, "Cannot update buffer data. It is not mapped.");
-				return;
-			}
+			CHECK(mMappedData != nullptr, "Failed to update buffer data. It is not mapped.");
 
 			char* p = (char*)mMappedData + mDataOffsets[index] - mMappedOffset;
 			memcpy(p, data, size);

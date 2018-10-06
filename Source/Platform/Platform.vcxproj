@@ -124,8 +124,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PlatformAssertion.cpp" />
+    <ClCompile Include="Win32\Win32DebugUtility.cpp" />
     <ClCompile Include="Win32\Win32DLib.cpp" />
     <ClCompile Include="Win32\Win32FileSystem.cpp" />
+    <ClCompile Include="Win32\Win32Path.cpp" />
     <ClCompile Include="Win32\Win32Platform.cpp" />
     <ClCompile Include="Win32\Win32String.cpp" />
   </ItemGroup>
@@ -136,10 +139,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileSystem.h" />
+    <ClInclude Include="Path.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="DLib.h" />
+    <ClInclude Include="PlatformAssertion.h" />
+    <ClInclude Include="PlatformDebugUtility.h" />
     <ClInclude Include="PlatformHeader.h" />
     <ClInclude Include="PlatformString.h" />
+    <ClInclude Include="Win32\Win32DebugUtility.h" />
     <ClInclude Include="Win32\Win32DLib.h" />
     <ClInclude Include="Win32\Win32FileSystem.h" />
     <ClInclude Include="Win32\Win32Platform.h" />

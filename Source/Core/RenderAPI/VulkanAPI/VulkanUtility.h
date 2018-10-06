@@ -1,8 +1,7 @@
 #pragma once
 
-#include<vulkan/vulkan.h>
-
-#include "EngineCore/LogWriter.h"
+#include <vulkan/vulkan.h>
+#include "Base/String.h"
 
 #ifdef _DEBUG
 

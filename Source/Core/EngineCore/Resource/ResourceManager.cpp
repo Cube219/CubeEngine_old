@@ -1,14 +1,14 @@
 #include "ResourceManager.h"
 
-#include "../LogWriter.h"
+#include "../Assertion.h"
 #include "BaseResource.h"
+#include "FileSystem.h"
 
 namespace cube
 {
 	namespace core
 	{
-		ResourceManager::ResourceManager(SPtr<platform::FileSystem>& fileSystem) : 
-			mFileSystem(fileSystem)
+		ResourceManager::ResourceManager()
 		{
 		}
 
@@ -39,7 +39,7 @@ namespace cube
 			// Get a metadata
 			String metaPath = path;
 			metaPath.append(CUBE_T(".cmeta"));
-			SPtr<File> metaFile = mFileSystem->OpenFile(metaPath, FileAccessModeBits::Read);
+			SPtr<File> metaFile = platform::FileSystem::OpenFile(metaPath, FileAccessModeBits::Read);
 
 			uint64_t size = metaFile->GetFileSize();
 			char* metaString = (char*)malloc(size + 1);
@@ -59,7 +59,7 @@ namespace cube
 			bool isFindImporter = false;
 			for(auto& importer : mImporters) {
 				if(importer->GetName() == importerName) {
-					SPtr<File> resFile = mFileSystem->OpenFile(path, FileAccessModeBits::Read);
+					SPtr<File> resFile = platform::FileSystem::OpenFile(path, FileAccessModeBits::Read);
 					Json info = metaJson["info"];
 
 					loadedRes = importer->Import(resFile, info);
@@ -68,12 +68,8 @@ namespace cube
 				}
 			}
 
-			if(loadedRes == nullptr) {
-				if(isFindImporter == true)
-					CUBE_LOG(LogType::Error, "Cannot find the importer whose name is \"{0}\".", importerName);
-
-				return nullptr;
-			}
+			CHECK(isFindImporter == true, "Failed to find the importer \"{0}\".", importerName);
+			CHECK(loadedRes != nullptr, "Failed to load the resource.");
 
 			{
 				Lock lock(mLoadedResourcesMutex);

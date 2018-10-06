@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+#include "../PlatformAssertion.h"
 #include "../PlatformString.h"
 
 namespace cube
@@ -13,99 +14,61 @@ namespace cube
 		//////////
 		// File //
 		//////////
-		uint64_t File::GetFileSize()
+		uint64_t Win32File::GetFileSizeImpl()
 		{
 			LARGE_INTEGER size_LI;
-			BOOL res = GetFileSizeEx(mData->fileHandle, &size_LI);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Cannot get file size. / ErrorCode: " << err << std::endl;
-				return 0;
-			}
+			BOOL res = GetFileSizeEx(mFileHandle, &size_LI);
+			PLATFORM_CHECK(res, "Failed to get file size. (ErrorCode: {0})", GetLastError());
 
 			return size_LI.QuadPart;
 		}
 
-		void File::SetFilePointer(uint64_t offset)
+		void Win32File::SetFilePointerImpl(uint64_t offset)
 		{
 			LARGE_INTEGER distance_LI;
 			distance_LI.QuadPart = offset;
 
-			BOOL res = SetFilePointerEx(mData->fileHandle, distance_LI, NULL, FILE_BEGIN);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Cannot set file pointer. / ErrorCode: " << err << std::endl;
-			}
+			BOOL res = SetFilePointerEx(mFileHandle, distance_LI, NULL, FILE_BEGIN);
+			PLATFORM_CHECK(res, "Failed to set file pointer. (ErrorCode: {0})", GetLastError());
 		}
 
-		void File::MoveFilePointer(int64_t distance)
+		void Win32File::MoveFilePointerImpl(int64_t distance)
 		{
 			LARGE_INTEGER distance_LI;
 			distance_LI.QuadPart = distance;
 
-			BOOL res = SetFilePointerEx(mData->fileHandle, distance_LI, NULL, FILE_CURRENT);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Cannot move file pointer. / ErrorCode: " << err << std::endl;
-			}
+			BOOL res = SetFilePointerEx(mFileHandle, distance_LI, NULL, FILE_CURRENT);
+			PLATFORM_CHECK(res, "Failed to move file pointer. (ErrorCode: {0})", GetLastError());
 		}
 
-		void File::Read(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize)
+		void Win32File::ReadImpl(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize)
 		{
-			BOOL res = ReadFile(mData->fileHandle, pReadBuffer, (DWORD)bufferSizeToRead, (LPDWORD)&readBufferSize, NULL);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Cannot read the file. / ErrorCode: " << err << std::endl;
-			}
+			BOOL res = ReadFile(mFileHandle, pReadBuffer, (DWORD)bufferSizeToRead, (LPDWORD)&readBufferSize, NULL);
+			PLATFORM_CHECK(res, "Failed to read the file. (ErrorCode: {0})", GetLastError());
 		}
 
-		void File::Write(void* pWriteBuffer, uint64_t bufferSize)
+		void Win32File::WriteImpl(void* pWriteBuffer, uint64_t bufferSize)
 		{
 			DWORD writtenSize;
-			BOOL res = WriteFile(mData->fileHandle, pWriteBuffer, (DWORD)bufferSize, &writtenSize, nullptr);
-
-			if(res == FALSE) {
-				DWORD err = GetLastError();
-				std::wcout << L"Win32File: Cannot write the file. / ErrorCode: " << err << std::endl;
-			}
+			BOOL res = WriteFile(mFileHandle, pWriteBuffer, (DWORD)bufferSize, &writtenSize, nullptr);
+			PLATFORM_CHECK(res, "Failed to write the file. (ErrorCode: {0})", GetLastError());
 		}
 
-		Win32File::Win32File(HANDLE fileHandle)
+		Win32File::Win32File(HANDLE fileHandle) : 
+			mFileHandle(fileHandle)
 		{
-			mData = new File::Data();
-
-			mData->fileHandle = fileHandle;
 		}
 
 		Win32File::~Win32File()
 		{
-			CloseHandle(mData->fileHandle);
-
-			delete mData;
+			CloseHandle(mFileHandle);
 		}
 
 		////////////////
 		// FileSystem //
 		////////////////
 
-		DWORD GetDwDesiredAccess(FileAccessModeBits accessMode)
-		{
-			DWORD d = 0;
-
-			if(static_cast<int>(accessMode & FileAccessModeBits::Read) > 0)
-				d |= GENERIC_READ;
-
-			if(static_cast<int>(accessMode & FileAccessModeBits::Write) > 0)
-				d |= GENERIC_WRITE;
-
-			return d;
-		}
-
-		SPtr<File> FileSystem::OpenFile(const String& path, FileAccessModeBits accessModeBits, bool createIfNotExist)
+		SPtr<File> Win32FileSystem::OpenFileImpl(const String& path, FileAccessModeBits accessModeBits, bool createIfNotExist)
 		{
 			DWORD desiredAccess = GetDwDesiredAccess(accessModeBits);
 			PString pPath = ToPString(path);
@@ -127,18 +90,21 @@ namespace cube
 				err = GetLastError();
 			}
 
-			std::wcout << L"Win32FileSystem: Cannot open a file. (" << pPath << L") / ErrorCode: " << err << std::endl;
+			PLATFORM_ASSERTION_FAILED("Failed to open a file. ({0}) (ErrorCode: {1})", path, err);
 			return nullptr;
 		}
 
-		Win32FileSystem::Win32FileSystem()
+		DWORD Win32FileSystem::GetDwDesiredAccess(FileAccessModeBits accessMode)
 		{
-			mData = new FileSystem::Data();
-		}
+			DWORD d = 0;
 
-		Win32FileSystem::~Win32FileSystem()
-		{
-			delete mData;
+			if(static_cast<int>(accessMode & FileAccessModeBits::Read) > 0)
+				d |= GENERIC_READ;
+
+			if(static_cast<int>(accessMode & FileAccessModeBits::Write) > 0)
+				d |= GENERIC_WRITE;
+
+			return d;
 		}
 	} // namespace platform
 } // namespace cube

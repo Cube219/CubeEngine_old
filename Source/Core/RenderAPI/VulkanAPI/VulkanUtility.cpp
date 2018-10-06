@@ -2,6 +2,8 @@
 
 #include <memory.h>
 
+#include "EngineCore/Assertion.h"
+
 #ifdef _DEBUG
 
 void PrintVkFail(const char* fileName, int lineNum, cube::String msg, VkResult res)
@@ -68,7 +70,7 @@ void PrintVkFail(const char* fileName, int lineNum, cube::String msg, VkResult r
 			break;
 	}
 
-	cube::core::LogWriter::WriteLog(cube::LogType::Error, fileName, lineNum, CUBE_T("VkResult Failed! - {0} {1}"), msg, errMsg);
+	ASSERTION_FAILED("{0} {1}", msg, errMsg);
 }
 
 #endif // _DEBUG
@@ -99,7 +101,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown DataFormat ({0})", (int)format);
+					ASSERTION_FAILED("Unknown DataFormat ({0})", (int)format);
 					break;
 			}
 
@@ -122,7 +124,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown VertexTopology ({0})", (int)topology);
+					ASSERTION_FAILED("Unknown VertexTopology ({0})", (int)topology);
 					break;
 			}
 
@@ -169,7 +171,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown PolygonMode ({0})", (int)polygonMode);
+					ASSERTION_FAILED("Unknown PolygonMode ({0})", (int)polygonMode);
 					break;
 			}
 
@@ -189,7 +191,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown PolygonFrontFace ({0})", (int)frontFace);
+					ASSERTION_FAILED("Unknown PolygonFrontFace ({0})", (int)frontFace);
 					break;
 			}
 
@@ -215,7 +217,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown CullMode ({0})", (int)cullMode);
+					ASSERTION_FAILED("Unknown CullMode ({0})", (int)cullMode);
 					break;
 			}
 
@@ -253,7 +255,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown CompareOperator ({0})", (int)compareOperator);
+					ASSERTION_FAILED("Unknown CompareOperator ({0})", (int)compareOperator);
 					break;
 			}
 
@@ -305,7 +307,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown StencilOperator ({0})", (int)op);
+					ASSERTION_FAILED("Unknown StencilOperator ({0})", (int)op);
 					break;
 			}
 
@@ -361,7 +363,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown BlendFactor ({0})", (int)blendFactor);
+					ASSERTION_FAILED("Unknown BlendFactor ({0})", (int)blendFactor);
 					break;
 			}
 
@@ -390,7 +392,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown BlendOperator ({0})", (int)blendOperator);
+					ASSERTION_FAILED("Unknown BlendOperator ({0})", (int)blendOperator);
 					break;
 			}
 
@@ -452,7 +454,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Unknown LogicOperator ({0})", (int)logicOperator);
+					ASSERTION_FAILED("Unknown LogicOperator ({0})", (int)logicOperator);
 					break;
 			}
 

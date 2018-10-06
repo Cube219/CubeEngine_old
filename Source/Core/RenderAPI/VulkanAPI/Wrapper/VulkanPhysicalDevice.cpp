@@ -1,5 +1,6 @@
 #include "VulkanPhysicalDevice.h"
 
+#include "EngineCore/Assertion.h"
 #include "VulkanQueue.h"
 
 namespace cube
@@ -192,7 +193,7 @@ namespace cube
 					break;
 
 				default:
-					CUBE_LOG(cube::LogType::Error, "Undefined Feature ({0})", (int)feature);
+					CUBE_LOG(cube::LogType::Warning, "Undefined Feature ({0})", (int)feature);
 					break;
 			}
 		}
