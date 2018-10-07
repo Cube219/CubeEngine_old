@@ -2,6 +2,8 @@
 
 #ifdef _DEBUG
 
+#include "EngineCore/Assertion.h"
+
 void PrintVkFail(const char* fileName, int lineNum, cube::String msg, VkResult res)
 {
 	cube::String errMsg;
@@ -66,7 +68,7 @@ void PrintVkFail(const char* fileName, int lineNum, cube::String msg, VkResult r
 		break;
 	}
 
-	cube::core::LogWriter::WriteLog(cube::LogType::Error, fileName, lineNum, CUBE_T("VkResult Failed! - {0} {1}"), msg, errMsg);
+	ASSERTION_FAILED("{0} {1}", msg, errMsg);
 }
 
 #endif // _DEBUG

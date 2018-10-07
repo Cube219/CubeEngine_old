@@ -28,6 +28,8 @@ namespace cube
 			VkDeviceMemory AllocateMemory(VkMemoryRequirements requirements, VkMemoryPropertyFlags properties);
 
 			VkDevice mDevice;
+
+			SPtr<VulkanPhysicalDevice> mPhysicalDevice;
 		};
 	} // namespace render
 } // namespace cube

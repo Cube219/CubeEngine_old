@@ -2,7 +2,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "EngineCore/LogWriter.h"
+#include "Base/String.h"
 
 #ifdef _DEBUG
 

@@ -1,5 +1,6 @@
 #include "VulkanPhysicalDevice.h"
 
+#include "EngineCore/Assertion.h"
 #include "VulkanUtility.h"
 
 namespace cube
@@ -37,8 +38,25 @@ namespace cube
 				}
 			}
 
-			CUBE_LOG(cube::LogType::Error, "Cannot find a queueFamily (VkQueueFlags: {0})", flags);
+			ASSERTION_FAILED("Failed to find a queueFamily. (VkQueueFlags: {0})", flags);
 			return 0;
+		}
+
+		uint32_t VulkanPhysicalDevice::GetMemoryTypeIndex(uint32_t memoryTypeBits, VkMemoryPropertyFlags requirmentFlags)
+		{
+			// TODO: 원리 알아보기
+			for(uint32_t i = 0; i < mMemProperties.memoryTypeCount; i++) {
+				if((memoryTypeBits & 1) == 1) {
+					if((mMemProperties.memoryTypes[i].propertyFlags & requirmentFlags) == requirmentFlags) {
+						return i;
+					}
+				}
+				memoryTypeBits >>= 1;
+			}
+
+			ASSERTION_FAILED("Failed to find memory type index. (memoryTypeBits: {0}, requirmentFlags: {1})",
+				memoryTypeBits, requirmentFlags);
+			return -1;
 		}
 	} // namespace render
 } // namespace cube

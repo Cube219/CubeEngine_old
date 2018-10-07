@@ -8,7 +8,8 @@ namespace cube
 	namespace render
 	{
 		DeviceVk::DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
-			bool enableDebugLayer)
+			bool enableDebugLayer) : 
+			mPhysicalDevice(physicalDevice)
 		{
 			VkResult res;
 
@@ -57,7 +58,19 @@ namespace cube
 
 		VkDeviceMemory DeviceVk::AllocateMemory(VkMemoryRequirements requirements, VkMemoryPropertyFlags properties)
 		{
-			return VkDeviceMemory();
+			VkResult res;
+
+			VkMemoryAllocateInfo memAllocateInfo = {};
+			memAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+			memAllocateInfo.pNext = nullptr;
+			memAllocateInfo.allocationSize = requirements.size;
+			memAllocateInfo.memoryTypeIndex = mPhysicalDevice->GetMemoryTypeIndex(requirements.memoryTypeBits, properties);
+
+			VkDeviceMemory mem;
+			res = vkAllocateMemory(mDevice, &memAllocateInfo, nullptr, &mem);
+			CheckVkResult("Failed to allocate DeviceMemory.", res);
+
+			return mem;
 		}
 	} // namespace render
 } // namespace cube

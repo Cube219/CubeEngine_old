@@ -92,7 +92,8 @@
       <AdditionalDependencies>OSDependentd.lib;SPVRemapperd.lib;SPIRVd.lib;OGLCompilerd.lib;HLSLd.lib;glslangd.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -134,7 +135,8 @@
       <AdditionalDependencies>OSDependent.lib;SPVRemapper.lib;SPIRV.lib;OGLCompiler.lib;HLSL.lib;glslang.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
