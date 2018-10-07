@@ -38,7 +38,7 @@ namespace cube
 
 		SPtr<Device> VulkanAPI::GetDevice(const DeviceAttribute& attr)
 		{
-			VkPhysicalDeviceFeatures features;
+			VkPhysicalDeviceFeatures features = {};
 			features.tessellationShader = true;
 			features.geometryShader = true;
 			features.samplerAnisotropy = true;
@@ -52,21 +52,23 @@ namespace cube
 			VkResult res;
 
 			Vector<const char*> layers;
-			if (attr.enableDebugLayer == true) {
-				layers.push_back("VK_LAYER_LUNARG_standard_validation");
-			}
-#ifdef _DEBUG
-			else {
-				// In debug mode, always enable debug layer
-				layers.push_back("VK_LAYER_LUNARG_standard_validation");
-			}
-#endif // _DEBUG
-
 			Vector<const char*> extensions;
 			extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 			extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #endif // VK_USE_PLATFORM_WIN32_KHR
+
+			if(attr.enableDebugLayer == true) {
+				layers.push_back("VK_LAYER_LUNARG_standard_validation");
+				extensions.push_back("VK_EXT_debug_utils");
+			}
+#ifdef _DEBUG
+			else {
+				// In debug mode, always enable debug layer
+				layers.push_back("VK_LAYER_LUNARG_standard_validation");
+				extensions.push_back("VK_EXT_debug_utils");
+			}
+#endif // _DEBUG
 
 			VkApplicationInfo appInfo = {};
 			appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -88,7 +90,7 @@ namespace cube
 			instanceCreateInfo.ppEnabledLayerNames = layers.data();
 
 			res = vkCreateInstance(&instanceCreateInfo, nullptr, &mInstance);
-			CheckVkResult("Cannot create VulkanInstance", res);
+			CheckVkResult("Failed to create VulkanInstance", res);
 		}
 	} // namespace render
 } // namespace cube
