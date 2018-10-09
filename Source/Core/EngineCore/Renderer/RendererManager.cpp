@@ -62,14 +62,13 @@ namespace cube
 					break;
 
 				default:
-					CHECK(false, "Unknown renderer type ({0})", (int)type);
+					ASSERTION_FAILED("Unknown renderer type ({0})", (int)type);
 					return;
 			}
 
 			using CreateAPIFunction = render::RenderAPI*(*)();
 
 			auto createAPIFunction = RCast(CreateAPIFunction)(mRenderDLib->GetFunction(CUBE_T("CreateAPI")));
-
 			// TODO: 좀 더 좋은 방법은 없을까?
 			SPtr<render::RenderAPI> temp(createAPIFunction());
 			mRenderAPI = std::move(temp);

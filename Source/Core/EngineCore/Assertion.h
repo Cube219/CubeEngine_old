@@ -11,13 +11,17 @@ namespace cube
 		template <typename ...Args>
 		void AssertionFailed(const char* fileName, int lineNum, const String& msg, Args&&... args)
 		{
-			platform::PlatformDebugUtility::AssertionFailed(fmt::format(msg, std::forward<Args>(args)...), nullptr, fileName, lineNum);
+			String str = fmt::format(msg, std::forward<Args>(args)...);
+			LogWriter::WriteLogImpl(LogType::Error, fileName, lineNum, str);
+			platform::PlatformDebugUtility::AssertionFailed(str, nullptr, fileName, lineNum);
 		}
 
 		template <typename ...Args>
 		void AssertionFailed(const char* fileName, int lineNum, const Character* msg, Args&&... args)
 		{
-			platform::PlatformDebugUtility::AssertionFailed(fmt::format(msg, std::forward<Args>(args)...), nullptr, fileName, lineNum);
+			String str = fmt::format(msg, std::forward<Args>(args)...);
+			LogWriter::WriteLogImpl(LogType::Error, fileName, lineNum, str);
+			platform::PlatformDebugUtility::AssertionFailed(str, nullptr, fileName, lineNum);
 		}
 	} // namespace core
 } // namespace cube
