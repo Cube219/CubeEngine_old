@@ -3,6 +3,7 @@
 #include "VulkanUtility.h"
 #include "Interface/DeviceVk.h"
 #include "VulkanPhysicalDevice.h"
+#include "VulkanDebug.h"
 
 namespace cube
 {
@@ -91,6 +92,16 @@ namespace cube
 
 			res = vkCreateInstance(&instanceCreateInfo, nullptr, &mInstance);
 			CheckVkResult("Failed to create VulkanInstance", res);
+
+			if(attr.enableDebugLayer == true) {
+				VulkanDebug::Setup(mInstance);
+			}
+#ifdef _DEBUG
+			else {
+				// In debug mode, always enable debug layer
+				VulkanDebug::Setup(mInstance);
+			}
+#endif // _DEBUG
 		}
 	} // namespace render
 } // namespace cube

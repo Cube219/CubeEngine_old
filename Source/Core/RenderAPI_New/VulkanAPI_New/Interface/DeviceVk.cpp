@@ -15,15 +15,13 @@ namespace cube
 
 			Vector<const char*> extensions;
 			extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+
+#ifndef _DEBUG // In debug mode, always enable debug layer
 			if (enableDebugLayer == true) {
+#endif // _DEBUG
 				// Deprecated. Use "VK_EXT_debug_utils" in instance instead.
 				// extensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
-			}
-#ifdef _DEBUG
-			else {
-				// In debug mode, always enable debug layer
-				// Deprecated. Use "VK_EXT_debug_utils" in instance instead.
-				// extensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
+#ifndef _DEBUG // In debug mode, always enable debug layer
 			}
 #endif // _DEBUG
 

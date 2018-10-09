@@ -13,6 +13,8 @@ namespace cube
 		class VulkanPhysicalDevice;
 
 		class DeviceVk;
+
+		class BufferVk;
 	} // namespace render
 } // namespace cube
 

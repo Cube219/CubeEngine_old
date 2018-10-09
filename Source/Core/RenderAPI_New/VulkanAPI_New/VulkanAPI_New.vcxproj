@@ -90,10 +90,12 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>OSDependentd.lib;SPVRemapperd.lib;SPIRVd.lib;OGLCompilerd.lib;HLSLd.lib;glslangd.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y
+xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,8 +137,8 @@
       <AdditionalDependencies>OSDependent.lib;SPVRemapper.lib;SPIRV.lib;OGLCompiler.lib;HLSL.lib;glslang.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y
+xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -154,16 +156,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="a.cpp" />
+    <ClCompile Include="Interface\BufferVk.cpp" />
     <ClCompile Include="Interface\DeviceVk.cpp" />
     <ClCompile Include="VulkanAPI.cpp" />
+    <ClCompile Include="VulkanDebug.cpp" />
     <ClCompile Include="VulkanPhysicalDevice.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Interface\BufferVk.h" />
     <ClInclude Include="Interface\DeviceVk.h" />
     <ClInclude Include="VulkanAPI.h" />
     <ClInclude Include="VulkanAPIHeader.h" />
+    <ClInclude Include="VulkanDebug.h" />
     <ClInclude Include="VulkanPhysicalDevice.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
