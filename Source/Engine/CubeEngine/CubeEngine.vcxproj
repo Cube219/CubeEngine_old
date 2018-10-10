@@ -87,6 +87,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>zlibstaticd.lib;assimpd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -128,6 +129,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>CUBE_ENGINE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Core\RenderAPI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
