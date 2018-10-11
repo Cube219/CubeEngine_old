@@ -10,6 +10,7 @@ namespace cube
 		{
 			uint32_t GPUIndex;
 			bool enableDebugLayer;
+			const char* debugName;
 		};
 
 		class Device
@@ -17,6 +18,8 @@ namespace cube
 		public:
 			Device() {}
 			virtual ~Device() {}
+
+			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) = 0;
 		};
 	} // namespace render
 } // namespace cube

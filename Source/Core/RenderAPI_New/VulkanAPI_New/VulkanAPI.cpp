@@ -45,7 +45,7 @@ namespace cube
 			features.samplerAnisotropy = true;
 			features.multiDrawIndirect = true;
 
-			return std::make_shared<DeviceVk>(mPhysicalDevices[attr.GPUIndex], features, attr.enableDebugLayer);
+			return std::make_shared<DeviceVk>(mPhysicalDevices[attr.GPUIndex], features, attr);
 		}
 
 		void VulkanAPI::CreateInstance(const RenderAPIAttribute& attr)
@@ -98,7 +98,7 @@ namespace cube
 			}
 #ifdef _DEBUG
 			else {
-				// In debug mode, always enable debug layer
+				// In debug mode, always enable VulkanDebug
 				VulkanDebug::Setup(mInstance);
 			}
 #endif // _DEBUG

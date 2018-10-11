@@ -12,11 +12,12 @@ namespace cube
 		{
 		public:
 			DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
-				bool enableDebugLayer);
+				const DeviceAttribute& attr);
 			virtual ~DeviceVk();
 
 			VkDevice GetHandle() const { return mDevice; }
 
+			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) override final;
 			// CreateBuffer
 			// CreateShader
 			// CreateTexture

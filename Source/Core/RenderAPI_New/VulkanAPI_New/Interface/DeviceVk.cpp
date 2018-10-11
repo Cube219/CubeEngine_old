@@ -2,13 +2,15 @@
 
 #include "../VulkanUtility.h"
 #include "../VulkanPhysicalDevice.h"
+#include "../VulkanDebug.h"
+#include "BaseRenderAPI_New/Interface/Buffer.h"
 
 namespace cube
 {
 	namespace render
 	{
 		DeviceVk::DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
-			bool enableDebugLayer) : 
+			const DeviceAttribute& attr) :
 			mPhysicalDevice(physicalDevice)
 		{
 			VkResult res;
@@ -17,7 +19,7 @@ namespace cube
 			extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
 #ifndef _DEBUG // In debug mode, always enable debug layer
-			if (enableDebugLayer == true) {
+			if (attr.enableDebugLayer == true) {
 #endif // _DEBUG
 				// Deprecated. Use "VK_EXT_debug_utils" in instance instead.
 				// extensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
@@ -47,11 +49,18 @@ namespace cube
 
 			res = vkCreateDevice(physicalDevice->GetHandle(), &deviceCreateInfo, nullptr, &mDevice);
 			CheckVkResult("Failed to create device", res);
+
+			VulkanDebug::SetObjectName(mDevice, attr.debugName);
 		}
 
 		DeviceVk::~DeviceVk()
 		{
 			vkDestroyDevice(mDevice, nullptr);
+		}
+
+		SPtr<Buffer> DeviceVk::CreateBuffer(const BufferAttribute& attr)
+		{
+			return SPtr<Buffer>();
 		}
 
 		VkDeviceMemory DeviceVk::AllocateMemory(VkMemoryRequirements requirements, VkMemoryPropertyFlags properties)

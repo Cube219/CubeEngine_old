@@ -3,6 +3,7 @@
 #pragma warning(disable:4275)
 
 #include "Base/BaseTypes.h"
+#include "BaseRenderAPI_New/RenderAPIHeader.h"
 
 #include <vulkan/vulkan.h>
 

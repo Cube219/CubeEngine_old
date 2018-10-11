@@ -8,8 +8,8 @@ namespace cube
 {
 	namespace render
 	{
-		VkInstance VulkanDebug::mInstance;
-		VkDebugUtilsMessengerEXT VulkanDebug::mMessenger;
+		VkInstance VulkanDebug::instance;
+		VkDebugUtilsMessengerEXT VulkanDebug::messenger;
 
 		PFN_vkCreateDebugUtilsMessengerEXT VulkanDebug::createDebugUtilsMessengerEXT;
 		PFN_vkDestroyDebugUtilsMessengerEXT VulkanDebug::destroyDebugUtilsMessengerEXT;
@@ -22,9 +22,11 @@ namespace cube
 		PFN_vkCmdEndDebugUtilsLabelEXT VulkanDebug::cmdEndDebugUtilsLabelEXT;
 		PFN_vkCmdInsertDebugUtilsLabelEXT VulkanDebug::cmdInsertDebugUtilsLabelEXT;
 
+		bool VulkanDebug::isEnabled = false;
+
 		void VulkanDebug::Setup(VkInstance instance)
 		{
-			mInstance = instance;
+			VulkanDebug::instance = instance;
 
 			// Get VK_EXT_debug_utils function pointers
 			createDebugUtilsMessengerEXT =
@@ -65,225 +67,67 @@ namespace cube
 			info.pfnUserCallback = VulkanDebug::MessageCallback;
 			info.pUserData = nullptr;
 
-			res = createDebugUtilsMessengerEXT(instance, &info, nullptr, &mMessenger);
+			res = createDebugUtilsMessengerEXT(instance, &info, nullptr, &messenger);
 			CheckVkResult("Failed to create debug messenger.", res);
+
+			isEnabled = true;
 		}
 
 		void VulkanDebug::Free()
 		{
-			destroyDebugUtilsMessengerEXT(mInstance, mMessenger, nullptr);
-		}
+			destroyDebugUtilsMessengerEXT(instance, messenger, nullptr);
 
-		void VulkanDebug::SetObjectName(VkDevice device, VkInstance instance, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_INSTANCE, (uint64_t)instance, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkPhysicalDevice physicalDevice, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_PHYSICAL_DEVICE, (uint64_t)physicalDevice, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DEVICE, (uint64_t)device, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkQueue queue, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_QUEUE, (uint64_t)queue, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkSemaphore semaphore, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_SEMAPHORE, (uint64_t)semaphore, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkCommandBuffer commandBuf, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_COMMAND_BUFFER, (uint64_t)commandBuf, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkFence fence, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_FENCE, (uint64_t)fence, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDeviceMemory deviceMemory, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DEVICE_MEMORY, (uint64_t)deviceMemory, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkBuffer buffer, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_BUFFER, (uint64_t)buffer, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkImage image, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_IMAGE, (uint64_t)image, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkEvent event, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_EVENT, (uint64_t)event, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkQueryPool queryPool, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_QUERY_POOL, (uint64_t)queryPool, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkBufferView bufferView, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_BUFFER_VIEW, (uint64_t)bufferView, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkImageView imageView, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_IMAGE_VIEW, (uint64_t)imageView, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkShaderModule shaderModule, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_SHADER_MODULE, (uint64_t)shaderModule, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkPipelineCache pipelineCache, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_PIPELINE_CACHE, (uint64_t)pipelineCache, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkPipelineLayout pipelineLayout, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_PIPELINE_LAYOUT, (uint64_t)pipelineLayout, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkRenderPass renderPass, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_RENDER_PASS, (uint64_t)renderPass, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkPipeline pipeline, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_PIPELINE, (uint64_t)pipeline, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, (uint64_t)descriptorSetLayout, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkSampler sampler, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_SAMPLER, (uint64_t)sampler, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDescriptorPool descriptorPool, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DESCRIPTOR_POOL, (uint64_t)descriptorPool, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDescriptorSet descriptorSet, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DESCRIPTOR_SET, (uint64_t)descriptorSet, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkFramebuffer framebuffer, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_FRAMEBUFFER, (uint64_t)framebuffer, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkCommandPool commandPool, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_COMMAND_POOL, (uint64_t)commandPool, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkSamplerYcbcrConversion samplerYcbcrConversion, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION, (uint64_t)samplerYcbcrConversion, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE, (uint64_t)descriptorUpdateTemplate, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkSurfaceKHR surface, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_SURFACE_KHR, (uint64_t)surface, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkSwapchainKHR swapchain, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_SWAPCHAIN_KHR, (uint64_t)swapchain, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDisplayKHR display, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DISPLAY_KHR, (uint64_t)display, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDisplayModeKHR displayMode, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DISPLAY_MODE_KHR, (uint64_t)displayMode, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDebugReportCallbackEXT debugReportCallback, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT, (uint64_t)debugReportCallback, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkObjectTableNVX objectTable, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_OBJECT_TABLE_NVX, (uint64_t)objectTable, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkIndirectCommandsLayoutNVX indirectCommandsLayout, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX, (uint64_t)indirectCommandsLayout, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkDebugUtilsMessengerEXT debugUtilsMessenger, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT, (uint64_t)debugUtilsMessenger, name);
-		}
-
-		void VulkanDebug::SetObjectName(VkDevice device, VkValidationCacheEXT validationCache, const char* name)
-		{
-			SetObjectNameImpl(device, VK_OBJECT_TYPE_VALIDATION_CACHE_EXT, (uint64_t)validationCache, name);
+			isEnabled = false;
 		}
 
 		void VulkanDebug::BeginQueueLabel(VkQueue queue, const char* name, float color[4])
 		{
+			if(isEnabled == false || name == nullptr)
+				return;
+			
 			VkDebugUtilsLabelEXT label = CreateLabel(name, color);
 			queueBeginDebugUtilsLabelEXT(queue, &label);
 		}
 
 		void VulkanDebug::EndQueueLabel(VkQueue queue)
 		{
+			if(isEnabled == false)
+				return;
+
 			queueEndDebugUtilsLabelEXT(queue);
 		}
 
 		void VulkanDebug::InsertQueueLabel(VkQueue queue, const char* name, float color[4])
 		{
+			if(isEnabled == false || name == nullptr)
+				return;
+			
 			VkDebugUtilsLabelEXT label = CreateLabel(name, color);
 			queueInsertDebugUtilsLabelEXT(queue, &label);
 		}
 
 		void VulkanDebug::BeginCommandBufferLabel(VkCommandBuffer commandBuf, const char* name, float color[4])
 		{
+			if(isEnabled == false || name == nullptr)
+				return;
+
 			VkDebugUtilsLabelEXT label = CreateLabel(name, color); 
 			cmdBeginDebugUtilsLabelEXT(commandBuf, &label);
 		}
 
 		void VulkanDebug::EndCommandBufferLabel(VkCommandBuffer commandBuf)
 		{
+			if(isEnabled == false)
+				return;
+
 			cmdEndDebugUtilsLabelEXT(commandBuf);
 		}
 
 		void VulkanDebug::InsertCommandBufferLabel(VkCommandBuffer commandBuf, const char* name, float color[4])
 		{
+			if(isEnabled == false || name == nullptr)
+				return;
+
 			VkDebugUtilsLabelEXT label = CreateLabel(name, color); 
 			cmdInsertDebugUtilsLabelEXT(commandBuf, &label);
 		}
@@ -366,6 +210,9 @@ namespace cube
 
 		void VulkanDebug::SetObjectNameImpl(VkDevice device, VkObjectType type, uint64_t handle, const char* name)
 		{
+			if(isEnabled == false || name == nullptr)
+				return;
+
 			VkResult res;
 
 			VkDebugUtilsObjectNameInfoEXT info = {};
