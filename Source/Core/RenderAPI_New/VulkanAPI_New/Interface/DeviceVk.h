@@ -8,7 +8,7 @@ namespace cube
 {
 	namespace render
 	{
-		class DeviceVk final : public Device
+		class DeviceVk final : public Device, public std::enable_shared_from_this<DeviceVk>
 		{
 		public:
 			DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
@@ -18,7 +18,6 @@ namespace cube
 			VkDevice GetHandle() const { return mDevice; }
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) override final;
-			// CreateBuffer
 			// CreateShader
 			// CreateTexture
 			// CreateSampler

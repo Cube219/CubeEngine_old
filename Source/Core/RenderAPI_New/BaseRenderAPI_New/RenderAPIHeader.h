@@ -12,6 +12,7 @@ namespace cube
 		struct DeviceAttribute;
 		class Device;
 
+		struct BufferAttribute;
 		class Buffer;
 		class BufferView;
 

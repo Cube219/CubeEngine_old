@@ -2,6 +2,18 @@
 
 #include <stdint.h>
 
+using Int8 = int8_t;
+using Int16 = int16_t;
+using Int32 = int32_t;
+using Int64 = int64_t;
+
+using Uint8 = uint8_t;
+using Uint16 = uint16_t;
+using Uint32 = uint32_t;
+using Uint64 = uint64_t;
+
+using SizeType = size_t;
+
 // After Visual Studio 15.8, to use extended alignment, you should define it.
 // This will occur when you make shared_ptr with the type of alignment over alignof(max_align_t) using std::make_shared
 // (https://developercommunity.visualstudio.com/content/problem/274945/stdmake-shared-is-not-honouring-alignment-of-a.html)

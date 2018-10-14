@@ -34,7 +34,7 @@ namespace cube
 			// TODO: 왜 뒤에서부터? 어떻게 찾아야 하는지 알아보기
 			for (size_t i = mQueueFamilyProperties.size() - 1; i >= 0; i--) {
 				if ((mQueueFamilyProperties[i].queueFlags & flags) > 0) {
-					return i;
+					return SCast(uint32_t)(i);
 				}
 			}
 

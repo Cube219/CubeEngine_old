@@ -1,9 +1,10 @@
 #include "DeviceVk.h"
 
 #include "../VulkanUtility.h"
-#include "../VulkanPhysicalDevice.h"
 #include "../VulkanDebug.h"
+#include "../VulkanPhysicalDevice.h"
 #include "BaseRenderAPI_New/Interface/Buffer.h"
+#include "BufferVk.h"
 
 namespace cube
 {
@@ -60,7 +61,8 @@ namespace cube
 
 		SPtr<Buffer> DeviceVk::CreateBuffer(const BufferAttribute& attr)
 		{
-			return SPtr<Buffer>();
+			return std::make_shared<BufferVk>(shared_from_this(), attr);
+			// RN: 왜 BUfferVk에서 첫 번째 인수에 const를 붙여야 하는가?
 		}
 
 		VkDeviceMemory DeviceVk::AllocateMemory(VkMemoryRequirements requirements, VkMemoryPropertyFlags properties)
