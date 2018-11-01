@@ -60,6 +60,13 @@ using Vector = std::vector<T>;
 template <typename Type, size_t Size>
 using Array = std::array<Type, Size>;
 
+#include <map>
+template <typename Key, typename Value>
+using Map = std::map<Key, Value>;
+
+template <typename Key, typename Value>
+using MultiMap = std::multimap<Key, Value>;
+
 #include <unordered_map>
 template <typename Key, typename Value>
 using HashMap = std::unordered_map<Key, Value>;

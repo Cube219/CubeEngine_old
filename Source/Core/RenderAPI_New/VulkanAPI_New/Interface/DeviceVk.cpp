@@ -18,6 +18,7 @@ namespace cube
 
 			Vector<const char*> extensions;
 			extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+			extensions.push_back(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME);
 
 #ifndef _DEBUG // In debug mode, always enable debug layer
 			if (attr.enableDebugLayer == true) {

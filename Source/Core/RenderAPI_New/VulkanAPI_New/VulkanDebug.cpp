@@ -75,6 +75,9 @@ namespace cube
 
 		void VulkanDebug::Free()
 		{
+			if(isEnabled == false)
+				return;
+
 			destroyDebugUtilsMessengerEXT(instance, messenger, nullptr);
 
 			isEnabled = false;

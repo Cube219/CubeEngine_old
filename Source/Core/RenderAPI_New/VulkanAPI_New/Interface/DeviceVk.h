@@ -24,6 +24,8 @@ namespace cube
 			// CreatePipelineState
 			// CreateFence
 
+			SPtr<VulkanPhysicalDevice> GetParentPhysicalDevice() const { return mPhysicalDevice; }
+
 		private:
 			VkDeviceMemory AllocateMemory(VkMemoryRequirements requirements, VkMemoryPropertyFlags properties);
 

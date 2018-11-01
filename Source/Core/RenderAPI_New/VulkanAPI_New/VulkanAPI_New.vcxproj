@@ -162,6 +162,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClCompile Include="Interface\DeviceVk.cpp" />
     <ClCompile Include="VulkanAPI.cpp" />
     <ClCompile Include="VulkanDebug.cpp" />
+    <ClCompile Include="VulkanMemoryManager.cpp" />
     <ClCompile Include="VulkanPhysicalDevice.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
@@ -171,6 +172,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClInclude Include="VulkanAPI.h" />
     <ClInclude Include="VulkanAPIHeader.h" />
     <ClInclude Include="VulkanDebug.h" />
+    <ClInclude Include="VulkanMemoryManager.h" />
     <ClInclude Include="VulkanPhysicalDevice.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>

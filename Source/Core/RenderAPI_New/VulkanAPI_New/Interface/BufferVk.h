@@ -22,6 +22,8 @@ namespace cube
 			virtual void Map(const void* pMappedData) override final;
 			virtual void Unmap() override final;
 
+			virtual void CreateView() override final;
+
 		private:
 			SPtr<DeviceVk> mDevice;
 			VkBuffer mBuffer;

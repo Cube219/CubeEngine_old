@@ -54,8 +54,6 @@ namespace cube
 				memoryTypeBits >>= 1;
 			}
 
-			ASSERTION_FAILED("Failed to find memory type index. (memoryTypeBits: {0}, requirmentFlags: {1})",
-				memoryTypeBits, requirmentFlags);
 			return -1;
 		}
 	} // namespace render

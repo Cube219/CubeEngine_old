@@ -11,6 +11,7 @@
       <Filter>Interface</Filter>
     </ClCompile>
     <ClCompile Include="VulkanDebug.cpp" />
+    <ClCompile Include="VulkanMemoryManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -29,5 +30,6 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="VulkanDebug.h" />
+    <ClInclude Include="VulkanMemoryManager.h" />
   </ItemGroup>
 </Project>

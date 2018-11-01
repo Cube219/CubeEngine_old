@@ -29,6 +29,8 @@ void InitDevice()
 	render::DeviceAttribute deviceAttr;
 	deviceAttr.GPUIndex = 0;
 	deviceAttr.enableDebugLayer = true;
+	deviceAttr.debugName = "MainDevice";
+
 	device = renderAPI->GetDevice(deviceAttr);
 }
 
@@ -41,8 +43,6 @@ int main(void)
 
 	InitRenderAPI();
 	InitDevice();
-
-	platform::Platform::Sleep(5000);
-
+	
 	return 0;
 }

@@ -16,6 +16,9 @@ namespace cube
 
 		VulkanAPI::~VulkanAPI()
 		{
+			mPhysicalDevices.clear();
+
+			VulkanDebug::Free();
 			vkDestroyInstance(mInstance, nullptr);
 		}
 

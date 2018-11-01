@@ -20,5 +20,16 @@ namespace cube
 		static float PrecisionSin(float rad);
 		static float PrecisionCos(float rad);
 		static float PrecisionTan(float rad);
+
+		template <typename T>
+		static T Min(const T a, const T b)
+		{
+			return (a <= b) ? a : b;
+		}
+		template <typename T>
+		static T Max(const T a, const T b)
+		{
+			return (a >= b) ? a : b;
+		}
 	};
-}
+} // namespace cube

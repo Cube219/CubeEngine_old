@@ -62,5 +62,9 @@ namespace cube
 		{
 		}
 
+		void BufferVk::CreateView()
+		{
+		}
+
 	} // namespace render
 } // namespace cube

@@ -24,6 +24,12 @@ namespace cube
 			TransferDest = 16
 		};
 
+		struct BufferData
+		{
+			const void* pData;
+			Uint64 dataSize;
+		};
+
 		struct BufferAttribute
 		{
 			Uint64 size = 0;
@@ -32,12 +38,6 @@ namespace cube
 			BufferBindTypeFlags bindTypeFlags = 0;
 			const BufferData* pData = nullptr;
 			const char* debugName = nullptr;
-		};
-
-		struct BufferData
-		{
-			const void* pData;
-			Uint64 dataSize;
 		};
 
 		class Buffer

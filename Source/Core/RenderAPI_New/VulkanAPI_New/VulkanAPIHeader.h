@@ -13,6 +13,11 @@ namespace cube
 	{
 		class VulkanPhysicalDevice;
 
+		struct VulkanAllocation;
+		class VulkanMemoryPage;
+		class VulkanMemoryHeap;
+		class VulkanMemoryManager;
+
 		class DeviceVk;
 
 		class BufferVk;
