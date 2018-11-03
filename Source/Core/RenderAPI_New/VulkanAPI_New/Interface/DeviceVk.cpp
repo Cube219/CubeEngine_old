@@ -1,4 +1,4 @@
-#include "DeviceVk.h"
+ï»¿#include "DeviceVk.h"
 
 #include "../VulkanUtility.h"
 #include "../VulkanDebug.h"
@@ -33,7 +33,7 @@ namespace cube
 			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 			queueInfo.flags = 0;
 			queueInfo.queueFamilyIndex = physicalDevice->FindQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
-			queueInfo.queueCount = 1; // TODO: ³ªÁß¿¡ ´Ã¸®±â?
+			queueInfo.queueCount = 1; // TODO: ë‚˜ì¤‘ì— ëŠ˜ë¦¬ê¸°?
 			const float queuePriority = 1.0f;
 			queueInfo.pQueuePriorities = &queuePriority;
 
@@ -63,11 +63,12 @@ namespace cube
 		SPtr<Buffer> DeviceVk::CreateBuffer(const BufferAttribute& attr)
 		{
 			return std::make_shared<BufferVk>(shared_from_this(), attr);
-			// RN: ¿Ö BUfferVk¿¡¼­ Ã¹ ¹øÂ° ÀÎ¼ö¿¡ const¸¦ ºÙ¿©¾ß ÇÏ´Â°¡?
+			// RN: ì™œ BUfferVkì—ì„œ ì²« ë²ˆì§¸ ì¸ìˆ˜ì— constë¥¼ ë¶™ì—¬ì•¼ í•˜ëŠ”ê°€?
 		}
 
 		VkDeviceMemory DeviceVk::AllocateMemory(VkMemoryRequirements requirements, VkMemoryPropertyFlags properties)
 		{
+			/*
 			VkResult res;
 
 			VkMemoryAllocateInfo memAllocateInfo = {};
@@ -79,8 +80,8 @@ namespace cube
 			VkDeviceMemory mem;
 			res = vkAllocateMemory(mDevice, &memAllocateInfo, nullptr, &mem);
 			CheckVkResult("Failed to allocate DeviceMemory.", res);
-
-			return mem;
+			*/
+			return 0;
 		}
 	} // namespace render
 } // namespace cube

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "VulkanAPIHeader.h"
 
@@ -14,12 +14,16 @@ namespace cube
 
 			VkPhysicalDevice GetHandle() const { return mPhysicalDevice; }
 
-			uint32_t FindQueueFamilyIndex(VkQueueFlags flags) const;
+			VkPhysicalDeviceProperties GetProperties() const { return mProperties; }
 
-			uint32_t GetMemoryTypeIndex(uint32_t memoryTypeBits, VkMemoryPropertyFlags requirmentFlags);
+			Uint32 FindQueueFamilyIndex(VkQueueFlags flags) const;
+
+			Uint32 GetMemoryTypeIndex(Uint32 memoryTypeBits, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferrdFlags);
 			VkPhysicalDeviceMemoryProperties GetMemoryProperties() const { return mMemProperties; }
 
 		private:
+			Uint32 CountBits(Uint32 flags);
+
 			VkPhysicalDevice mPhysicalDevice;
 
 			VkPhysicalDeviceProperties mProperties;

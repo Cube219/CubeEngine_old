@@ -62,13 +62,21 @@ namespace cube
 		class VulkanMemoryHeap
 		{
 		public:
-			VulkanMemoryHeap() {}
+			VulkanMemoryHeap() : mDevice(nullptr)
+			{}
 			VulkanMemoryHeap(const SPtr<DeviceVk>& device, Uint32 memoryTypeIndex, VkDeviceSize heapSize, VkDeviceSize pageSize);
 			~VulkanMemoryHeap() {}
+
+			VulkanMemoryHeap(const VulkanMemoryHeap& other) = delete;
+			VulkanMemoryHeap& operator=(const VulkanMemoryHeap& rhs) = delete;
+
+			VulkanMemoryHeap(VulkanMemoryHeap&& other);
+			VulkanMemoryHeap& operator=(VulkanMemoryHeap&& rhs);
 
 			VulkanAllocation Allocate(VkDeviceSize size, VkDeviceSize alignment);
 
 		private:
+			friend class VulkanMemoryManager;
 			friend class VulkanMemoryPage;
 
 			SPtr<DeviceVk> mDevice;
@@ -88,6 +96,7 @@ namespace cube
 		enum class MemoryUsage : Uint32
 		{
 			GPU,
+			CPU,
 			CPUtoGPU,
 			GPUtoCPU
 		};
@@ -110,7 +119,7 @@ namespace cube
 			SPtr<DeviceVk> mDevice;
 
 			Vector<Uint32> mHeapIndexAsMemoryUsage;
-			Vector<UPtr<VulkanMemoryHeap>> mHeaps;
+			Vector<VulkanMemoryHeap> mHeaps;
 		};
 	} // namespace render
 } // namespace cube

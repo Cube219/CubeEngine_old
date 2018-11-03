@@ -88,6 +88,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI_New;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>OSDependentd.lib;SPVRemapperd.lib;SPIRVd.lib;OGLCompilerd.lib;HLSLd.lib;glslangd.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -132,6 +134,8 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
       <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI_New;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

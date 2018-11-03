@@ -1,4 +1,4 @@
-#include "VulkanPhysicalDevice.h"
+ï»¿#include "VulkanPhysicalDevice.h"
 
 #include "EngineCore/Assertion.h"
 #include "VulkanUtility.h"
@@ -29,12 +29,12 @@ namespace cube
 		{
 		}
 
-		uint32_t VulkanPhysicalDevice::FindQueueFamilyIndex(VkQueueFlags flags) const
+		Uint32 VulkanPhysicalDevice::FindQueueFamilyIndex(VkQueueFlags flags) const
 		{
-			// TODO: ¿Ö µÚ¿¡¼­ºÎÅÍ? ¾î¶»°Ô Ã£¾Æ¾ß ÇÏ´ÂÁö ¾Ë¾Æº¸±â
+			// TODO: ì™œ ë’¤ì—ì„œë¶€í„°? ì–´ë–»ê²Œ ì°¾ì•„ì•¼ í•˜ëŠ”ì§€ ì•Œì•„ë³´ê¸°
 			for (size_t i = mQueueFamilyProperties.size() - 1; i >= 0; i--) {
 				if ((mQueueFamilyProperties[i].queueFlags & flags) > 0) {
-					return SCast(uint32_t)(i);
+					return SCast(Uint32)(i);
 				}
 			}
 
@@ -42,19 +42,43 @@ namespace cube
 			return 0;
 		}
 
-		uint32_t VulkanPhysicalDevice::GetMemoryTypeIndex(uint32_t memoryTypeBits, VkMemoryPropertyFlags requirmentFlags)
+		Uint32 VulkanPhysicalDevice::GetMemoryTypeIndex(Uint32 memoryTypeBits, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags)
 		{
-			// TODO: ¿ø¸® ¾Ë¾Æº¸±â
-			for(uint32_t i = 0; i < mMemProperties.memoryTypeCount; i++) {
+			// TODO: ì›ë¦¬ ì•Œì•„ë³´ê¸°
+
+			Uint32 memIndex = -1;
+			int maxPreferredCount = -1;
+
+			for(Uint32 i = 0; i < mMemProperties.memoryTypeCount; i++) {
 				if((memoryTypeBits & 1) == 1) {
-					if((mMemProperties.memoryTypes[i].propertyFlags & requirmentFlags) == requirmentFlags) {
-						return i;
+					VkMemoryPropertyFlags memProperties = mMemProperties.memoryTypes[i].propertyFlags;
+
+					// Check required flags
+					if((memProperties & requiredFlags) == requiredFlags) {
+						// Check preferred flags
+						Uint32 preferredCount = CountBits(memProperties & preferredFlags);
+						if(maxPreferredCount < (int)preferredCount) {
+							memIndex = i;
+							maxPreferredCount = preferredCount;
+						}
 					}
 				}
 				memoryTypeBits >>= 1;
 			}
 
-			return -1;
+			return memIndex;
+		}
+
+		Uint32 VulkanPhysicalDevice::CountBits(Uint32 flags)
+		{
+			if(flags == 0) return 0;
+
+			Uint32 count = 0;
+			for(Uint32 i = 1; i <= (1 << (sizeof(Uint32)*8-1)); i = i << 1) {
+				count += flags & i;
+			}
+
+			return count;
 		}
 	} // namespace render
 } // namespace cube
