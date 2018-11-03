@@ -24,14 +24,14 @@ namespace cube
 			// CreatePipelineState
 			// CreateFence
 
-			SPtr<VulkanPhysicalDevice> GetParentPhysicalDevice() const { return mPhysicalDevice; }
+			SPtr<VulkanPhysicalDevice> GetParentPhysicalDevice() const { return mParentPhysicalDevice; }
+			UPtr<VulkanMemoryManager>& GetMemoryManager() { return mMemoryManager; }
 
 		private:
-			VkDeviceMemory AllocateMemory(VkMemoryRequirements requirements, VkMemoryPropertyFlags properties);
-
 			VkDevice mDevice;
 
-			SPtr<VulkanPhysicalDevice> mPhysicalDevice;
+			SPtr<VulkanPhysicalDevice> mParentPhysicalDevice;
+			UPtr<VulkanMemoryManager> mMemoryManager;
 		};
 	} // namespace render
 } // namespace cube

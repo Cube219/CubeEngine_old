@@ -49,10 +49,13 @@ namespace cube
 			virtual void UpdateData(Uint64 offset, Uint64 size, const void* pData) = 0;
 			virtual void CopyData(const SPtr<Buffer>& src, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) = 0;
 
-			virtual void Map(const void* pMappedData) = 0;
+			virtual void Map(void*& pMappedData) = 0;
 			virtual void Unmap() = 0;
 
 			virtual void CreateView() = 0;
+
+		protected:
+			BufferUsage mUsage;
 		};
 	} // namespace render
 } // namespace cube

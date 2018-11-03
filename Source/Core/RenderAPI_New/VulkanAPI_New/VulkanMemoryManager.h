@@ -29,6 +29,8 @@ namespace cube
 			void Free(VulkanAllocation& alloc);
 			void Free(VulkanAllocation&& alloc);
 
+			VkDeviceMemory GetVkDeviceMemory() const { return mDeviceMemory; }
+
 		private:
 			struct FreeBlock;
 

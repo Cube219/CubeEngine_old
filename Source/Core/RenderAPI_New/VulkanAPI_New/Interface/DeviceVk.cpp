@@ -3,6 +3,7 @@
 #include "../VulkanUtility.h"
 #include "../VulkanDebug.h"
 #include "../VulkanPhysicalDevice.h"
+#include "../VulkanMemoryManager.h"
 #include "BaseRenderAPI_New/Interface/Buffer.h"
 #include "BufferVk.h"
 
@@ -12,7 +13,7 @@ namespace cube
 	{
 		DeviceVk::DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
 			const DeviceAttribute& attr) :
-			mPhysicalDevice(physicalDevice)
+			mParentPhysicalDevice(physicalDevice)
 		{
 			VkResult res;
 
@@ -50,9 +51,14 @@ namespace cube
 			deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
 
 			res = vkCreateDevice(physicalDevice->GetHandle(), &deviceCreateInfo, nullptr, &mDevice);
-			CheckVkResult("Failed to create device", res);
+			CheckVkResult("Failed to create device.", res);
 
 			VulkanDebug::SetObjectName(mDevice, attr.debugName);
+
+			mMemoryManager = std::make_unique<VulkanMemoryManager>(shared_from_this(),
+				256 * 1024 * 1024, // 256MiB
+				32 * 1024 * 1024  // 32MiB
+			);
 		}
 
 		DeviceVk::~DeviceVk()
@@ -64,24 +70,6 @@ namespace cube
 		{
 			return std::make_shared<BufferVk>(shared_from_this(), attr);
 			// RN: 왜 BUfferVk에서 첫 번째 인수에 const를 붙여야 하는가?
-		}
-
-		VkDeviceMemory DeviceVk::AllocateMemory(VkMemoryRequirements requirements, VkMemoryPropertyFlags properties)
-		{
-			/*
-			VkResult res;
-
-			VkMemoryAllocateInfo memAllocateInfo = {};
-			memAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-			memAllocateInfo.pNext = nullptr;
-			memAllocateInfo.allocationSize = requirements.size;
-			memAllocateInfo.memoryTypeIndex = mPhysicalDevice->GetMemoryTypeIndex(requirements.memoryTypeBits, properties);
-
-			VkDeviceMemory mem;
-			res = vkAllocateMemory(mDevice, &memAllocateInfo, nullptr, &mem);
-			CheckVkResult("Failed to allocate DeviceMemory.", res);
-			*/
-			return 0;
 		}
 	} // namespace render
 } // namespace cube
