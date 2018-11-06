@@ -4,6 +4,8 @@
 
 #include "BaseRenderAPI_New/Interface/Device.h"
 
+#include "../VulkanMemoryManager.h"
+
 namespace cube
 {
 	namespace render
@@ -11,7 +13,7 @@ namespace cube
 		class DeviceVk final : public Device, public std::enable_shared_from_this<DeviceVk>
 		{
 		public:
-			DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
+			DeviceVk(VulkanPhysicalDevice& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
 				const DeviceAttribute& attr);
 			virtual ~DeviceVk();
 
@@ -24,13 +26,13 @@ namespace cube
 			// CreatePipelineState
 			// CreateFence
 
-			SPtr<VulkanPhysicalDevice> GetParentPhysicalDevice() const { return mParentPhysicalDevice; }
+			VulkanPhysicalDevice& GetParentPhysicalDevice() const { return mParentPhysicalDevice; }
 			UPtr<VulkanMemoryManager>& GetMemoryManager() { return mMemoryManager; }
 
 		private:
 			VkDevice mDevice;
 
-			SPtr<VulkanPhysicalDevice> mParentPhysicalDevice;
+			VulkanPhysicalDevice& mParentPhysicalDevice;
 			UPtr<VulkanMemoryManager> mMemoryManager;
 		};
 	} // namespace render

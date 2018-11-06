@@ -24,7 +24,7 @@ namespace cube
 			void CreateInstance(const RenderAPIAttribute& attr);
 
 			VkInstance mInstance;
-			Vector<SPtr<VulkanPhysicalDevice>> mPhysicalDevices;
+			Vector<VulkanPhysicalDevice> mPhysicalDevices;
 		};
 	} // namespace render
 } // namespace cube

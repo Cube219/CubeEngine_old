@@ -11,7 +11,7 @@ namespace cube
 {
 	namespace render
 	{
-		DeviceVk::DeviceVk(SPtr<VulkanPhysicalDevice>& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
+		DeviceVk::DeviceVk(VulkanPhysicalDevice& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
 			const DeviceAttribute& attr) :
 			mParentPhysicalDevice(physicalDevice)
 		{
@@ -33,7 +33,7 @@ namespace cube
 			VkDeviceQueueCreateInfo queueInfo = {};
 			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 			queueInfo.flags = 0;
-			queueInfo.queueFamilyIndex = physicalDevice->FindQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
+			queueInfo.queueFamilyIndex = physicalDevice.FindQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
 			queueInfo.queueCount = 1; // TODO: 나중에 늘리기?
 			const float queuePriority = 1.0f;
 			queueInfo.pQueuePriorities = &queuePriority;
@@ -50,12 +50,12 @@ namespace cube
 			deviceCreateInfo.ppEnabledExtensionNames = extensions.data();
 			deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
 
-			res = vkCreateDevice(physicalDevice->GetHandle(), &deviceCreateInfo, nullptr, &mDevice);
+			res = vkCreateDevice(physicalDevice.GetHandle(), &deviceCreateInfo, nullptr, &mDevice);
 			CheckVkResult("Failed to create device.", res);
 
 			VulkanDebug::SetObjectName(mDevice, attr.debugName);
 
-			mMemoryManager = std::make_unique<VulkanMemoryManager>(shared_from_this(),
+			mMemoryManager = std::make_unique<VulkanMemoryManager>(*this,
 				256 * 1024 * 1024, // 256MiB
 				32 * 1024 * 1024  // 32MiB
 			);

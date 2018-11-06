@@ -64,9 +64,9 @@ namespace cube
 		class VulkanMemoryHeap
 		{
 		public:
-			VulkanMemoryHeap() : mDevice(nullptr)
+			VulkanMemoryHeap() : mDevicePtr(nullptr)
 			{}
-			VulkanMemoryHeap(const SPtr<DeviceVk>& device, Uint32 memoryTypeIndex, VkDeviceSize heapSize, VkDeviceSize pageSize);
+			VulkanMemoryHeap(DeviceVk* devicePtr, Uint32 memoryTypeIndex, VkDeviceSize heapSize, VkDeviceSize pageSize);
 			~VulkanMemoryHeap() {}
 
 			VulkanMemoryHeap(const VulkanMemoryHeap& other) = delete;
@@ -81,7 +81,7 @@ namespace cube
 			friend class VulkanMemoryManager;
 			friend class VulkanMemoryPage;
 
-			SPtr<DeviceVk> mDevice;
+			DeviceVk* mDevicePtr;
 
 			Uint32 mMemoryTypeIndex;
 			VkDeviceSize mHeapSize;
@@ -107,18 +107,19 @@ namespace cube
 		class VulkanMemoryManager
 		{
 		public:
-			VulkanMemoryManager(SPtr<DeviceVk> device, VkDeviceSize gpuPageSize, VkDeviceSize hostVisiblePageSize);
+			VulkanMemoryManager(DeviceVk& device, VkDeviceSize gpuPageSize, VkDeviceSize hostVisiblePageSize);
 			~VulkanMemoryManager();
 
 			VulkanMemoryManager(const VulkanMemoryManager& others) = delete;
 			VulkanMemoryManager& operator=(const VulkanMemoryManager& rhs) = delete;
+			VulkanMemoryManager(VulkanMemoryManager&& others) = delete;
 			VulkanMemoryManager& operator=(VulkanMemoryManager&& rhs) = delete;
 
 			VulkanAllocation Allocate(VkDeviceSize size, VkDeviceSize alignment, MemoryUsage usage);
 			VulkanAllocation Allocate(const VkMemoryRequirements& memRequirements, MemoryUsage usage);
 
 		private:
-			SPtr<DeviceVk> mDevice;
+			DeviceVk& mDevice;
 
 			Vector<Uint32> mHeapIndexAsMemoryUsage;
 			Vector<VulkanMemoryHeap> mHeaps;

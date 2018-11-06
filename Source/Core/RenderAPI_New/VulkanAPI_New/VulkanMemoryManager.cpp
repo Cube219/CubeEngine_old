@@ -26,10 +26,10 @@ namespace cube
 			info.memoryTypeIndex = memoryTypeIndex;
 			info.allocationSize = size;
 
-			res = vkAllocateMemory(myHeap.mDevice->GetHandle(), &info, nullptr, &mDeviceMemory);
+			res = vkAllocateMemory(myHeap.mDevicePtr->GetHandle(), &info, nullptr, &mDeviceMemory);
 			CheckVkResult("Failed to Create VulkanMemoryPage.", res);
 
-			VulkanDebug::SetObjectName(myHeap.mDevice->GetHandle(), mDeviceMemory,
+			VulkanDebug::SetObjectName(myHeap.mDevicePtr->GetHandle(), mDeviceMemory,
 				fmt::format("VulkanMemoryPage (Size: {0}, MemoryTypeIndex: {1})", size, memoryTypeIndex).c_str());
 
 			InsertFreeBlock(0, size);
@@ -37,7 +37,7 @@ namespace cube
 
 		VulkanMemoryPage::~VulkanMemoryPage()
 		{
-			vkFreeMemory(mMyHeap.mDevice->GetHandle(), mDeviceMemory, nullptr);
+			vkFreeMemory(mMyHeap.mDevicePtr->GetHandle(), mDeviceMemory, nullptr);
 		}
 
 		VulkanAllocation VulkanMemoryPage::Allocate(VkDeviceSize size, VkDeviceSize alignment)
@@ -189,13 +189,13 @@ namespace cube
 		// VulkanMemoryHeap //
 		//////////////////////
 
-		VulkanMemoryHeap::VulkanMemoryHeap(const SPtr<DeviceVk>& device, Uint32 memoryTypeIndex, VkDeviceSize heapSize, VkDeviceSize pageSize) :
-			mDevice(device), mMemoryTypeIndex(memoryTypeIndex), mHeapSize(heapSize), mPageSize(pageSize)
+		VulkanMemoryHeap::VulkanMemoryHeap(DeviceVk* devicePtr, Uint32 memoryTypeIndex, VkDeviceSize heapSize, VkDeviceSize pageSize) :
+			mDevicePtr(devicePtr), mMemoryTypeIndex(memoryTypeIndex), mHeapSize(heapSize), mPageSize(pageSize)
 		{
 		}
 
 		VulkanMemoryHeap::VulkanMemoryHeap(VulkanMemoryHeap&& other) :
-			mDevice(std::move(other.mDevice)),
+			mDevicePtr(other.mDevicePtr),
 			mMemoryTypeIndex(other.mMemoryTypeIndex),
 			mHeapSize(other.mHeapSize),
 			mPageSize(other.mPageSize),
@@ -206,7 +206,7 @@ namespace cube
 
 		VulkanMemoryHeap& VulkanMemoryHeap::operator=(VulkanMemoryHeap&& rhs)
 		{
-			mDevice = std::move(rhs.mDevice);
+			mDevicePtr = rhs.mDevicePtr;
 			mMemoryTypeIndex = rhs.mMemoryTypeIndex;
 			mHeapSize = rhs.mHeapSize;
 			mPageSize = rhs.mPageSize;
@@ -244,14 +244,14 @@ namespace cube
 		// VulkanMemoryManager //
 		/////////////////////////
 
-		VulkanMemoryManager::VulkanMemoryManager(SPtr<DeviceVk> device, VkDeviceSize gpuPageSize, VkDeviceSize hostVisiblePageSize) :
+		VulkanMemoryManager::VulkanMemoryManager(DeviceVk& device, VkDeviceSize gpuPageSize, VkDeviceSize hostVisiblePageSize) :
 			mDevice(device)
 		{
-			auto physicalDevice = device->GetParentPhysicalDevice();
-			auto memProperties = physicalDevice->GetMemoryProperties();
+			auto physicalDevice = device.GetParentPhysicalDevice();
+			auto memProperties = physicalDevice.GetMemoryProperties();
 			mHeaps.resize(memProperties.memoryTypeCount);
 			Uint32 typeBits = (1 << memProperties.memoryTypeCount) - 1;
-			bool isIntegratedGPU = (physicalDevice->GetProperties().deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU);
+			bool isIntegratedGPU = (physicalDevice.GetProperties().deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU);
 
 			VkMemoryPropertyFlags requiredFlags;
 			VkMemoryPropertyFlags preferredFlags;
@@ -260,22 +260,22 @@ namespace cube
 			// TODO: UE4보니까 여러 index들을 쓰던데 왜?(VulkanMemory.cpp)
 			requiredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
 			preferredFlags = 0;
-			Uint32 gpuIndex = physicalDevice->GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
+			Uint32 gpuIndex = physicalDevice.GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
 			CHECK(gpuIndex != -1, "Failed to memory type with a property that has DEVICE_LOCAL.");
 			VkDeviceSize heapSize = memProperties.memoryHeaps[memProperties.memoryTypes[gpuIndex].heapIndex].size;
 			VkDeviceSize pageSize = Math::Min(heapSize / 8, gpuPageSize);
-			mHeaps[gpuIndex] = VulkanMemoryHeap(device, gpuIndex, heapSize, pageSize);
+			mHeaps[gpuIndex] = VulkanMemoryHeap(&device, gpuIndex, heapSize, pageSize);
 			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::GPU] = gpuIndex;
 
 			// Setup CPU heap
 			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 			preferredFlags = 0;
-			Uint32 cpuIndex = physicalDevice->GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
+			Uint32 cpuIndex = physicalDevice.GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
 			CHECK(cpuIndex != -1, "Failed to memory type with a property that has HOST_VISIBLE | HOST_COHERENT.");
 			heapSize = memProperties.memoryHeaps[memProperties.memoryTypes[cpuIndex].heapIndex].size;
 			pageSize = hostVisiblePageSize;
-			if(mHeaps[cpuIndex].mDevice == nullptr)
-				mHeaps[cpuIndex] = VulkanMemoryHeap(device, cpuIndex, heapSize, pageSize);
+			if(mHeaps[cpuIndex].mDevicePtr == nullptr)
+				mHeaps[cpuIndex] = VulkanMemoryHeap(&device, cpuIndex, heapSize, pageSize);
 			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::CPU] = cpuIndex;
 			
 			// Setup CPUtoGPU heap
@@ -283,25 +283,25 @@ namespace cube
 			bool flushManually = false;
 			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 			preferredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-			Uint32 CtoGindex = physicalDevice->GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
+			Uint32 CtoGindex = physicalDevice.GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
 			CHECK(CtoGindex != -1,
 				"Failed to memory type with a property that has HOST_VISIBLE(required), DEVICE_LOCAL(preferred).");
 			heapSize = memProperties.memoryHeaps[memProperties.memoryTypes[CtoGindex].heapIndex].size;
 			pageSize = hostVisiblePageSize;
-			if(mHeaps[CtoGindex].mDevice == nullptr)
-				mHeaps[CtoGindex] = VulkanMemoryHeap(device, CtoGindex, heapSize, pageSize);
+			if(mHeaps[CtoGindex].mDevicePtr == nullptr)
+				mHeaps[CtoGindex] = VulkanMemoryHeap(&device, CtoGindex, heapSize, pageSize);
 			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::CPUtoGPU] = CtoGindex;
 
 			// Setup GPUtoCPU heap
 			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 			preferredFlags = VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
-			Uint32 GtoCindex = physicalDevice->GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
+			Uint32 GtoCindex = physicalDevice.GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
 			CHECK(GtoCindex != -1,
 				"Failed to memory type with a property that has HOST_VISIBLE(required), HOST_COHERENT(prefferd).");
 			heapSize = memProperties.memoryHeaps[memProperties.memoryTypes[GtoCindex].heapIndex].size;
 			pageSize = hostVisiblePageSize;
-			if(mHeaps[GtoCindex].mDevice == nullptr)
-				mHeaps[GtoCindex] = VulkanMemoryHeap(device, GtoCindex, heapSize, pageSize);
+			if(mHeaps[GtoCindex].mDevicePtr == nullptr)
+				mHeaps[GtoCindex] = VulkanMemoryHeap(&device, GtoCindex, heapSize, pageSize);
 			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::GPUtoCPU] = GtoCindex;
 		}
 

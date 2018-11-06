@@ -44,8 +44,6 @@ namespace cube
 
 		Uint32 VulkanPhysicalDevice::GetMemoryTypeIndex(Uint32 memoryTypeBits, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags)
 		{
-			// TODO: 원리 알아보기
-
 			Uint32 memIndex = -1;
 			int maxPreferredCount = -1;
 

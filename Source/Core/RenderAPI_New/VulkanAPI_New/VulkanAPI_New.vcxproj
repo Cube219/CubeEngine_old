@@ -163,21 +163,27 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Interface\BufferVk.cpp" />
+    <ClCompile Include="Interface\CommandListVk.cpp" />
     <ClCompile Include="Interface\DeviceVk.cpp" />
     <ClCompile Include="VulkanAPI.cpp" />
+    <ClCompile Include="VulkanCommandPool.cpp" />
     <ClCompile Include="VulkanDebug.cpp" />
     <ClCompile Include="VulkanMemoryManager.cpp" />
     <ClCompile Include="VulkanPhysicalDevice.cpp" />
+    <ClCompile Include="VulkanUploadHeap.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interface\BufferVk.h" />
+    <ClInclude Include="Interface\CommandListVk.h" />
     <ClInclude Include="Interface\DeviceVk.h" />
     <ClInclude Include="VulkanAPI.h" />
     <ClInclude Include="VulkanAPIHeader.h" />
+    <ClInclude Include="VulkanCommandPool.h" />
     <ClInclude Include="VulkanDebug.h" />
     <ClInclude Include="VulkanMemoryManager.h" />
     <ClInclude Include="VulkanPhysicalDevice.h" />
+    <ClInclude Include="VulkanUploadHeap.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

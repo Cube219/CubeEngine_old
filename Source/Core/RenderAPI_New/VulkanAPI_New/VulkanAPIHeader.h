@@ -18,9 +18,15 @@ namespace cube
 		class VulkanMemoryHeap;
 		class VulkanMemoryManager;
 
+		struct VulkanUploadAllocation;
+		class VulkanUploadHeap;
+
 		class DeviceVk;
 
 		class BufferVk;
+
+		class VulkanCommandPool;
+		class CommandListVk;
 	} // namespace render
 } // namespace cube
 

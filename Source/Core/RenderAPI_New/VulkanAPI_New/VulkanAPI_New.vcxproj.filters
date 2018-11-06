@@ -12,6 +12,11 @@
     </ClCompile>
     <ClCompile Include="VulkanDebug.cpp" />
     <ClCompile Include="VulkanMemoryManager.cpp" />
+    <ClCompile Include="Interface\CommandListVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanCommandPool.cpp" />
+    <ClCompile Include="VulkanUploadHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -31,5 +36,10 @@
     </ClInclude>
     <ClInclude Include="VulkanDebug.h" />
     <ClInclude Include="VulkanMemoryManager.h" />
+    <ClInclude Include="Interface\CommandListVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanCommandPool.h" />
+    <ClInclude Include="VulkanUploadHeap.h" />
   </ItemGroup>
 </Project>
