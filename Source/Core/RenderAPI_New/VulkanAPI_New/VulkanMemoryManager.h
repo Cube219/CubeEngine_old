@@ -100,7 +100,8 @@ namespace cube
 			GPU,
 			CPU,
 			CPUtoGPU,
-			GPUtoCPU
+			GPUtoCPU,
+			Count
 		};
 
 		// TODO: Async Allocator
@@ -119,9 +120,9 @@ namespace cube
 			VulkanAllocation Allocate(const VkMemoryRequirements& memRequirements, MemoryUsage usage);
 
 		private:
-			DeviceVk& mDevice;
+			VkDevice mVkDevice;
 
-			Vector<Uint32> mHeapIndexAsMemoryUsage;
+			Array<Uint32, (Uint32)MemoryUsage::Count> mHeapIndexAsMemoryUsage;
 			Vector<VulkanMemoryHeap> mHeaps;
 		};
 	} // namespace render

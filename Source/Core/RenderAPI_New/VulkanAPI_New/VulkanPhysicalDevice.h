@@ -16,7 +16,8 @@ namespace cube
 
 			VkPhysicalDeviceProperties GetProperties() const { return mProperties; }
 
-			Uint32 FindQueueFamilyIndex(VkQueueFlags flags) const;
+			Uint32 FindQueueFamilyIndex(VkQueueFlags flags, VkQueueFlags prohibitFlags) const;
+			const Vector<VkQueueFamilyProperties>& GetQueueFamilyProperties() const { return mQueueFamilyProperties; }
 
 			Uint32 GetMemoryTypeIndex(Uint32 memoryTypeBits, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferrdFlags);
 			VkPhysicalDeviceMemoryProperties GetMemoryProperties() const { return mMemProperties; }

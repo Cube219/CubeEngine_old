@@ -29,17 +29,17 @@ namespace cube
 		{
 		}
 
-		Uint32 VulkanPhysicalDevice::FindQueueFamilyIndex(VkQueueFlags flags) const
+		Uint32 VulkanPhysicalDevice::FindQueueFamilyIndex(VkQueueFlags flags, VkQueueFlags prohibitFlags) const
 		{
-			// TODO: 왜 뒤에서부터? 어떻게 찾아야 하는지 알아보기
-			for (size_t i = mQueueFamilyProperties.size() - 1; i >= 0; i--) {
-				if ((mQueueFamilyProperties[i].queueFlags & flags) > 0) {
-					return SCast(Uint32)(i);
+			// TODO: 다른 것들은 어떻게 찾는지 알아보기
+			for (Uint32 i = 0; i < mQueueFamilyProperties.size(); i++) {
+				if ((mQueueFamilyProperties[i].queueFlags & flags) != 0
+					&& (mQueueFamilyProperties[i].queueFlags & prohibitFlags) == 0) {
+					return i;
 				}
 			}
 
-			ASSERTION_FAILED("Failed to find a queueFamily. (VkQueueFlags: {0})", flags);
-			return 0;
+			return UInt32InvalidValue;
 		}
 
 		Uint32 VulkanPhysicalDevice::GetMemoryTypeIndex(Uint32 memoryTypeBits, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags)
@@ -71,12 +71,9 @@ namespace cube
 		{
 			if(flags == 0) return 0;
 
-			Uint32 count = 0;
-			for(Uint32 i = 1; i <= (1 << (sizeof(Uint32)*8-1)); i = i << 1) {
-				count += flags & i;
-			}
-
-			return count;
+			flags = flags - ((flags >> 1) & 0x55555555);
+			flags = (flags & 0x33333333) + (flags >> 2 & 0x33333333);
+			return (((flags + (flags >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
 		}
 	} // namespace render
 } // namespace cube

@@ -15,8 +15,14 @@
     <ClCompile Include="Interface\CommandListVk.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanCommandPool.cpp" />
     <ClCompile Include="VulkanUploadHeap.cpp" />
+    <ClCompile Include="VulkanQueueManager.cpp" />
+    <ClCompile Include="VulkanCommandListPool.cpp" />
+    <ClCompile Include="Interface\FenceVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanFencePool.cpp" />
+    <ClCompile Include="VulkanSemaphorePool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -39,7 +45,13 @@
     <ClInclude Include="Interface\CommandListVk.h">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="VulkanCommandPool.h" />
     <ClInclude Include="VulkanUploadHeap.h" />
+    <ClInclude Include="VulkanQueueManager.h" />
+    <ClInclude Include="VulkanCommandListPool.h" />
+    <ClInclude Include="Interface\FenceVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanFencePool.h" />
+    <ClInclude Include="VulkanSemaphorePool.h" />
   </ItemGroup>
 </Project>

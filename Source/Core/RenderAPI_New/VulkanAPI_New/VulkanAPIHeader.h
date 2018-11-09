@@ -22,11 +22,17 @@ namespace cube
 		class VulkanUploadHeap;
 
 		class DeviceVk;
+		class VulkanQueueManager;
 
 		class BufferVk;
 
-		class VulkanCommandPool;
+		class VulkanCommandListPool;
 		class CommandListVk;
+
+		class VulkanFencePool;
+		class FenceVk;
+
+		class VulkanSemaphorePool;
 	} // namespace render
 } // namespace cube
 

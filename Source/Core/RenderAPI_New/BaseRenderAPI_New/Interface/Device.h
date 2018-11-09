@@ -20,6 +20,8 @@ namespace cube
 			virtual ~Device() {}
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) = 0;
+
+			virtual void SubmitCommandList(SPtr<CommandList>& commandList) = 0;
 		};
 	} // namespace render
 } // namespace cube

@@ -245,7 +245,7 @@ namespace cube
 		/////////////////////////
 
 		VulkanMemoryManager::VulkanMemoryManager(DeviceVk& device, VkDeviceSize gpuPageSize, VkDeviceSize hostVisiblePageSize) :
-			mDevice(device)
+			mVkDevice(device.GetHandle())
 		{
 			auto physicalDevice = device.GetParentPhysicalDevice();
 			auto memProperties = physicalDevice.GetMemoryProperties();
