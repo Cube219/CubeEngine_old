@@ -164,8 +164,8 @@ namespace cube
 			}
 
 			// If not found, find with COMPUTE bits
-			mComputeQueueFamilyIndex = mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT, 0);
-			if(mComputeQueueFamilyIndex != UInt32InvalidValue)
+			mComputeQueueFamilyIndex = mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT, 0);
+			if(mComputeQueueFamilyIndex == UInt32InvalidValue)
 				return false;
 
 			Uint32 queueCount = props[mComputeQueueFamilyIndex].queueCount;

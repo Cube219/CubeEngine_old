@@ -64,10 +64,10 @@ namespace cube
 			// VulkanPhysicalDevice& mParentPhysicalDevice;
 			VulkanMemoryManager mMemoryManager;
 
-			VulkanCommandListPool mCommandListPool;
-			VulkanQueueManager mQueueManager;
 			VulkanFencePool mFencePool;
 			VulkanSemaphorePool mSemaphorePool;
+			VulkanQueueManager mQueueManager;
+			VulkanCommandListPool mCommandListPool;
 
 			core::Mutex mReleaseQueueMutex;
 			Vector<std::function<void()>> mReleaseFuncQueue;
