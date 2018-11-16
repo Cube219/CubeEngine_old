@@ -12,6 +12,7 @@ namespace cube
 	namespace render
 	{
 		class VulkanPhysicalDevice;
+		class VulkanLogicalDevice;
 
 		struct VulkanAllocation;
 		class VulkanMemoryPage;

@@ -17,14 +17,14 @@ namespace cube
 		class VulkanSemaphorePool
 		{
 		public:
-			VulkanSemaphorePool(DeviceVk& device);
+			VulkanSemaphorePool(SPtr<VulkanLogicalDevice>& device);
 			~VulkanSemaphorePool();
 
 			VulkanSemaphore GetSemaphore();
 			void FreeSemaphore(VulkanSemaphore& semaphore);
 
 		private:
-			DeviceVk& mDevice;
+			SPtr<VulkanLogicalDevice> mDevice;
 
 			core::Mutex mSemaphoresMutex;
 			Vector<VkSemaphore> mSemaphores;

@@ -1,14 +1,14 @@
 ﻿#include "VulkanCommandListPool.h"
 
 #include "VulkanUtility.h"
-#include "Interface/DeviceVk.h"
+#include "VulkanLogicalDevice.h"
 #include "VulkanQueueManager.h"
 
 namespace cube
 {
 	namespace render
 	{
-		VulkanCommandListPool::VulkanCommandListPool(SPtr<DeviceVk>& device, UPtr<VulkanQueueManager>& queueManager) :
+		VulkanCommandListPool::VulkanCommandListPool(SPtr<VulkanLogicalDevice>& device, VulkanQueueManager& queueManager) :
 			mDevice(device)
 		{
 			VkResult res;
@@ -19,34 +19,34 @@ namespace cube
 
 			// Graphics command pool
 			info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-			mGraphicsQueueFamilyIndex = queueManager->GetGraphicsQueueFamilyIndex();
+			mGraphicsQueueFamilyIndex = queueManager.GetGraphicsQueueFamilyIndex();
 			info.queueFamilyIndex = mGraphicsQueueFamilyIndex;
 
 			res = vkCreateCommandPool(mDevice->GetHandle(), &info, nullptr, &mGraphicsCommandPool);
-			CheckVkResult("Failed to create graphics command pool.", res);
+			CHECK_VK(res, "Failed to create graphics command pool.");
 
 			// Transfer command pool
 			info.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-			mTransferImmediateQueueFamilyIndex = queueManager->GetTransferImmediateQueueFamilyIndex();
+			mTransferImmediateQueueFamilyIndex = queueManager.GetTransferImmediateQueueFamilyIndex();
 			info.queueFamilyIndex = mTransferImmediateQueueFamilyIndex;
 			
 			res = vkCreateCommandPool(mDevice->GetHandle(), &info, nullptr, &mTransferImmediateCommandPool);
-			CheckVkResult("Failed to create transfer immediate command pool.", res);
+			CHECK_VK(res, "Failed to create transfer immediate command pool.");
 
 			info.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-			mTransferDeferredQueueFamilyIndex = queueManager->GetTransferDeferredFamilyIndex();
+			mTransferDeferredQueueFamilyIndex = queueManager.GetTransferDeferredFamilyIndex();
 			info.queueFamilyIndex = mTransferDeferredQueueFamilyIndex;
 
 			res = vkCreateCommandPool(mDevice->GetHandle(), &info, nullptr, &mTransferDeferredCommandPool);
-			CheckVkResult("Failed to create transfer deferred command pool.", res);
+			CHECK_VK(res, "Failed to create transfer deferred command pool.");
 
 			// Compute command pool
 			info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-			mComputeQueueFamilyIndex = queueManager->GetComputeQueueFamilyIndex();
+			mComputeQueueFamilyIndex = queueManager.GetComputeQueueFamilyIndex();
 			info.queueFamilyIndex = mComputeQueueFamilyIndex;
 
 			res = vkCreateCommandPool(mDevice->GetHandle(), &info, nullptr, &mComputeCommandPool);
-			CheckVkResult("Failed to create compute command pool.", res);
+			CHECK_VK(res, "Failed to create compute command pool.");
 		}
 
 		VulkanCommandListPool::~VulkanCommandListPool()

@@ -4,6 +4,9 @@
 
 #include "BaseRenderAPI_New/Interface/Fence.h"
 
+#include "../VkObject.h"
+#include "../VulkanLogicalDevice.h"
+
 namespace cube
 {
 	namespace render
@@ -11,10 +14,10 @@ namespace cube
 		class FenceVk final : public Fence
 		{
 		public:
-			FenceVk(DeviceVk& device, VkFence fence, Uint32 poolIndex, VulkanFencePool& pool);
+			FenceVk(VkFenceWrapper& fence, Uint32 poolIndex, VulkanFencePool& pool);
 			virtual ~FenceVk();
 
-			VkFence GetHandle() const { return mFence; }
+			VkFence GetHandle() const { return mFence.mObject; }
 
 			virtual void Release() override final;
 
@@ -23,8 +26,8 @@ namespace cube
 		private:
 			friend class VulkanFencePool;
 
-			DeviceVk& mDevice;
-			VkFence mFence;
+			VkFenceWrapper& mFence;
+
 			Uint32 mFencePoolIndex;
 			VulkanFencePool& mPool;
 		};

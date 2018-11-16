@@ -4,6 +4,7 @@
 
 #include "BaseRenderAPI_New/Interface/Buffer.h"
 
+#include "../VkObject.h"
 #include "../VulkanMemoryManager.h"
 
 namespace cube
@@ -13,10 +14,11 @@ namespace cube
 		class BufferVk final : public Buffer
 		{
 		public:
-			BufferVk(SPtr<DeviceVk> device, const BufferAttribute& attr);
+			BufferVk(DeviceVk& device, const BufferAttribute& attr,
+				VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool);
 			virtual ~BufferVk();
 
-			VkBuffer GetHandle() const { return mBuffer; }
+			VkBuffer GetHandle() const { return mBuffer.mObject; }
 
 			virtual void UpdateData(Uint64 offset, Uint64 size, const void* pData) override final;
 			virtual void CopyData(const SPtr<Buffer>& src, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) override final;
@@ -27,8 +29,7 @@ namespace cube
 			virtual void CreateView() override final;
 
 		private:
-			SPtr<DeviceVk> mDevice;
-			VkBuffer mBuffer;
+			VkBufferWrapper mBuffer;
 
 			VulkanAllocation mMemoryAllocation;
 		};

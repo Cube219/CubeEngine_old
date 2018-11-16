@@ -1,13 +1,13 @@
 ﻿#include "VulkanSemaphorePool.h"
 
 #include "VulkanUtility.h"
-#include "Interface/DeviceVk.h"
+#include "VulkanLogicalDevice.h"
 
 namespace cube
 {
 	namespace render
 	{
-		VulkanSemaphorePool::VulkanSemaphorePool(DeviceVk& device) : 
+		VulkanSemaphorePool::VulkanSemaphorePool(SPtr<VulkanLogicalDevice>& device) :
 			mDevice(device)
 		{
 			VkResult res;
@@ -23,18 +23,18 @@ namespace cube
 			info.flags = 0;
 
 			for(Uint32 i = 0; i < initSize; i++) {
-				res = vkCreateSemaphore(device.GetHandle(), &info, nullptr, &mSemaphores[i]);
-				CheckVkResult("Failed to create semaphore.", res);
+				res = vkCreateSemaphore(device->GetHandle(), &info, nullptr, &mSemaphores[i]);
+				CHECK_VK(res, "Failed to create semaphore.");
 				mIdleSemaphoreIndices[i] = i;
 			}
 		}
 
 		VulkanSemaphorePool::~VulkanSemaphorePool()
 		{
-			vkDeviceWaitIdle(mDevice.GetHandle());
+			vkDeviceWaitIdle(mDevice->GetHandle());
 
 			for(auto s : mSemaphores) {
-				vkDestroySemaphore(mDevice.GetHandle(), s, nullptr);
+				vkDestroySemaphore(mDevice->GetHandle(), s, nullptr);
 			}
 		}
 
@@ -52,9 +52,9 @@ namespace cube
 					info.pNext = nullptr;
 					info.flags = 0;
 
-					res = vkCreateSemaphore(mDevice.GetHandle(), &info, nullptr, &semaphore.handle);
-					CheckVkResult("Failed to create a new semaphore.", res);
-					semaphore.poolIndex = mSemaphores.size();
+					res = vkCreateSemaphore(mDevice->GetHandle(), &info, nullptr, &semaphore.handle);
+					CHECK_VK(res, "Failed to create a new semaphore.");
+					semaphore.poolIndex = SCast(Uint32)(mSemaphores.size());
 
 					mSemaphores.push_back(semaphore.handle);
 

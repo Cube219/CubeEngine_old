@@ -22,6 +22,7 @@ namespace cube
 			virtual void Release() = 0;
 
 			virtual FenceWaitResult Wait(float timeout) = 0;
+
 			bool IsFinished() { return Wait(0.0f) == FenceWaitResult::Success; }
 		};
 	} // namespace render

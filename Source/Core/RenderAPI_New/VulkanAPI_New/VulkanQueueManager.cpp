@@ -1,10 +1,10 @@
 ﻿#include "VulkanQueueManager.h"
 
 #include "VulkanUtility.h"
-#include "Interface/DeviceVk.h"
 #include "Interface/CommandListVk.h"
 #include "Interface/FenceVk.h"
 #include "VulkanPhysicalDevice.h"
+#include "VulkanLogicalDevice.h"
 #include "VulkanFencePool.h"
 #include "EngineCore/Assertion.h"
 
@@ -12,7 +12,7 @@ namespace cube
 {
 	namespace render
 	{
-		VulkanQueueManager::VulkanQueueManager(DeviceVk& device, VulkanPhysicalDevice& physicalDevice,
+		VulkanQueueManager::VulkanQueueManager(SPtr<VulkanLogicalDevice>& device, VulkanPhysicalDevice& physicalDevice,
 			VulkanFencePool& fencePool, VulkanSemaphorePool& semaphorePool) :
 			mDevice(device), mPhysicalDevice(physicalDevice), mFencePool(fencePool), mSemaphorePool(semaphorePool),
 			mLastGraphicsFence(nullptr)
@@ -35,9 +35,9 @@ namespace cube
 		{
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitCommandList(SPtr<CommandListVk>& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitCommandList(CommandListVk& commandList)
 		{
-			CommandListUsage usage = commandList->GetUsage();
+			CommandListUsage usage = commandList.GetUsage();
 			switch(usage) {
 				case CommandListUsage::Graphics:
 					return SubmitGraphicsQueue(commandList);
@@ -64,7 +64,7 @@ namespace cube
 			}
 
 			// Only use first queue in queue family
-			vkGetDeviceQueue(mDevice.GetHandle(), mGraphicsQueueFamilyIndex, 0, &mGraphicsQueue);
+			vkGetDeviceQueue(mDevice->GetHandle(), mGraphicsQueueFamilyIndex, 0, &mGraphicsQueue);
 			return true;
 		}
 
@@ -87,14 +87,14 @@ namespace cube
 					mTransferImmediateQueues.resize(queueCount - 1);
 					continue;
 				}
-				vkGetDeviceQueue(mDevice.GetHandle(), mTransferImmediateQueueFamilyIndex, i, &mTransferImmediateQueues[i]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mTransferImmediateQueueFamilyIndex, i, &mTransferImmediateQueues[i]);
 			}
 
 			if(mTransferImmediateQueues.size() == 0) {
 				// If the queue family is graphics queue family, but it has only one queue,
 				// just add its queue
 				mTransferImmediateQueues.resize(1);
-				vkGetDeviceQueue(mDevice.GetHandle(), mTransferImmediateQueueFamilyIndex, 0, &mTransferImmediateQueues[0]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mTransferImmediateQueueFamilyIndex, 0, &mTransferImmediateQueues[0]);
 			}
 
 			return true;
@@ -112,13 +112,15 @@ namespace cube
 				mTransferDeferredQueues.resize(queueCount);
 
 				for(Uint32 i = 0; i < queueCount; i++) {
-					vkGetDeviceQueue(mDevice.GetHandle(), mTransferDeferredQueueFamilyIndex, i, &mTransferDeferredQueues[i]);
+					vkGetDeviceQueue(mDevice->GetHandle(), mTransferDeferredQueueFamilyIndex, i, &mTransferDeferredQueues[i]);
 				}
 				return true;
 			}
 
 			// If not found, find with TRANSFER bits
 			mTransferDeferredQueueFamilyIndex = mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT, 0);
+			if(mTransferDeferredQueueFamilyIndex == UInt32InvalidValue)
+				return false;
 
 			Uint32 queueCount = props[mTransferDeferredQueueFamilyIndex].queueCount;
 			mTransferDeferredQueues.resize(queueCount);
@@ -130,14 +132,14 @@ namespace cube
 					mTransferDeferredQueues.resize(queueCount - 1);
 					continue;
 				}
-				vkGetDeviceQueue(mDevice.GetHandle(), mTransferDeferredQueueFamilyIndex, i, &mTransferDeferredQueues[i]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mTransferDeferredQueueFamilyIndex, i, &mTransferDeferredQueues[i]);
 			}
 
 			if(mTransferDeferredQueues.size() == 0) {
 				// If the queue family is graphics queue family, but it has only one queue,
 				// just add its queue
 				mTransferDeferredQueues.resize(1);
-				vkGetDeviceQueue(mDevice.GetHandle(), mTransferDeferredQueueFamilyIndex, 0, &mTransferDeferredQueues[0]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mTransferDeferredQueueFamilyIndex, 0, &mTransferDeferredQueues[0]);
 			}
 
 			return true;
@@ -156,13 +158,15 @@ namespace cube
 				mComputeQueues.resize(queueCount);
 
 				for(Uint32 i = 0; i < queueCount; i++) {
-					vkGetDeviceQueue(mDevice.GetHandle(), mComputeQueueFamilyIndex, i, &mComputeQueues[i]);
+					vkGetDeviceQueue(mDevice->GetHandle(), mComputeQueueFamilyIndex, i, &mComputeQueues[i]);
 				}
 				return true;
 			}
 
 			// If not found, find with COMPUTE bits
 			mComputeQueueFamilyIndex = mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT, 0);
+			if(mComputeQueueFamilyIndex != UInt32InvalidValue)
+				return false;
 
 			Uint32 queueCount = props[mComputeQueueFamilyIndex].queueCount;
 			mComputeQueues.resize(queueCount);
@@ -174,22 +178,22 @@ namespace cube
 					mComputeQueues.resize(queueCount - 1);
 					continue;
 				}
-				vkGetDeviceQueue(mDevice.GetHandle(), mComputeQueueFamilyIndex, i, &mComputeQueues[i]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mComputeQueueFamilyIndex, i, &mComputeQueues[i]);
 			}
 
 			if(mComputeQueues.size() == 0) {
 				// If the queue family is graphics queue family, but it has only one queue,
 				// just add its queue
 				mComputeQueues.resize(1);
-				vkGetDeviceQueue(mDevice.GetHandle(), mComputeQueueFamilyIndex, 0, &mComputeQueues[0]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mComputeQueueFamilyIndex, 0, &mComputeQueues[0]);
 			}
 
 			return true;
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitGraphicsQueue(SPtr<CommandListVk>& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitGraphicsQueue(CommandListVk& commandList)
 		{
-			CHECK(commandList->GetSubmitQueueFamilyIndex() == mGraphicsQueueFamilyIndex,
+			CHECK(commandList.GetSubmitQueueFamilyIndex() == mGraphicsQueueFamilyIndex,
 				"Submit queue family index in commandList doesn't match graphics queue family index.");
 
 			VkResult res;
@@ -217,7 +221,7 @@ namespace cube
 			}
 			mLastGraphicsSemaphores.clear();
 
-			VkCommandBuffer cmdBufToSubmit = commandList->GetHandle();
+			VkCommandBuffer cmdBufToSubmit = commandList.GetHandle();
 
 			// TODO: 나중에 waitStage들을 transfer immediate를 submit할 때 지정할 수 있게 하기
 			Vector<VkPipelineStageFlags> waitStages(waitSemaphores.size(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
@@ -240,7 +244,7 @@ namespace cube
 			SPtr<FenceVk> fence = mFencePool.GetFence();
 
 			res = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, fence->GetHandle());
-			CheckVkResult("Failed to submit command list to the graphics queue.", res);
+			CHECK_VK(res, "Failed to submit command list to the graphics queue.");
 			
 			// Update last fence / semaphores
 			mLastGraphicsFence = fence;
@@ -249,14 +253,14 @@ namespace cube
 			return fence;
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitTransferImmediateQueue(SPtr<CommandListVk>& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitTransferImmediateQueue(CommandListVk& commandList)
 		{
-			CHECK(commandList->GetSubmitQueueFamilyIndex() == mTransferImmediateQueueFamilyIndex,
+			CHECK(commandList.GetSubmitQueueFamilyIndex() == mTransferImmediateQueueFamilyIndex,
 				"Submit queue family index in commandList doesn't match transfer immediate queue family index.");
 
 			VkResult res;
 
-			VkCommandBuffer cmdBufToSubmit = commandList->GetHandle();
+			VkCommandBuffer cmdBufToSubmit = commandList.GetHandle();
 
 			VulkanSemaphore completeSemaphore = mSemaphorePool.GetSemaphore();
 
@@ -287,19 +291,19 @@ namespace cube
 			SPtr<FenceVk> fence = mFencePool.GetFence();
 
 			res = vkQueueSubmit(queueToSubmit, 1, &submitInfo, fence->GetHandle());
-			CheckVkResult("Failed to submit command list to the transfer immediate queue.", res);
+			CHECK_VK(res, "Failed to submit command list to the transfer immediate queue.");
 
 			return fence;
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitTransferDeferredQueue(SPtr<CommandListVk>& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitTransferDeferredQueue(CommandListVk& commandList)
 		{
-			CHECK(commandList->GetSubmitQueueFamilyIndex() == mTransferDeferredQueueFamilyIndex,
+			CHECK(commandList.GetSubmitQueueFamilyIndex() == mTransferDeferredQueueFamilyIndex,
 				"Submit queue family index in commandList doesn't match transfer deferred queue family index.");
 
 			VkResult res;
 
-			VkCommandBuffer cmdBufToSubmit = commandList->GetHandle();
+			VkCommandBuffer cmdBufToSubmit = commandList.GetHandle();
 
 			VkSubmitInfo submitInfo = {};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -323,14 +327,14 @@ namespace cube
 			SPtr<FenceVk> fence = mFencePool.GetFence();
 
 			res = vkQueueSubmit(queueToSubmit, 1, &submitInfo, fence->GetHandle());
-			CheckVkResult("Failed to submit command list to the transfer deferred queue.", res);
+			CHECK_VK(res, "Failed to submit command list to the transfer deferred queue.");
 			
 			return fence;
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitComputeQueue(SPtr<CommandListVk>& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitComputeQueue(CommandListVk& commandList)
 		{
-			CHECK(commandList->GetSubmitQueueFamilyIndex() == mComputeQueueFamilyIndex,
+			CHECK(commandList.GetSubmitQueueFamilyIndex() == mComputeQueueFamilyIndex,
 				"Submit queue family index in commandList doesn't match compute queue family index.");
 
 			ASSERTION_FAILED("Submit compute queue isn't implemented yet.");

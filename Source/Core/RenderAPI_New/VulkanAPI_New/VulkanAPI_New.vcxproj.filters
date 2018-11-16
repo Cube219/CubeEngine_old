@@ -23,6 +23,7 @@
     </ClCompile>
     <ClCompile Include="VulkanFencePool.cpp" />
     <ClCompile Include="VulkanSemaphorePool.cpp" />
+    <ClCompile Include="VulkanLogicalDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -53,5 +54,7 @@
     </ClInclude>
     <ClInclude Include="VulkanFencePool.h" />
     <ClInclude Include="VulkanSemaphorePool.h" />
+    <ClInclude Include="VkObject.h" />
+    <ClInclude Include="VulkanLogicalDevice.h" />
   </ItemGroup>
 </Project>

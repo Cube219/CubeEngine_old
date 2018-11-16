@@ -31,7 +31,7 @@ namespace cube
 			beginInfo.pInheritanceInfo = nullptr;
 
 			res = vkBeginCommandBuffer(mCommandBuffer, &beginInfo);
-			CheckVkResult("Failed to begin the command buffer.", res);
+			CHECK_VK(res, "Failed to begin the command buffer.");
 		}
 
 		void CommandListVk::End()
@@ -39,17 +39,17 @@ namespace cube
 			VkResult res;
 
 			res = vkEndCommandBuffer(mCommandBuffer);
-			CheckVkResult("Failed to end the command buffer.", res);
+			CHECK_VK(res, "Failed to end the command buffer.");
 		}
 
-		void CommandListVk::CopyBuffer(SPtr<BufferVk>& src, SPtr<BufferVk>& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size)
+		void CommandListVk::CopyBuffer(const Buffer& src, Buffer& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size)
 		{
 			VkBufferCopy copy;
 			copy.srcOffset = srcOffset;
 			copy.dstOffset = dstOffset;
 			copy.size = size;
 
-			vkCmdCopyBuffer(mCommandBuffer, src->GetHandle(), dst->GetHandle(), 1, &copy);
+			vkCmdCopyBuffer(mCommandBuffer, DCast(const BufferVk&)(src).GetHandle(), DCast(BufferVk&)(dst).GetHandle(), 1, &copy);
 		}
 	} // namespace render
 } // namespace cube

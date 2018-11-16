@@ -3,15 +3,19 @@
 #include "../VulkanUtility.h"
 #include "../VulkanDebug.h"
 #include "../VulkanMemoryManager.h"
+#include "../VulkanQueueManager.h"
+#include "../VulkanCommandListPool.h"
+#include "../VulkanLogicalDevice.h"
 #include "DeviceVk.h"
+#include "CommandListVk.h"
 #include "EngineCore/Assertion.h"
 
 namespace cube
 {
 	namespace render
 	{
-		BufferVk::BufferVk(SPtr<DeviceVk> device, const BufferAttribute& attr) :
-			mDevice(device)
+		BufferVk::BufferVk(DeviceVk& device, const BufferAttribute& attr,
+			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool)
 		{
 			mUsage = attr.usage;
 
@@ -48,10 +52,9 @@ namespace cube
 			if(attr.bindTypeFlags & BufferBindTypeFlagsBit::TransferDest)
 				info.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
-			res = vkCreateBuffer(device->GetHandle(), &info, nullptr, &mBuffer);
-			CheckVkResult("Failed to create buffer.", res);
+			mBuffer = device.GetLogicalDevice()->CreateVkBufferWrapper(info);
 
-			VulkanDebug::SetObjectName(device->GetHandle(), mBuffer, attr.debugName);
+			VulkanDebug::SetObjectName(mBuffer.GetVkDevice(), mBuffer.mObject, attr.debugName);
 
 			// Allocate memory
 			MemoryUsage memUsage;
@@ -71,14 +74,14 @@ namespace cube
 			}
 
 			VkMemoryRequirements memRequire;
-			vkGetBufferMemoryRequirements(device->GetHandle(), mBuffer, &memRequire);
-
-			mMemoryAllocation = device->GetMemoryManager()->Allocate(memRequire, memUsage);
+			vkGetBufferMemoryRequirements(mBuffer.GetVkDevice(), mBuffer.mObject, &memRequire);
+			
+			mMemoryAllocation = device.GetMemoryManager().Allocate(memRequire, memUsage);
 
 			// Bind memory
 			VkDeviceMemory deviceMem = mMemoryAllocation.pPage->GetVkDeviceMemory();
-			res = vkBindBufferMemory(device->GetHandle(), mBuffer, deviceMem, mMemoryAllocation.offset);
-			CheckVkResult("Failed to bind buffer memory.", res);
+			res = vkBindBufferMemory(mBuffer.GetVkDevice(), mBuffer.mObject, deviceMem, mMemoryAllocation.offset);
+			CHECK_VK(res, "Failed to bind buffer memory.");
 
 			// Initialize buffer data if it is existed
 			if(attr.pData != nullptr && attr.size > 0) {
@@ -88,10 +91,39 @@ namespace cube
 					memcpy(mappedPtr, attr.pData, attr.size);
 					Unmap();
 				} else {
-					// TODO: Buffer Copy 구현
-					//       CommandPool / CommandBuffer 구현 후
 					VkBufferCreateInfo stagingBufferInfo = info;
 					stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+
+					// RN: 어디다 쓰지?
+					U8String stagingBufDebugName = fmt::format("Staging buffer for \"{0}\"", attr.debugName);
+
+					VkBufferWrapper stagingBuffer = device.GetLogicalDevice()->CreateVkBufferWrapper(stagingBufferInfo);
+
+					VkMemoryRequirements stagingMemRequire;
+					vkGetBufferMemoryRequirements(mBuffer.GetVkDevice(), mBuffer.mObject, &stagingMemRequire);
+					VulkanAllocation stagingAlloc = device.GetMemoryManager().Allocate(stagingMemRequire, MemoryUsage::CPU);
+
+					void* stagingData = stagingAlloc.mappedData;
+					memcpy(stagingData, attr.pData, attr.size);
+
+					res = vkBindBufferMemory(stagingBuffer.GetVkDevice(), stagingBuffer.mObject,
+						stagingAlloc.pPage->GetVkDeviceMemory(), stagingAlloc.offset);
+					CHECK_VK(res, "Failed to bind staging buffer memory.");
+
+					SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(CommandListUsage::TransferImmediate);
+					cmdBuf->Begin();
+					VkCommandBuffer vkCmdBuf = cmdBuf->GetHandle();
+					VkBufferCopy bufCopy;
+					bufCopy.srcOffset = 0;
+					bufCopy.dstOffset = 0;
+					bufCopy.size = attr.size;
+					vkCmdCopyBuffer(vkCmdBuf, stagingBuffer.mObject, mBuffer.mObject, 1, &bufCopy);
+					cmdBuf->End();
+
+					queueManager.SubmitCommandList(*cmdBuf);
+
+					device.ReleaseAtEndOfFrame(cmdBuf);
+					device.ReleaseAtEndOfFrame(std::move(stagingBuffer));
 				}
 			}
 		}
@@ -99,7 +131,7 @@ namespace cube
 		BufferVk::~BufferVk()
 		{
 			mMemoryAllocation.pPage->Free(mMemoryAllocation);
-			vkDestroyBuffer(mDevice->GetHandle(), mBuffer, nullptr);
+			mBuffer.Release();
 		}
 
 		void BufferVk::UpdateData(Uint64 offset, Uint64 size, const void* pData)
@@ -119,7 +151,7 @@ namespace cube
 			CHECK(mUsage == BufferUsage::Dynamic || mUsage == BufferUsage::Staging,
 				"Only the dynamic or staging buffer can be mapped.");
 
-			// TODO: Map 구현
+			pMappedData = mMemoryAllocation.mappedData;
 		}
 
 		void BufferVk::Unmap()

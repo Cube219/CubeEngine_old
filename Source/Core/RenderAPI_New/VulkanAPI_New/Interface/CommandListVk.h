@@ -22,7 +22,7 @@ namespace cube
 			virtual void Begin() override final;
 			virtual void End() override final;
 
-			virtual void CopyBuffer(SPtr<BufferVk>& src, SPtr<BufferVk>& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) override final;
+			virtual void CopyBuffer(const Buffer& src, Buffer& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) override final;
 
 		private:
 			SPtr<VulkanCommandListPool> mPool;

@@ -1,7 +1,7 @@
 ﻿#include "VulkanFencePool.h"
 
 #include "VulkanUtility.h"
-#include "Interface/DeviceVk.h"
+#include "VulkanLogicalDevice.h"
 #include "Interface/FenceVk.h"
 #include "EngineCore/Assertion.h"
 
@@ -9,7 +9,7 @@ namespace cube
 {
 	namespace render
 	{
-		VulkanFencePool::VulkanFencePool(DeviceVk& device) :
+		VulkanFencePool::VulkanFencePool(SPtr<VulkanLogicalDevice>& device) :
 			mDevice(device)
 		{
 			VkResult res;
@@ -25,60 +25,60 @@ namespace cube
 			info.flags = 0;
 
 			for(Uint32 i = 0; i < initSize; i++) {
-				res = vkCreateFence(device.GetHandle(), &info, nullptr, &mFences[i]);
-				CheckVkResult("Failed to create fence.", res);
+				mFences[i] = VkFenceWrapper(VK_NULL_HANDLE, device->shared_from_this());
+				res = vkCreateFence(device->GetHandle(), &info, nullptr, &mFences[i].mObject);
+				CHECK_VK(res, "Failed to create fence.");
+
 				mIdleFenceIndices[i] = i;
 			}
 		}
 
 		VulkanFencePool::~VulkanFencePool()
 		{
-			vkDeviceWaitIdle(mDevice.GetHandle());
+			vkDeviceWaitIdle(mDevice->GetHandle());
 
-			for(auto f : mFences) {
-				vkDestroyFence(mDevice.GetHandle(), f, nullptr);
-			}
+			mFences.clear();
 		}
 
 		SPtr<FenceVk> VulkanFencePool::GetFence()
 		{
 			VkResult res;
 
-			VkFence fence = 0;
 			Uint32 index;
 
 			{
 				core::Lock lock(mFencesMutex);
 
 				if(mIdleFenceIndices.empty()) {
+					VkFenceWrapper fence(VK_NULL_HANDLE, mDevice);
+
 					VkFenceCreateInfo info;
 					info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 					info.pNext = nullptr;
 					info.flags = 0;
 
-					res = vkCreateFence(mDevice.GetHandle(), &info, nullptr, &fence);
-					CheckVkResult("Failed to create a new fence.", res);
+					res = vkCreateFence(mDevice->GetHandle(), &info, nullptr, &fence.mObject);
+					CHECK_VK(res, "Failed to create a new fence.");
 					index = SCast(Uint32)(mFences.size());
 
-					mFences.push_back(fence);
+					mFences.push_back(std::move(fence));
 				} else {
 					index = mIdleFenceIndices.back();
-					fence = mFences[index];
 
 					mIdleFenceIndices.pop_back();
 				}
 			}
 
-			vkResetFences(mDevice.GetHandle(), 1, &fence);
-			return std::make_shared<FenceVk>(mDevice, fence, index, *this);
+			vkResetFences(mDevice->GetHandle(), 1, &mFences[index].mObject);
+			return std::make_shared<FenceVk>(mFences[index], index, *this);
 		}
 
 		void VulkanFencePool::FreeFence(FenceVk& fence)
 		{
-			if(fence.mFence == nullptr || mFences.empty())
+			if(fence.mFence.IsEmpty() || mFences.empty())
 				return;
 
-			fence.mFence = nullptr;
+			fence.mFence.Release();
 			{
 				core::Lock lock(mFencesMutex);
 

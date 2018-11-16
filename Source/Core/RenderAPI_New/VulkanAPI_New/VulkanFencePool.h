@@ -2,6 +2,7 @@
 
 #include "VulkanAPIHeader.h"
 
+#include "VkObject.h"
 #include "EngineCore/Thread/MutexLock.h"
 
 namespace cube
@@ -11,17 +12,17 @@ namespace cube
 		class VulkanFencePool
 		{
 		public:
-			VulkanFencePool(DeviceVk& device);
+			VulkanFencePool(SPtr<VulkanLogicalDevice>& device);
 			~VulkanFencePool();
 
 			SPtr<FenceVk> GetFence();
 			void FreeFence(FenceVk& fence);
 
 		private:
-			DeviceVk& mDevice;
+			SPtr<VulkanLogicalDevice> mDevice;
 
 			core::Mutex mFencesMutex;
-			Vector<VkFence> mFences;
+			Vector<VkFenceWrapper> mFences;
 			Vector<Uint32> mIdleFenceIndices;
 		};
 	} // namespace render

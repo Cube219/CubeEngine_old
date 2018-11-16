@@ -3,6 +3,7 @@
 #include "VulkanUtility.h"
 #include "Interface/DeviceVk.h"
 #include "VulkanPhysicalDevice.h"
+#include "VulkanLogicalDevice.h"
 #include "VulkanDebug.h"
 
 namespace cube
@@ -30,11 +31,11 @@ namespace cube
 			VkResult res;
 			uint32_t physicalDeviceNum;
 			res = vkEnumeratePhysicalDevices(mInstance, &physicalDeviceNum, nullptr);
-			CheckVkResult("Failed to get physical device number", res);
+			CHECK_VK(res, "Failed to get physical device number.");
 			Vector<VkPhysicalDevice> pd;
 			pd.resize(physicalDeviceNum);
 			res = vkEnumeratePhysicalDevices(mInstance, &physicalDeviceNum, pd.data());
-			CheckVkResult("Failed to enumerate physical devices", res);
+			CHECK_VK(res, "Failed to enumerate physical devices.");
 			for (size_t i = 0; i < pd.size(); i++) {
 				mPhysicalDevices.emplace_back(pd[i]);
 			}
@@ -48,7 +49,9 @@ namespace cube
 			features.samplerAnisotropy = true;
 			features.multiDrawIndirect = true;
 
-			return std::make_shared<DeviceVk>(mPhysicalDevices[attr.GPUIndex], features, attr);
+			auto logicalDevice = std::make_shared<VulkanLogicalDevice>(mPhysicalDevices[attr.GPUIndex], features, attr);
+
+			return std::make_shared<DeviceVk>(std::move(logicalDevice));
 		}
 
 		void VulkanAPI::CreateInstance(const RenderAPIAttribute& attr)
@@ -94,7 +97,7 @@ namespace cube
 			instanceCreateInfo.ppEnabledLayerNames = layers.data();
 
 			res = vkCreateInstance(&instanceCreateInfo, nullptr, &mInstance);
-			CheckVkResult("Failed to create VulkanInstance", res);
+			CHECK_VK(res, "Failed to create VulkanInstance.");
 
 			if(attr.enableDebugLayer == true) {
 				VulkanDebug::Setup(mInstance);

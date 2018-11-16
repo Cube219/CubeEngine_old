@@ -12,14 +12,15 @@ namespace cube
 		class VulkanCommandListPool : public std::enable_shared_from_this<VulkanCommandListPool>
 		{
 		public:
-			VulkanCommandListPool(SPtr<DeviceVk>& device, UPtr<VulkanQueueManager>& queueManager);
+			VulkanCommandListPool(SPtr<VulkanLogicalDevice>& device, VulkanQueueManager& queueManager);
 			~VulkanCommandListPool();
 
+			// TODO: Allocate Sub-CommandList
 			SPtr<CommandListVk> Allocate(CommandListUsage usage);
 			void Free(CommandListVk& commandList);
 
 		private:
-			SPtr<DeviceVk> mDevice;
+			SPtr<VulkanLogicalDevice> mDevice;
 
 			core::Mutex mGraphicsCommandPoolMutex;
 			VkCommandPool mGraphicsCommandPool;

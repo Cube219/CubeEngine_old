@@ -68,7 +68,7 @@ namespace cube
 			info.pUserData = nullptr;
 
 			res = createDebugUtilsMessengerEXT(instance, &info, nullptr, &messenger);
-			CheckVkResult("Failed to create debug messenger.", res);
+			CHECK_VK(res, "Failed to create debug messenger.");
 
 			isEnabled = true;
 		}
@@ -226,7 +226,7 @@ namespace cube
 			info.pObjectName = name;
 
 			res = setDebugUtilsObjectNameEXT(device, &info);
-			CheckVkResult("Failed to set object name.", res);
+			CHECK_VK(res, "Failed to set object name.");
 		}
 
 		/*void VulkanDebug::SetObjectTagImpl(VkDevice device, VkObjectType type, uint64_t handle)

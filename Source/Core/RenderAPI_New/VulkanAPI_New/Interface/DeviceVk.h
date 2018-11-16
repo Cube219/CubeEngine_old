@@ -4,6 +4,15 @@
 
 #include "BaseRenderAPI_New/Interface/Device.h"
 
+#include "../VulkanMemoryManager.h"
+#include "../VulkanCommandListPool.h"
+#include "../VulkanQueueManager.h"
+#include "../VulkanFencePool.h"
+#include "../VulkanSemaphorePool.h"
+#include "../VulkanLogicalDevice.h"
+
+#include "EngineCore/Thread/MutexLock.h"
+
 namespace cube
 {
 	namespace render
@@ -11,39 +20,58 @@ namespace cube
 		class DeviceVk final : public Device, public std::enable_shared_from_this<DeviceVk>
 		{
 		public:
-			DeviceVk(VulkanPhysicalDevice& physicalDevice, const VkPhysicalDeviceFeatures& enabledFeatures,
-				const DeviceAttribute& attr);
+			DeviceVk(SPtr<VulkanLogicalDevice> device);
 			virtual ~DeviceVk();
 
-			VkDevice GetHandle() const { return mDevice; }
-
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) override final;
+
+			virtual SPtr<CommandList> GetCommandList(CommandListUsage usage) override final;
 			// CreateShader
 			// CreateTexture
 			// CreateSampler
 			// CreatePipelineState
 			// CreateFence
 
-			virtual void SubmitCommandList(SPtr<CommandList>& commandList) override final;
+			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) override final;
 
-			VulkanPhysicalDevice& GetParentPhysicalDevice() const { return mParentPhysicalDevice; }
-			UPtr<VulkanMemoryManager>& GetMemoryManager() { return mMemoryManager; }
-			UPtr<VulkanQueueManager>& GetQueueManager() { return mQueueManager; }
+			virtual void FinishFrame() override final;
 
-			Uint32 GetGraphicsQueueFamilyIndex() const { return mGraphicsQueueFamilyIndex; }
-			Uint32 GetTransferQueueFamilyIndex() const { return mTransferQueueFamilyIndex; }
+			SPtr<VulkanLogicalDevice> GetLogicalDevice() const { return mDevice; }
+			VulkanMemoryManager& GetMemoryManager() { return mMemoryManager; }
+			VulkanQueueManager& GetQueueManager() { return mQueueManager; }
+			
+			template <typename VkObjectType>
+			void ReleaseAtEndOfFrame(VkObjectType&& vkObject)
+			{
+				core::Lock lock(mReleaseQueueMutex);
+
+				mReleaseVkObjectQueue.push_back(VkObjectStorage::Create(std::move(vkObject)));
+			}
+
+			template <typename T>
+			void ReleaseAtEndOfFrame(SPtr<T> ptrObject)
+			{
+				core::Lock lock(mReleaseQueueMutex);
+
+				mReleaseFuncQueue.push_back([ptrObject]() mutable {
+					ptrObject.reset();
+				});
+			}
 
 		private:
-			VkDevice mDevice;
+			SPtr<VulkanLogicalDevice> mDevice;
 
-			VulkanPhysicalDevice& mParentPhysicalDevice;
-			UPtr<VulkanMemoryManager> mMemoryManager;
-			UPtr<VulkanQueueManager> mQueueManager;
-			UPtr<VulkanFencePool> mFencePool;
-			UPtr<VulkanSemaphorePool> mSemaphorePool;
+			// VulkanPhysicalDevice& mParentPhysicalDevice;
+			VulkanMemoryManager mMemoryManager;
 
-			Uint32 mGraphicsQueueFamilyIndex;
-			Uint32 mTransferQueueFamilyIndex;
+			VulkanCommandListPool mCommandListPool;
+			VulkanQueueManager mQueueManager;
+			VulkanFencePool mFencePool;
+			VulkanSemaphorePool mSemaphorePool;
+
+			core::Mutex mReleaseQueueMutex;
+			Vector<std::function<void()>> mReleaseFuncQueue;
+			Vector<VkObjectStorage> mReleaseVkObjectQueue;
 		};
 	} // namespace render
 } // namespace cube

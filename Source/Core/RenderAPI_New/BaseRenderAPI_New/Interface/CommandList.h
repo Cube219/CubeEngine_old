@@ -24,7 +24,7 @@ namespace cube
 			virtual void Begin() = 0;
 			virtual void End() = 0;
 
-			virtual void CopyBuffer(SPtr<BufferVk>& src, SPtr<BufferVk>& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) = 0;
+			virtual void CopyBuffer(const Buffer& src, Buffer& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) = 0;
 
 			CommandListUsage GetUsage() const { return mUsage; }
 
