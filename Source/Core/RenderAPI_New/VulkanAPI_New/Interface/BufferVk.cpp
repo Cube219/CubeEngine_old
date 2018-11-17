@@ -52,9 +52,7 @@ namespace cube
 			if(attr.bindTypeFlags & BufferBindTypeFlagsBit::TransferDest)
 				info.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
-			mBuffer = device.GetLogicalDevice()->CreateVkBufferWrapper(info);
-
-			VulkanDebug::SetObjectName(mBuffer.GetVkDevice(), mBuffer.mObject, attr.debugName);
+			mBuffer = device.GetLogicalDevice()->CreateVkBufferWrapper(info, attr.debugName);
 
 			// Allocate memory
 			MemoryUsage memUsage;
@@ -97,7 +95,8 @@ namespace cube
 					// RN: 어디다 쓰지?
 					U8String stagingBufDebugName = fmt::format("Staging buffer for \"{0}\"", attr.debugName);
 
-					VkBufferWrapper stagingBuffer = device.GetLogicalDevice()->CreateVkBufferWrapper(stagingBufferInfo);
+					VkBufferWrapper stagingBuffer =
+						device.GetLogicalDevice()->CreateVkBufferWrapper(stagingBufferInfo, stagingBufDebugName.c_str());
 
 					VkMemoryRequirements stagingMemRequire;
 					vkGetBufferMemoryRequirements(mBuffer.GetVkDevice(), mBuffer.mObject, &stagingMemRequire);

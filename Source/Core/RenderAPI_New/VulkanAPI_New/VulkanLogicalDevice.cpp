@@ -74,24 +74,30 @@ namespace cube
 			vkDestroyDevice(mDevice, nullptr);
 		}
 
-		VkBufferWrapper VulkanLogicalDevice::CreateVkBufferWrapper(const VkBufferCreateInfo& info)
+		VkBufferWrapper VulkanLogicalDevice::CreateVkBufferWrapper(const VkBufferCreateInfo& info, const char* debugName)
 		{
 			VkResult res;
 
 			VkBuffer buf;
 			res = vkCreateBuffer(mDevice, &info, nullptr, &buf);
-			CHECK_VK(res, "Failed to create VkBuffer.");
+			CHECK_VK(res, "Failed to create VkBuffer '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, buf, debugName);
 
 			return VkBufferWrapper(buf, shared_from_this());
 		}
 
-		VkFenceWrapper VulkanLogicalDevice::CreateVkFenceWrapper(const VkFenceCreateInfo& info)
+		VkFenceWrapper VulkanLogicalDevice::CreateVkFenceWrapper(const VkFenceCreateInfo& info, const char* debugName)
 		{
 			VkResult res;
 
 			VkFence fence;
 			res = vkCreateFence(mDevice, &info, nullptr, &fence);
-			CHECK_VK(res, "Failed to create VkFence.");
+			CHECK_VK(res, "Failed to create VkFence '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, fence, debugName);
 
 			return VkFenceWrapper(fence, shared_from_this());
 		}
