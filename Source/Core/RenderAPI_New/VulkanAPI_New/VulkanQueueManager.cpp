@@ -56,14 +56,63 @@ namespace cube
 			}
 		}
 
+		VkQueue VulkanQueueManager::GetPresentQueue(VkSurfaceKHR surface)
+		{
+			VkResult res;
+			Uint32 presentQueueFamilyIndex = Uint32InvalidValue;
+
+			// Check compute queue family if it is supported to present
+			VkBool32 isSupported;
+			res = vkGetPhysicalDeviceSurfaceSupportKHR(mPhysicalDevice.GetHandle(), mComputeQueueFamilyIndex, surface, &isSupported);
+			CHECK_VK(res, "Failed to get if compute queue family supports present.");
+			if(isSupported == VK_TRUE) {
+				presentQueueFamilyIndex = mComputeCurrentIndex;
+			} else {
+				// If not, check graphics queue family
+				res = vkGetPhysicalDeviceSurfaceSupportKHR(mPhysicalDevice.GetHandle(), mGraphicsQueueFamilyIndex, surface, &isSupported);
+				CHECK_VK(res, "Failed to get if graphics queue family supports present.");
+				if(isSupported == VK_TRUE) {
+					presentQueueFamilyIndex = mGraphicsQueueFamilyIndex;
+				} else {
+					// If not, try to find present queue family
+					Uint32 queueFamilySize = SCast(Uint32)(mPhysicalDevice.GetQueueFamilyProperties().size());
+					for(Uint32 i = 0; i < queueFamilySize; i++) {
+						res = vkGetPhysicalDeviceSurfaceSupportKHR(mPhysicalDevice.GetHandle(), i, surface, &isSupported);
+						CHECK_VK(res, "Failed to get the queue family to supports present.");
+
+						if(isSupported == VK_TRUE) {
+							presentQueueFamilyIndex = i;
+							break;
+						}
+					}
+				}
+			}
+			CHECK(presentQueueFamilyIndex != Uint32InvalidValue, "There's no queue families that support present.");
+
+			VkQueue queue;
+			if(presentQueueFamilyIndex != mGraphicsQueueFamilyIndex) {
+				vkGetDeviceQueue(mDevice->GetHandle(), presentQueueFamilyIndex, 0, &queue);
+			} else {
+				Uint32 queueIndex = 0;
+				// If the queue family is graphics queue family and it has two or more queue count,
+				// select the second queue because the first queue is used by graphics only
+				if(mPhysicalDevice.GetQueueFamilyProperties()[presentQueueFamilyIndex].queueCount > 1)
+					queueIndex = 1;
+
+				vkGetDeviceQueue(mDevice->GetHandle(), presentQueueFamilyIndex, queueIndex, &queue);
+			}
+
+			return queue;
+		}
+
 		bool VulkanQueueManager::InitGraphicsQueue()
 		{
 			mGraphicsQueueFamilyIndex = mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT, 0);
-			if(mGraphicsQueueFamilyIndex == UInt32InvalidValue) {
+			if(mGraphicsQueueFamilyIndex == Uint32InvalidValue) {
 				return false;
 			}
 
-			// Only use first queue in queue family
+			// Only use the first queue in queue family
 			vkGetDeviceQueue(mDevice->GetHandle(), mGraphicsQueueFamilyIndex, 0, &mGraphicsQueue);
 			return true;
 		}
@@ -73,7 +122,7 @@ namespace cube
 			auto& props = mPhysicalDevice.GetQueueFamilyProperties();
 
 			mTransferImmediateQueueFamilyIndex = mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT, 0);
-			if(mTransferImmediateQueueFamilyIndex == UInt32InvalidValue) {
+			if(mTransferImmediateQueueFamilyIndex == Uint32InvalidValue) {
 				return false;
 			}
 
@@ -107,7 +156,7 @@ namespace cube
 			// Find queue family that only have TRANSFER bits
 			mTransferDeferredQueueFamilyIndex =
 				mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
-			if(mTransferDeferredQueueFamilyIndex != UInt32InvalidValue) {
+			if(mTransferDeferredQueueFamilyIndex != Uint32InvalidValue) {
 				Uint32 queueCount = props[mTransferDeferredQueueFamilyIndex].queueCount;
 				mTransferDeferredQueues.resize(queueCount);
 
@@ -119,7 +168,7 @@ namespace cube
 
 			// If not found, find with TRANSFER bits
 			mTransferDeferredQueueFamilyIndex = mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT, 0);
-			if(mTransferDeferredQueueFamilyIndex == UInt32InvalidValue)
+			if(mTransferDeferredQueueFamilyIndex == Uint32InvalidValue)
 				return false;
 
 			Uint32 queueCount = props[mTransferDeferredQueueFamilyIndex].queueCount;
@@ -153,7 +202,7 @@ namespace cube
 			// TODO: Translate (TRANSFER는 포함시키는데, 이는 AMD그래픽카드에서 COMPUTE|TRANSFER 인 QueueFamily를 쓰기 위해서)
 			mComputeQueueFamilyIndex =
 				mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT, VK_QUEUE_GRAPHICS_BIT);
-			if(mComputeQueueFamilyIndex != UInt32InvalidValue) {
+			if(mComputeQueueFamilyIndex != Uint32InvalidValue) {
 				Uint32 queueCount = props[mComputeQueueFamilyIndex].queueCount;
 				mComputeQueues.resize(queueCount);
 
@@ -165,7 +214,7 @@ namespace cube
 
 			// If not found, find with COMPUTE bits
 			mComputeQueueFamilyIndex = mPhysicalDevice.FindQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT, 0);
-			if(mComputeQueueFamilyIndex == UInt32InvalidValue)
+			if(mComputeQueueFamilyIndex == Uint32InvalidValue)
 				return false;
 
 			Uint32 queueCount = props[mComputeQueueFamilyIndex].queueCount;

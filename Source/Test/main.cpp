@@ -1,6 +1,7 @@
 #include "Platform.h"
 #include "BaseRenderAPI_New/RenderAPI.h"
 #include "BaseRenderAPI_New/Interface/Device.h"
+#include "BaseRenderAPI_New/Interface/SwapChain.h"
 
 using namespace cube;
 
@@ -8,6 +9,7 @@ SPtr<platform::DLib> dLib;
 SPtr<render::RenderAPI> renderAPI;
 
 SPtr<render::Device> device;
+SPtr<render::SwapChain> swapChain;
 
 void InitRenderAPI()
 {
@@ -34,6 +36,19 @@ void InitDevice()
 	device = renderAPI->GetDevice(deviceAttr);
 }
 
+void CreateSwapChain()
+{
+	render::SwapChainAttribute swapChainAttr;
+	swapChainAttr.width = 1024;
+	swapChainAttr.height = 768;
+	swapChainAttr.colorBufferFormat = render::TextureFormat::RGBA_8_sRGB;
+	swapChainAttr.depthBufferFormat = render::TextureFormat::D32_Float;
+	swapChainAttr.bufferCount = 2;
+	swapChainAttr.debugName = "SwapChain";
+
+	swapChain = device->CreateSwapChain(swapChainAttr);
+}
+
 int main(void)
 {
 	platform::Platform::Init();
@@ -43,6 +58,7 @@ int main(void)
 
 	InitRenderAPI();
 	InitDevice();
+	CreateSwapChain();
 	
 	return 0;
 }

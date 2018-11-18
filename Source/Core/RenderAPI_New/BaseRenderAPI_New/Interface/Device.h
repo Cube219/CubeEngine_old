@@ -23,6 +23,8 @@ namespace cube
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) = 0;
 			virtual SPtr<CommandList> GetCommandList(CommandListUsage usage) = 0;
+			virtual SPtr<Texture> CreateTexture(const TextureAttribute& attr) = 0;
+			virtual SPtr<SwapChain> CreateSwapChain(const SwapChainAttribute& attr) = 0;
 
 			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) = 0;
 

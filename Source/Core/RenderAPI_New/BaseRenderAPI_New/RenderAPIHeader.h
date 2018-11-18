@@ -25,6 +25,7 @@ namespace cube
 		class Texture;
 		class TextureView;
 
+		struct SwapChainAttribute;
 		class SwapChain;
 
 		class Shader;

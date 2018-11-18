@@ -22,6 +22,7 @@ namespace cube
 			Uint32 GetTransferImmediateQueueFamilyIndex() const { return mTransferImmediateQueueFamilyIndex; }
 			Uint32 GetTransferDeferredFamilyIndex() const { return mTransferDeferredQueueFamilyIndex; }
 			Uint32 GetComputeQueueFamilyIndex() const { return mComputeQueueFamilyIndex; }
+			VkQueue GetPresentQueue(VkSurfaceKHR surface);
 
 		private:
 			bool InitGraphicsQueue();

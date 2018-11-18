@@ -28,6 +28,9 @@ namespace cube
 		class BufferVk;
 		class BufferViewVk;
 
+		class TextureVk;
+		class TextureViewVk;
+
 		class VulkanCommandListPool;
 		class CommandListVk;
 
@@ -35,6 +38,8 @@ namespace cube
 		class FenceVk;
 
 		class VulkanSemaphorePool;
+
+		class SwapChainVk;
 	} // namespace render
 } // namespace cube
 

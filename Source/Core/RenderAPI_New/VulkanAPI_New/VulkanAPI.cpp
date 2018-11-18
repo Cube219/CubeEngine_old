@@ -5,6 +5,7 @@
 #include "VulkanPhysicalDevice.h"
 #include "VulkanLogicalDevice.h"
 #include "VulkanDebug.h"
+#include "VulkanTypeConversion.h"
 
 namespace cube
 {
@@ -25,6 +26,8 @@ namespace cube
 
 		void VulkanAPI::Init(const RenderAPIAttribute& attr)
 		{
+			TypeConversionInit();
+
 			CreateInstance(attr);
 
 			// Get PhysicalDevices(GPU)
@@ -51,7 +54,7 @@ namespace cube
 
 			auto logicalDevice = std::make_shared<VulkanLogicalDevice>(mPhysicalDevices[attr.GPUIndex], features, attr);
 
-			return std::make_shared<DeviceVk>(std::move(logicalDevice));
+			return std::make_shared<DeviceVk>(mInstance, std::move(logicalDevice));
 		}
 
 		void VulkanAPI::CreateInstance(const RenderAPIAttribute& attr)

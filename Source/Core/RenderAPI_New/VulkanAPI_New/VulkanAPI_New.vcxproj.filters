@@ -31,6 +31,12 @@
       <Filter>Interface</Filter>
     </ClCompile>
     <ClCompile Include="VulkanTypeConversion.cpp" />
+    <ClCompile Include="Interface\SwapChainVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\TextureViewVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -70,5 +76,11 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="VulkanTypeConversion.h" />
+    <ClInclude Include="Interface\SwapChainVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\TextureViewVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

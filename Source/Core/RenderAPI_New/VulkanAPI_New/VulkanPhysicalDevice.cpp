@@ -39,7 +39,7 @@ namespace cube
 				}
 			}
 
-			return UInt32InvalidValue;
+			return Uint32InvalidValue;
 		}
 
 		Uint32 VulkanPhysicalDevice::GetMemoryTypeIndex(Uint32 memoryTypeBits, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferredFlags)

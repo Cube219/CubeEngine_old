@@ -14,7 +14,7 @@ namespace cube
 				mObject(VK_NULL_HANDLE), mDevice(nullptr)
 			{}
 			VkObject(T object, SPtr<VulkanLogicalDevice> device) : 
-				mObject(mObject), mDevice(device)
+				mObject(object), mDevice(device)
 			{}
 			~VkObject()
 			{
@@ -68,6 +68,7 @@ namespace cube
 		using VkImageWrapper = VkObject<VkImage>;
 		using VkImageViewWrapper = VkObject<VkImageView>;
 		using VkFenceWrapper = VkObject<VkFence>;
+		using VkSwapChainWrapper = VkObject<VkSwapchainKHR>;
 
 		// -------------------------------------------------
 		// Helper class for storaging VkObject child classes

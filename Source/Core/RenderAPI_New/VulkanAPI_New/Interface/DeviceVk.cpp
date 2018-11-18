@@ -7,13 +7,16 @@
 #include "BufferVk.h"
 #include "FenceVk.h"
 #include "CommandListVk.h"
+#include "TextureVk.h"
+#include "SwapChainVk.h"
 
 namespace cube
 {
 	namespace render
 	{
-		DeviceVk::DeviceVk(SPtr<VulkanLogicalDevice> device) : 
-			mDevice(device),
+		DeviceVk::DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device) :
+			mInstance(ins),
+			mDevice(std::move(device)),
 			mMemoryManager(mDevice, 256*1024*1024, 32*1024*1024), // gpuPage: 256 MiB, hostVisiblePage: 32 Mib
 			mFencePool(mDevice),
 			mSemaphorePool(mDevice),
@@ -34,6 +37,16 @@ namespace cube
 		SPtr<CommandList> DeviceVk::GetCommandList(CommandListUsage usage)
 		{
 			return mCommandListPool.Allocate(usage);
+		}
+
+		SPtr<Texture> DeviceVk::CreateTexture(const TextureAttribute& attr)
+		{
+			return std::make_shared<TextureVk>(*this, attr, mQueueManager, mCommandListPool);
+		}
+
+		SPtr<SwapChain> DeviceVk::CreateSwapChain(const SwapChainAttribute& attr)
+		{
+			return std::make_shared<SwapChainVk>(mInstance, *this, attr, mQueueManager);
 		}
 
 		SPtr<Fence> DeviceVk::SubmitCommandList(SPtr<CommandList>& commandList)

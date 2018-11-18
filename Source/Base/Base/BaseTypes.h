@@ -8,13 +8,13 @@ using Int32 = int32_t;
 using Int64 = int64_t;
 
 using Uint8 = uint8_t;
-static constexpr Uint8 UInt8InvalidValue = (Uint8)(-1);
+static constexpr Uint8 Uint8InvalidValue = (Uint8)(-1);
 using Uint16 = uint16_t;
-static constexpr Uint16 UInt16InvalidValue = (Uint16)(-1);
+static constexpr Uint16 Uint16InvalidValue = (Uint16)(-1);
 using Uint32 = uint32_t;
-static constexpr Uint32 UInt32InvalidValue = (Uint32)(-1);
+static constexpr Uint32 Uint32InvalidValue = (Uint32)(-1);
 using Uint64 = uint64_t;
-static constexpr Uint64 UInt64InvalidValue = (Uint64)(-1);
+static constexpr Uint64 Uint64InvalidValue = (Uint64)(-1);
 
 using SizeType = size_t;
 

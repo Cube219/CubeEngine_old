@@ -20,12 +20,13 @@ namespace cube
 		class DeviceVk final : public Device, public std::enable_shared_from_this<DeviceVk>
 		{
 		public:
-			DeviceVk(SPtr<VulkanLogicalDevice> device);
+			DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device);
 			virtual ~DeviceVk();
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) override final;
-
 			virtual SPtr<CommandList> GetCommandList(CommandListUsage usage) override final;
+			virtual SPtr<Texture> CreateTexture(const TextureAttribute& attr) override final;
+			virtual SPtr<SwapChain> CreateSwapChain(const SwapChainAttribute& attr) override final;
 			// CreateShader
 			// CreateTexture
 			// CreateSampler
@@ -60,6 +61,7 @@ namespace cube
 
 		private:
 			SPtr<VulkanLogicalDevice> mDevice;
+			VkInstance mInstance;
 
 			// VulkanPhysicalDevice& mParentPhysicalDevice;
 			VulkanMemoryManager mMemoryManager;

@@ -8,6 +8,9 @@ namespace cube
 	{
 		class TextureView
 		{
+		public:
+			TextureView() {}
+			virtual ~TextureView() {}
 		};
 	} // namespace render
 } // namespace cube

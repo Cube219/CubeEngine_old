@@ -25,12 +25,14 @@ namespace cube
 			VkImageWrapper CreateVkImageWrapper(const VkImageCreateInfo& info, const char* debugName = nullptr);
 			VkImageViewWrapper CreateVkImageViewWrapper(const VkImageViewCreateInfo& info, const char* debugName = nullptr);
 			VkFenceWrapper CreateVkFenceWrapper(const VkFenceCreateInfo& info, const char* debugName = nullptr);
+			VkSwapChainWrapper CreateVkSwapChainWrapper(const VkSwapchainCreateInfoKHR& info, const char* debugName = nullptr);
 
 			void ReleaseVkObject(VkBufferWrapper&& buffer) const;
 			void ReleaseVkObject(VkBufferViewWrapper&& bufView) const;
 			void ReleaseVkObject(VkImageWrapper&& image) const;
 			void ReleaseVkObject(VkImageViewWrapper&& imgView) const;
 			void ReleaseVkObject(VkFenceWrapper&& fence) const;
+			void ReleaseVkObject(VkSwapChainWrapper&& swapChain) const;
 
 		private:
 			VkDevice mDevice;

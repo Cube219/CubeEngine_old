@@ -144,6 +144,21 @@ namespace cube
 			return VkFenceWrapper(fence, shared_from_this());
 		}
 
+		VkSwapChainWrapper VulkanLogicalDevice::CreateVkSwapChainWrapper(const VkSwapchainCreateInfoKHR& info,
+			const char* debugName)
+		{
+			VkResult res;
+
+			VkSwapchainKHR swapChain;
+			res = vkCreateSwapchainKHR(mDevice, &info, nullptr, &swapChain);
+			CHECK_VK(res, "Failed to create VkSwapchain '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, swapChain, debugName);
+
+			return VkSwapChainWrapper(swapChain, shared_from_this());
+		}
+
 		void VulkanLogicalDevice::ReleaseVkObject(VkBufferWrapper&& buffer) const
 		{
 			vkDestroyBuffer(buffer.GetVkDevice(), buffer.mObject, nullptr);
@@ -177,6 +192,13 @@ namespace cube
 			vkDestroyFence(fence.GetVkDevice(), fence.mObject, nullptr);
 			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
 			CUBE_LOG(LogType::Info, "Release VkFenceWrapper.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkSwapChainWrapper&& swapChain) const
+		{
+			vkDestroySwapchainKHR(swapChain.GetVkDevice(), swapChain.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkSwapchain.");
 		}
 	} // namespace render
 } // namespace cube
