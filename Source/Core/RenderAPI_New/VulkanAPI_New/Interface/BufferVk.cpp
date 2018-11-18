@@ -22,10 +22,10 @@ namespace cube
 			// Check buffer attr
 #ifdef _DEBUG
 			if(attr.cpuAccessible == true) {
-				CHECK(attr.usage == BufferUsage::Dynamic || attr.usage == BufferUsage::Staging,
+				CHECK(attr.usage == ResourceUsage::Dynamic || attr.usage == ResourceUsage::Staging,
 					"The buffer must be dynamic or staging if it is accessible by CPU.");
 			}
-			CHECK(attr.usage != BufferUsage::Immutable || attr.pData != nullptr,
+			CHECK(attr.usage != ResourceUsage::Immutable || attr.pData != nullptr,
 				"The immutable buffer must be initialized with data at creation time.");
 #endif // _DEBUG
 
@@ -57,16 +57,16 @@ namespace cube
 			// Allocate memory
 			MemoryUsage memUsage;
 			switch(attr.usage) {
-				case BufferUsage::Default:
-				case BufferUsage::Immutable:
+				case ResourceUsage::Default:
+				case ResourceUsage::Immutable:
 					memUsage = MemoryUsage::GPU;
 					break;
 					
-				case BufferUsage::Dynamic:
+				case ResourceUsage::Dynamic:
 					memUsage = MemoryUsage::CPUtoGPU;
 					break;
 
-				case BufferUsage::Staging:
+				case ResourceUsage::Staging:
 					memUsage = MemoryUsage::CPU;
 					break;
 			}
@@ -83,7 +83,7 @@ namespace cube
 
 			// Initialize buffer data if it is existed
 			if(attr.pData != nullptr && attr.size > 0) {
-				if(attr.usage == BufferUsage::Dynamic || attr.usage == BufferUsage::Staging) {
+				if(attr.usage == ResourceUsage::Dynamic || attr.usage == ResourceUsage::Staging) {
 					void* mappedPtr;
 					Map(mappedPtr);
 					memcpy(mappedPtr, attr.pData, attr.size);
@@ -92,14 +92,13 @@ namespace cube
 					VkBufferCreateInfo stagingBufferInfo = info;
 					stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
-					// RN: 어디다 쓰지?
 					U8String stagingBufDebugName = fmt::format("Staging buffer for \"{0}\"", attr.debugName);
 
 					VkBufferWrapper stagingBuffer =
 						device.GetLogicalDevice()->CreateVkBufferWrapper(stagingBufferInfo, stagingBufDebugName.c_str());
 
 					VkMemoryRequirements stagingMemRequire;
-					vkGetBufferMemoryRequirements(mBuffer.GetVkDevice(), mBuffer.mObject, &stagingMemRequire);
+					vkGetBufferMemoryRequirements(stagingBuffer.GetVkDevice(), stagingBuffer.mObject, &stagingMemRequire);
 					VulkanAllocation stagingAlloc = device.GetMemoryManager().Allocate(stagingMemRequire, MemoryUsage::CPU);
 
 					void* stagingData = stagingAlloc.mappedData;
@@ -133,21 +132,24 @@ namespace cube
 			mBuffer.Release();
 		}
 
-		void BufferVk::UpdateData(Uint64 offset, Uint64 size, const void* pData)
+		void BufferVk::UpdateData(CommandList& cmdList, Uint64 offset, Uint64 size, const void* pData)
 		{
-			CHECK(mUsage != BufferUsage::Immutable, "Immutable buffer cannot be updated.");
+			CHECK(mUsage != ResourceUsage::Immutable, "Immutable buffer cannot be updated.");
+			CHECK(mUsage != ResourceUsage::Dynamic, "Dynamic buffer should be updated via map.");
 			// TODO: UpdateData 구현
 		}
 
-		void BufferVk::CopyData(const SPtr<Buffer>& src, Uint64 srcOffset, Uint64 dstOffset, Uint64 size)
+		void BufferVk::CopyData(CommandList& cmdList, const Buffer& src, Uint64 srcOffset,
+			Uint64 dstOffset, Uint64 size)
 		{
-			CHECK(mUsage != BufferUsage::Immutable, "Immutable buffer cannot be updated.");
-			// TODO: CopyData 구현
+			CHECK(mUsage != ResourceUsage::Immutable, "Immutable buffer cannot be updated.");
+			
+			cmdList.CopyBuffer(src, *this, srcOffset, dstOffset, size);
 		}
 
 		void BufferVk::Map(void*& pMappedData)
 		{
-			CHECK(mUsage == BufferUsage::Dynamic || mUsage == BufferUsage::Staging,
+			CHECK(mUsage == ResourceUsage::Dynamic || mUsage == ResourceUsage::Staging,
 				"Only the dynamic or staging buffer can be mapped.");
 
 			pMappedData = mMemoryAllocation.mappedData;

@@ -1,0 +1,172 @@
+﻿#include "TextureVk.h"
+
+#include "../VulkanUtility.h"
+#include "../VulkanTypeConversion.h"
+#include "DeviceVk.h"
+#include "EngineCore/Assertion.h"
+
+namespace cube
+{
+	namespace render
+	{
+		TextureVk::TextureVk(DeviceVk& device, const TextureAttribute& attr,
+			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool)
+		{
+			VkResult res;
+
+			VkImageCreateInfo info;
+			info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+			info.pNext = nullptr;
+			info.flags = 0;
+			
+			switch(attr.type) {
+				case TextureType::Texture1D:
+				case TextureType::Texture1DArray:
+					info.imageType = VK_IMAGE_TYPE_1D;
+					break;
+
+				case TextureType::TextureCube:
+				case TextureType::TextureCubeArray:
+					info.flags |= VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+					// Fallback
+
+				case TextureType::Texture2D:
+				case TextureType::Texture2DArray:
+					info.imageType = VK_IMAGE_TYPE_2D;
+					break;
+
+				case TextureType::Texture3D:
+					info.imageType = VK_IMAGE_TYPE_3D;
+					break;
+
+				default:
+					ASSERTION_FAILED("Unknown TextureType ({0})", (Uint32)attr.type);
+					break;
+			}
+
+			info.format = TextureFormatToVkFormat(attr.format);
+			info.extent = {attr.width, attr.height, attr.depth};
+			info.mipLevels = attr.mipLevels;
+			info.arrayLayers = 1; // TODO: 차후 구현
+			info.samples = VK_SAMPLE_COUNT_1_BIT; // TODO: 차후 구현
+			info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; // 차후 구현?
+
+			info.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+			// info.usage |= VK_IMAGE_USAGE_SAMPLED_BIT; // TODO: 샘플링 구현하면서 구현
+			if((attr.bindTypeFlags & TextureBindTypeFlagsBit::RenderTarget) > 0) {
+				info.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+			}
+			if((attr.bindTypeFlags & TextureBindTypeFlagsBit::ShaderResource) > 0) {
+				info.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
+			}
+			if((attr.bindTypeFlags & TextureBindTypeFlagsBit::DepthStencil) > 0) {
+				info.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+			}
+
+			info.queueFamilyIndexCount = 0;
+			info.pQueueFamilyIndices = nullptr;
+			info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			info.tiling = VK_IMAGE_TILING_OPTIMAL;
+
+			mImage = device.GetLogicalDevice()->CreateVkImageWrapper(info, attr.debugName);
+
+			// Allocate memory
+			MemoryUsage memUsage;
+			switch(attr.usage) {
+			case ResourceUsage::Default:
+			case ResourceUsage::Immutable:
+				memUsage = MemoryUsage::GPU;
+				break;
+
+			case ResourceUsage::Dynamic: // TODO: 차후 구현
+				ASSERTION_FAILED("Dynamic texture is not supported yet.");
+				// memUsage = MemoryUsage::CPUtoGPU;
+				break;
+
+			case ResourceUsage::Staging: // TODO: 차후 구현
+				ASSERTION_FAILED("Staging texture is not supported yet.");
+				// memUsage = MemoryUsage::CPU;
+				break;
+			}
+
+			VkMemoryRequirements memRequire;
+			vkGetImageMemoryRequirements(mImage.GetVkDevice(), mImage.mObject, &memRequire);
+
+			mAllocation = device.GetMemoryManager().Allocate(memRequire, memUsage);
+
+			// Bind memory
+			VkDeviceMemory deviceMem = mAllocation.pPage->GetVkDeviceMemory();
+			res = vkBindImageMemory(mImage.GetVkDevice(), mImage.mObject, deviceMem, mAllocation.offset);
+			CHECK_VK(res, "Failed to bind buffer memory.");
+
+			// Initialize texture data if it is existed
+			if(attr.textureData.pData != nullptr && attr.textureData.size > 0) {
+				VkBufferCreateInfo stagingBufInfo;
+				stagingBufInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				stagingBufInfo.pNext = nullptr;
+				stagingBufInfo.flags = 0;
+				stagingBufInfo.size = attr.textureData.size;
+				stagingBufInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+				stagingBufInfo.queueFamilyIndexCount = 0;
+				stagingBufInfo.pQueueFamilyIndices = nullptr;
+				stagingBufInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+				U8String stagingBufDebugName = fmt::format("Staging buffer for \"{0}\"", attr.debugName);
+
+				VkBufferWrapper stagingBuf =
+					device.GetLogicalDevice()->CreateVkBufferWrapper(stagingBufInfo, stagingBufDebugName.c_str());
+
+				VkMemoryRequirements stagingMemRequire;
+				vkGetBufferMemoryRequirements(stagingBuf.GetVkDevice(), stagingBuf.mObject, &stagingMemRequire);
+				VulkanAllocation stagingAlloc = device.GetMemoryManager().Allocate(stagingMemRequire, MemoryUsage::CPU);
+
+				void* stagingData = stagingAlloc.mappedData;
+				memcpy(stagingData, attr.textureData.pData, attr.textureData.size);
+
+				res = vkBindBufferMemory(stagingBuf.GetVkDevice(), stagingBuf.mObject,
+					stagingAlloc.pPage->GetVkDeviceMemory(), stagingAlloc.offset);
+				CHECK_VK(res, "Failed to bind staging buffer memory.");
+
+				SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(CommandListUsage::TransferImmediate);
+				cmdBuf->Begin();
+				VkCommandBuffer vkCmdBuf = cmdBuf->GetHandle();
+				VkBufferImageCopy bufImgCopy;
+				bufImgCopy.bufferOffset = 0;
+				bufImgCopy.bufferRowLength = 0;
+				bufImgCopy.bufferRowLength = 0;
+
+				bufImgCopy.imageSubresource.aspectMask = 0;
+				if((attr.bindTypeFlags & TextureBindTypeFlagsBit::DepthStencil) > 0) {
+					bufImgCopy.imageSubresource.aspectMask |= VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+				} else {
+					bufImgCopy.imageSubresource.aspectMask |= VK_IMAGE_ASPECT_COLOR_BIT;
+				}
+				bufImgCopy.imageSubresource.mipLevel = 0;
+				bufImgCopy.imageSubresource.baseArrayLayer = 0;
+				bufImgCopy.imageSubresource.layerCount = 1;
+
+				bufImgCopy.imageOffset = { 0, 0, 0 };
+				bufImgCopy.imageExtent = { attr.width, attr.height, attr.depth };
+
+				vkCmdCopyBufferToImage(vkCmdBuf, stagingBuf.mObject, mImage.mObject, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &bufImgCopy);
+				cmdBuf->End();
+
+				queueManager.SubmitCommandList(*cmdBuf);
+
+				device.ReleaseAtEndOfFrame(cmdBuf);
+				device.ReleaseAtEndOfFrame(std::move(stagingBuf));
+			}
+		}
+
+		TextureVk::~TextureVk()
+		{
+			mAllocation.pPage->Free(mAllocation);
+			mImage.Release();
+		}
+
+		void TextureVk::UpdateData(CommandList& cmdList, const void* pData, Uint64 size, Uint32 width, Uint32 height)
+		{
+			// TODO: 차후 구현
+		}
+	} // namespace render
+} // namespace cube

@@ -26,6 +26,7 @@ namespace cube
 		class VulkanQueueManager;
 
 		class BufferVk;
+		class BufferViewVk;
 
 		class VulkanCommandListPool;
 		class CommandListVk;

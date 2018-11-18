@@ -40,9 +40,11 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="RenderAPIHeader.h" />
-    <ClInclude Include="RenderTypes.h" />
     <ClInclude Include="RenderAPI.h" />
     <ClInclude Include="Interface\CommandList.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\RenderTypes.h">
       <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>

@@ -41,6 +41,7 @@ namespace cube
 			}
 
 			VkDevice GetVkDevice() const { return mDevice->GetHandle(); }
+			SPtr<VulkanLogicalDevice> GetVulkanLogicalDevice() const { return mDevice; }
 
 			void Release()
 			{
@@ -63,6 +64,9 @@ namespace cube
 		};
 
 		using VkBufferWrapper = VkObject<VkBuffer>;
+		using VkBufferViewWrapper = VkObject<VkBufferView>;
+		using VkImageWrapper = VkObject<VkImage>;
+		using VkImageViewWrapper = VkObject<VkImageView>;
 		using VkFenceWrapper = VkObject<VkFence>;
 
 		// -------------------------------------------------

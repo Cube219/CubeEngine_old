@@ -20,8 +20,9 @@ namespace cube
 
 			VkBuffer GetHandle() const { return mBuffer.mObject; }
 
-			virtual void UpdateData(Uint64 offset, Uint64 size, const void* pData) override final;
-			virtual void CopyData(const SPtr<Buffer>& src, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) override final;
+			virtual void UpdateData(CommandList& cmdList, Uint64 offset, Uint64 size, const void* pData) override final;
+			virtual void CopyData(CommandList& cmdList, const Buffer& src, Uint64 srcOffset,
+				Uint64 dstOffset, Uint64 size) override final;
 
 			virtual void Map(void*& pMappedData) override final;
 			virtual void Unmap() override final;

@@ -133,6 +133,7 @@
     <ClInclude Include="Interface\Device.h" />
     <ClInclude Include="Interface\Fence.h" />
     <ClInclude Include="Interface\GraphicsPipelineState.h" />
+    <ClInclude Include="Interface\RenderTypes.h" />
     <ClInclude Include="Interface\Sampler.h" />
     <ClInclude Include="Interface\Shader.h" />
     <ClInclude Include="Interface\SwapChain.h" />
@@ -140,7 +141,6 @@
     <ClInclude Include="Interface\TextureView.h" />
     <ClInclude Include="RenderAPI.h" />
     <ClInclude Include="RenderAPIHeader.h" />
-    <ClInclude Include="RenderTypes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

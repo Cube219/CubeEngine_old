@@ -24,6 +24,13 @@
     <ClCompile Include="VulkanFencePool.cpp" />
     <ClCompile Include="VulkanSemaphorePool.cpp" />
     <ClCompile Include="VulkanLogicalDevice.cpp" />
+    <ClCompile Include="Interface\BufferViewVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\TextureVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanTypeConversion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -56,5 +63,12 @@
     <ClInclude Include="VulkanSemaphorePool.h" />
     <ClInclude Include="VkObject.h" />
     <ClInclude Include="VulkanLogicalDevice.h" />
+    <ClInclude Include="Interface\BufferViewVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\TextureVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanTypeConversion.h" />
   </ItemGroup>
 </Project>

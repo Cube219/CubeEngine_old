@@ -21,9 +21,15 @@ namespace cube
 			VulkanPhysicalDevice& GetParentPhysicalDevice() const { return mParentPhysicalDevice; }
 
 			VkBufferWrapper CreateVkBufferWrapper(const VkBufferCreateInfo& info, const char* debugName = nullptr);
+			VkBufferViewWrapper CreateVkBufferViewWrapper(const VkBufferViewCreateInfo& info, const char* debugName = nullptr);
+			VkImageWrapper CreateVkImageWrapper(const VkImageCreateInfo& info, const char* debugName = nullptr);
+			VkImageViewWrapper CreateVkImageViewWrapper(const VkImageViewCreateInfo& info, const char* debugName = nullptr);
 			VkFenceWrapper CreateVkFenceWrapper(const VkFenceCreateInfo& info, const char* debugName = nullptr);
 
 			void ReleaseVkObject(VkBufferWrapper&& buffer) const;
+			void ReleaseVkObject(VkBufferViewWrapper&& bufView) const;
+			void ReleaseVkObject(VkImageWrapper&& image) const;
+			void ReleaseVkObject(VkImageViewWrapper&& imgView) const;
 			void ReleaseVkObject(VkFenceWrapper&& fence) const;
 
 		private:

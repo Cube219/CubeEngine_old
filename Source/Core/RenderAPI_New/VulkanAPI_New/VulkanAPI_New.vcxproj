@@ -162,7 +162,9 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Interface\BufferViewVk.cpp" />
     <ClCompile Include="Interface\FenceVk.cpp" />
+    <ClCompile Include="Interface\TextureVk.cpp" />
     <ClCompile Include="VulkanCommandListPool.cpp" />
     <ClCompile Include="Interface\BufferVk.cpp" />
     <ClCompile Include="Interface\CommandListVk.cpp" />
@@ -175,11 +177,14 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClCompile Include="VulkanMemoryManager.cpp" />
     <ClCompile Include="VulkanPhysicalDevice.cpp" />
     <ClCompile Include="VulkanSemaphorePool.cpp" />
+    <ClCompile Include="VulkanTypeConversion.cpp" />
     <ClCompile Include="VulkanUploadHeap.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Interface\BufferViewVk.h" />
     <ClInclude Include="Interface\FenceVk.h" />
+    <ClInclude Include="Interface\TextureVk.h" />
     <ClInclude Include="VkObject.h" />
     <ClInclude Include="VulkanCommandListPool.h" />
     <ClInclude Include="Interface\BufferVk.h" />
@@ -194,6 +199,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClInclude Include="VulkanMemoryManager.h" />
     <ClInclude Include="VulkanPhysicalDevice.h" />
     <ClInclude Include="VulkanSemaphorePool.h" />
+    <ClInclude Include="VulkanTypeConversion.h" />
     <ClInclude Include="VulkanUploadHeap.h" />
     <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>

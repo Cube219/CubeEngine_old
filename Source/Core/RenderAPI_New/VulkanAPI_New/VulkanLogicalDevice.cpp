@@ -88,6 +88,48 @@ namespace cube
 			return VkBufferWrapper(buf, shared_from_this());
 		}
 
+		VkBufferViewWrapper VulkanLogicalDevice::CreateVkBufferViewWrapper(const VkBufferViewCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkBufferView bufView;
+			res = vkCreateBufferView(mDevice, &info, nullptr, &bufView);
+			CHECK_VK(res, "Failed to create VkBufferView '{0}'/", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, bufView, debugName);
+
+			return VkBufferViewWrapper(bufView, shared_from_this());
+		}
+
+		VkImageWrapper VulkanLogicalDevice::CreateVkImageWrapper(const VkImageCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkImage image;
+			res = vkCreateImage(mDevice, &info, nullptr, &image);
+			CHECK_VK(res, "Failed to create VkImage '{0}'/", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, image, debugName);
+
+			return VkImageWrapper(image, shared_from_this());
+		}
+
+		VkImageViewWrapper VulkanLogicalDevice::CreateVkImageViewWrapper(const VkImageViewCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkImageView imgView;
+			res = vkCreateImageView(mDevice, &info, nullptr, &imgView);
+			CHECK_VK(res, "Failed to create VkImageView '{0}'/", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, imgView, debugName);
+
+			return VkImageViewWrapper(imgView, shared_from_this());
+		}
+
 		VkFenceWrapper VulkanLogicalDevice::CreateVkFenceWrapper(const VkFenceCreateInfo& info, const char* debugName)
 		{
 			VkResult res;
@@ -107,6 +149,27 @@ namespace cube
 			vkDestroyBuffer(buffer.GetVkDevice(), buffer.mObject, nullptr);
 			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
 			CUBE_LOG(LogType::Info, "Release VkBufferWrapper.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkBufferViewWrapper&& bufView) const
+		{
+			vkDestroyBufferView(bufView.GetVkDevice(), bufView.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkBufferViewWrapper.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkImageWrapper&& image) const
+		{
+			vkDestroyImage(image.GetVkDevice(), image.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkImageWrapper.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkImageViewWrapper&& imgView) const
+		{
+			vkDestroyImageView(imgView.GetVkDevice(), imgView.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkImageViewWrapper.");
 		}
 
 		void VulkanLogicalDevice::ReleaseVkObject(VkFenceWrapper&& fence) const

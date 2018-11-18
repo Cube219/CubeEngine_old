@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Base/BaseTypes.h"
+#include "Interface/RenderTypes.h"
 
 namespace cube
 {
@@ -20,6 +21,7 @@ namespace cube
 		
 		class GraphicsPipelineState;
 
+		struct TextureAttribute;
 		class Texture;
 		class TextureView;
 
