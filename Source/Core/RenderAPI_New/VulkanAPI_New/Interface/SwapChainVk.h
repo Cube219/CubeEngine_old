@@ -37,11 +37,14 @@ namespace cube
 			bool mIsSupportedVsync;
 
 			VkSurfaceKHR mSurface;
+			VkSurfaceCapabilitiesKHR mSurfaceCapabilities;
 			VkFormat mColorFormat;
 			VkFormat mDepthFormat;
 			VkColorSpaceKHR mColorSpace;
 			VkPresentModeKHR mPresentMode;
 			VkPresentModeKHR mVsyncPresentMode;
+
+			Vector<VkImageView> mBackImageViews;
 
 			VkQueue mPresentQueue;
 		};

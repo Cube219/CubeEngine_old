@@ -54,7 +54,15 @@ namespace cube
 
 			auto logicalDevice = std::make_shared<VulkanLogicalDevice>(mPhysicalDevices[attr.GPUIndex], features, attr);
 
-			return std::make_shared<DeviceVk>(mInstance, std::move(logicalDevice));
+			auto deviceVk = std::make_shared<DeviceVk>(mInstance, std::move(logicalDevice));
+
+			// Set physical device debug name
+			for(Uint32 i = 0; i < SCast(Uint32)(mPhysicalDevices.size()); i++) {
+				U8String debugName = fmt::format("Physical Device {0}", i);
+				VulkanDebug::SetObjectName(deviceVk->GetLogicalDevice()->GetHandle(), mPhysicalDevices[i].GetHandle(), debugName.c_str());
+			}
+
+			return deviceVk;
 		}
 
 		void VulkanAPI::CreateInstance(const RenderAPIAttribute& attr)
