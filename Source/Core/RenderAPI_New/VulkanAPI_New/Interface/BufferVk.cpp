@@ -41,15 +41,15 @@ namespace cube
 			info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 			info.usage = 0;
-			if(attr.bindTypeFlags & BufferBindTypeFlagsBit::Vertex)
+			if(attr.bindTypeFlags & BufferBindTypeFlagBits::Vertex)
 				info.usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-			if(attr.bindTypeFlags & BufferBindTypeFlagsBit::Index)
+			if(attr.bindTypeFlags & BufferBindTypeFlagBits::Index)
 				info.usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-			if(attr.bindTypeFlags & BufferBindTypeFlagsBit::Uniform)
+			if(attr.bindTypeFlags & BufferBindTypeFlagBits::Uniform)
 				info.usage |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-			if(attr.bindTypeFlags & BufferBindTypeFlagsBit::TransferSource)
+			if(attr.bindTypeFlags & BufferBindTypeFlagBits::TransferSource)
 				info.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-			if(attr.bindTypeFlags & BufferBindTypeFlagsBit::TransferDest)
+			if(attr.bindTypeFlags & BufferBindTypeFlagBits::TransferDest)
 				info.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
 			mBuffer = device.GetLogicalDevice()->CreateVkBufferWrapper(info, attr.debugName);

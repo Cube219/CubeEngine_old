@@ -3,6 +3,7 @@
 #include "../VulkanUtility.h"
 #include "../VulkanTypeConversion.h"
 #include "DeviceVk.h"
+#include "TextureViewVk.h"
 #include "EngineCore/Assertion.h"
 
 namespace cube
@@ -10,7 +11,8 @@ namespace cube
 	namespace render
 	{
 		TextureVk::TextureVk(DeviceVk& device, const TextureAttribute& attr,
-			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool)
+			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool) : 
+			mDevice(device)
 		{
 			VkResult res;
 
@@ -53,13 +55,13 @@ namespace cube
 
 			info.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 			// info.usage |= VK_IMAGE_USAGE_SAMPLED_BIT; // TODO: 샘플링 구현하면서 구현
-			if((attr.bindTypeFlags & TextureBindTypeFlagsBit::RenderTarget) > 0) {
+			if((attr.bindTypeFlags & TextureBindTypeFlagBits::RenderTarget) > 0) {
 				info.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 			}
-			if((attr.bindTypeFlags & TextureBindTypeFlagsBit::ShaderResource) > 0) {
+			if((attr.bindTypeFlags & TextureBindTypeFlagBits::ShaderResource) > 0) {
 				info.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
 			}
-			if((attr.bindTypeFlags & TextureBindTypeFlagsBit::DepthStencil) > 0) {
+			if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil) > 0) {
 				info.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 			}
 
@@ -136,7 +138,7 @@ namespace cube
 				bufImgCopy.bufferRowLength = 0;
 
 				bufImgCopy.imageSubresource.aspectMask = 0;
-				if((attr.bindTypeFlags & TextureBindTypeFlagsBit::DepthStencil) > 0) {
+				if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil) > 0) {
 					bufImgCopy.imageSubresource.aspectMask |= VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
 				} else {
 					bufImgCopy.imageSubresource.aspectMask |= VK_IMAGE_ASPECT_COLOR_BIT;
@@ -156,6 +158,32 @@ namespace cube
 				device.ReleaseAtEndOfFrame(cmdBuf);
 				device.ReleaseAtEndOfFrame(std::move(stagingBuf));
 			}
+
+			// Setup default view attribute
+			switch(attr.type) {
+				case TextureType::Texture1D:        mDefaultViewAttr.type = TextureViewType::Texture1D; break;
+				case TextureType::Texture1DArray:   mDefaultViewAttr.type = TextureViewType::Texture1DArray; break;
+				case TextureType::Texture2D:        mDefaultViewAttr.type = TextureViewType::Texture2D; break;
+				case TextureType::Texture2DArray:   mDefaultViewAttr.type = TextureViewType::Texture2DArray; break;
+				case TextureType::Texture3D:        mDefaultViewAttr.type = TextureViewType::Texture3D; break;
+				case TextureType::TextureCube:      mDefaultViewAttr.type = TextureViewType::TextureCube; break;
+				case TextureType::TextureCubeArray: mDefaultViewAttr.type = TextureViewType::TextureCubeArray; break;
+				default: break;
+			}
+
+			mDefaultViewAttr.format = attr.format;
+			
+			if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil) > 0) {
+				info.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+				mDefaultViewAttr.componentFlags = TextureViewComponentFlagBits::Depth | TextureViewComponentFlagBits::Stencil;
+			} else {
+				mDefaultViewAttr.componentFlags = TextureViewComponentFlagBits::Color;
+			}
+			
+			mDefaultViewAttr.firstMipLevel = 0;
+			mDefaultViewAttr.numMipLevels = attr.mipLevels;
+			mDefaultViewAttr.firstArrayIndex = 0;
+			mDefaultViewAttr.numArray = attr.arraySize;
 		}
 
 		TextureVk::~TextureVk()
@@ -167,6 +195,11 @@ namespace cube
 		void TextureVk::UpdateData(CommandList& cmdList, const void* pData, Uint64 size, Uint32 width, Uint32 height)
 		{
 			// TODO: 차후 구현
+		}
+
+		SPtr<TextureView> TextureVk::CreateView(const TextureViewAttribute& attr)
+		{
+			return std::make_shared<TextureViewVk>(mDevice, attr, mImage);
 		}
 	} // namespace render
 } // namespace cube

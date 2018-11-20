@@ -11,10 +11,10 @@ namespace cube
 		{
 		public:
 			VkObject() : 
-				mObject(VK_NULL_HANDLE), mDevice(nullptr)
+				mObject(VK_NULL_HANDLE), mDevice(nullptr), mDebugName("")
 			{}
-			VkObject(T object, SPtr<VulkanLogicalDevice> device) : 
-				mObject(object), mDevice(device)
+			VkObject(T object, SPtr<VulkanLogicalDevice> device, const char* debugName = "") : 
+				mObject(object), mDevice(device), mDebugName(debugName)
 			{}
 			~VkObject()
 			{
@@ -58,6 +58,7 @@ namespace cube
 			}
 
 			T mObject;
+			const char* mDebugName;
 	
 		private:
 			SPtr<VulkanLogicalDevice> mDevice;

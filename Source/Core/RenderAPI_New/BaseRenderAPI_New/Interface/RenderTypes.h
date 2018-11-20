@@ -15,7 +15,7 @@ namespace cube
 		};
 
 		using BufferBindTypeFlags = Uint32;
-		enum BufferBindTypeFlagsBit : Uint32
+		enum BufferBindTypeFlagBits : Uint32
 		{
 			Vertex = 1,
 			Index = 2,
@@ -256,11 +256,30 @@ namespace cube
 		};
 
 		using TextureBindTypeFlags = Uint32;
-		enum TextureBindTypeFlagsBit : Uint32
+		enum TextureBindTypeFlagBits : Uint32
 		{
 			RenderTarget = 1,
 			DepthStencil = 2,
 			ShaderResource = 4
+		};
+
+		enum class TextureViewType
+		{
+			Texture1D,
+			Texture1DArray,
+			Texture2D,
+			Texture2DArray,
+			Texture3D,
+			TextureCube,
+			TextureCubeArray
+		};
+
+		using TextureViewComponentFlags = Uint32;
+		enum TextureViewComponentFlagBits : Uint32
+		{
+			Color = 1,
+			Depth = 2,
+			Stencil = 4
 		};
 	} // namesapce render
 } // namespace cube

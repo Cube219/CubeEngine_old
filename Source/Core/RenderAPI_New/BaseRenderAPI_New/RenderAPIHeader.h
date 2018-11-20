@@ -23,6 +23,7 @@ namespace cube
 
 		struct TextureAttribute;
 		class Texture;
+		struct TextureViewAttribute;
 		class TextureView;
 
 		struct SwapChainAttribute;

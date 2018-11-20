@@ -109,6 +109,7 @@ namespace cube
 		/////////////////////////
 
 		// TODO: Async Allocator
+		// TODO: Dedicated allocation
 		class VulkanMemoryManager
 		{
 		public:

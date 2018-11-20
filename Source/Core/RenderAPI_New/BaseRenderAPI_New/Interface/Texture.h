@@ -2,6 +2,8 @@
 
 #include "../RenderAPIHeader.h"
 
+#include "BaseRenderAPI_New/Interface/TextureView.h"
+
 namespace cube
 {
 	namespace render
@@ -23,6 +25,7 @@ namespace cube
 			Uint32 width;
 			Uint32 height;
 			Uint32 depth;
+			Uint32 arraySize;
 			
 			Uint32 mipLevels;
 
@@ -36,6 +39,13 @@ namespace cube
 			virtual ~Texture() {}
 
 			virtual void UpdateData(CommandList& cmdList, const void* pData, Uint64 size, Uint32 width, Uint32 height) = 0;
+
+			virtual SPtr<TextureView> CreateView(const TextureViewAttribute& attr) = 0;
+
+			TextureViewAttribute GetDefaultViewAttr() const { return mDefaultViewAttr; }
+
+		protected:
+			TextureViewAttribute mDefaultViewAttr;
 		};
 	} // namespace render
 } // namespace cube

@@ -85,7 +85,7 @@ namespace cube
 			if(debugName != nullptr)
 				VulkanDebug::SetObjectName(mDevice, buf, debugName);
 
-			return VkBufferWrapper(buf, shared_from_this());
+			return VkBufferWrapper(buf, shared_from_this(), debugName);
 		}
 
 		VkBufferViewWrapper VulkanLogicalDevice::CreateVkBufferViewWrapper(const VkBufferViewCreateInfo& info, const char* debugName)
@@ -99,7 +99,7 @@ namespace cube
 			if(debugName != nullptr)
 				VulkanDebug::SetObjectName(mDevice, bufView, debugName);
 
-			return VkBufferViewWrapper(bufView, shared_from_this());
+			return VkBufferViewWrapper(bufView, shared_from_this(), debugName);
 		}
 
 		VkImageWrapper VulkanLogicalDevice::CreateVkImageWrapper(const VkImageCreateInfo& info, const char* debugName)
@@ -113,7 +113,7 @@ namespace cube
 			if(debugName != nullptr)
 				VulkanDebug::SetObjectName(mDevice, image, debugName);
 
-			return VkImageWrapper(image, shared_from_this());
+			return VkImageWrapper(image, shared_from_this(), debugName);
 		}
 
 		VkImageViewWrapper VulkanLogicalDevice::CreateVkImageViewWrapper(const VkImageViewCreateInfo& info, const char* debugName)
@@ -127,7 +127,7 @@ namespace cube
 			if(debugName != nullptr)
 				VulkanDebug::SetObjectName(mDevice, imgView, debugName);
 
-			return VkImageViewWrapper(imgView, shared_from_this());
+			return VkImageViewWrapper(imgView, shared_from_this(), debugName);
 		}
 
 		VkFenceWrapper VulkanLogicalDevice::CreateVkFenceWrapper(const VkFenceCreateInfo& info, const char* debugName)
@@ -141,7 +141,7 @@ namespace cube
 			if(debugName != nullptr)
 				VulkanDebug::SetObjectName(mDevice, fence, debugName);
 
-			return VkFenceWrapper(fence, shared_from_this());
+			return VkFenceWrapper(fence, shared_from_this(), debugName);
 		}
 
 		VkSwapChainWrapper VulkanLogicalDevice::CreateVkSwapChainWrapper(const VkSwapchainCreateInfoKHR& info,
@@ -156,7 +156,7 @@ namespace cube
 			if(debugName != nullptr)
 				VulkanDebug::SetObjectName(mDevice, swapChain, debugName);
 
-			return VkSwapChainWrapper(swapChain, shared_from_this());
+			return VkSwapChainWrapper(swapChain, shared_from_this(), debugName);
 		}
 
 		void VulkanLogicalDevice::ReleaseVkObject(VkBufferWrapper&& buffer) const

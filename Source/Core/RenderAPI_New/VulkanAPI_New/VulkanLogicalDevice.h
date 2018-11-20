@@ -20,12 +20,12 @@ namespace cube
 
 			VulkanPhysicalDevice& GetParentPhysicalDevice() const { return mParentPhysicalDevice; }
 
-			VkBufferWrapper CreateVkBufferWrapper(const VkBufferCreateInfo& info, const char* debugName = nullptr);
-			VkBufferViewWrapper CreateVkBufferViewWrapper(const VkBufferViewCreateInfo& info, const char* debugName = nullptr);
+			VkBufferWrapper CreateVkBufferWrapper(const VkBufferCreateInfo& info, const char* debugName = "");
+			VkBufferViewWrapper CreateVkBufferViewWrapper(const VkBufferViewCreateInfo& info, const char* debugName = "");
 			VkImageWrapper CreateVkImageWrapper(const VkImageCreateInfo& info, const char* debugName = nullptr);
-			VkImageViewWrapper CreateVkImageViewWrapper(const VkImageViewCreateInfo& info, const char* debugName = nullptr);
-			VkFenceWrapper CreateVkFenceWrapper(const VkFenceCreateInfo& info, const char* debugName = nullptr);
-			VkSwapChainWrapper CreateVkSwapChainWrapper(const VkSwapchainCreateInfoKHR& info, const char* debugName = nullptr);
+			VkImageViewWrapper CreateVkImageViewWrapper(const VkImageViewCreateInfo& info, const char* debugName = "");
+			VkFenceWrapper CreateVkFenceWrapper(const VkFenceCreateInfo& info, const char* debugName = "");
+			VkSwapChainWrapper CreateVkSwapChainWrapper(const VkSwapchainCreateInfoKHR& info, const char* debugName = "");
 
 			void ReleaseVkObject(VkBufferWrapper&& buffer) const;
 			void ReleaseVkObject(VkBufferViewWrapper&& bufView) const;
