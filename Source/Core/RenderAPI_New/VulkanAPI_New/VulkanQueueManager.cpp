@@ -66,7 +66,7 @@ namespace cube
 			res = vkGetPhysicalDeviceSurfaceSupportKHR(mPhysicalDevice.GetHandle(), mComputeQueueFamilyIndex, surface, &isSupported);
 			CHECK_VK(res, "Failed to get if compute queue family supports present.");
 			if(isSupported == VK_TRUE) {
-				presentQueueFamilyIndex = mComputeCurrentIndex;
+				presentQueueFamilyIndex = SCast(Uint32)(mComputeCurrentIndex);
 			} else {
 				// If not, check graphics queue family
 				res = vkGetPhysicalDeviceSurfaceSupportKHR(mPhysicalDevice.GetHandle(), mGraphicsQueueFamilyIndex, surface, &isSupported);
@@ -290,7 +290,7 @@ namespace cube
 			submitInfo.signalSemaphoreCount = 0;
 			submitInfo.pSignalSemaphores = nullptr;
 
-			SPtr<FenceVk> fence = mFencePool.GetFence();
+			SPtr<FenceVk> fence = mFencePool.GetFence("Fence to complete to submit grpahics queue");
 
 			res = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, fence->GetHandle());
 			CHECK_VK(res, "Failed to submit command list to the graphics queue.");
@@ -311,7 +311,7 @@ namespace cube
 
 			VkCommandBuffer cmdBufToSubmit = commandList.GetHandle();
 
-			VulkanSemaphore completeSemaphore = mSemaphorePool.GetSemaphore();
+			VulkanSemaphore completeSemaphore = mSemaphorePool.GetSemaphore("Semaphore to complete to submit transfer immediate");
 
 			VkSubmitInfo submitInfo = {};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -337,7 +337,7 @@ namespace cube
 				mImmediateCompleteSemaphores.push_back(completeSemaphore);
 			}
 
-			SPtr<FenceVk> fence = mFencePool.GetFence();
+			SPtr<FenceVk> fence = mFencePool.GetFence("Fence to complete to submit transfer immediate");
 
 			res = vkQueueSubmit(queueToSubmit, 1, &submitInfo, fence->GetHandle());
 			CHECK_VK(res, "Failed to submit command list to the transfer immediate queue.");
@@ -373,7 +373,7 @@ namespace cube
 				mTransferDeferredCurrentIndex %= mTransferDeferredQueues.size();
 			}
 
-			SPtr<FenceVk> fence = mFencePool.GetFence();
+			SPtr<FenceVk> fence = mFencePool.GetFence("Fence to complete to submit transfer deferred");
 
 			res = vkQueueSubmit(queueToSubmit, 1, &submitInfo, fence->GetHandle());
 			CHECK_VK(res, "Failed to submit command list to the transfer deferred queue.");

@@ -46,7 +46,7 @@ namespace cube
 
 		SPtr<SwapChain> DeviceVk::CreateSwapChain(const SwapChainAttribute& attr)
 		{
-			return std::make_shared<SwapChainVk>(mInstance, *this, attr, mQueueManager);
+			return std::make_shared<SwapChainVk>(mInstance, *this, attr, mQueueManager, mSemaphorePool);
 		}
 
 		SPtr<Fence> DeviceVk::SubmitCommandList(SPtr<CommandList>& commandList)

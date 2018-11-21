@@ -1,6 +1,7 @@
 ﻿#include "VulkanSemaphorePool.h"
 
 #include "VulkanUtility.h"
+#include "VulkanDebug.h"
 #include "VulkanLogicalDevice.h"
 
 namespace cube
@@ -38,7 +39,7 @@ namespace cube
 			}
 		}
 
-		VulkanSemaphore VulkanSemaphorePool::GetSemaphore()
+		VulkanSemaphore VulkanSemaphorePool::GetSemaphore(const char* debugName)
 		{
 			VkResult res;
 
@@ -65,6 +66,8 @@ namespace cube
 					mIdleSemaphoreIndices.pop_back();
 				}
 			}
+
+			VulkanDebug::SetObjectName(mDevice->GetHandle(), semaphore.handle, debugName);
 
 			return semaphore;
 		}

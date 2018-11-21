@@ -15,7 +15,7 @@ namespace cube
 			VulkanFencePool(SPtr<VulkanLogicalDevice>& device);
 			~VulkanFencePool();
 
-			SPtr<FenceVk> GetFence();
+			SPtr<FenceVk> GetFence(const char* debugName = "");
 			void FreeFence(FenceVk& fence);
 
 		private:

@@ -16,10 +16,11 @@ namespace cube
 	namespace render
 	{
 		SwapChainVk::SwapChainVk(VkInstance ins, DeviceVk& device, const SwapChainAttribute& attr,
-			VulkanQueueManager& queueManager) :
+			VulkanQueueManager& queueManager, VulkanSemaphorePool& semaphorePool) :
 			mSwapChain(VK_NULL_HANDLE, device.GetLogicalDevice()),
 			mAttribute(attr),
-			mWidth(attr.width), mHeight(attr.height), mImageCount(attr.bufferCount), mVsync(attr.vsync)
+			mWidth(attr.width), mHeight(attr.height), mImageCount(attr.bufferCount), mVsync(attr.vsync),
+			mSemaphorePool(semaphorePool)
 		{
 			VkResult res;
 
@@ -111,7 +112,7 @@ namespace cube
 				isFound = std::find(supportedPresentModes.cbegin(), supportedPresentModes.cend(), mPresentMode) != supportedPresentModes.cend();
 				
 				if(!isFound) {
-					ASSERTION_FAILED("Cannot find supported present mode (MAILBOX / IMMEDIATE).");
+					ASSERTION_FAILED("Cannot find supported present mode (MAILBOX or IMMEDIATE).");
 				}
 			}
 			
@@ -132,8 +133,31 @@ namespace cube
 			mSwapChain.Release();
 		}
 
+		void SwapChainVk::AcquireNextImage()
+		{
+			VkResult res;
+
+			res = vkAcquireNextImageKHR(mSwapChain.GetVkDevice(), mSwapChain.mObject, UINT64_MAX,
+				VK_NULL_HANDLE, VK_NULL_HANDLE, &mCurrentBackImageIndex);
+			CHECK_VK(res, "Failed to acquire next image.");
+		}
+
 		void SwapChainVk::Present()
 		{
+			VkResult res;
+
+			VkPresentInfoKHR info;
+			info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+			info.pNext = nullptr;
+			info.swapchainCount = 1;
+			info.pSwapchains = &mSwapChain.mObject;
+			info.pImageIndices = &mCurrentBackImageIndex;
+			info.waitSemaphoreCount = 1;
+			info.pWaitSemaphores = &mDrawCompleteSemaphores[mCurrentBackImageIndex].handle;
+			info.pResults = nullptr;
+
+			res = vkQueuePresentKHR(mPresentQueue, &info);
+			CHECK_VK(res, "Failed to present.");
 		}
 
 		void SwapChainVk::Resize(Uint32 width, Uint32 height, bool vsync)
@@ -141,14 +165,33 @@ namespace cube
 			if(vsync == true) {
 				CHECK(mIsSupportedVsync == true, "Vsync is not supported this platform.");
 			}
+
+			// Release all resources related to swap chain
+			for(auto imgView : mBackImageViews) {
+				vkDestroyImageView(mSwapChain.GetVkDevice(), imgView, nullptr);
+			}
+			mBackImageViews.clear();
+			for(auto& semaphore : mDrawCompleteSemaphores) {
+				mSemaphorePool.FreeSemaphore(semaphore);
+			}
+			mDrawCompleteSemaphores.clear();
+
+			mWidth = width;
+			mHeight = height;
+			mVsync = vsync;
+
+			CreateSwapChain();
+			CreateImages();
 		}
 
 		void SwapChainVk::SetFullscreenMode()
 		{
+			// TODO: 차후 구현
 		}
 
 		void SwapChainVk::SetWindowedMode()
 		{
+			// TODO: 차후 구현
 		}
 
 		void SwapChainVk::CreateSwapChain()
@@ -197,6 +240,16 @@ namespace cube
 
 			mSwapChain = oldSwapChain.GetVulkanLogicalDevice()->CreateVkSwapChainWrapper(info, "SwapChain");
 			oldSwapChain.Release();
+
+			// Create semaphores
+			/*mAcquiredSemaphores.resize(mImageCount);
+			for(Uint32 i = 0; i < mImageCount; i++) {
+				mAcquiredSemaphores.push_back(mSemaphorePool.GetSemaphore());
+			}*/
+			mDrawCompleteSemaphores.resize(mImageCount);
+			for(Uint32 i = 0; i < mImageCount; i++) {
+				mDrawCompleteSemaphores.push_back(mSemaphorePool.GetSemaphore(fmt::format("DrawCompleteSemaphores[{0}]", i).c_str()));
+			}
 		}
 
 		void SwapChainVk::CreateImages()

@@ -1,6 +1,7 @@
 ﻿#include "VulkanFencePool.h"
 
 #include "VulkanUtility.h"
+#include "VulkanDebug.h"
 #include "VulkanLogicalDevice.h"
 #include "Interface/FenceVk.h"
 #include "EngineCore/Assertion.h"
@@ -40,7 +41,7 @@ namespace cube
 			mFences.clear();
 		}
 
-		SPtr<FenceVk> VulkanFencePool::GetFence()
+		SPtr<FenceVk> VulkanFencePool::GetFence(const char* debugName)
 		{
 			VkResult res;
 
@@ -70,6 +71,8 @@ namespace cube
 			}
 
 			vkResetFences(mDevice->GetHandle(), 1, &mFences[index].mObject);
+			VulkanDebug::SetObjectName(mDevice->GetHandle(), mFences[index].mObject, debugName);
+
 			return std::make_shared<FenceVk>(mFences[index], index, *this);
 		}
 

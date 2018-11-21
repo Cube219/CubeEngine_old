@@ -20,7 +20,7 @@ namespace cube
 			VulkanSemaphorePool(SPtr<VulkanLogicalDevice>& device);
 			~VulkanSemaphorePool();
 
-			VulkanSemaphore GetSemaphore();
+			VulkanSemaphore GetSemaphore(const char* debugName = "");
 			void FreeSemaphore(VulkanSemaphore& semaphore);
 
 		private:
