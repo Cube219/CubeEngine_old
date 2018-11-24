@@ -164,9 +164,12 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
   <ItemGroup>
     <ClCompile Include="Interface\BufferViewVk.cpp" />
     <ClCompile Include="Interface\FenceVk.cpp" />
+    <ClCompile Include="Interface\GraphicsPipelineStateVk.cpp" />
+    <ClCompile Include="Interface\ShaderVk.cpp" />
     <ClCompile Include="Interface\SwapChainVk.cpp" />
     <ClCompile Include="Interface\TextureViewVk.cpp" />
     <ClCompile Include="Interface\TextureVk.cpp" />
+    <ClCompile Include="Tools\GLSLTool.cpp" />
     <ClCompile Include="VulkanCommandListPool.cpp" />
     <ClCompile Include="Interface\BufferVk.cpp" />
     <ClCompile Include="Interface\CommandListVk.cpp" />
@@ -186,9 +189,12 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
   <ItemGroup>
     <ClInclude Include="Interface\BufferViewVk.h" />
     <ClInclude Include="Interface\FenceVk.h" />
+    <ClInclude Include="Interface\GraphicsPipelineStateVk.h" />
+    <ClInclude Include="Interface\ShaderVk.h" />
     <ClInclude Include="Interface\SwapChainVk.h" />
     <ClInclude Include="Interface\TextureViewVk.h" />
     <ClInclude Include="Interface\TextureVk.h" />
+    <ClInclude Include="Tools\GLSLTool.h" />
     <ClInclude Include="VkObject.h" />
     <ClInclude Include="VulkanCommandListPool.h" />
     <ClInclude Include="Interface\BufferVk.h" />

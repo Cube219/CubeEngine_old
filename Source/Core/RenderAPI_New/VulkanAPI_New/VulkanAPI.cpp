@@ -6,6 +6,7 @@
 #include "VulkanLogicalDevice.h"
 #include "VulkanDebug.h"
 #include "VulkanTypeConversion.h"
+#include "Tools/GLSLTool.h"
 
 namespace cube
 {
@@ -22,11 +23,15 @@ namespace cube
 
 			VulkanDebug::Free();
 			vkDestroyInstance(mInstance, nullptr);
+
+			GLSLTool::Finalize();
 		}
 
 		void VulkanAPI::Init(const RenderAPIAttribute& attr)
 		{
 			TypeConversionInit();
+
+			GLSLTool::Init();
 
 			CreateInstance(attr);
 

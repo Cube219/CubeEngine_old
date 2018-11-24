@@ -40,6 +40,10 @@ namespace cube
 		class VulkanSemaphorePool;
 
 		class SwapChainVk;
+
+		class GraphicsPipelineStateVk;
+
+		class ShaderVk;
 	} // namespace render
 } // namespace cube
 

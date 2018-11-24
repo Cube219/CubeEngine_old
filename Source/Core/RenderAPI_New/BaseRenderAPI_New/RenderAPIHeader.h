@@ -19,6 +19,7 @@ namespace cube
 
 		class Fence;
 		
+		struct GraphicsPipelineStateAttribute;
 		class GraphicsPipelineState;
 
 		struct TextureAttribute;

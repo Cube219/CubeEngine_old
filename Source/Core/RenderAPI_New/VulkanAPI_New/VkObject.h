@@ -70,6 +70,8 @@ namespace cube
 		using VkImageViewWrapper = VkObject<VkImageView>;
 		using VkFenceWrapper = VkObject<VkFence>;
 		using VkSwapChainWrapper = VkObject<VkSwapchainKHR>;
+		using VkPipelineWrapper = VkObject<VkPipeline>;
+		using VkShaderModuleWrapper = VkObject< VkShaderModule>;
 
 		// -------------------------------------------------
 		// Helper class for storaging VkObject child classes

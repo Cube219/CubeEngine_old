@@ -3,6 +3,7 @@
 #include "VulkanAPIHeader.h"
 
 #include "BaseRenderAPI_New/Interface/RenderTypes.h"
+#include "Interface/GraphicsPipelineStateVk.h"
 
 namespace cube
 {
@@ -11,6 +12,11 @@ namespace cube
 		void TypeConversionInit();
 
 		VkFormat TextureFormatToVkFormat(TextureFormat texFormat);
+		VkCompareOp ComparisonFunctionToVkCompareOp(ComparisonFunction compareFunc);
+		VkStencilOpState StencilStateToVkStencilOpState(StencilState stencilState);
+		VkStencilOp StencilOperatorToVkStencilOp(StencilOperator stencilOp);
+		VkBlendFactor BlendFactorToVkBlendFactor(BlendFactor blendFactor);
+		VkBlendOp BlendOperatorToVkBlendOp(BlendOperator blendOp);
 
 		static Array<VkFormat, (Uint32)TextureFormat::TextureFormatCount> texFmtToVkFmt;
 	} // namespace render

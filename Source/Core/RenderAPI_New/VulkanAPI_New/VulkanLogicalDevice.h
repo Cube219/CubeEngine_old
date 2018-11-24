@@ -26,6 +26,9 @@ namespace cube
 			VkImageViewWrapper CreateVkImageViewWrapper(const VkImageViewCreateInfo& info, const char* debugName = "");
 			VkFenceWrapper CreateVkFenceWrapper(const VkFenceCreateInfo& info, const char* debugName = "");
 			VkSwapChainWrapper CreateVkSwapChainWrapper(const VkSwapchainCreateInfoKHR& info, const char* debugName = "");
+			VkPipelineWrapper CreateVkPipelineWrapper(const VkGraphicsPipelineCreateInfo& info, VkPipelineCache cache, const char* debugName = "");
+			VkPipelineWrapper CreateVkPipelineWrapper(const VkComputePipelineCreateInfo& info, VkPipelineCache cache, const char* debugName = "");
+			VkShaderModuleWrapper CreateVkShaderModuleWrapper(const VkShaderModuleCreateInfo& info, const char* debugName = "");
 
 			void ReleaseVkObject(VkBufferWrapper&& buffer) const;
 			void ReleaseVkObject(VkBufferViewWrapper&& bufView) const;
@@ -33,6 +36,8 @@ namespace cube
 			void ReleaseVkObject(VkImageViewWrapper&& imgView) const;
 			void ReleaseVkObject(VkFenceWrapper&& fence) const;
 			void ReleaseVkObject(VkSwapChainWrapper&& swapChain) const;
+			void ReleaseVkObject(VkPipelineWrapper&& pipeline) const;
+			void ReleaseVkObject(VkShaderModuleWrapper&& shaderModule) const;
 
 		private:
 			VkDevice mDevice;

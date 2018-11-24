@@ -6,6 +6,118 @@ namespace cube
 {
 	namespace render
 	{
+		enum class ShaderType
+		{
+			Vertex,
+			Pixel,
+			Geometry,
+			Hull,
+			Domain,
+			Compute
+		};
+
+		enum class ShaderLanguage
+		{
+			HLSL,
+			GLSL,
+			SPIRV
+		};
+
+		enum class PrimitiveTopology
+		{
+			PointList,
+			LineList,
+			LineStrip,
+			TriangleList,
+			TriangleStrip,
+			TriangleFan,
+			PatchList
+			// TODO: with-adjacency도 추가?
+		};
+
+		enum class FillMode
+		{
+			Point,
+			Line,
+			Fill
+		};
+
+		enum class CullMode
+		{
+			None,
+			Front,
+			Back
+		};
+
+		enum class TriangleFrontFace
+		{
+			Clockwise,
+			CounterClockwise
+		};
+
+		enum class ComparisonFunction
+		{
+			Never,
+			Always,
+			Equal,
+			NotEqual,
+			Less,
+			LessEqual,
+			Greater,
+			GreaterEqual
+		};
+
+		enum class StencilOperator
+		{
+			Zero,
+			Keep,
+			Invert,
+			Replace,
+			IncrementAndClamp,
+			IncrementAndWrap,
+			DecrementAndClamp,
+			DecrementAndWrap,
+		};
+
+		enum class BlendFactor
+		{
+			Zero,
+			One,
+			SourceColor,
+			SourceAlpha,
+			SourceAlphaSaturate,
+			InverseSourceColor,
+			InverseSourceAlpha,
+			DestinationColor,
+			DestinationAlpha,
+			InverseDestinationColor,
+			InverseDestinationAlpha,
+			Constant,
+			InverseConstant,
+			Source1Color,
+			Source1Alpha,
+			InverseSource1Color,
+			InverseSource1Alpha,
+		};
+		enum class BlendOperator
+		{
+			Add,
+			Subtract,
+			ReverseSubtract,
+			Min,
+			Max
+		};
+
+		using ColorWriteMaskFlags = Uint32;
+		enum ColorWriteMaskBits : Uint32
+		{
+			Red = 1,
+			Green = 2,
+			Blue = 4,
+			Alpha = 8,
+			All = Red | Green | Blue | Alpha
+		};
+
 		enum class ResourceUsage
 		{
 			Default,

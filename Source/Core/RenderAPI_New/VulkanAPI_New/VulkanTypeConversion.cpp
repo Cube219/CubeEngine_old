@@ -1,5 +1,7 @@
 ﻿#include "VulkanTypeConversion.h"
 
+#include "EngineCore/Assertion.h"
+
 namespace cube
 {
 	namespace render
@@ -194,6 +196,91 @@ namespace cube
 		VkFormat TextureFormatToVkFormat(TextureFormat texFormat)
 		{
 			return texFmtToVkFmt[(Uint32)texFormat];
+		}
+
+		VkCompareOp ComparisonFunctionToVkCompareOp(ComparisonFunction compareFunc)
+		{
+			switch(compareFunc) {
+				case ComparisonFunction::Never:        return VK_COMPARE_OP_NEVER;
+				case ComparisonFunction::Always:       return VK_COMPARE_OP_ALWAYS;
+				case ComparisonFunction::Equal:        return VK_COMPARE_OP_EQUAL;
+				case ComparisonFunction::NotEqual:     return VK_COMPARE_OP_NOT_EQUAL;
+				case ComparisonFunction::Less:         return VK_COMPARE_OP_LESS;
+				case ComparisonFunction::LessEqual:    return VK_COMPARE_OP_LESS_OR_EQUAL;
+				case ComparisonFunction::Greater:      return VK_COMPARE_OP_GREATER;
+				case ComparisonFunction::GreaterEqual: return VK_COMPARE_OP_GREATER_OR_EQUAL;
+				default: ASSERTION_FAILED("Unknown ComparisonFunction ({0})", (Uint32)compareFunc);
+			}
+			return VK_COMPARE_OP_NEVER;
+		}
+
+		VkStencilOpState StencilStateToVkStencilOpState(StencilState stencilState)
+		{
+			VkStencilOpState state;
+			state.depthFailOp = StencilOperatorToVkStencilOp(stencilState.depthFailOp);
+			state.failOp = StencilOperatorToVkStencilOp(stencilState.failOp);
+			state.passOp = StencilOperatorToVkStencilOp(stencilState.passOp);
+			state.compareOp = ComparisonFunctionToVkCompareOp(stencilState.compareFunc);
+			state.compareMask = stencilState.readMask;
+			state.writeMask = stencilState.writeMask;
+			state.reference = 0; // Set dynamically
+
+			return state;
+		}
+
+		VkStencilOp StencilOperatorToVkStencilOp(StencilOperator stencilOp)
+		{
+			switch(stencilOp) {
+				case StencilOperator::Zero:              return VK_STENCIL_OP_ZERO;
+				case StencilOperator::Keep:              return VK_STENCIL_OP_KEEP;
+				case StencilOperator::Invert:            return VK_STENCIL_OP_INVERT;
+				case StencilOperator::Replace:           return VK_STENCIL_OP_REPLACE;
+				case StencilOperator::IncrementAndClamp: return VK_STENCIL_OP_INCREMENT_AND_CLAMP;
+				case StencilOperator::IncrementAndWrap:  return VK_STENCIL_OP_INCREMENT_AND_WRAP;
+				case StencilOperator::DecrementAndClamp: return VK_STENCIL_OP_DECREMENT_AND_CLAMP;
+				case StencilOperator::DecrementAndWrap:  return VK_STENCIL_OP_DECREMENT_AND_WRAP;
+				default: ASSERTION_FAILED("Unknown StencilOperator ({0})", (Uint32)stencilOp);
+			}
+			return VK_STENCIL_OP_ZERO;
+		}
+
+		VkBlendFactor BlendFactorToVkBlendFactor(BlendFactor blendFactor)
+		{
+			switch(blendFactor) {
+				case BlendFactor::Zero:                    return VK_BLEND_FACTOR_ZERO;
+				case BlendFactor::One:                     return VK_BLEND_FACTOR_ONE;
+				case BlendFactor::SourceColor:             return VK_BLEND_FACTOR_SRC_COLOR;
+				case BlendFactor::SourceAlpha:             return VK_BLEND_FACTOR_SRC_ALPHA;
+				case BlendFactor::SourceAlphaSaturate:     return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
+				case BlendFactor::InverseSourceColor:      return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+				case BlendFactor::InverseSourceAlpha:      return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+				case BlendFactor::DestinationColor:        return VK_BLEND_FACTOR_DST_COLOR;
+				case BlendFactor::DestinationAlpha:        return VK_BLEND_FACTOR_DST_ALPHA;
+				case BlendFactor::InverseDestinationColor: return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+				case BlendFactor::InverseDestinationAlpha: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+				case BlendFactor::Constant:                return VK_BLEND_FACTOR_CONSTANT_COLOR;
+				case BlendFactor::InverseConstant:         return VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR;
+				// TODO: CONSTANT_ALPHA는 나중에?
+				case BlendFactor::Source1Color:            return VK_BLEND_FACTOR_SRC1_COLOR;
+				case BlendFactor::Source1Alpha:            return VK_BLEND_FACTOR_SRC1_ALPHA;
+				case BlendFactor::InverseSource1Color:     return VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR;
+				case BlendFactor::InverseSource1Alpha:     return VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA;
+				default: ASSERTION_FAILED("Unknown BlendFactor ({0})", (Uint32)blendFactor);
+			}
+			return VK_BLEND_FACTOR_ZERO;
+		}
+
+		VkBlendOp BlendOperatorToVkBlendOp(BlendOperator blendOp)
+		{
+			switch(blendOp) {
+				case BlendOperator::Add:             return VK_BLEND_OP_ADD;
+				case BlendOperator::Subtract:        return VK_BLEND_OP_SUBTRACT;
+				case BlendOperator::ReverseSubtract: return VK_BLEND_OP_REVERSE_SUBTRACT;
+				case BlendOperator::Min:             return VK_BLEND_OP_MIN;
+				case BlendOperator::Max:             return VK_BLEND_OP_MAX;
+				default: ASSERTION_FAILED("Unknown BlendOperator ({0})", (Uint32)blendOp);
+			}
+			return VK_BLEND_OP_ADD;
 		}
 	} // namespace render
 } // namespace cube

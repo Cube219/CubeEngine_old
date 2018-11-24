@@ -159,6 +159,51 @@ namespace cube
 			return VkSwapChainWrapper(swapChain, shared_from_this(), debugName);
 		}
 
+		VkPipelineWrapper VulkanLogicalDevice::CreateVkPipelineWrapper(const VkGraphicsPipelineCreateInfo& info,
+			VkPipelineCache cache, const char* debugName)
+		{
+			VkResult res;
+
+			VkPipeline pipeline;
+			res = vkCreateGraphicsPipelines(mDevice, cache, 1, &info, nullptr, &pipeline);
+			CHECK_VK(res, "Failed to create VkPipeline for graphics '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, pipeline, debugName);
+
+			return VkPipelineWrapper(pipeline, shared_from_this(), debugName);
+		}
+
+		VkPipelineWrapper VulkanLogicalDevice::CreateVkPipelineWrapper(const VkComputePipelineCreateInfo & info,
+			VkPipelineCache cache, const char * debugName)
+		{
+			VkResult res;
+
+			VkPipeline pipeline;
+			res = vkCreateComputePipelines(mDevice, cache, 1, &info, nullptr, &pipeline);
+			CHECK_VK(res, "Failed to create VkPipeline for compute '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, pipeline, debugName);
+
+			return VkPipelineWrapper(pipeline, shared_from_this(), debugName);
+		}
+
+		VkShaderModuleWrapper VulkanLogicalDevice::CreateVkShaderModuleWrapper(const VkShaderModuleCreateInfo& info,
+			const char * debugName)
+		{
+			VkResult res;
+
+			VkShaderModule shaderModule;
+			res = vkCreateShaderModule(mDevice, &info, nullptr, &shaderModule);
+			CHECK_VK(res, "Failed to create VkShaderModule '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, shaderModule, debugName);
+
+			return VkShaderModuleWrapper(shaderModule, shared_from_this(), debugName);
+		}
+
 		void VulkanLogicalDevice::ReleaseVkObject(VkBufferWrapper&& buffer) const
 		{
 			vkDestroyBuffer(buffer.GetVkDevice(), buffer.mObject, nullptr);
@@ -199,6 +244,20 @@ namespace cube
 			vkDestroySwapchainKHR(swapChain.GetVkDevice(), swapChain.mObject, nullptr);
 			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
 			CUBE_LOG(LogType::Info, "Release VkSwapchain.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkPipelineWrapper&& pipeline) const
+		{
+			vkDestroyPipeline(mDevice, pipeline.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkPipeline.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkShaderModuleWrapper&& shaderModule) const
+		{
+			vkDestroyShaderModule(mDevice, shaderModule.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkShaderModule.");
 		}
 	} // namespace render
 } // namespace cube
