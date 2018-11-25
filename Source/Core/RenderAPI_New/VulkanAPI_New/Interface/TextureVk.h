@@ -24,12 +24,18 @@ namespace cube
 
 			virtual SPtr<TextureView> CreateView(const TextureViewAttribute& attr) override final;
 
+			VkImageUsageFlags GetUsage() const { return mUsage; }
+
 		private:
+			friend class TextureViewVk;
+
 			VkImageWrapper mImage;
 
 			VulkanAllocation mAllocation;
 
 			DeviceVk& mDevice;
+
+			VkImageUsageFlags mUsage;
 		};
 	} // namespace render
 } // namespace cube

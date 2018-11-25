@@ -14,8 +14,10 @@ namespace cube
 			RenderTargetVk(const RenderTargetAttribute& attr);
 			virtual ~RenderTargetVk();
 
-			VkImageLayout GetVkImageLayout() const { return VK_IMAGE_LAYOUT_GENERAL; } // TODO: 차후 수정
-			VkAttachmentDescription GetVkAttachmentDescription() const { return VkAttachmentDescription(); } // TODO: 차후 수정
+			VkAttachmentDescription GetVkAttachmentDescription() const { return mAttachmentDesc; }
+
+		private:
+			VkAttachmentDescription mAttachmentDesc;
 		};
 	} // namespace render
 } // namespace cube

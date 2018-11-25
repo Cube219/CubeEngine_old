@@ -282,5 +282,26 @@ namespace cube
 			}
 			return VK_BLEND_OP_ADD;
 		}
+
+		VkAttachmentLoadOp LoadOperatorToVkAttachmentLoadOp(LoadOperator loadOp)
+		{
+			switch(loadOp) {
+				case LoadOperator::Load:     return VK_ATTACHMENT_LOAD_OP_LOAD;
+				case LoadOperator::Clear:    return VK_ATTACHMENT_LOAD_OP_CLEAR;
+				case LoadOperator::DontCare: return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				default: ASSERTION_FAILED("Unknown LoadOperator ({0})", (Uint32)loadOp);
+			}
+			return VK_ATTACHMENT_LOAD_OP_LOAD;
+		}
+
+		VkAttachmentStoreOp StoreOperatorToVkAttachmentStoreOp(StoreOperator storeOp)
+		{
+			switch(storeOp) {
+				case StoreOperator::Store:     return VK_ATTACHMENT_STORE_OP_STORE;
+				case StoreOperator::DontCare: return VK_ATTACHMENT_STORE_OP_DONT_CARE;
+				default: ASSERTION_FAILED("Unknown StoreOperator ({0})", (Uint32)storeOp);
+			}
+			return VK_ATTACHMENT_STORE_OP_STORE;
+		}
 	} // namespace render
 } // namespace cube

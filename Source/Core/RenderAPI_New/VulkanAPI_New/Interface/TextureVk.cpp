@@ -64,6 +64,7 @@ namespace cube
 			if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil_Bit) > 0) {
 				info.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 			}
+			mUsage = info.usage;
 
 			info.queueFamilyIndexCount = 0;
 			info.pQueueFamilyIndices = nullptr;
@@ -199,7 +200,7 @@ namespace cube
 
 		SPtr<TextureView> TextureVk::CreateView(const TextureViewAttribute& attr)
 		{
-			return std::make_shared<TextureViewVk>(mDevice, attr, mImage);
+			return std::make_shared<TextureViewVk>(mDevice, attr, *this);
 		}
 	} // namespace render
 } // namespace cube

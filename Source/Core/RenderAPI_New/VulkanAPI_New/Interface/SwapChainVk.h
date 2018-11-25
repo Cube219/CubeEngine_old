@@ -28,6 +28,8 @@ namespace cube
 
 			VulkanSemaphore& GetDrawCompleteSemaphore() { return mDrawCompleteSemaphores[mCurrentBackImageIndex]; }
 
+			VkFormat GetColorVkFormat() const { return mColorFormat; }
+
 		private:
 			void CreateSwapChain();
 			void CreateImages();

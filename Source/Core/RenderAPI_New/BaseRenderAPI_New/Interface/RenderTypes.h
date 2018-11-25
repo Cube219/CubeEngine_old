@@ -6,6 +6,21 @@ namespace cube
 {
 	namespace render
 	{
+		// ----- RenderTarget -----
+		enum class LoadOperator
+		{
+			Load,
+			Clear,
+			DontCare
+		};
+
+		enum class StoreOperator
+		{
+			Store,
+			DontCare
+		};
+
+		// ----- Shader -----
 		enum class ShaderType
 		{
 			Vertex,
@@ -23,6 +38,7 @@ namespace cube
 			SPIRV
 		};
 
+		// ----- GraphicsPipelineState -----
 		enum class PrimitiveTopology
 		{
 			PointList,
@@ -118,6 +134,7 @@ namespace cube
 			All_Bit = Red_Bit | Green_Bit | Blue_Bit | Alpha_Bit
 		};
 
+		// ----- Buffer / Texture -----
 		enum class ResourceUsage
 		{
 			Default,

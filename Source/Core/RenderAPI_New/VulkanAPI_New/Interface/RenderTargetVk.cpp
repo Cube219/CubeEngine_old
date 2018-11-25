@@ -1,11 +1,43 @@
 ﻿#include "RenderTargetVk.h"
 
+#include "TextureViewVk.h"
+#include "TextureVk.h"
+#include "SwapChainVk.h"
+#include "../VulkanTypeConversion.h"
+
 namespace cube
 {
 	namespace render
 	{
 		RenderTargetVk::RenderTargetVk(const RenderTargetAttribute& attr)
 		{
+			mAttachmentDesc.format = VK_FORMAT_UNDEFINED;
+			mAttachmentDesc.samples = VK_SAMPLE_COUNT_1_BIT; // TODO: MultiSampling 구현 때 구현
+			mAttachmentDesc.loadOp = LoadOperatorToVkAttachmentLoadOp(attr.loadOp);
+			mAttachmentDesc.storeOp = StoreOperatorToVkAttachmentStoreOp(attr.storeOp);
+			mAttachmentDesc.stencilLoadOp = LoadOperatorToVkAttachmentLoadOp(attr.stencilLoadOp);
+			mAttachmentDesc.stencilStoreOp = StoreOperatorToVkAttachmentStoreOp(attr.stencilStoreOp);
+			mAttachmentDesc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+			if(attr.isSwapChain == false) {
+				SPtr<TextureViewVk> textureViewVk = DPCast(TextureViewVk)(attr.textureView);
+
+				mAttachmentDesc.format = textureViewVk->GetVkFormat();
+
+				VkImageUsageFlags usage = textureViewVk->GetParentImage().GetUsage();
+
+				if((usage & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) > 0) {
+					mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				} else if((usage & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) > 0) {
+					mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+				}
+			} else {
+				SPtr<SwapChainVk> swapChainVk = DPCast(SwapChainVk)(attr.swapChain);
+
+				mAttachmentDesc.format = swapChainVk->GetColorVkFormat();
+				mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+			}
 		}
 
 		RenderTargetVk::~RenderTargetVk()

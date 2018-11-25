@@ -57,17 +57,17 @@ namespace cube
 				descHelper.inputs.resize(subpass.inputs.size());
 				for(Uint64 j = 0; j < descHelper.inputs.size(); j++) {
 					index = subpass.inputs[j];
-					descHelper.inputs[j] = { index, DPCast(RenderTargetVk)(attr.renderTargets[index])->GetVkImageLayout() };
+					descHelper.inputs[j] = { index, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
 				}
 
 				descHelper.colors.resize(subpass.colorOutputs.size());
 				for(Uint64 j = 0; j < descHelper.colors.size(); j++) {
 					index = subpass.colorOutputs[j];
-					descHelper.colors[j] = { index, DPCast(RenderTargetVk)(attr.renderTargets[index])->GetVkImageLayout() };
+					descHelper.colors[j] = { index, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 				}
 
 				index = subpass.depthStencilOutput;
-				descHelper.depthStencil = { index, DPCast(RenderTargetVk)(attr.renderTargets[index])->GetVkImageLayout() };
+				descHelper.depthStencil = { index, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL };
 
 				subpassDescs[i] = descHelper.Get();
 			}

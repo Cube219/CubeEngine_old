@@ -11,6 +11,12 @@ namespace cube
 			SPtr<TextureView> textureView;
 			bool isSwapChain;
 			SPtr<SwapChain> swapChain;
+
+			LoadOperator loadOp;
+			StoreOperator storeOp;
+
+			LoadOperator stencilLoadOp;
+			StoreOperator stencilStoreOp;
 		};
 
 		class RenderTarget
