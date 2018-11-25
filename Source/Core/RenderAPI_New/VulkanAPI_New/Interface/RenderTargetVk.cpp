@@ -20,8 +20,10 @@ namespace cube
 			mAttachmentDesc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
+			mHasSwapChain = attr.isSwapChain;
 			if(attr.isSwapChain == false) {
 				SPtr<TextureViewVk> textureViewVk = DPCast(TextureViewVk)(attr.textureView);
+				mTextureView = textureViewVk;
 
 				mAttachmentDesc.format = textureViewVk->GetVkFormat();
 
@@ -34,6 +36,7 @@ namespace cube
 				}
 			} else {
 				SPtr<SwapChainVk> swapChainVk = DPCast(SwapChainVk)(attr.swapChain);
+				mSwapChain = swapChainVk;
 
 				mAttachmentDesc.format = swapChainVk->GetColorVkFormat();
 				mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;

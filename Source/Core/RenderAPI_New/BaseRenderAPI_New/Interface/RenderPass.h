@@ -28,6 +28,9 @@ namespace cube
 			Vector<Subpass> subpasses;
 			Vector<SubpassDependency> subpassdependencies;
 
+			Uint32 width;
+			Uint32 height;
+
 			const char* debugName = nullptr;
 		};
 
@@ -36,6 +39,8 @@ namespace cube
 		public:
 			RenderPass() {}
 			virtual ~RenderPass() {}
+
+			virtual void Resize(Uint32 width, Uint32 height) = 0;
 		};
 	} // namespace render
 } // namespace cube

@@ -2,17 +2,24 @@
 
 #include "DeviceVk.h"
 #include "RenderTargetVk.h"
+#include "SwapChainVk.h"
+#include "TextureViewVk.h"
 
 namespace cube
 {
 	namespace render
 	{
-		RenderPassVk::RenderPassVk(DeviceVk& device, const RenderPassAttribute& attr)
+		RenderPassVk::RenderPassVk(DeviceVk& device, const RenderPassAttribute& attr) : 
+			mDevice(device)
 		{
 			// Attachment
 			Vector<VkAttachmentDescription> attachmentDescs(attr.renderTargets.size());
+			mRenderTargets.resize(attr.renderTargets.size());
 			for(Uint64 i = 0; i < attachmentDescs.size(); i++) {
-				attachmentDescs[i] = DPCast(RenderTargetVk)(attr.renderTargets[i])->GetVkAttachmentDescription();
+				SPtr<RenderTargetVk> renderTargetVk = DPCast(RenderTargetVk)(attr.renderTargets[i]);
+				attachmentDescs[i] = renderTargetVk->GetVkAttachmentDescription();
+				
+				mRenderTargets[i] = renderTargetVk;
 			}
 
 			// Subpass
@@ -99,11 +106,67 @@ namespace cube
 			info.pDependencies = subpassDependencies.data();
 
 			mRenderPass = device.GetLogicalDevice()->CreateVkRenderPassWrapper(info, attr.debugName);
+
+			CreateFramebuffer(attr.width, attr.height);
 		}
 
 		RenderPassVk::~RenderPassVk()
 		{
+			mFramebuffers.clear();
 			mRenderPass.Release();
+		}
+
+		void RenderPassVk::Resize(Uint32 width, Uint32 height)
+		{
+			mFramebuffers.clear();
+
+			CreateFramebuffer(width, height);
+		}
+
+		void RenderPassVk::CreateFramebuffer(Uint32 width, Uint32 height)
+		{
+			SPtr<SwapChainVk> swapChainVk;
+
+			mHasSwapchainRenderTarget = false;
+			for(auto& rt : mRenderTargets) {
+				if(rt->HasSwapChain()) {
+					mHasSwapchainRenderTarget = true;
+					swapChainVk = rt->GetSwapChainVk();
+					break;
+				}
+			}
+
+			if(mHasSwapchainRenderTarget) {
+				mFramebuffers.resize(swapChainVk->GetImageCount());
+			} else {
+				mFramebuffers.resize(1);
+			}
+
+			Vector<VkImageView> attachments(mRenderTargets.size());
+
+			VkFramebufferCreateInfo info;
+			info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			info.pNext = nullptr;
+			info.flags = 0;
+			info.renderPass = mRenderPass.mObject;
+			info.attachmentCount = SCast(Uint32)(attachments.size());
+			info.pAttachments = attachments.data();
+			info.width = width;
+			info.height = height;
+			info.layers = 1;
+
+			for(Uint64 i = 0; i < attachments.size(); i++) {
+				auto& renderTarget = mRenderTargets[i];
+
+				if(renderTarget->HasSwapChain()) {
+					attachments[i] = renderTarget->GetSwapChainVk()->GetBackImages()[i];
+				} else {
+					attachments[i] = renderTarget->GetTextureViewVk()->GetHandle();
+				}
+
+				mDevice.GetLogicalDevice()->CreateVkFramebufferWrapper(info,
+					fmt::format("Framebuffer {0} in {1}", i, mRenderPass.mDebugName).c_str());
+			}
 		}
 	} // namespace render
 } // namespace cube
