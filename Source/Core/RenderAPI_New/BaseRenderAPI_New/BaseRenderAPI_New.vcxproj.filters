@@ -47,5 +47,11 @@
     <ClInclude Include="Interface\RenderTypes.h">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\RenderPass.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\RenderTarget.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

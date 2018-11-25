@@ -44,6 +44,9 @@ namespace cube
 		class GraphicsPipelineStateVk;
 
 		class ShaderVk;
+
+		class RenderTargetVk;
+		class RenderPassVk;
 	} // namespace render
 } // namespace cube
 

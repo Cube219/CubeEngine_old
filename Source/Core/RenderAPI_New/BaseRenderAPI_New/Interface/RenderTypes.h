@@ -111,11 +111,11 @@ namespace cube
 		using ColorWriteMaskFlags = Uint32;
 		enum ColorWriteMaskBits : Uint32
 		{
-			Red = 1,
-			Green = 2,
-			Blue = 4,
-			Alpha = 8,
-			All = Red | Green | Blue | Alpha
+			Red_Bit = 1,
+			Green_Bit = 2,
+			Blue_Bit = 4,
+			Alpha_Bit = 8,
+			All_Bit = Red_Bit | Green_Bit | Blue_Bit | Alpha_Bit
 		};
 
 		enum class ResourceUsage
@@ -129,11 +129,11 @@ namespace cube
 		using BufferBindTypeFlags = Uint32;
 		enum BufferBindTypeFlagBits : Uint32
 		{
-			Vertex = 1,
-			Index = 2,
-			Uniform = 4,
-			TransferSource = 8, // RN: Usage로 자동으로 설정되게?
-			TransferDest = 16
+			Vertex_Bit = 1,
+			Index_Bit = 2,
+			Uniform_Bit = 4,
+			TransferSource_Bit = 8, // RN: Usage로 자동으로 설정되게?
+			TransferDest_Bit = 16
 		};
 
 		enum class TextureType
@@ -370,9 +370,9 @@ namespace cube
 		using TextureBindTypeFlags = Uint32;
 		enum TextureBindTypeFlagBits : Uint32
 		{
-			RenderTarget = 1,
-			DepthStencil = 2,
-			ShaderResource = 4
+			RenderTarget_Bit = 1,
+			DepthStencil_Bit = 2,
+			ShaderResource_Bit = 4
 		};
 
 		enum class TextureViewType
@@ -389,9 +389,9 @@ namespace cube
 		using TextureViewComponentFlags = Uint32;
 		enum TextureViewComponentFlagBits : Uint32
 		{
-			Color = 1,
-			Depth = 2,
-			Stencil = 4
+			Color_Bit = 1,
+			Depth_Bit = 2,
+			Stencil_Bit = 4
 		};
 	} // namesapce render
 } // namespace cube

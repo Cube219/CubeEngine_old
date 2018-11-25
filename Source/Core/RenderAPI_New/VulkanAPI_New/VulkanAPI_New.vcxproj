@@ -165,6 +165,8 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClCompile Include="Interface\BufferViewVk.cpp" />
     <ClCompile Include="Interface\FenceVk.cpp" />
     <ClCompile Include="Interface\GraphicsPipelineStateVk.cpp" />
+    <ClCompile Include="Interface\RenderPassVk.cpp" />
+    <ClCompile Include="Interface\RenderTargetVk.cpp" />
     <ClCompile Include="Interface\ShaderVk.cpp" />
     <ClCompile Include="Interface\SwapChainVk.cpp" />
     <ClCompile Include="Interface\TextureViewVk.cpp" />
@@ -190,6 +192,8 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClInclude Include="Interface\BufferViewVk.h" />
     <ClInclude Include="Interface\FenceVk.h" />
     <ClInclude Include="Interface\GraphicsPipelineStateVk.h" />
+    <ClInclude Include="Interface\RenderPassVk.h" />
+    <ClInclude Include="Interface\RenderTargetVk.h" />
     <ClInclude Include="Interface\ShaderVk.h" />
     <ClInclude Include="Interface\SwapChainVk.h" />
     <ClInclude Include="Interface\TextureViewVk.h" />

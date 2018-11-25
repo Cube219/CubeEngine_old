@@ -133,6 +133,8 @@
     <ClInclude Include="Interface\Device.h" />
     <ClInclude Include="Interface\Fence.h" />
     <ClInclude Include="Interface\GraphicsPipelineState.h" />
+    <ClInclude Include="Interface\RenderPass.h" />
+    <ClInclude Include="Interface\RenderTarget.h" />
     <ClInclude Include="Interface\RenderTypes.h" />
     <ClInclude Include="Interface\Sampler.h" />
     <ClInclude Include="Interface\Shader.h" />

@@ -35,5 +35,10 @@ namespace cube
 		class Sampler;
 
 		class CommandList;
+
+		struct RenderTargetAttribute;
+		class RenderTarget;
+		struct RenderPassAttribute;
+		class RenderPass;
 	} // namespace render
 } // namespace cube

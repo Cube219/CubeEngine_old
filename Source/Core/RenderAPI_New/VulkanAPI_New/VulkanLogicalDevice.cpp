@@ -204,6 +204,34 @@ namespace cube
 			return VkShaderModuleWrapper(shaderModule, shared_from_this(), debugName);
 		}
 
+		VkRenderPassWrapper VulkanLogicalDevice::CreateVkRenderPassWrapper(const VkRenderPassCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkRenderPass renderPass;
+			res = vkCreateRenderPass(mDevice, &info, nullptr, &renderPass);
+			CHECK_VK(res, "Failed to create VkRenderPass '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, renderPass, debugName);
+
+			return VkRenderPassWrapper(renderPass, shared_from_this(), debugName);
+		}
+
+		VkFramebufferWrapper VulkanLogicalDevice::CreateVkFramebufferWrapper(const VkFramebufferCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkFramebuffer framebuffer;
+			res = vkCreateFramebuffer(mDevice, &info, nullptr, &framebuffer);
+			CHECK_VK(res, "Failed to create VkFramebuffer '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, framebuffer, debugName);
+
+			return VkFramebufferWrapper(framebuffer, shared_from_this(), debugName);
+		}
+
 		void VulkanLogicalDevice::ReleaseVkObject(VkBufferWrapper&& buffer) const
 		{
 			vkDestroyBuffer(buffer.GetVkDevice(), buffer.mObject, nullptr);
@@ -258,6 +286,20 @@ namespace cube
 			vkDestroyShaderModule(mDevice, shaderModule.mObject, nullptr);
 			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
 			CUBE_LOG(LogType::Info, "Release VkShaderModule.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkRenderPassWrapper&& renderPass) const
+		{
+			vkDestroyRenderPass(mDevice, renderPass.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkRenderPass.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkFramebufferWrapper&& framebuffer) const
+		{
+			vkDestroyFramebuffer(mDevice, framebuffer.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkFramebuffer.");
 		}
 	} // namespace render
 } // namespace cube

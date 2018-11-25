@@ -55,13 +55,13 @@ namespace cube
 
 			info.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 			// info.usage |= VK_IMAGE_USAGE_SAMPLED_BIT; // TODO: 샘플링 구현하면서 구현
-			if((attr.bindTypeFlags & TextureBindTypeFlagBits::RenderTarget) > 0) {
+			if((attr.bindTypeFlags & TextureBindTypeFlagBits::RenderTarget_Bit) > 0) {
 				info.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 			}
-			if((attr.bindTypeFlags & TextureBindTypeFlagBits::ShaderResource) > 0) {
+			if((attr.bindTypeFlags & TextureBindTypeFlagBits::ShaderResource_Bit) > 0) {
 				info.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
 			}
-			if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil) > 0) {
+			if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil_Bit) > 0) {
 				info.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 			}
 
@@ -138,7 +138,7 @@ namespace cube
 				bufImgCopy.bufferRowLength = 0;
 
 				bufImgCopy.imageSubresource.aspectMask = 0;
-				if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil) > 0) {
+				if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil_Bit) > 0) {
 					bufImgCopy.imageSubresource.aspectMask |= VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
 				} else {
 					bufImgCopy.imageSubresource.aspectMask |= VK_IMAGE_ASPECT_COLOR_BIT;
@@ -173,11 +173,11 @@ namespace cube
 
 			mDefaultViewAttr.format = attr.format;
 			
-			if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil) > 0) {
+			if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil_Bit) > 0) {
 				info.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-				mDefaultViewAttr.componentFlags = TextureViewComponentFlagBits::Depth | TextureViewComponentFlagBits::Stencil;
+				mDefaultViewAttr.componentFlags = TextureViewComponentFlagBits::Depth_Bit | TextureViewComponentFlagBits::Stencil_Bit;
 			} else {
-				mDefaultViewAttr.componentFlags = TextureViewComponentFlagBits::Color;
+				mDefaultViewAttr.componentFlags = TextureViewComponentFlagBits::Color_Bit;
 			}
 			
 			mDefaultViewAttr.firstMipLevel = 0;

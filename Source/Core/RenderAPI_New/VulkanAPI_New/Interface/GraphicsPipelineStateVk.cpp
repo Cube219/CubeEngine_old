@@ -4,6 +4,7 @@
 #include "../VulkanTypeConversion.h"
 #include "DeviceVk.h"
 #include "ShaderVk.h"
+#include "RenderPassVk.h"
 #include "EngineCore/Assertion.h"
 
 namespace cube
@@ -153,13 +154,13 @@ namespace cube
 				attachment.dstAlphaBlendFactor = BlendFactorToVkBlendFactor(blendState.dstAlphaBlend);
 				attachment.alphaBlendOp = BlendOperatorToVkBlendOp(blendState.alphaBlendOp);
 				attachment.colorWriteMask = 0;
-				if((blendState.writeMask & ColorWriteMaskBits::Red) > 0)
+				if((blendState.writeMask & ColorWriteMaskBits::Red_Bit) > 0)
 					attachment.colorWriteMask |= VK_COLOR_COMPONENT_R_BIT;
-				if((blendState.writeMask & ColorWriteMaskBits::Green) > 0)
+				if((blendState.writeMask & ColorWriteMaskBits::Green_Bit) > 0)
 					attachment.colorWriteMask |= VK_COLOR_COMPONENT_G_BIT;
-				if((blendState.writeMask & ColorWriteMaskBits::Blue) > 0)
+				if((blendState.writeMask & ColorWriteMaskBits::Blue_Bit) > 0)
 					attachment.colorWriteMask |= VK_COLOR_COMPONENT_B_BIT;
-				if((blendState.writeMask & ColorWriteMaskBits::Alpha) > 0)
+				if((blendState.writeMask & ColorWriteMaskBits::Alpha_Bit) > 0)
 					attachment.colorWriteMask |= VK_COLOR_COMPONENT_A_BIT;
 			}
 
@@ -220,7 +221,7 @@ namespace cube
 			pipelineCreateInfo.pDepthStencilState = &depthStencilStateCreateInfo;
 			pipelineCreateInfo.stageCount = SCast(Uint32)(shaderStages.size());
 			pipelineCreateInfo.pStages = shaderStages.data();
-			// pipelineCreateInfo.renderPass = DPCast(VulkanRenderPass)(initializer.renderPass)->GetHandle();
+			pipelineCreateInfo.renderPass = DPCast(RenderPassVk)(attr.renderPass)->GetHandle();
 			pipelineCreateInfo.subpass = 0;
 
 			mPipeline = device.GetLogicalDevice()->CreateVkPipelineWrapper(pipelineCreateInfo, VK_NULL_HANDLE, attr.debugName);

@@ -94,6 +94,8 @@ namespace cube
 			SPtr<Shader> geometryShader = nullptr;
 			// RN: PipelineLayout을 어떻게 할까? RenderPass는?
 
+			SPtr<RenderPass> renderPass;
+
 			const char* debugName = nullptr;
 		};
 
