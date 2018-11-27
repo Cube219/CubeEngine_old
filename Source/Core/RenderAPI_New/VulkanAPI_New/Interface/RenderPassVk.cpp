@@ -125,6 +125,8 @@ namespace cube
 
 		void RenderPassVk::CreateFramebuffer(Uint32 width, Uint32 height)
 		{
+			mFramebufferRect2D = { 0, 0, width, height };
+
 			SPtr<SwapChainVk> swapChainVk;
 
 			mHasSwapchainRenderTarget = false;
@@ -165,7 +167,7 @@ namespace cube
 				}
 
 				mDevice.GetLogicalDevice()->CreateVkFramebufferWrapper(info,
-					fmt::format("Framebuffer {0} in {1}", i, mRenderPass.mDebugName).c_str());
+					fmt::format("Framebuffer[{0}] in {1}", i, mRenderPass.mDebugName).c_str());
 			}
 		}
 	} // namespace render

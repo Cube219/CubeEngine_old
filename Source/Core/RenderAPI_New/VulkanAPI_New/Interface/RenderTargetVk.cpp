@@ -31,8 +31,16 @@ namespace cube
 
 				if((usage & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) > 0) {
 					mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+					mDefaultClearValue.color.float32[0] = attr.defaultColor[0];
+					mDefaultClearValue.color.float32[1] = attr.defaultColor[1];
+					mDefaultClearValue.color.float32[2] = attr.defaultColor[2];
+					mDefaultClearValue.color.float32[3] = attr.defaultColor[3];
 				} else if((usage & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) > 0) {
 					mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+					mDefaultClearValue.depthStencil.depth = attr.defaultDepth;
+					mDefaultClearValue.depthStencil.stencil = attr.defaultStencil;
 				}
 			} else {
 				SPtr<SwapChainVk> swapChainVk = DPCast(SwapChainVk)(attr.swapChain);

@@ -19,8 +19,14 @@ namespace cube
 			virtual void Resize(Uint32 width, Uint32 height) override final;
 
 			VkRenderPass GetHandle() const { return mRenderPass.mObject; }
+
 			const char* GetSubpassDebugName(Uint32 index) const { return mSubpassDebugNames[index]; }
-			VkFramebuffer GetFramebuffer() const { return mFramebuffers[0].mObject; }
+
+			Uint32 GetRenderTargetNum() const { return SCast(Uint32)(mRenderTargets.size()); }
+			const Vector<SPtr<RenderTargetVk>>& GetRenderTargets() const { return mRenderTargets; }
+
+			VkFramebuffer GetVkFramebuffer() const { return mFramebuffers[0].mObject; }
+			Rect2D GetFramebufferRect2D() const { return mFramebufferRect2D; }
 
 		private:
 			void CreateFramebuffer(Uint32 width, Uint32 height);
@@ -34,6 +40,7 @@ namespace cube
 			Vector<SPtr<RenderTargetVk>> mRenderTargets;
 			bool mHasSwapchainRenderTarget;
 			Vector<VkFramebufferWrapper> mFramebuffers;
+			Rect2D mFramebufferRect2D;
 		};
 	} // namespace render
 } // namespace cube

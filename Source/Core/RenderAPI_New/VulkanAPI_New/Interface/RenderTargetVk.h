@@ -19,12 +19,16 @@ namespace cube
 			bool HasSwapChain() const { return mHasSwapChain; }
 			SPtr<TextureViewVk> GetTextureViewVk() const { return mTextureView; }
 			SPtr<SwapChainVk> GetSwapChainVk() const { return mSwapChain; }
+			VkClearValue GetDefaultClearValue() const { return mDefaultClearValue; }
 
 		private:
 			VkAttachmentDescription mAttachmentDesc;
+
 			SPtr<TextureViewVk> mTextureView;
 			bool mHasSwapChain;
 			SPtr<SwapChainVk> mSwapChain;
+
+			VkClearValue mDefaultClearValue;
 		};
 	} // namespace render
 } // namespace cube

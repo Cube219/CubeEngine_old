@@ -6,6 +6,25 @@ namespace cube
 {
 	namespace render
 	{
+		// ----- CommandList -----
+		struct Viewport
+		{
+			float x;
+			float y;
+			float width;
+			float height;
+			float minDepth;
+			float maxDepth;
+		};
+
+		struct Rect2D
+		{
+			Int32 x;
+			Int32 y;
+			Uint32 width;
+			Uint32 height;
+		};
+
 		// ----- RenderTarget -----
 		enum class LoadOperator
 		{
