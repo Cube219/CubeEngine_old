@@ -34,9 +34,10 @@ namespace cube
 			return std::make_shared<BufferVk>(*this, attr, mQueueManager, mCommandListPool);
 		}
 
-		SPtr<CommandList> DeviceVk::GetCommandList(CommandListUsage usage)
+		SPtr<CommandList> DeviceVk::GetCommandList(CommandListUsage usage, Uint32 threadIndex,
+			bool isSub, bool isForSubRenderTarget)
 		{
-			return mCommandListPool.Allocate(usage);
+			return mCommandListPool.Allocate(usage, threadIndex, isSub, isForSubRenderTarget);
 		}
 
 		SPtr<Texture> DeviceVk::CreateTexture(const TextureAttribute& attr)

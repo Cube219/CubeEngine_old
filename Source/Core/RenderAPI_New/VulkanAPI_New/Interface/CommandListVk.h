@@ -12,19 +12,18 @@ namespace cube
 		{
 		public:
 			CommandListVk(SPtr<VulkanCommandListPool> pool, VkCommandBuffer commandBuffer,
-				CommandListUsage usage, Uint32 submitQueueFamilyIndex);
+				CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex,
+				bool isSub, bool isSubpassCommandList);
 			virtual ~CommandListVk();
 
 			VkCommandBuffer GetHandle() const { return mCommandBuffer; }
-
-			Uint32 GetSubmitQueueFamilyIndex() const { return mSubmitQueueFamilyIndex; }
 
 			virtual void Begin() override final;
 			virtual void End() override final;
 
 			virtual void CopyBuffer(const Buffer& src, Buffer& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) override final;
 
-			virtual void SetRenderPass(SPtr<RenderPass>& renderPass) override final;
+			virtual void SetRenderPass(SPtr<RenderPass>& renderPass, Uint32 renderTargetIndex = 0) override final;
 
 			virtual void SetPipelineState(SPtr<GraphicsPipelineState>& pipelineState) override final;
 
@@ -40,11 +39,21 @@ namespace cube
 
 			virtual void ExecuteCommands(Uint32 numCommandLists, SPtr<CommandList>* cmdLists) override final;
 
+			Uint32 GetAllocatedCommandPoolIndex() const { return mCommandPoolIndex; }
+			Uint32 GetSubmitQueueFamilyIndex() const { return mSubmitQueueFamilyIndex; }
+
 		private:
+			friend class VulkanCommandListPool;
+
 			SPtr<VulkanCommandListPool> mPool;
+			Uint32 mCommandPoolIndex;
 			Uint32 mSubmitQueueFamilyIndex;
 
 			VkCommandBuffer mCommandBuffer;
+			bool mIsSub;
+			bool mIsSubpassCommandList;
+
+			SPtr<RenderPassVk> mBindedRenderPass = nullptr;
 		};
 	} // namespace render
 } // namespace cube

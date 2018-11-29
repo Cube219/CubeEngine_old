@@ -6,15 +6,20 @@
 #include "RenderPassVk.h"
 #include "RenderTargetVk.h"
 #include "GraphicsPipelineStateVk.h"
+#include "EngineCore/Assertion.h"
 
 namespace cube
 {
 	namespace render
 	{
 		CommandListVk::CommandListVk(SPtr<VulkanCommandListPool> pool, VkCommandBuffer commandBuffer,
-			CommandListUsage usage, Uint32 submitQueueFamilyIndex) :
+			CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex,
+			bool isSub, bool isSubpassCommandList) :
 			CommandList(usage),
-			mPool(pool), mCommandBuffer(commandBuffer), mSubmitQueueFamilyIndex(submitQueueFamilyIndex)
+			mPool(pool), mCommandBuffer(commandBuffer),
+			mCommandPoolIndex(commandPoolIndex),
+			mSubmitQueueFamilyIndex(submitQueueFamilyIndex),
+			mIsSub(isSub), mIsSubpassCommandList(isSubpassCommandList)
 		{
 		}
 
@@ -25,6 +30,11 @@ namespace cube
 
 		void CommandListVk::Begin()
 		{
+			// If it is a command list for sub pass, begin will be deferred to SetRenderPass
+			// because of pInheritanceInfo
+			if(mIsSubpassCommandList == true)
+				return;
+
 			VkResult res;
 
 			VkCommandBufferBeginInfo beginInfo;
@@ -55,29 +65,54 @@ namespace cube
 			vkCmdCopyBuffer(mCommandBuffer, DCast(const BufferVk&)(src).GetHandle(), DCast(BufferVk&)(dst).GetHandle(), 1, &copy);
 		}
 
-		void CommandListVk::SetRenderPass(SPtr<RenderPass>& renderPass)
+		void CommandListVk::SetRenderPass(SPtr<RenderPass>& renderPass, Uint32 renderTargetIndex)
 		{
 			auto renderPassVk = DPCast(RenderPassVk)(renderPass);
 
-			VkRenderPassBeginInfo info;
-			info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			info.pNext = nullptr;
-			info.renderPass = renderPassVk->GetHandle();
-			info.framebuffer = renderPassVk->GetVkFramebuffer();
+			if(mIsSubpassCommandList == true) {
+				// If it is a command list for sub pass, begin will be deferred to SetRenderPass
+				// because of pInheritanceInfo
+				VkResult res;
 
-			Rect2D rect = renderPassVk->GetFramebufferRect2D();
-			VkRect2D vkRect = {0, 0, rect.width, rect.height};
-			info.renderArea = vkRect;
+				VkCommandBufferInheritanceInfo inheritance;
+				inheritance.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+				inheritance.pNext = nullptr;
+				inheritance.renderPass = renderPassVk->GetHandle();
+				inheritance.subpass = renderTargetIndex;
+				inheritance.framebuffer = renderPassVk->GetVkFramebuffer();
+				inheritance.occlusionQueryEnable = VK_FALSE;
+				inheritance.queryFlags = 0;
+				inheritance.pipelineStatistics = 0;
 
-			auto& renderTargets = renderPassVk->GetRenderTargets();
-			Vector<VkClearValue> clearValues(renderTargets.size());
-			for(Uint64 i = 0; i < clearValues.size(); i++) {
-				clearValues[i] = renderTargets[i]->GetDefaultClearValue();
+				VkCommandBufferBeginInfo beginInfo;
+				beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				beginInfo.pNext = nullptr;
+				beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+				beginInfo.pInheritanceInfo = &inheritance;
+
+				res = vkBeginCommandBuffer(mCommandBuffer, &beginInfo);
+				CHECK_VK(res, "Failed to begin the command buffer for subpass.");
+			} else {
+				VkRenderPassBeginInfo info;
+				info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+				info.pNext = nullptr;
+				info.renderPass = renderPassVk->GetHandle();
+				info.framebuffer = renderPassVk->GetVkFramebuffer();
+
+				Rect2D rect = renderPassVk->GetFramebufferRect2D();
+				VkRect2D vkRect = { 0, 0, rect.width, rect.height };
+				info.renderArea = vkRect;
+
+				auto& renderTargets = renderPassVk->GetRenderTargets();
+				Vector<VkClearValue> clearValues(renderTargets.size());
+				for(Uint64 i = 0; i < clearValues.size(); i++) {
+					clearValues[i] = renderTargets[i]->GetDefaultClearValue();
+				}
+				info.clearValueCount = SCast(Uint32)(clearValues.size());
+				info.pClearValues = clearValues.data();
+
+				vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 			}
-			info.clearValueCount = SCast(Uint32)(clearValues.size());
-			info.pClearValues = clearValues.data();
-
-			vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 		}
 
 		void CommandListVk::SetPipelineState(SPtr<GraphicsPipelineState>& pipelineState)

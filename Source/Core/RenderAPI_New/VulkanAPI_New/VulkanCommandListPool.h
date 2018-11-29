@@ -15,27 +15,28 @@ namespace cube
 			VulkanCommandListPool(SPtr<VulkanLogicalDevice>& device, VulkanQueueManager& queueManager);
 			~VulkanCommandListPool();
 
-			// TODO: Allocate Sub-CommandList
-			SPtr<CommandListVk> Allocate(CommandListUsage usage);
+			SPtr<CommandListVk> Allocate(CommandListUsage usage, Uint32 threadIndex, bool isSub, bool isForSubpass);
 			void Free(CommandListVk& commandList);
 
 		private:
 			SPtr<VulkanLogicalDevice> mDevice;
 
-			core::Mutex mGraphicsCommandPoolMutex;
-			VkCommandPool mGraphicsCommandPool;
+			static constexpr Uint32 maxThreadNum = 8;
+
+			Array<core::Mutex, maxThreadNum> mGraphicsCommandPoolMutexes;
+			Array<VkCommandPool, maxThreadNum> mGraphicsCommandPools;
 			Uint32 mGraphicsQueueFamilyIndex;
 
-			core::Mutex mTransferImmediateCommandPoolMutex;
-			VkCommandPool mTransferImmediateCommandPool;
+			Array<core::Mutex, maxThreadNum> mTransferImmediateCommandPoolMutexes;
+			Array<VkCommandPool, maxThreadNum> mTransferImmediateCommandPools;
 			Uint32 mTransferImmediateQueueFamilyIndex;
 
-			core::Mutex mTransferDeferredCommandPoolMutex;
-			VkCommandPool mTransferDeferredCommandPool;
+			Array<core::Mutex, maxThreadNum> mTransferDeferredCommandPoolMutexes;
+			Array<VkCommandPool, maxThreadNum> mTransferDeferredCommandPools;
 			Uint32 mTransferDeferredQueueFamilyIndex;
 
-			core::Mutex mComputeCommandPoolMutex;
-			VkCommandPool mComputeCommandPool;
+			Array<core::Mutex, maxThreadNum> mComputeCommandPoolMutexes;
+			Array<VkCommandPool, maxThreadNum> mComputeCommandPools;
 			Uint32 mComputeQueueFamilyIndex;
 		};
 	} // namespace render

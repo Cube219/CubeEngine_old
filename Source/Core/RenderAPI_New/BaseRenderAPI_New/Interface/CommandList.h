@@ -26,7 +26,7 @@ namespace cube
 
 			virtual void CopyBuffer(const Buffer& src, Buffer& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) = 0;
 
-			virtual void SetRenderPass(SPtr<RenderPass>& renderPass) = 0;
+			virtual void SetRenderPass(SPtr<RenderPass>& renderPass, Uint32 renderTargetIndex = 0) = 0;
 
 			virtual void SetPipelineState(SPtr<GraphicsPipelineState>& pipelineState) = 0;
 

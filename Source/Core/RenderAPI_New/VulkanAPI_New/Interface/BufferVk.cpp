@@ -108,7 +108,7 @@ namespace cube
 						stagingAlloc.pPage->GetVkDeviceMemory(), stagingAlloc.offset);
 					CHECK_VK(res, "Failed to bind staging buffer memory.");
 
-					SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(CommandListUsage::TransferImmediate);
+					SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(CommandListUsage::TransferImmediate, 0, false, false);
 					cmdBuf->Begin();
 					VkCommandBuffer vkCmdBuf = cmdBuf->GetHandle();
 					VkBufferCopy bufCopy;
