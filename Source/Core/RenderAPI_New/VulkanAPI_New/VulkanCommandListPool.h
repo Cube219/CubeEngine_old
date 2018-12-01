@@ -15,7 +15,7 @@ namespace cube
 			VulkanCommandListPool(SPtr<VulkanLogicalDevice>& device, VulkanQueueManager& queueManager);
 			~VulkanCommandListPool();
 
-			SPtr<CommandListVk> Allocate(CommandListUsage usage, Uint32 threadIndex, bool isSub, bool isForSubpass);
+			SPtr<CommandListVk> Allocate(CommandListUsage usage, Uint32 threadIndex, bool isSub);
 			void Free(CommandListVk& commandList);
 
 		private:

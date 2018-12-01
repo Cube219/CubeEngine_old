@@ -24,8 +24,7 @@ namespace cube
 			virtual ~DeviceVk();
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) override final;
-			virtual SPtr<CommandList> GetCommandList(CommandListUsage usage, Uint32 threadIndex,
-				bool isSub = false, bool isForSubRenderTarget = false) override final;
+			virtual SPtr<CommandList> GetCommandList(const CommandListAttribute& attr) override final;
 			virtual SPtr<Texture> CreateTexture(const TextureAttribute& attr) override final;
 			virtual SPtr<SwapChain> CreateSwapChain(const SwapChainAttribute& attr) override final;
 			// CreateShader

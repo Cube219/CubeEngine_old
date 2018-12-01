@@ -14,12 +14,12 @@ namespace cube
 	{
 		CommandListVk::CommandListVk(SPtr<VulkanCommandListPool> pool, VkCommandBuffer commandBuffer,
 			CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex,
-			bool isSub, bool isSubpassCommandList) :
+			bool isSub) :
 			CommandList(usage),
 			mPool(pool), mCommandBuffer(commandBuffer),
 			mCommandPoolIndex(commandPoolIndex),
 			mSubmitQueueFamilyIndex(submitQueueFamilyIndex),
-			mIsSub(isSub), mIsSubpassCommandList(isSubpassCommandList)
+			mIsSub(isSub)
 		{
 		}
 
@@ -30,9 +30,9 @@ namespace cube
 
 		void CommandListVk::Begin()
 		{
-			// If it is a command list for sub pass, begin will be deferred to SetRenderPass
+			// If it is a sub-command list for graphics, begin will be deferred to SetRenderPass
 			// because of pInheritanceInfo
-			if(mIsSubpassCommandList == true)
+			if(mUsage == CommandListUsage::Graphics && mIsSub == true)
 				return;
 
 			VkResult res;
@@ -69,8 +69,8 @@ namespace cube
 		{
 			auto renderPassVk = DPCast(RenderPassVk)(renderPass);
 
-			if(mIsSubpassCommandList == true) {
-				// If it is a command list for sub pass, begin will be deferred to SetRenderPass
+			if(mUsage == CommandListUsage::Graphics && mIsSub == true) {
+				// If it is a sub-command list for graphics, begin will be deferred to SetRenderPass
 				// because of pInheritanceInfo
 				VkResult res;
 
@@ -111,7 +111,12 @@ namespace cube
 				info.clearValueCount = SCast(Uint32)(clearValues.size());
 				info.pClearValues = clearValues.data();
 
-				vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+				// In graphics command buffer, set VkSubpassContents VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS
+				// because we will use sub-command buffer for recoding draw commands
+				if(mUsage == CommandListUsage::Graphics)
+					vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+				else
+					vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 			}
 		}
 

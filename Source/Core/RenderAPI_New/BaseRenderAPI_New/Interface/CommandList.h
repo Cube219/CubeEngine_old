@@ -14,6 +14,14 @@ namespace cube
 			Compute
 		};
 
+		struct CommandListAttribute
+		{
+			CommandListUsage usage;
+			Uint32 threadIndex;
+			
+			bool isSub = false;
+		};
+
 		class CommandList
 		{
 		public:

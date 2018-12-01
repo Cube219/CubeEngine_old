@@ -81,8 +81,7 @@ namespace cube
 			}
 		}
 
-		SPtr<CommandListVk> VulkanCommandListPool::Allocate(CommandListUsage usage, Uint32 threadIndex,
-			bool isSub, bool isForSubpass)
+		SPtr<CommandListVk> VulkanCommandListPool::Allocate(CommandListUsage usage, Uint32 threadIndex, bool isSub)
 		{
 			VkCommandBufferAllocateInfo info;
 			info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -106,7 +105,7 @@ namespace cube
 					lock.release();
 
 					cmd = std::make_shared<CommandListVk>(shared_from_this(), cmdBuf, usage, threadIndex, mGraphicsQueueFamilyIndex,
-						isSub, isForSubpass);
+						isSub);
 					break;
 				}
 
@@ -119,7 +118,7 @@ namespace cube
 					lock.release();
 
 					cmd = std::make_shared<CommandListVk>(shared_from_this(), cmdBuf, usage, threadIndex, mTransferImmediateQueueFamilyIndex,
-						isSub, isForSubpass);
+						isSub);
 					break;
 				}
 
@@ -132,7 +131,7 @@ namespace cube
 					lock.release();
 
 					cmd = std::make_shared<CommandListVk>(shared_from_this(), cmdBuf, usage, threadIndex, mTransferDeferredQueueFamilyIndex,
-						isSub, isForSubpass);
+						isSub);
 					break;
 				}
 
@@ -145,7 +144,7 @@ namespace cube
 					lock.release();
 
 					cmd = std::make_shared<CommandListVk>(shared_from_this(), cmdBuf, usage, threadIndex, mComputeQueueFamilyIndex,
-						isSub, isForSubpass);
+						isSub);
 					break;
 				}
 
