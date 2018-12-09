@@ -31,6 +31,8 @@ namespace cube
 		class SwapChain;
 
 		class Shader;
+		class ShaderVariable;
+		class ShaderVariablesBinder;
 
 		class Sampler;
 
