@@ -129,14 +129,16 @@ namespace cube
 			Uint32 queueCount = props[mTransferImmediateQueueFamilyIndex].queueCount;
 			mTransferImmediateQueues.resize(queueCount);
 
+			Uint32 queueIndex = 0;
 			for(Uint32 i = 0; i < queueCount; i++) {
-				if(mGraphicsQueueFamilyIndex == mTransferImmediateQueueFamilyIndex) {
+				if(i == 0 && mGraphicsQueueFamilyIndex == mTransferImmediateQueueFamilyIndex) {
 					// If the queue family is graphics queue family, skip the first queue
 					// because it is used by graphics only
 					mTransferImmediateQueues.resize(queueCount - 1);
 					continue;
 				}
-				vkGetDeviceQueue(mDevice->GetHandle(), mTransferImmediateQueueFamilyIndex, i, &mTransferImmediateQueues[i]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mTransferImmediateQueueFamilyIndex, i, &mTransferImmediateQueues[queueIndex]);
+				queueIndex++;
 			}
 
 			if(mTransferImmediateQueues.size() == 0) {
@@ -174,14 +176,16 @@ namespace cube
 			Uint32 queueCount = props[mTransferDeferredQueueFamilyIndex].queueCount;
 			mTransferDeferredQueues.resize(queueCount);
 
+			Uint32 queueIndex = 0;
 			for(Uint32 i = 0; i < queueCount; i++) {
-				if(mGraphicsQueueFamilyIndex == mTransferDeferredQueueFamilyIndex) {
+				if(i == 0 && mGraphicsQueueFamilyIndex == mTransferDeferredQueueFamilyIndex) {
 					// If the queue family is graphics queue family, skip the first queue
 					// because it is used by graphics only
 					mTransferDeferredQueues.resize(queueCount - 1);
 					continue;
 				}
-				vkGetDeviceQueue(mDevice->GetHandle(), mTransferDeferredQueueFamilyIndex, i, &mTransferDeferredQueues[i]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mTransferDeferredQueueFamilyIndex, i, &mTransferDeferredQueues[queueIndex]);
+				queueIndex++;
 			}
 
 			if(mTransferDeferredQueues.size() == 0) {
@@ -220,14 +224,16 @@ namespace cube
 			Uint32 queueCount = props[mComputeQueueFamilyIndex].queueCount;
 			mComputeQueues.resize(queueCount);
 
+			Uint32 queueIndex = 0;
 			for(Uint32 i = 0; i < queueCount; i++) {
-				if(mGraphicsQueueFamilyIndex == mComputeQueueFamilyIndex) {
+				if(i == 0 && mGraphicsQueueFamilyIndex == mComputeQueueFamilyIndex) {
 					// If the queue family is graphics queue family, skip the first queue
 					// because it is used by graphics only
 					mComputeQueues.resize(queueCount - 1);
 					continue;
 				}
-				vkGetDeviceQueue(mDevice->GetHandle(), mComputeQueueFamilyIndex, i, &mComputeQueues[i]);
+				vkGetDeviceQueue(mDevice->GetHandle(), mComputeQueueFamilyIndex, i, &mComputeQueues[queueIndex]);
+				queueIndex++;
 			}
 
 			if(mComputeQueues.size() == 0) {

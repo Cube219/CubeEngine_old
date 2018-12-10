@@ -185,8 +185,13 @@ namespace cube
 			res += fmt::format(CUBE_T("\n\tObjects - {0}"), pData->objectCount);
 			for(uint32_t i = 0; i < pData->objectCount; i++) {
 				VkDebugUtilsObjectNameInfoEXT obj = pData->pObjects[i];
+
+				const char* objName = "";
+				if(obj.pObjectName != nullptr)
+					objName = obj.pObjectName;
+
 				res += fmt::format(CUBE_T("\n\t\tObject[{0}] - Handle {1}, Name \"{2}\""),
-					GetVkObjectTypeStr(obj.objectType), obj.objectHandle, obj.pObjectName);
+					GetVkObjectTypeStr(obj.objectType), obj.objectHandle, objName);
 			}
 
 			res += fmt::format(CUBE_T("\n\tQueue Labels - {0}"), pData->queueLabelCount);
@@ -205,7 +210,7 @@ namespace cube
 
 			platform::PlatformDebugUtility::PrintToConsole(res);
 			if(isError) {
-				platform::PlatformDebugUtility::AssertionFailed(res, __FUNCTION__, __FILE__, __LINE__);
+				//platform::PlatformDebugUtility::AssertionFailed(res, __FUNCTION__, __FILE__, __LINE__);
 			}
 
 			return true;
