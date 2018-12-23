@@ -30,7 +30,7 @@ namespace cube
 			ShaderParametersLayout() {}
 			virtual ~ShaderParametersLayout() {}
 
-			virtual SPtr<ShaderParameters> GetParameters() = 0;
+			virtual SPtr<ShaderParameters> CreateParameters() = 0;
 		};
 	} // namespace render
 } // namespace cube

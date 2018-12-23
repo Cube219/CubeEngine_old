@@ -24,10 +24,13 @@ namespace cube
 			const Vector<VulkanShaderParameterAllocation>& GetParameterAllocations() const { return mParameterAllocations; }
 
 		private:
+			VulkanShaderParameterAllocation& FindAllocation(Uint32 bindIndex);
+
 			VulkanShaderParameterManager& mParameterManager;
 
 			ShaderParametersLayoutVk& mLayout;
 
+			Vector<ShaderParameterInfo> mParameterInfos;
 			Vector<VulkanShaderParameterAllocation> mParameterAllocations;
 		};
 	} // namespace render

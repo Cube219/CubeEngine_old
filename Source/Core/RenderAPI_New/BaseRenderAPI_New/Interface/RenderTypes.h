@@ -61,7 +61,7 @@ namespace cube
 		enum ShaderParameterType
 		{
 			RawData,
-			ConstBuffer,
+			ConstantBuffer,
 			StorageBuffer,
 			Sampler,
 			StorageImage

@@ -30,39 +30,44 @@ namespace cube
 					maxBindingNum = param.bindIndex;
 			}
 
-			Vector<VkDescriptorSetLayoutBinding> bindings(maxBindingNum);
+			Vector<VkDescriptorSetLayoutBinding> bindings;
 			for(auto& param : attr.paramInfos) {
+				VkDescriptorSetLayoutBinding binding;
+
 				switch(param.type) {
 					case ShaderParameterType::RawData:
-						ASSERTION_FAILED("ShaderParameterType::RawData is not implemented yet.");
-						break;
+						mHasRawDataParameter = true;
+						mRawDataParameterSize = param.size;
+						continue; // RawData(Push constant) doesn't bind descriptor set
 
-					case ShaderParameterType::ConstBuffer:
-						bindings[param.bindIndex].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+					case ShaderParameterType::ConstantBuffer:
+						binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
 						break;
 
 					case ShaderParameterType::StorageBuffer:
-						bindings[param.bindIndex].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+						binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 						break;
 
 					case ShaderParameterType::Sampler:
 						ASSERTION_FAILED("ShaderParameterType::Sampler is not implemented yet.");
-						bindings[param.bindIndex].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+						binding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
 						break;
 
 					case ShaderParameterType::StorageImage:
 						ASSERTION_FAILED("ShaderParameterType::StorageImage is not implemented yet.");
-						bindings[param.bindIndex].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+						binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
 						break;
 
 					default:
 						ASSERTION_FAILED("Unknown ShaderParameterType ({0})", (int)param.type);
 				}
 
-				bindings[param.bindIndex].binding = param.bindIndex;
-				bindings[param.bindIndex].descriptorCount = param.count;
-				bindings[param.bindIndex].stageFlags = VK_SHADER_STAGE_ALL;
-				bindings[param.bindIndex].pImmutableSamplers = nullptr;
+				binding.binding = param.bindIndex;
+				binding.descriptorCount = param.count;
+				binding.stageFlags = VK_SHADER_STAGE_ALL;
+				binding.pImmutableSamplers = nullptr;
+
+				bindings.push_back(binding);
 			}
 
 			layoutInfo.bindingCount = SCast(Uint32)(bindings.size());
@@ -89,10 +94,9 @@ namespace cube
 
 				switch(param.type) {
 					case ShaderParameterType::RawData:
-						ASSERTION_FAILED("ShaderParameterType::RawData is not implemented yet.");
-						break; // continue;
+						continue; // RawData(Push constant) does not be written in descriptor set
 
-					case ShaderParameterType::ConstBuffer:
+					case ShaderParameterType::ConstantBuffer:
 						writeBufferInfos.push_back({ mShaderParameterManager.GetUniformDynamicBuffer(), 0, VK_WHOLE_SIZE });
 
 						write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
@@ -133,15 +137,17 @@ namespace cube
 			mShaderParameterManager.FreeDescriptorSet(mDescriptorSet);
 		}
 
-		SPtr<ShaderParameters> ShaderParametersLayoutVk::GetParameters()
+		SPtr<ShaderParameters> ShaderParametersLayoutVk::CreateParameters()
 		{
 			Vector<VulkanShaderParameterAllocation> parameterAllocations(mParameterInfos.size());
 
 			for(Uint64 i = 0; i < mParameterInfos.size(); i++) {
 				auto& info = mParameterInfos[i];
 
-				if(info.isChangedPerFrame == false) {
+				// RawData always allocate even it is PerFrame
+				if(info.type == ShaderParameterType::RawData || info.isChangedPerFrame == false) {
 					parameterAllocations[i] = mShaderParameterManager.Allocate(info.type, info.size);
+					parameterAllocations[i].bindIndex = info.bindIndex;
 				} /* else {
 					// PerFrame parameter will be allocated at updating parameter data
 				} */
@@ -165,15 +171,27 @@ namespace cube
 
 			auto& parameterAllocations = params.GetParameterAllocations();
 
+			Uint64 rawDataAllocationIndex = Uint64InvalidValue;
 			Vector<Uint32> dynamicOffsets;
 			for(Uint64 i = 0; i < parameterAllocations.size(); i++) {
 				auto& alloc = parameterAllocations[i];
 
-				// Find dynamic offsets (Uniform(Const), Storage)
-				if((alloc.type == ShaderParameterType::ConstBuffer) |
+				// Find dynamic offsets (Constant(Uniform), Storage)
+				if((alloc.type == ShaderParameterType::ConstantBuffer) |
 					(alloc.type == ShaderParameterType::StorageBuffer)) {
 					dynamicOffsets.push_back(SCast(Uint32)(alloc.dynamicOffset));
 				}
+
+				if(alloc.type == ShaderParameterType::RawData) {
+					rawDataAllocationIndex = i;
+				}
+			}
+
+			if(mHasRawDataParameter) {
+				CHECK(rawDataAllocationIndex != Uint64InvalidValue, "Cannot find RawData Parameter.");
+
+				auto& rawDataAlloc = parameterAllocations[rawDataAllocationIndex];
+				vkCmdPushConstants(cmdBuf, pipelineLayout, bindPoint, 0, SCast(Uint32)(rawDataAlloc.size), rawDataAlloc.pData);
 			}
 
 			vkCmdBindDescriptorSets(cmdBuf, bindPoint, pipelineLayout, parametersIndex, 1, &mDescriptorSet,

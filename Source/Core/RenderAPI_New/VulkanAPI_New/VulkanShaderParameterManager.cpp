@@ -33,15 +33,15 @@ namespace cube
 			Uint32 bufSize;
 			const char* bufDebugName = "";
 			switch(type) {
-				case ShaderParameterType::ConstBuffer:
-					bufSize = limits.maxUniformBufferRange;
+				case ShaderParameterType::ConstantBuffer:
+					bufSize = (UniformBufferMaxSize > limits.maxUniformBufferRange) ? limits.maxUniformBufferRange : UniformBufferMaxSize;
 					bufInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 					bufDebugName = "Uniform buffer in ShaderParameterHeap";
 					mAlignment = limits.minUniformBufferOffsetAlignment;
 					break;
 
 				case ShaderParameterType::StorageBuffer:
-					bufSize = limits.maxStorageBufferRange;
+					bufSize = (StorageBufferMaxSize > limits.maxStorageBufferRange) ? limits.maxStorageBufferRange : StorageBufferMaxSize;
 					bufInfo.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 					bufDebugName = "Storage buffer in ShaderParameterHeap";
 					mAlignment = limits.minStorageBufferOffsetAlignment;
@@ -143,7 +143,7 @@ namespace cube
 		//////////////////////////////////
 
 		VulkanShaderParameterManager::VulkanShaderParameterManager(SPtr<VulkanLogicalDevice>& device, VulkanMemoryManager& memManager) :
-			mUniformHeap{device, memManager, 0, ShaderParameterType::ConstBuffer},
+			mUniformHeap{device, memManager, 0, ShaderParameterType::ConstantBuffer},
 			mStorageHeap{device, memManager, 1, ShaderParameterType::StorageBuffer}
 		{
 			auto& limits = device->GetParentPhysicalDevice().GetProperties().limits;
@@ -192,15 +192,14 @@ namespace cube
 		VulkanShaderParameterAllocation VulkanShaderParameterManager::Allocate(ShaderParameterType type, Uint64 size)
 		{
 			switch(type) {
-			case ShaderParameterType::ConstBuffer:
+			case ShaderParameterType::ConstantBuffer:
 				return mUniformHeap.Allocate(size);
 
 			case ShaderParameterType::StorageBuffer:
 				return mStorageHeap.Allocate(size);
 
 			case ShaderParameterType::RawData:
-				ASSERTION_FAILED("RawData type is stored in CommandList. Not ShaderParameterHeap.");
-				return {};
+				return AllocateRawData(size);
 
 			case ShaderParameterType::Sampler:
 				ASSERTION_FAILED("Sampler type is not implemented.");
@@ -219,15 +218,14 @@ namespace cube
 		VulkanShaderParameterAllocation VulkanShaderParameterManager::AllocatePerFrame(ShaderParameterType type, Uint64 size)
 		{
 			switch(type) {
-			case ShaderParameterType::ConstBuffer:
+			case ShaderParameterType::ConstantBuffer:
 				return mUniformHeap.AllocatePerFrame(size);
 
 			case ShaderParameterType::StorageBuffer:
 				return mStorageHeap.AllocatePerFrame(size);
 
 			case ShaderParameterType::RawData:
-				ASSERTION_FAILED("RawData type is stored in CommandList. Not ShaderParameterHeap.");
-				return {};
+				return AllocateRawData(size);
 
 			case ShaderParameterType::Sampler:
 				ASSERTION_FAILED("Sampler type is not implemented.");
@@ -250,7 +248,7 @@ namespace cube
 				return;
 
 			switch(allocation.type) {
-			case ShaderParameterType::ConstBuffer:
+			case ShaderParameterType::ConstantBuffer:
 				mUniformHeap.Free(std::move(allocation));
 				break;
 
@@ -259,7 +257,7 @@ namespace cube
 				break;
 
 			case ShaderParameterType::RawData:
-				ASSERTION_FAILED("RawData type is stored in CommandList. Not ShaderParameterHeap.");
+				mIsRawDataAllocated = false;
 				break;
 
 			case ShaderParameterType::Sampler:
@@ -307,6 +305,24 @@ namespace cube
 			
 			res = vkFreeDescriptorSets(mDescriptorPool.GetVkDevice(), mDescriptorPool.mObject, 1, &descSet);
 			CHECK_VK(res, "Failed to free descriptor set.");
+		}
+
+		VulkanShaderParameterAllocation VulkanShaderParameterManager::AllocateRawData(Uint64 size)
+		{
+			CHECK(mIsRawDataAllocated == false, "RawDataBuffer is already allocated. In Vulkan, only one RawData parameter is allowed.");
+			CHECK(RawDataBufferSize >= size, "RawData cannot be allocated size over {0}. (Allocation size: {1})", RawDataBufferSize, size);
+
+			mIsRawDataAllocated = true;
+
+			VulkanShaderParameterAllocation allocation;
+			allocation.type = ShaderParameterType::RawData;
+			allocation.isPerFrame = false;
+			allocation.buffer = VK_NULL_HANDLE;
+			allocation.pData = mRawDataBuffer;
+			allocation.size = size;
+			allocation.dynamicOffset = 0;
+
+			return allocation;
 		}
 	} // namespace render
 } // namespace cube

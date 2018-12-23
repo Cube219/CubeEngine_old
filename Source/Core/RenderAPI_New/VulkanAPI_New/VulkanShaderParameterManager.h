@@ -13,6 +13,7 @@ namespace cube
 		{
 			ShaderParameterType type;
 			bool isPerFrame;
+			Uint32 bindIndex;
 
 			VkBuffer buffer;
 			Uint64 dynamicOffset;
@@ -24,6 +25,9 @@ namespace cube
 		///////////////////////////////
 		// VulkanShaderParameterHeap //
 		///////////////////////////////
+
+		constexpr Uint32 UniformBufferMaxSize = 4 * 1024 * 1024;  // 4MiB
+		constexpr Uint32 StorageBufferMaxSize = 64 * 1024 * 1024; // 64MiB
 
 		class VulkanShaderParameterHeap
 		{
@@ -60,6 +64,8 @@ namespace cube
 		// VulkanShaderParameterManager //
 		//////////////////////////////////
 
+		constexpr Uint32 RawDataBufferSize = 256;
+
 		class VulkanShaderParameterManager
 		{
 		public:
@@ -79,10 +85,15 @@ namespace cube
 			void FreeDescriptorSet(VkDescriptorSet descSet);
 
 		private:
+			VulkanShaderParameterAllocation AllocateRawData(Uint64 size);
+
 			VulkanShaderParameterHeap mUniformHeap;
 			VulkanShaderParameterHeap mStorageHeap;
 
 			VkDescriptorPoolWrapper mDescriptorPool;
+
+			bool mIsRawDataAllocated = false;
+			char mRawDataBuffer[RawDataBufferSize];
 		};
 	} // namespace render
 } // namespace cube
