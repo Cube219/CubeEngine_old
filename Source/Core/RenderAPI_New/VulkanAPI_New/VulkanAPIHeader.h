@@ -44,6 +44,11 @@ namespace cube
 		class GraphicsPipelineStateVk;
 
 		class ShaderVk;
+		class ShaderParametersVk;
+		class ShaderParametersLayoutVk;
+		struct VulkanShaderParameterAllocation;
+		class VulkanShaderParameterHeap;
+		class VulkanShaderParameterManager;
 
 		class RenderTargetVk;
 		class RenderPassVk;

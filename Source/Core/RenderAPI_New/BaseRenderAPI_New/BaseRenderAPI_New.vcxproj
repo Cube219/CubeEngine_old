@@ -138,8 +138,8 @@
     <ClInclude Include="Interface\RenderTypes.h" />
     <ClInclude Include="Interface\Sampler.h" />
     <ClInclude Include="Interface\Shader.h" />
-    <ClInclude Include="Interface\ShaderVariable.h" />
-    <ClInclude Include="Interface\ShaderVariablesBinder.h" />
+    <ClInclude Include="Interface\ShaderParameters.h" />
+    <ClInclude Include="Interface\ShaderParametersLayout.h" />
     <ClInclude Include="Interface\SwapChain.h" />
     <ClInclude Include="Interface\Texture.h" />
     <ClInclude Include="Interface\TextureView.h" />

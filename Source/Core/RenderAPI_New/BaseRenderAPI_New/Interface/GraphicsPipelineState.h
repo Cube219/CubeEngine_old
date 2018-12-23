@@ -96,6 +96,8 @@ namespace cube
 
 			SPtr<RenderPass> renderPass;
 
+			Vector<SPtr<ShaderParametersLayout>> shaderParameterLayouts;
+
 			const char* debugName = nullptr;
 		};
 

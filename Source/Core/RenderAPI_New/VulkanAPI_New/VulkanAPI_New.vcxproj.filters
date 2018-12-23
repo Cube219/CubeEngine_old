@@ -52,6 +52,13 @@
     <ClCompile Include="Interface\RenderTargetVk.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
+    <ClCompile Include="Interface\ShaderParametersLayoutVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanShaderParameterManager.cpp" />
+    <ClCompile Include="Interface\ShaderParametersVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -113,6 +120,13 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="Interface\RenderTargetVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ShaderParametersLayoutVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanShaderParameterManager.h" />
+    <ClInclude Include="Interface\ShaderParametersVk.h">
       <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>

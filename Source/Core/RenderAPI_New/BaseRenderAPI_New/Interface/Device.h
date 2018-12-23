@@ -25,6 +25,7 @@ namespace cube
 			virtual SPtr<CommandList> GetCommandList(const CommandListAttribute& attr) = 0;
 			virtual SPtr<Texture> CreateTexture(const TextureAttribute& attr) = 0;
 			virtual SPtr<SwapChain> CreateSwapChain(const SwapChainAttribute& attr) = 0;
+			virtual SPtr<ShaderParametersLayout> CreateShaderParametersLayout(const ShaderParametersLayoutAttribute& attr) = 0;
 
 			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) = 0;
 

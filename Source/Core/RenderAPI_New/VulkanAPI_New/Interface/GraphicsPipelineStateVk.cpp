@@ -5,6 +5,7 @@
 #include "DeviceVk.h"
 #include "ShaderVk.h"
 #include "RenderPassVk.h"
+#include "ShaderParametersLayoutVk.h"
 #include "EngineCore/Assertion.h"
 
 namespace cube
@@ -202,12 +203,31 @@ namespace cube
 			if(attr.geometryShader != nullptr)
 				shaderStages.push_back(DPCast(ShaderVk)(attr.geometryShader)->GetPipelineShaderStageInfo());
 
+			// Pipeline layout (ShaderParametersLayout)
+			VkPipelineLayoutCreateInfo layoutInfo;
+			layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+			layoutInfo.pNext = nullptr;
+			layoutInfo.flags = 0;
+			// TODO: RawData 구현시 구현
+			layoutInfo.pushConstantRangeCount = 0;
+			layoutInfo.pPushConstantRanges = nullptr;
+
+			Vector<VkDescriptorSetLayout> descSetLayouts(attr.shaderParameterLayouts.size());
+			for(Uint64 i = 0; i < descSetLayouts.size(); i++) {
+				descSetLayouts[i] = DPCast(ShaderParametersLayoutVk)(attr.shaderParameterLayouts[i])->GetVkDescriptorSetLayout();
+			}
+			layoutInfo.setLayoutCount = SCast(Uint32)(descSetLayouts.size());
+			layoutInfo.pSetLayouts = descSetLayouts.data();
+
+			mLayout = device.GetLogicalDevice()->CreateVkPipelineLayoutWrapper(layoutInfo,
+				fmt::format("PipelineLayout for '{0}'", attr.debugName).c_str());
+
 			// Graphics pipeline
 			VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 			pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 			pipelineCreateInfo.pNext = nullptr;
 			pipelineCreateInfo.flags = 0;
-			// pipelineCreateInfo.layout = mPipelineLayout;
+			pipelineCreateInfo.layout = mLayout.mObject;
 			pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE; // TODO: 구현?
 			pipelineCreateInfo.basePipelineIndex = 0;
 			pipelineCreateInfo.pVertexInputState = &vertexInputCreateInfo;

@@ -12,6 +12,11 @@ namespace cube
 {
 	namespace render
 	{
+		void VulkanAllocation::Free()
+		{
+			pPage->Free(*this);
+		}
+
 		//////////////////////
 		// VulkanMemoryPage //
 		//////////////////////

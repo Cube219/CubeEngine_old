@@ -53,10 +53,10 @@
     <ClInclude Include="Interface\RenderTarget.h">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\ShaderVariable.h">
+    <ClInclude Include="Interface\ShaderParameters.h">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\ShaderVariablesBinder.h">
+    <ClInclude Include="Interface\ShaderParametersLayout.h">
       <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>

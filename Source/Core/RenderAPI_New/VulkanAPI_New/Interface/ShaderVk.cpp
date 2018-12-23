@@ -1,6 +1,7 @@
 ﻿#include "ShaderVk.h"
 
 #include "DeviceVk.h"
+#include "../VulkanTypeConversion.h"
 #include "../Tools/GLSLTool.h"
 #include "EngineCore/Assertion.h"
 
@@ -16,7 +17,7 @@ namespace cube
 				case ShaderLanguage::GLSL:  LoadFromGLSL(attr); break;
 				case ShaderLanguage::HLSL:  LoadFromHLSL(attr); break;
 				case ShaderLanguage::SPIRV: LoadFromSPIRV(attr); break;
-				default: ASSERTION_FAILED("Unknown shader language ({0}).", (Uint32)attr.type);
+				default: ASSERTION_FAILED("Unknown ShaderLanguage ({0}).", (Uint32)attr.type);
 			}
 
 			VkShaderModuleCreateInfo info;
@@ -41,7 +42,7 @@ namespace cube
 				case ShaderType::Hull:     mShaderStageInfo.stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT; break;
 				case ShaderType::Domain:   mShaderStageInfo.stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT; break;
 				case ShaderType::Compute:  mShaderStageInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT; break;
-				default: ASSERTION_FAILED("Unknown shader type ({0}).", (Uint32)attr.type);
+				default: ASSERTION_FAILED("Unknown ShaderType ({0}).", (Uint32)attr.type);
 			}
 
 			mShaderStageInfo.pName = attr.entryPoint;

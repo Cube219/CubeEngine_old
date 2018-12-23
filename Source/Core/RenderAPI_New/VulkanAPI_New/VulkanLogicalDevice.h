@@ -28,9 +28,12 @@ namespace cube
 			VkSwapChainWrapper CreateVkSwapChainWrapper(const VkSwapchainCreateInfoKHR& info, const char* debugName = "");
 			VkPipelineWrapper CreateVkPipelineWrapper(const VkGraphicsPipelineCreateInfo& info, VkPipelineCache cache, const char* debugName = "");
 			VkPipelineWrapper CreateVkPipelineWrapper(const VkComputePipelineCreateInfo& info, VkPipelineCache cache, const char* debugName = "");
+			VkPipelineLayoutWrapper CreateVkPipelineLayoutWrapper(const VkPipelineLayoutCreateInfo& info, const char* debugName = "");
 			VkShaderModuleWrapper CreateVkShaderModuleWrapper(const VkShaderModuleCreateInfo& info, const char* debugName = "");
 			VkRenderPassWrapper CreateVkRenderPassWrapper(const VkRenderPassCreateInfo& info, const char* debugName = "");
 			VkFramebufferWrapper CreateVkFramebufferWrapper(const VkFramebufferCreateInfo& info, const char* debugName = "");
+			VkDescriptorPoolWrapper CreateVkDescriptorPoolWrapper(const VkDescriptorPoolCreateInfo& info, const char* debugName = "");
+			VkDescriptorSetLayoutWrapper CreateVkDescriptorSetLayoutWrapper(const VkDescriptorSetLayoutCreateInfo& info, const char* debugName = "");
 
 			void ReleaseVkObject(VkBufferWrapper&& buffer) const;
 			void ReleaseVkObject(VkBufferViewWrapper&& bufView) const;
@@ -39,9 +42,12 @@ namespace cube
 			void ReleaseVkObject(VkFenceWrapper&& fence) const;
 			void ReleaseVkObject(VkSwapChainWrapper&& swapChain) const;
 			void ReleaseVkObject(VkPipelineWrapper&& pipeline) const;
+			void ReleaseVkObject(VkPipelineLayoutWrapper&& pipelineLayout) const;
 			void ReleaseVkObject(VkShaderModuleWrapper&& shaderModule) const;
 			void ReleaseVkObject(VkRenderPassWrapper&& renderPass) const;
 			void ReleaseVkObject(VkFramebufferWrapper&& framebuffer) const;
+			void ReleaseVkObject(VkDescriptorPoolWrapper&& descriptorPool) const;
+			void ReleaseVkObject(VkDescriptorSetLayoutWrapper&& descriptorSetLayout) const;
 
 		private:
 			VkDevice mDevice;

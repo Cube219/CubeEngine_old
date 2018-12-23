@@ -10,6 +10,7 @@
 #include "../VulkanFencePool.h"
 #include "../VulkanSemaphorePool.h"
 #include "../VulkanLogicalDevice.h"
+#include "../VulkanShaderParameterManager.h"
 
 #include "EngineCore/Thread/MutexLock.h"
 
@@ -27,6 +28,7 @@ namespace cube
 			virtual SPtr<CommandList> GetCommandList(const CommandListAttribute& attr) override final;
 			virtual SPtr<Texture> CreateTexture(const TextureAttribute& attr) override final;
 			virtual SPtr<SwapChain> CreateSwapChain(const SwapChainAttribute& attr) override final;
+			virtual SPtr<ShaderParametersLayout> CreateShaderParametersLayout(const ShaderParametersLayoutAttribute& attr) override final;
 			// CreateShader
 			// CreateTexture
 			// CreateSampler
@@ -40,6 +42,7 @@ namespace cube
 			SPtr<VulkanLogicalDevice> GetLogicalDevice() const { return mDevice; }
 			VulkanMemoryManager& GetMemoryManager() { return mMemoryManager; }
 			VulkanQueueManager& GetQueueManager() { return mQueueManager; }
+			VulkanShaderParameterManager& GetShaderParameterManager() { return mShaderParameterManager; }
 			
 			template <typename VkObjectType>
 			void ReleaseAtEndOfFrame(VkObjectType&& vkObject)
@@ -70,6 +73,7 @@ namespace cube
 			VulkanSemaphorePool mSemaphorePool;
 			VulkanQueueManager mQueueManager;
 			VulkanCommandListPool mCommandListPool;
+			VulkanShaderParameterManager mShaderParameterManager;
 
 			core::Mutex mReleaseQueueMutex;
 			Vector<std::function<void()>> mReleaseFuncQueue;

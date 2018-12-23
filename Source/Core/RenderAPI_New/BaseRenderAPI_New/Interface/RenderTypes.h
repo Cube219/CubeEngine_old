@@ -57,6 +57,22 @@ namespace cube
 			SPIRV
 		};
 
+		// ----- ShaderParameters -----
+		enum ShaderParameterType
+		{
+			RawData,
+			ConstBuffer,
+			StorageBuffer,
+			Sampler,
+			StorageImage
+		};
+
+		enum class PipelineType
+		{
+			Graphics,
+			Compute
+		};
+
 		// ----- GraphicsPipelineState -----
 		enum class PrimitiveTopology
 		{

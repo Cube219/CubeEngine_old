@@ -20,6 +20,7 @@ namespace cube
 
 		private:
 			VkPipelineWrapper mPipeline;
+			VkPipelineLayoutWrapper mLayout;
 		};
 	} // namespace render
 } // namespace cube

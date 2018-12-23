@@ -9,6 +9,7 @@
 #include "CommandListVk.h"
 #include "TextureVk.h"
 #include "SwapChainVk.h"
+#include "ShaderParametersLayoutVk.h"
 
 namespace cube
 {
@@ -21,7 +22,8 @@ namespace cube
 			mFencePool(mDevice),
 			mSemaphorePool(mDevice),
 			mQueueManager(mDevice, mDevice->GetParentPhysicalDevice(), mFencePool, mSemaphorePool),
-			mCommandListPool(mDevice, mQueueManager)
+			mCommandListPool(mDevice, mQueueManager),
+			mShaderParameterManager(mDevice, mMemoryManager)
 		{
 		}
 
@@ -47,6 +49,11 @@ namespace cube
 		SPtr<SwapChain> DeviceVk::CreateSwapChain(const SwapChainAttribute& attr)
 		{
 			return std::make_shared<SwapChainVk>(mInstance, *this, attr, mQueueManager, mSemaphorePool);
+		}
+
+		SPtr<ShaderParametersLayout> DeviceVk::CreateShaderParametersLayout(const ShaderParametersLayoutAttribute& attr)
+		{
+			return std::make_shared<ShaderParametersLayoutVk>(*this, attr);
 		}
 
 		SPtr<Fence> DeviceVk::SubmitCommandList(SPtr<CommandList>& commandList)

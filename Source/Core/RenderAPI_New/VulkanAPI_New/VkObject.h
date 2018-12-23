@@ -71,9 +71,13 @@ namespace cube
 		using VkFenceWrapper = VkObject<VkFence>;
 		using VkSwapChainWrapper = VkObject<VkSwapchainKHR>;
 		using VkPipelineWrapper = VkObject<VkPipeline>;
+		using VkPipelineLayoutWrapper = VkObject<VkPipelineLayout>;
 		using VkShaderModuleWrapper = VkObject<VkShaderModule>;
 		using VkRenderPassWrapper = VkObject<VkRenderPass>;
 		using VkFramebufferWrapper = VkObject<VkFramebuffer>;
+		using VkDescriptorPoolWrapper = VkObject<VkDescriptorPool>;
+		using VkDescriptorSetLayoutWrapper = VkObject<VkDescriptorSetLayout>;
+		using VkDescriptorSetWrapper = VkObject<VkDescriptorSet>;
 
 		// -------------------------------------------------
 		// Helper class for storaging VkObject child classes

@@ -14,6 +14,8 @@ namespace cube
 			VkDeviceSize size;
 			VulkanMemoryPage* pPage = nullptr;
 			void* mappedData = nullptr;
+
+			void Free();
 		};
 
 		//////////////////////

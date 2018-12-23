@@ -14,7 +14,7 @@ namespace cube
 
 			VkPhysicalDevice GetHandle() const { return mPhysicalDevice; }
 
-			VkPhysicalDeviceProperties GetProperties() const { return mProperties; }
+			const VkPhysicalDeviceProperties& GetProperties() const { return mProperties; }
 
 			Uint32 FindQueueFamilyIndex(VkQueueFlags flags, VkQueueFlags prohibitFlags) const;
 			const Vector<VkQueueFamilyProperties>& GetQueueFamilyProperties() const { return mQueueFamilyProperties; }

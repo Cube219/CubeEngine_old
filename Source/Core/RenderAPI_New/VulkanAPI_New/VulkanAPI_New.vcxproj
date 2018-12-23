@@ -167,6 +167,8 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClCompile Include="Interface\GraphicsPipelineStateVk.cpp" />
     <ClCompile Include="Interface\RenderPassVk.cpp" />
     <ClCompile Include="Interface\RenderTargetVk.cpp" />
+    <ClCompile Include="Interface\ShaderParametersLayoutVk.cpp" />
+    <ClCompile Include="Interface\ShaderParametersVk.cpp" />
     <ClCompile Include="Interface\ShaderVk.cpp" />
     <ClCompile Include="Interface\SwapChainVk.cpp" />
     <ClCompile Include="Interface\TextureViewVk.cpp" />
@@ -184,6 +186,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClCompile Include="VulkanMemoryManager.cpp" />
     <ClCompile Include="VulkanPhysicalDevice.cpp" />
     <ClCompile Include="VulkanSemaphorePool.cpp" />
+    <ClCompile Include="VulkanShaderParameterManager.cpp" />
     <ClCompile Include="VulkanTypeConversion.cpp" />
     <ClCompile Include="VulkanUploadHeap.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
@@ -194,6 +197,8 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClInclude Include="Interface\GraphicsPipelineStateVk.h" />
     <ClInclude Include="Interface\RenderPassVk.h" />
     <ClInclude Include="Interface\RenderTargetVk.h" />
+    <ClInclude Include="Interface\ShaderParametersLayoutVk.h" />
+    <ClInclude Include="Interface\ShaderParametersVk.h" />
     <ClInclude Include="Interface\ShaderVk.h" />
     <ClInclude Include="Interface\SwapChainVk.h" />
     <ClInclude Include="Interface\TextureViewVk.h" />
@@ -213,6 +218,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClInclude Include="VulkanMemoryManager.h" />
     <ClInclude Include="VulkanPhysicalDevice.h" />
     <ClInclude Include="VulkanSemaphorePool.h" />
+    <ClInclude Include="VulkanShaderParameterManager.h" />
     <ClInclude Include="VulkanTypeConversion.h" />
     <ClInclude Include="VulkanUploadHeap.h" />
     <ClInclude Include="VulkanUtility.h" />

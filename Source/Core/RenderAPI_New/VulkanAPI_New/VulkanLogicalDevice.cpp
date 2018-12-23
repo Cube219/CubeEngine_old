@@ -189,6 +189,20 @@ namespace cube
 			return VkPipelineWrapper(pipeline, shared_from_this(), debugName);
 		}
 
+		VkPipelineLayoutWrapper VulkanLogicalDevice::CreateVkPipelineLayoutWrapper(const VkPipelineLayoutCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkPipelineLayout layout;
+			res = vkCreatePipelineLayout(mDevice, &info, nullptr, &layout);
+			CHECK_VK(res, "Failed to create VkPipelineLayout '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, layout, debugName);
+
+			return VkPipelineLayoutWrapper(layout, shared_from_this(), debugName);
+		}
+
 		VkShaderModuleWrapper VulkanLogicalDevice::CreateVkShaderModuleWrapper(const VkShaderModuleCreateInfo& info,
 			const char * debugName)
 		{
@@ -230,6 +244,34 @@ namespace cube
 				VulkanDebug::SetObjectName(mDevice, framebuffer, debugName);
 
 			return VkFramebufferWrapper(framebuffer, shared_from_this(), debugName);
+		}
+
+		VkDescriptorPoolWrapper VulkanLogicalDevice::CreateVkDescriptorPoolWrapper(const VkDescriptorPoolCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkDescriptorPool pool;
+			res = vkCreateDescriptorPool(mDevice, &info, nullptr, &pool);
+			CHECK_VK(res, "Failed to create VkDescriptorPool '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, pool, debugName);
+
+			return VkDescriptorPoolWrapper(pool, shared_from_this(), debugName);
+		}
+
+		VkDescriptorSetLayoutWrapper VulkanLogicalDevice::CreateVkDescriptorSetLayoutWrapper(const VkDescriptorSetLayoutCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkDescriptorSetLayout setLayout;
+			res = vkCreateDescriptorSetLayout(mDevice, &info, nullptr, &setLayout);
+			CHECK_VK(res, "Failed to create VkDescriptorSetLayout '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, setLayout, debugName);
+
+			return VkDescriptorSetLayoutWrapper(setLayout, shared_from_this(), debugName);
 		}
 
 		void VulkanLogicalDevice::ReleaseVkObject(VkBufferWrapper&& buffer) const
@@ -281,6 +323,13 @@ namespace cube
 			CUBE_LOG(LogType::Info, "Release VkPipeline.");
 		}
 
+		void VulkanLogicalDevice::ReleaseVkObject(VkPipelineLayoutWrapper&& pipelineLayout) const
+		{
+			vkDestroyPipelineLayout(mDevice, pipelineLayout.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkPipelineLayout.");
+		}
+
 		void VulkanLogicalDevice::ReleaseVkObject(VkShaderModuleWrapper&& shaderModule) const
 		{
 			vkDestroyShaderModule(mDevice, shaderModule.mObject, nullptr);
@@ -300,6 +349,20 @@ namespace cube
 			vkDestroyFramebuffer(mDevice, framebuffer.mObject, nullptr);
 			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
 			CUBE_LOG(LogType::Info, "Release VkFramebuffer.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkDescriptorPoolWrapper&& descriptorPool) const
+		{
+			vkDestroyDescriptorPool(mDevice, descriptorPool.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkDescriptorPool.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkDescriptorSetLayoutWrapper&& descriptorSetLayout) const
+		{
+			vkDestroyDescriptorSetLayout(mDevice, descriptorSetLayout.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkDescriptorSetLayout.");
 		}
 	} // namespace render
 } // namespace cube
