@@ -17,6 +17,7 @@ namespace cube
 
 			VkBuffer buffer;
 			Uint64 dynamicOffset;
+			Uint64 dynamicUnalignedOffset;
 
 			Uint64 size;
 			void* pData;
@@ -38,7 +39,6 @@ namespace cube
 
 			VkBuffer GetHeapBuffer() const { return mBuffer.mObject; }
 
-			// TODO: alignment 구현
 			VulkanShaderParameterAllocation Allocate(Uint64 size);
 			VulkanShaderParameterAllocation AllocatePerFrame(Uint64 size);
 			void Free(VulkanShaderParameterAllocation&& allocation);
@@ -52,7 +52,7 @@ namespace cube
 			VkBufferWrapper mBuffer;
 			VulkanAllocation mBufferMemoryAllocation;
 			Uint64 mBufferSize;
-			Uint64 mAlignment;
+			Uint64 mMinAlignment;
 
 			Uint64 mCurrentOffset;
 

@@ -1,6 +1,5 @@
 ﻿#include "VulkanMemoryManager.h"
 
-#include "EngineCore/Assertion.h"
 #include "VulkanUtility.h"
 #include "VulkanDebug.h"
 #include "Interface/DeviceVk.h"
@@ -21,7 +20,7 @@ namespace cube
 		// VulkanMemoryPage //
 		//////////////////////
 
-		VulkanMemoryPage::VulkanMemoryPage(VulkanMemoryHeap& myHeap, VkDeviceSize size, MemoryUsage memoryUsage, Uint32 memoryTypeIndex) :
+		VulkanMemoryPage::VulkanMemoryPage(VulkanMemoryHeap& myHeap, Uint64 size, MemoryUsage memoryUsage, Uint32 memoryTypeIndex) :
 			mMyHeap(myHeap), mMappedData(nullptr), mMaxSize(size), mFreeSize(size)
 		{
 			VkResult res;
@@ -79,46 +78,50 @@ namespace cube
 			vkFreeMemory(mMyHeap.mDevice->GetHandle(), mDeviceMemory, nullptr);
 		}
 
-		VulkanAllocation VulkanMemoryPage::Allocate(VkDeviceSize size, VkDeviceSize alignment)
+		VulkanAllocation VulkanMemoryPage::Allocate(Uint64 size, Uint64 alignment)
 		{
-			CHECK((alignment & (alignment - 1)) == 0, "Alignment({0}) must be power of 2.", alignment);
-			VkDeviceSize alignedSize = (size + (alignment - 1)) & ~(alignment - 1);
-			
-			auto smallestFreeBlockItIt = mFreeBlocksOrderBySize.lower_bound(alignedSize);
+			auto smallestFreeBlockItIt = mFreeBlocksOrderBySize.lower_bound(size + alignment);
 			if(smallestFreeBlockItIt == mFreeBlocksOrderBySize.end()) {
-				return VulkanAllocation{ 0, 0, nullptr };
+				return VulkanAllocation{ 0, 0, 0, nullptr };
 			}
 			auto smallestFreeBlockIt = smallestFreeBlockItIt->second;
 
-			VkDeviceSize oldFreeBlockOffset = smallestFreeBlockIt->first;
-			VkDeviceSize oldFreeBlockSize = smallestFreeBlockIt->second.size;
+			//     |<----------------------oldSize------ ..... ----------------->|
+			//     |                               |<--- ..... ---newSize------->|
+			//     |            |                  |     .....                   |
+			//     |            |<------size------>|     .....                   |
+			// oldOffset  alignedOffset       newOffset
+			Uint64 oldFreeBlockOffset = smallestFreeBlockIt->first;
+			Uint64 oldFreeBlockSize = smallestFreeBlockIt->second.size;
 
-			VkDeviceSize newFreeBlockOffset = oldFreeBlockOffset + alignedSize;
-			VkDeviceSize newFreeBlockSize = oldFreeBlockSize - alignedSize;
+			Uint64 alignedOffset = Align(oldFreeBlockOffset, alignment);
 
-			VkDeviceSize allocOffset = oldFreeBlockOffset;
+			Uint64 newFreeBlockOffset = alignedOffset + size;
+			Uint64 newFreeBlockSize = oldFreeBlockSize - (alignedOffset - oldFreeBlockOffset) - size;
+
+			Uint64 unalignedOffset = oldFreeBlockOffset;
 
 			RemoveFreeBlock(smallestFreeBlockIt);
 			InsertFreeBlock(newFreeBlockOffset, newFreeBlockSize);
 
-			mFreeSize -= alignedSize;
+			mFreeSize -= size + (alignedOffset - oldFreeBlockOffset);
 
 			void* allocMappedData = nullptr;
 			if(mMappedData != nullptr) {
-				allocMappedData = (char*)mMappedData + allocOffset;
+				allocMappedData = (char*)mMappedData + alignedOffset;
 			}
 
-			return VulkanAllocation{allocOffset, alignedSize, this, allocMappedData};
+			return VulkanAllocation{alignedOffset, unalignedOffset, size, this, allocMappedData};
 		}
 
 		void VulkanMemoryPage::Free(VulkanAllocation& alloc)
 		{
-			VkDeviceSize freeOffset = alloc.offset;
-			VkDeviceSize freeSize = alloc.size;
+			Uint64 freeOffset = alloc.unalignedOffset;
+			Uint64 freeSize = alloc.size + (alloc.offset - alloc.unalignedOffset);
 
 			auto nextBlockIter = mFreeBlocksOrderByOffset.upper_bound(freeOffset);
-			VkDeviceSize nextOffset;
-			VkDeviceSize nextSize;
+			Uint64 nextOffset;
+			Uint64 nextSize;
 			if(nextBlockIter != mFreeBlocksOrderByOffset.end()) {
 				nextOffset = nextBlockIter->first;
 				nextSize = nextBlockIter->second.size;
@@ -128,8 +131,8 @@ namespace cube
 			}
 
 			auto prevBlockIter = nextBlockIter;
-			VkDeviceSize prevOffset;
-			VkDeviceSize prevSize;
+			Uint64 prevOffset;
+			Uint64 prevSize;
 			if(prevBlockIter != mFreeBlocksOrderByOffset.begin()) {
 				--prevBlockIter;
 				prevOffset = prevBlockIter->first;
@@ -213,7 +216,7 @@ namespace cube
 			Free(alloc);
 		}
 
-		void VulkanMemoryPage::InsertFreeBlock(VkDeviceSize offset, VkDeviceSize size)
+		void VulkanMemoryPage::InsertFreeBlock(Uint64 offset, Uint64 size)
 		{
 			auto newFreeBlockIterAndResult = mFreeBlocksOrderByOffset.emplace(offset, size);
 			CHECK(newFreeBlockIterAndResult.second, "Failed to insert free block in mFreeBlocksOrderByOffset.");
@@ -234,35 +237,13 @@ namespace cube
 		//////////////////////
 
 		VulkanMemoryHeap::VulkanMemoryHeap(SPtr<VulkanLogicalDevice>& device, MemoryUsage memoryUsage, Uint32 memoryTypeIndex,
-			VkDeviceSize heapSize, VkDeviceSize pageSize) :
+			Uint64 heapSize, Uint64 pageSize) :
 			mDevice(device), mMemoryUsage(memoryUsage), mMemoryTypeIndex(memoryTypeIndex),
 			mHeapSize(heapSize), mPageSize(pageSize)
 		{
 		}
 
-		VulkanMemoryHeap::VulkanMemoryHeap(VulkanMemoryHeap&& other) :
-			mDevice(std::move(other.mDevice)),
-			mMemoryTypeIndex(other.mMemoryTypeIndex),
-			mHeapSize(other.mHeapSize),
-			mPageSize(other.mPageSize),
-			// mPagesMutex(other.mPagesMutex), // It cannot be moved.
-			mPages(std::move(other.mPages))
-		{
-		}
-
-		VulkanMemoryHeap& VulkanMemoryHeap::operator=(VulkanMemoryHeap&& rhs)
-		{
-			mDevice = std::move(rhs.mDevice);
-			mMemoryTypeIndex = rhs.mMemoryTypeIndex;
-			mHeapSize = rhs.mHeapSize;
-			mPageSize = rhs.mPageSize;
-			// mPagesMutex = std::move(rhs.mPagesMutex); // It cannot be moved.
-			mPages = std::move(rhs.mPages);
-
-			return *this;
-		}
-
-		VulkanAllocation VulkanMemoryHeap::Allocate(VkDeviceSize size, VkDeviceSize alignment)
+		VulkanAllocation VulkanMemoryHeap::Allocate(Uint64 size, Uint64 alignment)
 		{
 			VulkanAllocation allocation;
 
@@ -276,7 +257,7 @@ namespace cube
 			}
 
 			// Create a new page
-			VkDeviceSize pageSize = mPageSize;
+			Uint64 pageSize = mPageSize;
 			while(pageSize < size)
 				pageSize *= 2;
 
@@ -290,7 +271,7 @@ namespace cube
 		// VulkanMemoryManager //
 		/////////////////////////
 
-		VulkanMemoryManager::VulkanMemoryManager(SPtr<VulkanLogicalDevice>& device, VkDeviceSize gpuPageSize, VkDeviceSize hostVisiblePageSize) :
+		VulkanMemoryManager::VulkanMemoryManager(SPtr<VulkanLogicalDevice>& device, Uint64 gpuPageSize, Uint64 hostVisiblePageSize) :
 			mDevice(device)
 		{
 			auto& physicalDevice = device->GetParentPhysicalDevice();
@@ -308,8 +289,8 @@ namespace cube
 			preferredFlags = 0;
 			Uint32 gpuIndex = physicalDevice.GetMemoryTypeIndex(typeBits, requiredFlags, preferredFlags);
 			CHECK(gpuIndex != -1, "Failed to memory type with a property that has DEVICE_LOCAL.");
-			VkDeviceSize heapSize = memProperties.memoryHeaps[memProperties.memoryTypes[gpuIndex].heapIndex].size;
-			VkDeviceSize pageSize = Math::Min(heapSize / 8, gpuPageSize);
+			Uint64 heapSize = memProperties.memoryHeaps[memProperties.memoryTypes[gpuIndex].heapIndex].size;
+			Uint64 pageSize = Math::Min(heapSize / 8, gpuPageSize);
 			mHeaps[gpuIndex] = VulkanMemoryHeap(device, MemoryUsage::GPU, gpuIndex, heapSize, pageSize);
 			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::GPU] = gpuIndex;
 
@@ -355,7 +336,7 @@ namespace cube
 		{
 		}
 
-		VulkanAllocation VulkanMemoryManager::Allocate(VkDeviceSize size, VkDeviceSize alignment, MemoryUsage usage)
+		VulkanAllocation VulkanMemoryManager::Allocate(Uint64 size, Uint64 alignment, MemoryUsage usage)
 		{
 			Uint32 index = mHeapIndexAsMemoryUsage[(Uint32)usage];
 			return mHeaps[index].Allocate(size, alignment);

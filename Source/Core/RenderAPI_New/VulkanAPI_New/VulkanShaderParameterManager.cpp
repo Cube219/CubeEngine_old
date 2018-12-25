@@ -37,18 +37,18 @@ namespace cube
 					bufSize = (UniformBufferMaxSize > limits.maxUniformBufferRange) ? limits.maxUniformBufferRange : UniformBufferMaxSize;
 					bufInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 					bufDebugName = "Uniform buffer in ShaderParameterHeap";
-					mAlignment = limits.minUniformBufferOffsetAlignment;
+					mMinAlignment = limits.minUniformBufferOffsetAlignment;
 					break;
 
 				case ShaderParameterType::StorageBuffer:
 					bufSize = (StorageBufferMaxSize > limits.maxStorageBufferRange) ? limits.maxStorageBufferRange : StorageBufferMaxSize;
 					bufInfo.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 					bufDebugName = "Storage buffer in ShaderParameterHeap";
-					mAlignment = limits.minStorageBufferOffsetAlignment;
+					mMinAlignment = limits.minStorageBufferOffsetAlignment;
 					break;
 
 				case ShaderParameterType::RawData:
-					ASSERTION_FAILED("RawData type is stored in CommandList. Not ShaderParameterHeap.");
+					ASSERTION_FAILED("RawData type is stored in VulkanShaderParameterManager. Not ShaderParameterHeap.");
 					break;
 
 				case ShaderParameterType::Sampler:
@@ -89,33 +89,42 @@ namespace cube
 			if(mCurrentOffset + size >= mFrameOffset) {
 				mCurrentOffset = 0;
 			}
+
+			//     |<-------------adjustedSize----------->|
+			//     |        |                             |       
+			//     |        |<-----------size------------>|
+			//  offset alignedOffset                   newOffset
+			Uint64 alignedOffset = Align(mCurrentOffset, mMinAlignment);
 			
 			VulkanShaderParameterAllocation allocation;
 			allocation.type = mHeapType;
 			allocation.isPerFrame = false;
 			allocation.buffer = mBuffer.mObject;
-			allocation.pData = (char*)mBufferMemoryAllocation.mappedData + mCurrentOffset;
+			allocation.pData = (char*)mBufferMemoryAllocation.mappedData + alignedOffset;
 			allocation.size = size;
-			allocation.dynamicOffset = mCurrentOffset;
+			allocation.dynamicOffset = alignedOffset;
+			allocation.dynamicUnalignedOffset = mCurrentOffset;
 
-			mCurrentOffset += size;
+			mCurrentOffset = alignedOffset + size;
 
 			return allocation;
 		}
 
 		VulkanShaderParameterAllocation VulkanShaderParameterHeap::AllocatePerFrame(Uint64 size)
 		{
-			CHECK(mCurrentFrameOffset + size <= mBufferSize, "No space in {0} (Per frame).", mBuffer.mDebugName);
+			Uint64 alignedOffset = Align(mCurrentFrameOffset, mMinAlignment);
+			CHECK(alignedOffset + size <= mBufferSize, "No space in {0} (Per frame).", mBuffer.mDebugName);
 
 			VulkanShaderParameterAllocation allocation;
 			allocation.type = mHeapType;
 			allocation.isPerFrame = true;
 			allocation.buffer = mBuffer.mObject;
-			allocation.pData = (char*)mBufferMemoryAllocation.mappedData + mCurrentFrameOffset;
+			allocation.pData = (char*)mBufferMemoryAllocation.mappedData + alignedOffset;
 			allocation.size = size;
-			allocation.dynamicOffset = mCurrentFrameOffset;
+			allocation.dynamicOffset = alignedOffset;
+			allocation.dynamicUnalignedOffset = mCurrentFrameOffset;
 
-			mCurrentFrameOffset += size;
+			mCurrentFrameOffset = alignedOffset + size;
 
 			return allocation;
 		}

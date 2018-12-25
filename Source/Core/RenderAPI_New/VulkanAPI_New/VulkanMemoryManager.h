@@ -3,15 +3,24 @@
 #include "VulkanAPIHeader.h"
 
 #include "EngineCore/Thread/MutexLock.h"
+#include "EngineCore/Assertion.h"
 
 namespace cube
 {
 	namespace render
 	{
+		template <typename T>
+		T Align(T offset, T alignment)
+		{
+			CHECK((alignment & (alignment - 1)) == 0, "Alignment({0}) must be power of 2.", alignment);
+			return (offset + (alignment - 1)) & ~(alignment - 1);
+		}
+
 		struct VulkanAllocation
 		{
-			VkDeviceSize offset;
-			VkDeviceSize size;
+			Uint64 offset;
+			Uint64 unalignedOffset;
+			Uint64 size;
 			VulkanMemoryPage* pPage = nullptr;
 			void* mappedData = nullptr;
 
@@ -34,10 +43,10 @@ namespace cube
 		class VulkanMemoryPage
 		{
 		public:
-			VulkanMemoryPage(VulkanMemoryHeap& myHeap, VkDeviceSize size, MemoryUsage memoryUsage, Uint32 memoryTypeIndex);
+			VulkanMemoryPage(VulkanMemoryHeap& myHeap, Uint64 size, MemoryUsage memoryUsage, Uint32 memoryTypeIndex);
 			~VulkanMemoryPage();
 
-			VulkanAllocation Allocate(VkDeviceSize size, VkDeviceSize alignment);
+			VulkanAllocation Allocate(Uint64 size, Uint64 alignment);
 			void Free(VulkanAllocation& alloc);
 			void Free(VulkanAllocation&& alloc);
 
@@ -46,17 +55,17 @@ namespace cube
 		private:
 			struct FreeBlock;
 
-			using OrderByOffsetMap = Map<VkDeviceSize, FreeBlock>;
-			using OrderBySizeMultiMap = MultiMap<VkDeviceSize, OrderByOffsetMap::iterator>;
+			using OrderByOffsetMap = Map<Uint64, FreeBlock>;
+			using OrderBySizeMultiMap = MultiMap<Uint64, OrderByOffsetMap::iterator>;
 
 			struct FreeBlock
 			{
-				VkDeviceSize size;
+				Uint64 size;
 				OrderBySizeMultiMap::iterator orderBySizeIter;
-				FreeBlock(VkDeviceSize size) : size(size) {}
+				FreeBlock(Uint64 size) : size(size) {}
 			};
 
-			void InsertFreeBlock(VkDeviceSize offset, VkDeviceSize size);
+			void InsertFreeBlock(Uint64 offset, Uint64 size);
 			void RemoveFreeBlock(OrderByOffsetMap::iterator iter);
 
 			VulkanMemoryHeap& mMyHeap;
@@ -64,8 +73,8 @@ namespace cube
 			VkDeviceMemory mDeviceMemory;
 			void* mMappedData;
 
-			VkDeviceSize mMaxSize;
-			VkDeviceSize mFreeSize;
+			Uint64 mMaxSize;
+			Uint64 mFreeSize;
 			OrderByOffsetMap mFreeBlocksOrderByOffset;
 			OrderBySizeMultiMap mFreeBlocksOrderBySize;
 		};
@@ -80,16 +89,33 @@ namespace cube
 			VulkanMemoryHeap() : mDevice(nullptr)
 			{}
 			VulkanMemoryHeap(SPtr<VulkanLogicalDevice>& device, MemoryUsage memoryUsage, Uint32 memoryTypeIndex,
-				VkDeviceSize heapSize, VkDeviceSize pageSize);
+				Uint64 heapSize, Uint64 pageSize);
 			~VulkanMemoryHeap() {}
 
 			VulkanMemoryHeap(const VulkanMemoryHeap& other) = delete;
 			VulkanMemoryHeap& operator=(const VulkanMemoryHeap& rhs) = delete;
 
-			VulkanMemoryHeap(VulkanMemoryHeap&& other);
-			VulkanMemoryHeap& operator=(VulkanMemoryHeap&& rhs);
+			VulkanMemoryHeap(VulkanMemoryHeap&& other) : 
+				mDevice(std::move(other.mDevice)),
+				mMemoryTypeIndex(other.mMemoryTypeIndex),
+				mHeapSize(other.mHeapSize),
+				mPageSize(other.mPageSize),
+				// mPagesMutex(other.mPagesMutex), // It cannot be moved.
+				mPages(std::move(other.mPages))
+			{}
+			VulkanMemoryHeap& operator=(VulkanMemoryHeap&& rhs)
+			{
+				mDevice = std::move(rhs.mDevice);
+				mMemoryTypeIndex = rhs.mMemoryTypeIndex;
+				mHeapSize = rhs.mHeapSize;
+				mPageSize = rhs.mPageSize;
+				// mPagesMutex = std::move(rhs.mPagesMutex); // It cannot be moved.
+				mPages = std::move(rhs.mPages);
 
-			VulkanAllocation Allocate(VkDeviceSize size, VkDeviceSize alignment);
+				return *this;
+			}
+
+			VulkanAllocation Allocate(Uint64 size, Uint64 alignment);
 
 		private:
 			friend class VulkanMemoryManager;
@@ -99,8 +125,8 @@ namespace cube
 
 			MemoryUsage mMemoryUsage;
 			Uint32 mMemoryTypeIndex;
-			VkDeviceSize mHeapSize;
-			VkDeviceSize mPageSize;
+			Uint64 mHeapSize;
+			Uint64 mPageSize;
 
 			core::Mutex mPagesMutex;
 			Vector<VulkanMemoryPage> mPages;
@@ -115,7 +141,7 @@ namespace cube
 		class VulkanMemoryManager
 		{
 		public:
-			VulkanMemoryManager(SPtr<VulkanLogicalDevice>& device, VkDeviceSize gpuPageSize, VkDeviceSize hostVisiblePageSize);
+			VulkanMemoryManager(SPtr<VulkanLogicalDevice>& device, Uint64 gpuPageSize, Uint64 hostVisiblePageSize);
 			~VulkanMemoryManager();
 
 			VulkanMemoryManager(const VulkanMemoryManager& others) = delete;
@@ -123,7 +149,7 @@ namespace cube
 			VulkanMemoryManager(VulkanMemoryManager&& others) = delete;
 			VulkanMemoryManager& operator=(VulkanMemoryManager&& rhs) = delete;
 
-			VulkanAllocation Allocate(VkDeviceSize size, VkDeviceSize alignment, MemoryUsage usage);
+			VulkanAllocation Allocate(Uint64 size, Uint64 alignment, MemoryUsage usage);
 			VulkanAllocation Allocate(const VkMemoryRequirements& memRequirements, MemoryUsage usage);
 
 		private:
