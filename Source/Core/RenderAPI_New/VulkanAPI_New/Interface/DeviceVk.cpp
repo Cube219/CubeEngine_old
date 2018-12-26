@@ -18,12 +18,13 @@ namespace cube
 		DeviceVk::DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device) :
 			mInstance(ins),
 			mDevice(std::move(device)),
-			mMemoryManager(mDevice, 256*1024*1024, 32*1024*1024), // gpuPage: 256 MiB, hostVisiblePage: 32 Mib
+			mMemoryManager(mDevice, 256*1024*1024, 32*1024*1024), // gpuPage: 256 MiB, hostVisiblePage: 32 MiB
 			mFencePool(mDevice),
 			mSemaphorePool(mDevice),
 			mQueueManager(mDevice, mDevice->GetParentPhysicalDevice(), mFencePool, mSemaphorePool),
 			mCommandListPool(mDevice, mQueueManager),
-			mShaderParameterManager(mDevice, mMemoryManager)
+			mShaderParameterManager(mDevice, mMemoryManager),
+			mUploadHeap(mMemoryManager, 32*1024*1024) // Page: 32 MiB
 		{
 		}
 
@@ -62,7 +63,7 @@ namespace cube
 			return mQueueManager.SubmitCommandList(*commandListVk);
 		}
 
-		void DeviceVk::FinishFrame()
+		void DeviceVk::StartFrame()
 		{
 			core::Lock lock(mReleaseQueueMutex);
 
@@ -72,6 +73,9 @@ namespace cube
 				func();
 			}
 			mReleaseFuncQueue.clear();
+
+			mShaderParameterManager.DiscardPerFrame();
+			mUploadHeap.DiscardAllocations();
 		}
 	} // namespace render
 } // namespace cube

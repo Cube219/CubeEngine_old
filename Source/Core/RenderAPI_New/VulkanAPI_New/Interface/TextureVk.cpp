@@ -156,8 +156,8 @@ namespace cube
 
 				queueManager.SubmitCommandList(*cmdBuf);
 
-				device.ReleaseAtEndOfFrame(cmdBuf);
-				device.ReleaseAtEndOfFrame(std::move(stagingBuf));
+				device.ReleaseAtNextFrame(cmdBuf);
+				device.ReleaseAtNextFrame(std::move(stagingBuf));
 			}
 
 			// Setup default view attribute
@@ -189,7 +189,7 @@ namespace cube
 
 		TextureVk::~TextureVk()
 		{
-			mAllocation.pPage->Free(mAllocation);
+			mAllocation.Free();
 			mImage.Release();
 		}
 

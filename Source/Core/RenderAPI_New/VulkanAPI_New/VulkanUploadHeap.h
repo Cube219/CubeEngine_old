@@ -1,8 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #include "VulkanAPIHeader.h"
 
 #include "VulkanMemoryManager.h"
+#include "VkObject.h"
+
+#include "EngineCore/Thread/MutexLock.h"
 
 namespace cube
 {
@@ -10,31 +13,44 @@ namespace cube
 	{
 		struct VulkanUploadAllocation
 		{
+			void* mappedData;
+		};
+
+		class VulkanUploadPage
+		{
+		public:
+			VulkanUploadPage(VulkanMemoryManager& memoryManager, Uint64 size);
+			~VulkanUploadPage();
+
+			VulkanUploadAllocation Allocate(Uint64 size, Uint64 alignment);
+
+			void DiscardAlloations();
+
+		private:
+			VulkanAllocation mAllocation;
+
+			Uint64 mPageSize;
+			Uint64 mStartOffset;
+			Uint64 mCurrentOffset;
+			Uint64 mEndOffset;
 		};
 
 		class VulkanUploadHeap
 		{
 		public:
-			VulkanUploadHeap(VulkanMemoryManager& memoryManager, VkDeviceSize pageSize);
+			VulkanUploadHeap(VulkanMemoryManager& memoryManager, Uint64 pageSize);
 			~VulkanUploadHeap();
 
-			VulkanUploadAllocation Allocate(VkDeviceSize size, VkDeviceSize alignment);
+			VulkanUploadAllocation Allocate(Uint64 size, Uint64 alignment);
 
-			void FinishFrame();
+			void DiscardAllocations();
 
 		private:
-			struct UploadPage
-			{
-				VulkanAllocation memAllocation;
-				VkBuffer buffer;
-			};
-
-			UploadPage CreateNewPage(VkDeviceSize size);
-
 			VulkanMemoryManager& mMemoryManager;
 
-			Vector<UploadPage> mPages;
-			VkDeviceSize mDefaultPageSize;
+			core::Mutex mPagesMutex;
+			Vector<VulkanUploadPage> mPages;
+			Uint64 mDefaultPageSize;
 		};
 	} // namespace render
 } // namespace cube

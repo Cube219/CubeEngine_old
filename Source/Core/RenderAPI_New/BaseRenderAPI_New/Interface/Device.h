@@ -29,7 +29,7 @@ namespace cube
 
 			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) = 0;
 
-			virtual void FinishFrame() = 0;
+			virtual void StartFrame() = 0;
 		};
 	} // namespace render
 } // namespace cube

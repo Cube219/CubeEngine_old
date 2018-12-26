@@ -11,6 +11,7 @@
 #include "../VulkanSemaphorePool.h"
 #include "../VulkanLogicalDevice.h"
 #include "../VulkanShaderParameterManager.h"
+#include "../VulkanUploadHeap.h"
 
 #include "EngineCore/Thread/MutexLock.h"
 
@@ -37,15 +38,16 @@ namespace cube
 
 			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) override final;
 
-			virtual void FinishFrame() override final;
+			virtual void StartFrame() override final;
 
 			SPtr<VulkanLogicalDevice> GetLogicalDevice() const { return mDevice; }
 			VulkanMemoryManager& GetMemoryManager() { return mMemoryManager; }
 			VulkanQueueManager& GetQueueManager() { return mQueueManager; }
 			VulkanShaderParameterManager& GetShaderParameterManager() { return mShaderParameterManager; }
+			VulkanUploadHeap& GetUploadHeap() { return mUploadHeap; }
 			
 			template <typename VkObjectType>
-			void ReleaseAtEndOfFrame(VkObjectType&& vkObject)
+			void ReleaseAtNextFrame(VkObjectType&& vkObject)
 			{
 				core::Lock lock(mReleaseQueueMutex);
 
@@ -53,7 +55,7 @@ namespace cube
 			}
 
 			template <typename T>
-			void ReleaseAtEndOfFrame(SPtr<T> ptrObject)
+			void ReleaseAtNextFrame(SPtr<T> ptrObject)
 			{
 				core::Lock lock(mReleaseQueueMutex);
 
@@ -74,6 +76,7 @@ namespace cube
 			VulkanQueueManager mQueueManager;
 			VulkanCommandListPool mCommandListPool;
 			VulkanShaderParameterManager mShaderParameterManager;
+			VulkanUploadHeap mUploadHeap;
 
 			core::Mutex mReleaseQueueMutex;
 			Vector<std::function<void()>> mReleaseFuncQueue;

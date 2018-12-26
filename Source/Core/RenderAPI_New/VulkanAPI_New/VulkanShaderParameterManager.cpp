@@ -70,10 +70,12 @@ namespace cube
 
 			mBufferMemoryAllocation = memManager.Allocate(memRequire, MemoryUsage::CPUtoGPU);
 
-			mCurrentOffset = 0;
-			mBufferSize = bufSize;
-			mFrameOffset = bufSize / 2;
-			mCurrentFrameOffset = mFrameOffset;
+			mStartOffset = mBufferMemoryAllocation.offset;
+			mCurrentOffset = mStartOffset;
+			mEndOffset = mBufferMemoryAllocation.offset + mBufferMemoryAllocation.size;
+			
+			mStartFrameOffset = mStartOffset + (mBufferMemoryAllocation.size / 2);
+			mCurrentFrameOffset = mStartFrameOffset;
 		}
 
 		VulkanShaderParameterHeap::~VulkanShaderParameterHeap()
@@ -84,23 +86,24 @@ namespace cube
 
 		VulkanShaderParameterAllocation VulkanShaderParameterHeap::Allocate(Uint64 size)
 		{
-			// TODO: 현재는 Ring buffer식으로 할당을 하는데 검사 logic이 없어서 덮어씌어질 수 있음
-			//       차후 다른 방식으로 구현?
-			if(mCurrentOffset + size >= mFrameOffset) {
-				mCurrentOffset = 0;
-			}
-
 			//     |<-------------adjustedSize----------->|
 			//     |        |                             |       
 			//     |        |<-----------size------------>|
 			//  offset alignedOffset                   newOffset
 			Uint64 alignedOffset = Align(mCurrentOffset, mMinAlignment);
 			
+			// TODO: 현재는 Ring buffer식으로 할당을 하는데 검사 logic이 없어서 덮어씌어질 수 있음
+			//       차후 다른 방식으로 구현?
+			if(alignedOffset + size >= mStartFrameOffset) {
+				mCurrentOffset = mStartOffset;
+				alignedOffset = Align(mCurrentOffset, mMinAlignment);
+			}
+
 			VulkanShaderParameterAllocation allocation;
 			allocation.type = mHeapType;
 			allocation.isPerFrame = false;
 			allocation.buffer = mBuffer.mObject;
-			allocation.pData = (char*)mBufferMemoryAllocation.mappedData + alignedOffset;
+			allocation.pData = (char*)mBufferMemoryAllocation.mappedData + (alignedOffset);
 			allocation.size = size;
 			allocation.dynamicOffset = alignedOffset;
 			allocation.dynamicUnalignedOffset = mCurrentOffset;
@@ -113,7 +116,7 @@ namespace cube
 		VulkanShaderParameterAllocation VulkanShaderParameterHeap::AllocatePerFrame(Uint64 size)
 		{
 			Uint64 alignedOffset = Align(mCurrentFrameOffset, mMinAlignment);
-			CHECK(alignedOffset + size <= mBufferSize, "No space in {0} (Per frame).", mBuffer.mDebugName);
+			CHECK(alignedOffset + size < mEndOffset, "No space in {0} (Per frame).", mBuffer.mDebugName);
 
 			VulkanShaderParameterAllocation allocation;
 			allocation.type = mHeapType;
@@ -144,7 +147,7 @@ namespace cube
 
 		void VulkanShaderParameterHeap::DiscardPerFrame()
 		{
-			mCurrentFrameOffset = mFrameOffset;
+			mCurrentFrameOffset = mStartFrameOffset;
 		}
 
 		//////////////////////////////////

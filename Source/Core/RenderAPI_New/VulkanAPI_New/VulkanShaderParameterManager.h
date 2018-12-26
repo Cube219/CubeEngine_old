@@ -51,13 +51,15 @@ namespace cube
 
 			VkBufferWrapper mBuffer;
 			VulkanAllocation mBufferMemoryAllocation;
-			Uint64 mBufferSize;
 			Uint64 mMinAlignment;
 
+			Uint64 mStartOffset;
 			Uint64 mCurrentOffset;
 
-			Uint64 mFrameOffset;
+			Uint64 mStartFrameOffset;
 			Uint64 mCurrentFrameOffset;
+
+			Uint64 mEndOffset;
 		};
 
 		//////////////////////////////////

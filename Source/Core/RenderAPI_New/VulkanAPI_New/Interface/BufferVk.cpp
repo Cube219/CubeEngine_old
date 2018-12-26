@@ -120,15 +120,15 @@ namespace cube
 
 					queueManager.SubmitCommandList(*cmdBuf);
 
-					device.ReleaseAtEndOfFrame(cmdBuf);
-					device.ReleaseAtEndOfFrame(std::move(stagingBuffer));
+					device.ReleaseAtNextFrame(cmdBuf);
+					device.ReleaseAtNextFrame(std::move(stagingBuffer));
 				}
 			}
 		}
 
 		BufferVk::~BufferVk()
 		{
-			mMemoryAllocation.pPage->Free(mMemoryAllocation);
+			mMemoryAllocation.Free();
 			mBuffer.Release();
 		}
 
