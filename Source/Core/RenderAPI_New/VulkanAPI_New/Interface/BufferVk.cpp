@@ -71,14 +71,41 @@ namespace cube
 					break;
 			}
 
-			VkMemoryRequirements memRequire;
-			vkGetBufferMemoryRequirements(mBuffer.GetVkDevice(), mBuffer.mObject, &memRequire);
-			
-			mMemoryAllocation = device.GetMemoryManager().Allocate(memRequire, memUsage);
+			if(attr.isDedicated) {
+				VkBufferMemoryRequirementsInfo2 memRequireInfo;
+				memRequireInfo.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
+				memRequireInfo.pNext = nullptr;
+				memRequireInfo.buffer = mBuffer.mObject;
+
+				VkMemoryDedicatedRequirements memDediRequire;
+				memDediRequire.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
+				memDediRequire.pNext = nullptr;
+				memDediRequire.prefersDedicatedAllocation = VK_TRUE;
+				memDediRequire.requiresDedicatedAllocation = VK_TRUE;
+
+				VkMemoryRequirements2 memRequire;
+				memRequire.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+				memRequire.pNext = &memDediRequire;
+
+				vkGetBufferMemoryRequirements2(mBuffer.GetVkDevice(), &memRequireInfo, &memRequire);
+
+				VkMemoryDedicatedAllocateInfo dediAllocInfo;
+				dediAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
+				dediAllocInfo.pNext = nullptr;
+				dediAllocInfo.buffer = mBuffer.mObject;
+				dediAllocInfo.image = VK_NULL_HANDLE;
+
+				mMemoryAllocation = device.GetMemoryManager().AllocateDedicated(memRequire, dediAllocInfo, memUsage);
+			} else {
+				VkMemoryRequirements memRequire;
+				vkGetBufferMemoryRequirements(mBuffer.GetVkDevice(), mBuffer.mObject, &memRequire);
+
+				mMemoryAllocation = device.GetMemoryManager().Allocate(memRequire, memUsage);
+			}
 
 			// Bind memory
-			VkDeviceMemory deviceMem = mMemoryAllocation.pPage->GetVkDeviceMemory();
-			res = vkBindBufferMemory(mBuffer.GetVkDevice(), mBuffer.mObject, deviceMem, mMemoryAllocation.offset);
+			res = vkBindBufferMemory(mBuffer.GetVkDevice(), mBuffer.mObject,
+				mMemoryAllocation.deviceMemory, mMemoryAllocation.offset);
 			CHECK_VK(res, "Failed to bind buffer memory.");
 
 			// Initialize buffer data if it is existed

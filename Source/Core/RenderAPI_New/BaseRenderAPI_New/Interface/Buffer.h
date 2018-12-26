@@ -19,6 +19,7 @@ namespace cube
 			ResourceUsage usage;
 			BufferBindTypeFlags bindTypeFlags = 0;
 			const BufferData* pData = nullptr;
+			bool isDedicated = false;
 			const char* debugName = nullptr;
 		};
 

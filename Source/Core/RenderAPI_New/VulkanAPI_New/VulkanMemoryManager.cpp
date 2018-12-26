@@ -11,11 +11,6 @@ namespace cube
 {
 	namespace render
 	{
-		void VulkanAllocation::Free()
-		{
-			pPage->Free(*this);
-		}
-
 		//////////////////////
 		// VulkanMemoryPage //
 		//////////////////////
@@ -32,7 +27,7 @@ namespace cube
 			info.allocationSize = size;
 
 			res = vkAllocateMemory(myHeap.mDevice->GetHandle(), &info, nullptr, &mDeviceMemory);
-			CHECK_VK(res, "Failed to Create VulkanMemoryPage.");
+			CHECK_VK(res, "Failed to create VulkanMemoryPage.");
 
 			const char* memoryUsageDebugName = "";
 			switch(memoryUsage) {
@@ -82,7 +77,7 @@ namespace cube
 		{
 			auto smallestFreeBlockItIt = mFreeBlocksOrderBySize.lower_bound(size + alignment);
 			if(smallestFreeBlockItIt == mFreeBlocksOrderBySize.end()) {
-				return VulkanAllocation{ 0, 0, 0, nullptr };
+				return VulkanAllocation{ VK_NULL_HANDLE, 0, 0, 0, nullptr, nullptr, false, VK_NULL_HANDLE };
 			}
 			auto smallestFreeBlockIt = smallestFreeBlockItIt->second;
 
@@ -111,7 +106,7 @@ namespace cube
 				allocMappedData = (char*)mMappedData + alignedOffset;
 			}
 
-			return VulkanAllocation{alignedOffset, unalignedOffset, size, this, allocMappedData};
+			return VulkanAllocation{mDeviceMemory, alignedOffset, unalignedOffset, size, allocMappedData, this, false, VK_NULL_HANDLE};
 		}
 
 		void VulkanMemoryPage::Free(VulkanAllocation& alloc)
@@ -275,7 +270,7 @@ namespace cube
 			mDevice(device)
 		{
 			auto& physicalDevice = device->GetParentPhysicalDevice();
-			auto memProperties = physicalDevice.GetMemoryProperties();
+			auto& memProperties = physicalDevice.GetMemoryProperties();
 			mHeaps.resize(memProperties.memoryTypeCount);
 			Uint32 typeBits = (1 << memProperties.memoryTypeCount) - 1;
 			bool isIntegratedGPU = (physicalDevice.GetProperties().deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU);
@@ -350,6 +345,77 @@ namespace cube
 				memRequirements.memoryTypeBits, index);
 
 			return mHeaps[index].Allocate(memRequirements.size, memRequirements.alignment);
+		}
+
+		VulkanAllocation VulkanMemoryManager::AllocateDedicated(const VkMemoryRequirements2& memRequirements,
+			const VkMemoryDedicatedAllocateInfo& dediAllocInfo, MemoryUsage usage)
+		{
+			VkResult res;
+
+			CHECK(memRequirements.pNext != nullptr, "You must add VkMemoryDedicatedRequirements in pNext of VkMemoryRequirements2.");
+
+			Uint32 index = mHeapIndexAsMemoryUsage[(Uint32)usage];
+			CHECK((index & memRequirements.memoryRequirements.memoryTypeBits) != 0,
+				"Failed to allocate VulkanMemory. MemoryTypeBits in VkMemoryRequirements({0}) doesn't have index {1}",
+				memRequirements.memoryRequirements.memoryTypeBits, index);
+
+			VkMemoryAllocateInfo info = {};
+			info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+			info.pNext = &dediAllocInfo;
+			info.memoryTypeIndex = index;
+			info.allocationSize = memRequirements.memoryRequirements.size;
+
+			VkDeviceMemory mem;
+			res = vkAllocateMemory(mDevice->GetHandle(), &info, nullptr, &mem);
+			CHECK_VK(res, "Failed to allocate dedicated memory.");
+
+			// Mapped memory if its usage is not GPU
+			Uint64 size = memRequirements.memoryRequirements.size;
+
+			void* mappedData = nullptr;
+			const char* memoryUsageDebugName = "";
+			switch(usage) {
+				case MemoryUsage::CPU:
+					memoryUsageDebugName = ", MemoryUsage: CPU";
+					res = vkMapMemory(mDevice->GetHandle(), mem, 0, size, 0, &mappedData);
+					CHECK_VK(res, "Failed to map the memory.");
+					break;
+
+				case MemoryUsage::CPUtoGPU:
+					memoryUsageDebugName = ", MemoryUsage: CPUtoGPU";
+					res = vkMapMemory(mDevice->GetHandle(), mem, 0, size, 0, &mappedData);
+					CHECK_VK(res, "Failed to map the memory.");
+					break;
+
+				case MemoryUsage::GPUtoCPU:
+					memoryUsageDebugName = ", MemoryUsage: GPUtoCPU";
+					res = vkMapMemory(mDevice->GetHandle(), mem, 0, size, 0, &mappedData);
+					CHECK_VK(res, "Failed to map the memory.");
+					break;
+
+				case MemoryUsage::GPU:
+					memoryUsageDebugName = ", MemoryUsage: GPU";
+					break;
+
+				default:
+					break;
+			}
+
+			VulkanDebug::SetObjectName(mDevice->GetHandle(), mem,
+				fmt::format("Dedicated memory allocation (Size: {0}, MemoryTypeIndex: {1} {2})",
+					size, index, memoryUsageDebugName).c_str());
+
+			VulkanAllocation alloc;
+			alloc.offset = 0;
+			alloc.unalignedOffset = 0;
+			alloc.size = memRequirements.memoryRequirements.size;
+			alloc.mappedData = mappedData;
+
+			alloc.isDedicatedAllocation = true;
+			alloc.deviceMemory = mem;
+			alloc.device = mDevice->GetHandle();
+
+			return alloc;
 		}
 	} // namespace render
 } // namespace cube

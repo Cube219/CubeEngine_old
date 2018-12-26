@@ -92,14 +92,40 @@ namespace cube
 				break;
 			}
 
-			VkMemoryRequirements memRequire;
-			vkGetImageMemoryRequirements(mImage.GetVkDevice(), mImage.mObject, &memRequire);
+			if(attr.isDedicated) {
+				VkImageMemoryRequirementsInfo2 memRequireInfo;
+				memRequireInfo.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
+				memRequireInfo.pNext = nullptr;
+				memRequireInfo.image = mImage.mObject;
 
-			mAllocation = device.GetMemoryManager().Allocate(memRequire, memUsage);
+				VkMemoryDedicatedRequirements memDediRequire;
+				memDediRequire.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
+				memDediRequire.pNext = nullptr;
+				memDediRequire.prefersDedicatedAllocation = VK_TRUE;
+				memDediRequire.requiresDedicatedAllocation = VK_TRUE;
+
+				VkMemoryRequirements2 memRequire;
+				memRequire.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+				memRequire.pNext = &memDediRequire;
+
+				vkGetImageMemoryRequirements2(mImage.GetVkDevice(), &memRequireInfo, &memRequire);
+
+				VkMemoryDedicatedAllocateInfo dediAllocInfo;
+				dediAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
+				dediAllocInfo.pNext = nullptr;
+				dediAllocInfo.buffer = VK_NULL_HANDLE;
+				dediAllocInfo.image = mImage.mObject;
+
+				mAllocation = device.GetMemoryManager().AllocateDedicated(memRequire, dediAllocInfo, memUsage);
+			} else {
+				VkMemoryRequirements memRequire;
+				vkGetImageMemoryRequirements(mImage.GetVkDevice(), mImage.mObject, &memRequire);
+
+				mAllocation = device.GetMemoryManager().Allocate(memRequire, memUsage);
+			}
 
 			// Bind memory
-			VkDeviceMemory deviceMem = mAllocation.pPage->GetVkDeviceMemory();
-			res = vkBindImageMemory(mImage.GetVkDevice(), mImage.mObject, deviceMem, mAllocation.offset);
+			res = vkBindImageMemory(mImage.GetVkDevice(), mImage.mObject, mAllocation.deviceMemory, mAllocation.offset);
 			CHECK_VK(res, "Failed to bind buffer memory.");
 
 			// Initialize texture data if it is existed

@@ -18,11 +18,16 @@ namespace cube
 
 		struct VulkanAllocation
 		{
+			VkDeviceMemory deviceMemory;
 			Uint64 offset;
 			Uint64 unalignedOffset;
 			Uint64 size;
-			VulkanMemoryPage* pPage = nullptr;
 			void* mappedData = nullptr;
+
+			VulkanMemoryPage* pPage = nullptr;
+
+			bool isDedicatedAllocation;
+			VkDevice device; // For freeing dedicated allocation
 
 			void Free();
 		};
@@ -137,7 +142,6 @@ namespace cube
 		/////////////////////////
 
 		// TODO: Async Allocator
-		// TODO: Dedicated allocation
 		class VulkanMemoryManager
 		{
 		public:
@@ -151,6 +155,8 @@ namespace cube
 
 			VulkanAllocation Allocate(Uint64 size, Uint64 alignment, MemoryUsage usage);
 			VulkanAllocation Allocate(const VkMemoryRequirements& memRequirements, MemoryUsage usage);
+			VulkanAllocation AllocateDedicated(const VkMemoryRequirements2& memRequirements,
+				const VkMemoryDedicatedAllocateInfo& dediAllocInfo, MemoryUsage usage);
 
 		private:
 			SPtr<VulkanLogicalDevice> mDevice;
@@ -158,5 +164,13 @@ namespace cube
 			Array<Uint32, (Uint32)MemoryUsage::Count> mHeapIndexAsMemoryUsage;
 			Vector<VulkanMemoryHeap> mHeaps;
 		};
+
+		inline void VulkanAllocation::Free()
+		{
+			if(!isDedicatedAllocation)
+				pPage->Free(*this);
+			else
+				vkFreeMemory(device, deviceMemory, nullptr);
+		}
 	} // namespace render
 } // namespace cube

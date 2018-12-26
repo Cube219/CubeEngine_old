@@ -29,6 +29,8 @@ namespace cube
 			
 			Uint32 mipLevels;
 
+			bool isDedicated = false;
+
 			const char* debugName = nullptr;
 		};
 

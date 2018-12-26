@@ -20,7 +20,7 @@ namespace cube
 			const Vector<VkQueueFamilyProperties>& GetQueueFamilyProperties() const { return mQueueFamilyProperties; }
 
 			Uint32 GetMemoryTypeIndex(Uint32 memoryTypeBits, VkMemoryPropertyFlags requiredFlags, VkMemoryPropertyFlags preferrdFlags);
-			VkPhysicalDeviceMemoryProperties GetMemoryProperties() const { return mMemProperties; }
+			const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return mMemProperties; }
 
 		private:
 			Uint32 CountBits(Uint32 flags);
