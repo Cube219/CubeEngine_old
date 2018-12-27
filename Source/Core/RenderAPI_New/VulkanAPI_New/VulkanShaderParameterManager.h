@@ -4,6 +4,7 @@
 
 #include "VkObject.h"
 #include "VulkanMemoryManager.h"
+#include "BaseRenderAPI_New/Utilities/VariableSizeMemoryPage.h"
 
 namespace cube
 {
@@ -54,7 +55,7 @@ namespace cube
 			Uint64 mMinAlignment;
 
 			Uint64 mStartOffset;
-			Uint64 mCurrentOffset;
+			VariableSizeMemoryPage mPageForNonPerFrame; // Not include perFrame area
 
 			Uint64 mStartFrameOffset;
 			Uint64 mCurrentFrameOffset;

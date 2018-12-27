@@ -20,6 +20,8 @@ namespace cube
 			Uint32 heapIndex, ShaderParameterType type) : 
 			mHeapIndex(heapIndex), mHeapType(type)
 		{
+			VkResult res;
+
 			auto& limits = device->GetParentPhysicalDevice().GetProperties().limits;
 
 			VkBufferCreateInfo bufInfo;
@@ -70,10 +72,13 @@ namespace cube
 
 			mBufferMemoryAllocation = memManager.Allocate(memRequire, MemoryUsage::CPUtoGPU);
 
+			res = vkBindBufferMemory(mBuffer.GetVkDevice(), mBuffer.mObject,
+				mBufferMemoryAllocation.deviceMemory, mBufferMemoryAllocation.offset);
+
 			mStartOffset = mBufferMemoryAllocation.offset;
-			mCurrentOffset = mStartOffset;
 			mEndOffset = mBufferMemoryAllocation.offset + mBufferMemoryAllocation.size;
-			
+			mPageForNonPerFrame = VariableSizeMemoryPage(mBufferMemoryAllocation.size / 2, mStartOffset);
+
 			mStartFrameOffset = mStartOffset + (mBufferMemoryAllocation.size / 2);
 			mCurrentFrameOffset = mStartFrameOffset;
 		}
@@ -86,29 +91,16 @@ namespace cube
 
 		VulkanShaderParameterAllocation VulkanShaderParameterHeap::Allocate(Uint64 size)
 		{
-			//     |<-------------adjustedSize----------->|
-			//     |        |                             |       
-			//     |        |<-----------size------------>|
-			//  offset alignedOffset                   newOffset
-			Uint64 alignedOffset = Align(mCurrentOffset, mMinAlignment);
-			
-			// TODO: 현재는 Ring buffer식으로 할당을 하는데 검사 logic이 없어서 덮어씌어질 수 있음
-			//       차후 다른 방식으로 구현?
-			if(alignedOffset + size >= mStartFrameOffset) {
-				mCurrentOffset = mStartOffset;
-				alignedOffset = Align(mCurrentOffset, mMinAlignment);
-			}
+			VariableSizeMemoryPage::Allocation alloc = mPageForNonPerFrame.Allocate(size, mMinAlignment);
 
 			VulkanShaderParameterAllocation allocation;
 			allocation.type = mHeapType;
 			allocation.isPerFrame = false;
 			allocation.buffer = mBuffer.mObject;
-			allocation.pData = (char*)mBufferMemoryAllocation.mappedData + (alignedOffset);
+			allocation.pData = (char*)mBufferMemoryAllocation.mappedData + alloc.offset;
 			allocation.size = size;
-			allocation.dynamicOffset = alignedOffset;
-			allocation.dynamicUnalignedOffset = mCurrentOffset;
-
-			mCurrentOffset = alignedOffset + size;
+			allocation.dynamicOffset = alloc.offset;
+			allocation.dynamicUnalignedOffset = alloc.unalignedOffset;
 
 			return allocation;
 		}
@@ -142,7 +134,10 @@ namespace cube
 				return;
 			*/
 
-			// TODO: Free하는 Logic 추가
+			VariableSizeMemoryPage::Allocation alloc{allocation.dynamicOffset,
+				allocation.dynamicUnalignedOffset, allocation.size};
+
+			mPageForNonPerFrame.Free(alloc);
 		}
 
 		void VulkanShaderParameterHeap::DiscardPerFrame()

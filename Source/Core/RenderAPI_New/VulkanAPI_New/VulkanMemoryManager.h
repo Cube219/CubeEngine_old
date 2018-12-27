@@ -2,6 +2,7 @@
 
 #include "VulkanAPIHeader.h"
 
+#include "BaseRenderAPI_New/Utilities/VariableSizeMemoryPage.h"
 #include "EngineCore/Thread/MutexLock.h"
 #include "EngineCore/Assertion.h"
 
@@ -9,13 +10,6 @@ namespace cube
 {
 	namespace render
 	{
-		template <typename T>
-		T Align(T offset, T alignment)
-		{
-			CHECK((alignment & (alignment - 1)) == 0, "Alignment({0}) must be power of 2.", alignment);
-			return (offset + (alignment - 1)) & ~(alignment - 1);
-		}
-
 		struct VulkanAllocation
 		{
 			VkDeviceMemory deviceMemory;
@@ -58,30 +52,12 @@ namespace cube
 			VkDeviceMemory GetVkDeviceMemory() const { return mDeviceMemory; }
 
 		private:
-			struct FreeBlock;
-
-			using OrderByOffsetMap = Map<Uint64, FreeBlock>;
-			using OrderBySizeMultiMap = MultiMap<Uint64, OrderByOffsetMap::iterator>;
-
-			struct FreeBlock
-			{
-				Uint64 size;
-				OrderBySizeMultiMap::iterator orderBySizeIter;
-				FreeBlock(Uint64 size) : size(size) {}
-			};
-
-			void InsertFreeBlock(Uint64 offset, Uint64 size);
-			void RemoveFreeBlock(OrderByOffsetMap::iterator iter);
-
 			VulkanMemoryHeap& mMyHeap;
+
+			VariableSizeMemoryPage mPage;
 
 			VkDeviceMemory mDeviceMemory;
 			void* mMappedData;
-
-			Uint64 mMaxSize;
-			Uint64 mFreeSize;
-			OrderByOffsetMap mFreeBlocksOrderByOffset;
-			OrderBySizeMultiMap mFreeBlocksOrderBySize;
 		};
 
 		//////////////////////

@@ -16,7 +16,7 @@ namespace cube
 		//////////////////////
 
 		VulkanMemoryPage::VulkanMemoryPage(VulkanMemoryHeap& myHeap, Uint64 size, MemoryUsage memoryUsage, Uint32 memoryTypeIndex) :
-			mMyHeap(myHeap), mMappedData(nullptr), mMaxSize(size), mFreeSize(size)
+			mMyHeap(myHeap), mMappedData(nullptr), mPage(size, 0)
 		{
 			VkResult res;
 
@@ -60,8 +60,6 @@ namespace cube
 			VulkanDebug::SetObjectName(myHeap.mDevice->GetHandle(), mDeviceMemory,
 				fmt::format("VulkanMemoryPage (Size: {0}, MemoryTypeIndex: {1} {2})",
 					size, memoryTypeIndex, memoryUsageDebugName).c_str());
-
-			InsertFreeBlock(0, size);
 		}
 
 		VulkanMemoryPage::~VulkanMemoryPage()
@@ -75,156 +73,28 @@ namespace cube
 
 		VulkanAllocation VulkanMemoryPage::Allocate(Uint64 size, Uint64 alignment)
 		{
-			auto smallestFreeBlockItIt = mFreeBlocksOrderBySize.lower_bound(size + alignment);
-			if(smallestFreeBlockItIt == mFreeBlocksOrderBySize.end()) {
+			VariableSizeMemoryPage::Allocation alloc = mPage.Allocate(size, alignment);
+			if(alloc.offset == Uint64InvalidValue) {
 				return VulkanAllocation{ VK_NULL_HANDLE, 0, 0, 0, nullptr, nullptr, false, VK_NULL_HANDLE };
 			}
-			auto smallestFreeBlockIt = smallestFreeBlockItIt->second;
-
-			//     |<----------------------oldSize------ ..... ----------------->|
-			//     |                               |<--- ..... ---newSize------->|
-			//     |            |                  |     .....                   |
-			//     |            |<------size------>|     .....                   |
-			// oldOffset  alignedOffset       newOffset
-			Uint64 oldFreeBlockOffset = smallestFreeBlockIt->first;
-			Uint64 oldFreeBlockSize = smallestFreeBlockIt->second.size;
-
-			Uint64 alignedOffset = Align(oldFreeBlockOffset, alignment);
-
-			Uint64 newFreeBlockOffset = alignedOffset + size;
-			Uint64 newFreeBlockSize = oldFreeBlockSize - (alignedOffset - oldFreeBlockOffset) - size;
-
-			Uint64 unalignedOffset = oldFreeBlockOffset;
-
-			RemoveFreeBlock(smallestFreeBlockIt);
-			InsertFreeBlock(newFreeBlockOffset, newFreeBlockSize);
-
-			mFreeSize -= size + (alignedOffset - oldFreeBlockOffset);
 
 			void* allocMappedData = nullptr;
 			if(mMappedData != nullptr) {
-				allocMappedData = (char*)mMappedData + alignedOffset;
+				allocMappedData = (char*)mMappedData + alloc.offset;
 			}
 
-			return VulkanAllocation{mDeviceMemory, alignedOffset, unalignedOffset, size, allocMappedData, this, false, VK_NULL_HANDLE};
+			return VulkanAllocation{ mDeviceMemory, alloc.offset, alloc.unalignedOffset, size, allocMappedData, this, false, VK_NULL_HANDLE };
 		}
 
 		void VulkanMemoryPage::Free(VulkanAllocation& alloc)
 		{
-			Uint64 freeOffset = alloc.unalignedOffset;
-			Uint64 freeSize = alloc.size + (alloc.offset - alloc.unalignedOffset);
-
-			auto nextBlockIter = mFreeBlocksOrderByOffset.upper_bound(freeOffset);
-			Uint64 nextOffset;
-			Uint64 nextSize;
-			if(nextBlockIter != mFreeBlocksOrderByOffset.end()) {
-				nextOffset = nextBlockIter->first;
-				nextSize = nextBlockIter->second.size;
-			} else {
-				nextOffset = 0;
-				nextSize = 0;
-			}
-
-			auto prevBlockIter = nextBlockIter;
-			Uint64 prevOffset;
-			Uint64 prevSize;
-			if(prevBlockIter != mFreeBlocksOrderByOffset.begin()) {
-				--prevBlockIter;
-				prevOffset = prevBlockIter->first;
-				prevSize = prevBlockIter->second.size;
-			} else {
-				prevBlockIter = mFreeBlocksOrderByOffset.end();
-				prevOffset = 0;
-				prevSize = 0;
-			}
-
-#ifdef _DEBUG
-			// Check overlap between new and next
-			if(nextBlockIter != mFreeBlocksOrderByOffset.end()) {
-				CHECK((freeOffset + freeSize) <= nextOffset, "Invalid free block insertion. New free block overlap next free block.");
-			} else {
-				CHECK((freeOffset + freeSize) <= mMaxSize, "Invalid free block insertion. New free block exceeds max size.");
-			}
-			// Check overlap between prev and new
-			if(prevBlockIter != mFreeBlocksOrderByOffset.end()) {
-				CHECK((prevOffset + prevSize) <= freeOffset, "Invalid free block insertion. New free block overlap previous free block.");
-			}
-#endif // _DEBUG
-			
-			if(prevBlockIter != mFreeBlocksOrderByOffset.end() && prevOffset + prevSize == freeOffset) {
-				//     |                    |                  |
-				//     |<-----prevSize----->|<----freeSize---->|
-				//     |                    |                  |
-				// prevOffset           freeOffset
-
-				if(nextBlockIter != mFreeBlocksOrderByOffset.end() && freeOffset + freeSize == nextOffset) {
-					//     |                    |                  |                    |
-					//     |<-----prevSize----->|<----freeSize---->|<-----nextSize----->|
-					//     |                    |                  |                    |
-					// prevOffset           freeOffset         nextOffset
-					// -> Merge prev, free, next block
-					RemoveFreeBlock(nextBlockIter);
-					prevSize += freeSize + nextSize;
-					prevBlockIter->second.size = prevSize;
-				} else {
-					//     |                    |                  |       |                    |
-					//     |<-----prevSize----->|<----freeSize---->| ..... |<-----nextSize----->|
-					//     |                    |                  |       |                    |
-					// prevOffset           freeOffset                 nextOffset
-					// -> Merge prev, free
-					prevSize += freeSize;
-					prevBlockIter->second.size = prevSize;
-				}
-			} else {
-				//     |                    |       |                  |
-				//     |<-----prevSize----->| ..... |<----freeSize---->|
-				//     |                    |       |                  |
-				// prevOffset                   freeOffset
-
-				if(nextBlockIter != mFreeBlocksOrderByOffset.end() && freeOffset + freeSize == nextOffset) {
-					//     |                    |       |                  |                    |
-					//     |<-----prevSize----->| ..... |<----freeSize---->|<-----nextSize----->|
-					//     |                    |       |                  |                    |
-					// prevOffset                   freeOffset          nextOffset
-					// -> Merge free, next
-					RemoveFreeBlock(nextBlockIter);
-					nextSize += freeSize;
-					nextOffset = freeOffset;
-					InsertFreeBlock(nextOffset, nextSize);
-				} else {
-					//     |                    |       |                  |       |                    |
-					//     |<-----prevSize----->| ..... |<----freeSize---->| ..... |<-----nextSize----->|
-					//     |                    |       |                  |       |                    |
-					// prevOffset                   freeOffset                 nextOffset
-					// -> Create new free block
-					InsertFreeBlock(freeOffset, freeSize);
-				}
-			}
-
-			alloc.pPage = nullptr;
-
-			mFreeSize += freeSize;
+			VariableSizeMemoryPage::Allocation allocation{ alloc.offset, alloc.unalignedOffset, alloc.size };
+			mPage.Free(allocation);
 		}
 
 		void VulkanMemoryPage::Free(VulkanAllocation&& alloc)
 		{
 			Free(alloc);
-		}
-
-		void VulkanMemoryPage::InsertFreeBlock(Uint64 offset, Uint64 size)
-		{
-			auto newFreeBlockIterAndResult = mFreeBlocksOrderByOffset.emplace(offset, size);
-			CHECK(newFreeBlockIterAndResult.second, "Failed to insert free block in mFreeBlocksOrderByOffset.");
-			auto newFreeBlockIter = newFreeBlockIterAndResult.first;
-
-			auto orderBySizeIter = mFreeBlocksOrderBySize.emplace(size, newFreeBlockIter);
-			newFreeBlockIter->second.orderBySizeIter = orderBySizeIter;
-		}
-
-		void VulkanMemoryPage::RemoveFreeBlock(OrderByOffsetMap::iterator iter)
-		{
-			mFreeBlocksOrderBySize.erase(iter->second.orderBySizeIter);
-			mFreeBlocksOrderByOffset.erase(iter);
 		}
 
 		//////////////////////
