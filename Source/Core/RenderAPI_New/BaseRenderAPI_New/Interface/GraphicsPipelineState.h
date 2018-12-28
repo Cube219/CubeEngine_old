@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../RenderAPIHeader.h"
 
@@ -23,7 +23,7 @@ namespace cube
 			FillMode fillMode;
 			CullMode cullMode;
 			TriangleFrontFace frontFace;
-			// TODO: ¸¹Àº ±â´Éµé Ãß°¡
+			// TODO: ë§ì€ ê¸°ëŠ¥ë“¤ ì¶”ê°€
 		};
 
 		struct StencilState
@@ -46,9 +46,9 @@ namespace cube
 			StencilState frontFace;
 			StencilState backFace;
 
-			// TODO: DepthBoundTest´Â ³ªÁß¿¡ ±¸Çö?
-			//       ±¸ÇöÇÑ´Ù¸é µ¿ÀûÀ¸·Î ±¸Çö
-			//       VkPhysicalDeviceFeatures.depthBounds°¡ True¿©¾ß °¡´É
+			// TODO: DepthBoundTestëŠ” ë‚˜ì¤‘ì— êµ¬í˜„?
+			//       êµ¬í˜„í•œë‹¤ë©´ ë™ì ìœ¼ë¡œ êµ¬í˜„
+			//       VkPhysicalDeviceFeatures.depthBoundsê°€ Trueì—¬ì•¼ ê°€ëŠ¥
 		};
 
 		struct RenderTargetBlendState
@@ -67,7 +67,7 @@ namespace cube
 		};
 		struct BlendState
 		{
-			// TODO: LogicOp ±¸Çö?
+			// TODO: LogicOp êµ¬í˜„?
 
 			Vector<RenderTargetBlendState> renderTargets;
 		};
@@ -92,7 +92,6 @@ namespace cube
 			SPtr<Shader> domainShader = nullptr;
 			SPtr<Shader> hullShader = nullptr;
 			SPtr<Shader> geometryShader = nullptr;
-			// RN: PipelineLayoutÀ» ¾î¶»°Ô ÇÒ±î? RenderPass´Â?
 
 			SPtr<RenderPass> renderPass;
 

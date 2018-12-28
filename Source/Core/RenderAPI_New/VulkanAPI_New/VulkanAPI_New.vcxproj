@@ -163,6 +163,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Interface\BufferViewVk.cpp" />
+    <ClCompile Include="Interface\ComputePipelineStateVk.cpp" />
     <ClCompile Include="Interface\FenceVk.cpp" />
     <ClCompile Include="Interface\GraphicsPipelineStateVk.cpp" />
     <ClCompile Include="Interface\RenderPassVk.cpp" />
@@ -193,6 +194,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interface\BufferViewVk.h" />
+    <ClInclude Include="Interface\ComputePipelineStateVk.h" />
     <ClInclude Include="Interface\FenceVk.h" />
     <ClInclude Include="Interface\GraphicsPipelineStateVk.h" />
     <ClInclude Include="Interface\RenderPassVk.h" />

@@ -22,9 +22,12 @@ namespace cube
 
 			virtual void CopyBuffer(const Buffer& src, Buffer& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) override final;
 
+			virtual void SetComputePipelineState(SPtr<ComputePipelineState>& pipelineState) override final;
+			virtual void Dispatch(Uint32 groupX, Uint32 groupY, Uint32 groupZ) override final;
+
 			virtual void SetRenderPass(SPtr<RenderPass>& renderPass, Uint32 renderTargetIndex = 0) override final;
 
-			virtual void SetPipelineState(SPtr<GraphicsPipelineState>& pipelineState) override final;
+			virtual void SetGraphicsPipelineState(SPtr<GraphicsPipelineState>& pipelineState) override final;
 
 			virtual void SetViewports(Uint32 numViewports, const Viewport* pViewPorts) override final;
 			virtual void SetScissors(Uint32 numScissors, const Rect2D* pScissors) override final;

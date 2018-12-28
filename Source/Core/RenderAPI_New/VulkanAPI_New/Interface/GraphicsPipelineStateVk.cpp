@@ -204,6 +204,7 @@ namespace cube
 				shaderStages.push_back(DPCast(ShaderVk)(attr.geometryShader)->GetPipelineShaderStageInfo());
 
 			// Pipeline layout (ShaderParametersLayout)
+			// Equivalent in ComputePipelineStateVk
 			VkPipelineLayoutCreateInfo layoutInfo;
 			layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 			layoutInfo.pNext = nullptr;
@@ -221,7 +222,7 @@ namespace cube
 				if(layout->HasRawDataParameter() == true) {
 					CHECK(layoutInfo.pushConstantRangeCount == 0, "Pipeline doen't have two or more RawDataParameter.");
 
-					pushConstantRange.stageFlags = VK_SHADER_STAGE_ALL;
+					pushConstantRange.stageFlags = VK_SHADER_STAGE_ALL_GRAPHICS; // Different in ComputePipelineStateVk
 					pushConstantRange.offset = 0;
 					pushConstantRange.size = layout->GetRawDataParameterSize();
 
@@ -265,6 +266,7 @@ namespace cube
 
 		GraphicsPipelineStateVk::~GraphicsPipelineStateVk()
 		{
+			mLayout.Release();
 			mPipeline.Release();
 		}
 	} // namespace render

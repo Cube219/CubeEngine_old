@@ -21,6 +21,8 @@ namespace cube
 		
 		struct GraphicsPipelineStateAttribute;
 		class GraphicsPipelineState;
+		struct ComputePipelineStateAttribute;
+		class ComputePipelineState;
 
 		struct TextureAttribute;
 		class Texture;

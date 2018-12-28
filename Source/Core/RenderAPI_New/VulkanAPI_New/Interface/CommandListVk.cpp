@@ -6,6 +6,7 @@
 #include "RenderPassVk.h"
 #include "RenderTargetVk.h"
 #include "GraphicsPipelineStateVk.h"
+#include "ComputePipelineStateVk.h"
 #include "EngineCore/Assertion.h"
 
 namespace cube
@@ -65,8 +66,26 @@ namespace cube
 			vkCmdCopyBuffer(mCommandBuffer, DCast(const BufferVk&)(src).GetHandle(), DCast(BufferVk&)(dst).GetHandle(), 1, &copy);
 		}
 
+		void CommandListVk::SetComputePipelineState(SPtr<ComputePipelineState>& pipelineState)
+		{
+			CHECK(mUsage == CommandListUsage::Compute, "Only compute command list can set compute pipeline state.");
+
+			SPtr<ComputePipelineStateVk> pipelineVk = DPCast(ComputePipelineStateVk)(pipelineState);
+
+			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineVk->GetHandle());
+		}
+
+		void CommandListVk::Dispatch(Uint32 groupX, Uint32 groupY, Uint32 groupZ)
+		{
+			CHECK(mUsage == CommandListUsage::Compute, "Only compute command list can dispatch compute shaders.");
+
+			vkCmdDispatch(mCommandBuffer, groupX, groupY, groupZ);
+		}
+
 		void CommandListVk::SetRenderPass(SPtr<RenderPass>& renderPass, Uint32 renderTargetIndex)
 		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can set render pass.");
+
 			auto renderPassVk = DPCast(RenderPassVk)(renderPass);
 
 			if(mUsage == CommandListUsage::Graphics && mIsSub == true) {
@@ -120,8 +139,10 @@ namespace cube
 			}
 		}
 
-		void CommandListVk::SetPipelineState(SPtr<GraphicsPipelineState>& pipelineState)
+		void CommandListVk::SetGraphicsPipelineState(SPtr<GraphicsPipelineState>& pipelineState)
 		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can set graphics pipeline state.");
+
 			SPtr<GraphicsPipelineStateVk> pipelineVk = DPCast(GraphicsPipelineStateVk)(pipelineState);
 
 			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineVk->GetHandle());
@@ -129,6 +150,8 @@ namespace cube
 
 		void CommandListVk::SetViewports(Uint32 numViewports, const Viewport* pViewPorts)
 		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can set viewports.");
+
 			Vector<VkViewport> vp(numViewports);
 			for(Uint64 i = 0; i < numViewports; i++) {
 				vp[i].x = pViewPorts[i].x;
@@ -144,6 +167,8 @@ namespace cube
 
 		void CommandListVk::SetScissors(Uint32 numScissors, const Rect2D* pScissors)
 		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can set scissors.");
+
 			Vector<VkRect2D> sc(numScissors);
 			for(Uint64 i = 0; i < numScissors; i++) {
 				sc[i].offset.x = pScissors[i].x;
@@ -157,6 +182,8 @@ namespace cube
 
 		void CommandListVk::BindVertexBuffers(Uint32 startIndex, Uint32 numBuffers, SPtr<Buffer>* pBuffers, Uint32* pOffsets)
 		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can bind vertex buffers.");
+
 			Vector<VkBuffer> bufs(numBuffers);
 			Vector<Uint64> offsets(numBuffers);
 			for(Uint64 i = 0; i < numBuffers; i++) {
@@ -169,16 +196,22 @@ namespace cube
 
 		void CommandListVk::BindIndexBuffer(SPtr<Buffer> buf, Uint32 offset)
 		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can bind index buffers.");
+
 			vkCmdBindIndexBuffer(mCommandBuffer, DPCast(BufferVk)(buf)->GetHandle(), offset, VK_INDEX_TYPE_UINT32);
 		}
 
 		void CommandListVk::Draw(Uint32 numVertices, Uint32 baseVertex, Uint32 numInstances, Uint32 baseInstance)
 		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can draw.");
+
 			vkCmdDraw(mCommandBuffer, numVertices, numInstances, baseVertex, baseInstance);
 		}
 
 		void CommandListVk::DrawIndexed(Uint32 numIndices, Uint32 baseIndex, Uint32 baseVertex, Uint32 numInstances, Uint32 baseInstance)
 		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can draw indexed.");
+
 			vkCmdDrawIndexed(mCommandBuffer, numIndices, numInstances, baseIndex, baseVertex, baseInstance);
 		}
 

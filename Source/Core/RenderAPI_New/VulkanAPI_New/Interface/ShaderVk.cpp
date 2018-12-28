@@ -33,7 +33,7 @@ namespace cube
 			mShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			mShaderStageInfo.pNext = nullptr;
 			mShaderStageInfo.flags = 0;
-			mShaderStageInfo.pSpecializationInfo = nullptr;
+			mShaderStageInfo.pSpecializationInfo = nullptr; // TODO: 차후 구현?
 
 			switch(attr.type) {
 				case ShaderType::Vertex:   mShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT; break;

@@ -42,6 +42,7 @@ namespace cube
 		class SwapChainVk;
 
 		class GraphicsPipelineStateVk;
+		class ComputePipelineStateVk;
 
 		class ShaderVk;
 		class ShaderParametersVk;

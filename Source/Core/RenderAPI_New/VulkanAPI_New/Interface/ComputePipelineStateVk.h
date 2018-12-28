@@ -16,8 +16,11 @@ namespace cube
 			ComputePipelineStateVk(DeviceVk& device, const ComputePipelineStateAttribute& attr);
 			virtual ~ComputePipelineStateVk();
 
+			VkPipeline GetHandle() const { return mPipeline.mObject; }
+
 		private:
 			VkPipelineWrapper mPipeline;
+			VkPipelineLayoutWrapper mLayout;
 		};
 	} // namespace render
 } // namespace cube

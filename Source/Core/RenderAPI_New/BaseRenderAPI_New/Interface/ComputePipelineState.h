@@ -8,6 +8,10 @@ namespace cube
 	{
 		struct ComputePipelineStateAttribute
 		{
+			SPtr<Shader> shader;
+
+			Vector<SPtr<ShaderParametersLayout>> shaderParameterLayouts;
+
 			const char* debugName = nullptr;
 		};
 

@@ -59,6 +59,9 @@
     <ClCompile Include="Interface\ShaderParametersVk.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
+    <ClCompile Include="Interface\ComputePipelineStateVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="VulkanShaderParameterManager.h" />
     <ClInclude Include="Interface\ShaderParametersVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ComputePipelineStateVk.h">
       <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
