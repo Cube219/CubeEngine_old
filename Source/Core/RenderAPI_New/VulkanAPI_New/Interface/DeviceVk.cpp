@@ -9,7 +9,13 @@
 #include "CommandListVk.h"
 #include "TextureVk.h"
 #include "SwapChainVk.h"
+#include "RenderTargetVk.h"
+#include "RenderPassVk.h"
 #include "ShaderParametersLayoutVk.h"
+#include "ShaderVk.h"
+#include "GraphicsPipelineStateVk.h"
+#include "ComputePipelineStateVk.h"
+#include "FenceVk.h"
 
 namespace cube
 {
@@ -52,9 +58,39 @@ namespace cube
 			return std::make_shared<SwapChainVk>(mInstance, *this, attr, mQueueManager, mSemaphorePool);
 		}
 
+		SPtr<RenderTarget> DeviceVk::CreateRenderTarget(const RenderTargetAttribute& attr)
+		{
+			return std::make_shared<RenderTargetVk>(attr);
+		}
+
+		SPtr<RenderPass> DeviceVk::CreateRenderPass(const RenderPassAttribute& attr)
+		{
+			return std::make_shared<RenderPassVk>(*this, attr);
+		}
+
 		SPtr<ShaderParametersLayout> DeviceVk::CreateShaderParametersLayout(const ShaderParametersLayoutAttribute& attr)
 		{
 			return std::make_shared<ShaderParametersLayoutVk>(*this, attr);
+		}
+
+		SPtr<Shader> DeviceVk::CreateShader(const ShaderAttribute& attr)
+		{
+			return std::make_shared<ShaderVk>(*this, attr);
+		}
+
+		SPtr<GraphicsPipelineState> DeviceVk::CreateGraphicsPipelineState(const GraphicsPipelineStateAttribute& attr)
+		{
+			return std::make_shared<GraphicsPipelineStateVk>(*this, attr);
+		}
+
+		SPtr<ComputePipelineState> DeviceVk::CreateComputePipelineState(const ComputePipelineStateAttribute& attr)
+		{
+			return std::make_shared<ComputePipelineStateVk>(*this, attr);
+		}
+
+		SPtr<Fence> DeviceVk::GetFence(const char* debugName)
+		{
+			return mFencePool.GetFence(debugName);;
 		}
 
 		SPtr<Fence> DeviceVk::SubmitCommandList(SPtr<CommandList>& commandList)

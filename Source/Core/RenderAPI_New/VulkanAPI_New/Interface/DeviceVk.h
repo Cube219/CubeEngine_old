@@ -26,16 +26,20 @@ namespace cube
 			virtual ~DeviceVk();
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) override final;
-			virtual SPtr<CommandList> GetCommandList(const CommandListAttribute& attr) override final;
 			virtual SPtr<Texture> CreateTexture(const TextureAttribute& attr) override final;
 			virtual SPtr<SwapChain> CreateSwapChain(const SwapChainAttribute& attr) override final;
-			virtual SPtr<ShaderParametersLayout> CreateShaderParametersLayout(const ShaderParametersLayoutAttribute& attr) override final;
-			// CreateShader
-			// CreateTexture
-			// CreateSampler
-			// CreatePipelineState
-			// CreateFence
 
+			virtual SPtr<RenderTarget> CreateRenderTarget(const RenderTargetAttribute& attr) override final;
+			virtual SPtr<RenderPass> CreateRenderPass(const RenderPassAttribute& attr) override final;
+
+			virtual SPtr<ShaderParametersLayout> CreateShaderParametersLayout(const ShaderParametersLayoutAttribute& attr) override final;
+			virtual SPtr<Shader> CreateShader(const ShaderAttribute& attr) override final;
+			virtual SPtr<GraphicsPipelineState> CreateGraphicsPipelineState(const GraphicsPipelineStateAttribute& attr) override final;
+			virtual SPtr<ComputePipelineState> CreateComputePipelineState(const ComputePipelineStateAttribute& attr) override final;
+
+			virtual SPtr<Fence> GetFence(const char* debugName = "") override final;
+
+			virtual SPtr<CommandList> GetCommandList(const CommandListAttribute& attr) override final;
 			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) override final;
 
 			virtual void StartFrame() override final;

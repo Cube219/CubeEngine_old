@@ -32,6 +32,7 @@ namespace cube
 		struct SwapChainAttribute;
 		class SwapChain;
 
+		struct ShaderAttribute;
 		class Shader;
 
 		struct ShaderParametersLayoutAttribute;
