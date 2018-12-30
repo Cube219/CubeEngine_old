@@ -168,6 +168,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClCompile Include="Interface\GraphicsPipelineStateVk.cpp" />
     <ClCompile Include="Interface\RenderPassVk.cpp" />
     <ClCompile Include="Interface\RenderTargetVk.cpp" />
+    <ClCompile Include="Interface\SamplerVk.cpp" />
     <ClCompile Include="Interface\ShaderParametersLayoutVk.cpp" />
     <ClCompile Include="Interface\ShaderParametersVk.cpp" />
     <ClCompile Include="Interface\ShaderVk.cpp" />
@@ -199,6 +200,7 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ClInclude Include="Interface\GraphicsPipelineStateVk.h" />
     <ClInclude Include="Interface\RenderPassVk.h" />
     <ClInclude Include="Interface\RenderTargetVk.h" />
+    <ClInclude Include="Interface\SamplerVk.h" />
     <ClInclude Include="Interface\ShaderParametersLayoutVk.h" />
     <ClInclude Include="Interface\ShaderParametersVk.h" />
     <ClInclude Include="Interface\ShaderVk.h" />

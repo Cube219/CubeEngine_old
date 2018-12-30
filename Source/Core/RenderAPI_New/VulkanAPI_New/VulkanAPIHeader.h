@@ -11,6 +11,31 @@ namespace cube
 {
 	namespace render
 	{
+		class DeviceVk;
+
+		class BufferVk;
+		class BufferViewVk;
+
+		class CommandListVk;
+		class FenceVk;
+
+		class GraphicsPipelineStateVk;
+		class ComputePipelineStateVk;
+
+		class TextureVk;
+		class TextureViewVk;
+
+		class SwapChainVk;
+
+		class ShaderVk;
+		class ShaderParametersVk;
+		class ShaderParametersLayoutVk;
+
+		class SamplerVk;
+
+		class RenderTargetVk;
+		class RenderPassVk;
+
 		class VulkanPhysicalDevice;
 		class VulkanLogicalDevice;
 
@@ -22,37 +47,15 @@ namespace cube
 		struct VulkanUploadAllocation;
 		class VulkanUploadHeap;
 
-		class DeviceVk;
-		class VulkanQueueManager;
-
-		class BufferVk;
-		class BufferViewVk;
-
-		class TextureVk;
-		class TextureViewVk;
-
-		class VulkanCommandListPool;
-		class CommandListVk;
-
-		class VulkanFencePool;
-		class FenceVk;
-
-		class VulkanSemaphorePool;
-
-		class SwapChainVk;
-
-		class GraphicsPipelineStateVk;
-		class ComputePipelineStateVk;
-
-		class ShaderVk;
-		class ShaderParametersVk;
-		class ShaderParametersLayoutVk;
 		struct VulkanShaderParameterAllocation;
 		class VulkanShaderParameterHeap;
 		class VulkanShaderParameterManager;
 
-		class RenderTargetVk;
-		class RenderPassVk;
+		class VulkanQueueManager;
+
+		class VulkanCommandListPool;
+		class VulkanFencePool;
+		class VulkanSemaphorePool;
 	} // namespace render
 } // namespace cube
 

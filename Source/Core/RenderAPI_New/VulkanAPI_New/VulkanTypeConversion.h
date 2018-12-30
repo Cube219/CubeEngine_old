@@ -19,6 +19,9 @@ namespace cube
 		VkBlendOp BlendOperatorToVkBlendOp(BlendOperator blendOp);
 		VkAttachmentLoadOp LoadOperatorToVkAttachmentLoadOp(LoadOperator loadOp);
 		VkAttachmentStoreOp StoreOperatorToVkAttachmentStoreOp(StoreOperator storeOp);
+		VkFilter FilterTypeToVkFilter(FilterType filter);
+		VkSamplerMipmapMode FilterTypeToVkSamplerMipmapMode(FilterType filter);
+		VkSamplerAddressMode AddressModeToVkSamplerAddressMode(AddressMode addressMode);
 
 		static Array<VkFormat, (Uint32)TextureFormat::TextureFormatCount> texFmtToVkFmt;
 	} // namespace render

@@ -62,6 +62,9 @@
     <ClCompile Include="Interface\ComputePipelineStateVk.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
+    <ClCompile Include="Interface\SamplerVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -133,6 +136,9 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="Interface\ComputePipelineStateVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\SamplerVk.h">
       <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>

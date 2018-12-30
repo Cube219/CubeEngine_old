@@ -445,5 +445,22 @@ namespace cube
 			Depth_Bit = 2,
 			Stencil_Bit = 4
 		};
+
+		// Sampler
+		enum class FilterType
+		{
+			Point,
+			Linear,
+			Anisotropy
+		};
+
+		enum class AddressMode
+		{
+			Wrap,
+			BorderColor,
+			Clamp,
+			Mirror,
+			MirrorOnce
+		};
 	} // namesapce render
 } // namespace cube

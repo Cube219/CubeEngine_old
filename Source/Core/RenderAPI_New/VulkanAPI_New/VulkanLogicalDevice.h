@@ -34,6 +34,7 @@ namespace cube
 			VkFramebufferWrapper CreateVkFramebufferWrapper(const VkFramebufferCreateInfo& info, const char* debugName = "");
 			VkDescriptorPoolWrapper CreateVkDescriptorPoolWrapper(const VkDescriptorPoolCreateInfo& info, const char* debugName = "");
 			VkDescriptorSetLayoutWrapper CreateVkDescriptorSetLayoutWrapper(const VkDescriptorSetLayoutCreateInfo& info, const char* debugName = "");
+			VkSamplerWrapper CreateVkSamplerWrapper(const VkSamplerCreateInfo& info, const char* debugName = "");
 
 			void ReleaseVkObject(VkBufferWrapper&& buffer) const;
 			void ReleaseVkObject(VkBufferViewWrapper&& bufView) const;
@@ -48,6 +49,7 @@ namespace cube
 			void ReleaseVkObject(VkFramebufferWrapper&& framebuffer) const;
 			void ReleaseVkObject(VkDescriptorPoolWrapper&& descriptorPool) const;
 			void ReleaseVkObject(VkDescriptorSetLayoutWrapper&& descriptorSetLayout) const;
+			void ReleaseVkObject(VkSamplerWrapper&& sampler) const;
 
 		private:
 			VkDevice mDevice;

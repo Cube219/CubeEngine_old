@@ -17,6 +17,7 @@ namespace cube
 		class Buffer;
 		class BufferView;
 
+		class CommandList;
 		class Fence;
 		
 		struct GraphicsPipelineStateAttribute;
@@ -34,14 +35,12 @@ namespace cube
 
 		struct ShaderAttribute;
 		class Shader;
-
 		struct ShaderParametersLayoutAttribute;
 		class ShaderParametersLayout;
 		class ShaderParameters;
 
+		struct SamplerAttribute;
 		class Sampler;
-
-		class CommandList;
 
 		struct RenderTargetAttribute;
 		class RenderTarget;

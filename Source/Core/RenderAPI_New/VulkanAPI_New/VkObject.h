@@ -78,6 +78,7 @@ namespace cube
 		using VkDescriptorPoolWrapper = VkObject<VkDescriptorPool>;
 		using VkDescriptorSetLayoutWrapper = VkObject<VkDescriptorSetLayout>;
 		using VkDescriptorSetWrapper = VkObject<VkDescriptorSet>;
+		using VkSamplerWrapper = VkObject<VkSampler>;
 
 		// -------------------------------------------------
 		// Helper class for storaging VkObject child classes

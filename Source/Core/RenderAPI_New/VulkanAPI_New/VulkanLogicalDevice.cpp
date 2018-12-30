@@ -275,6 +275,20 @@ namespace cube
 			return VkDescriptorSetLayoutWrapper(setLayout, shared_from_this(), debugName);
 		}
 
+		VkSamplerWrapper VulkanLogicalDevice::CreateVkSamplerWrapper(const VkSamplerCreateInfo& info, const char* debugName)
+		{
+			VkResult res;
+
+			VkSampler sampler;
+			res = vkCreateSampler(mDevice, &info, nullptr, &sampler);
+			CHECK_VK(res, "Failed to create VkSampler '{0}'.", debugName);
+
+			if(debugName != nullptr)
+				VulkanDebug::SetObjectName(mDevice, sampler, debugName);
+
+			return VkSamplerWrapper(sampler, shared_from_this(), debugName);
+		}
+
 		void VulkanLogicalDevice::ReleaseVkObject(VkBufferWrapper&& buffer) const
 		{
 			vkDestroyBuffer(buffer.GetVkDevice(), buffer.mObject, nullptr);
@@ -364,6 +378,13 @@ namespace cube
 			vkDestroyDescriptorSetLayout(mDevice, descriptorSetLayout.mObject, nullptr);
 			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
 			CUBE_LOG(LogType::Info, "Release VkDescriptorSetLayout.");
+		}
+
+		void VulkanLogicalDevice::ReleaseVkObject(VkSamplerWrapper&& sampler) const
+		{
+			vkDestroySampler(mDevice, sampler.mObject, nullptr);
+			// TODO: 이거 나오는지 확인하고 잘 나오면 지움. VkObjectStorage가 잘 작동하는지 확인하기 위함.
+			CUBE_LOG(LogType::Info, "Release VkSampler.");
 		}
 	} // namespace render
 } // namespace cube

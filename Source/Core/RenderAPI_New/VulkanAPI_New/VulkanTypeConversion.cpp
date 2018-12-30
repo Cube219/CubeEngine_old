@@ -297,11 +297,56 @@ namespace cube
 		VkAttachmentStoreOp StoreOperatorToVkAttachmentStoreOp(StoreOperator storeOp)
 		{
 			switch(storeOp) {
-				case StoreOperator::Store:     return VK_ATTACHMENT_STORE_OP_STORE;
+				case StoreOperator::Store:    return VK_ATTACHMENT_STORE_OP_STORE;
 				case StoreOperator::DontCare: return VK_ATTACHMENT_STORE_OP_DONT_CARE;
 				default: ASSERTION_FAILED("Unknown StoreOperator ({0})", (Uint32)storeOp);
 			}
 			return VK_ATTACHMENT_STORE_OP_STORE;
+		}
+
+		VkFilter FilterTypeToVkFilter(FilterType filter)
+		{
+			switch(filter) {
+				case FilterType::Point:
+					return VK_FILTER_NEAREST;
+
+				case FilterType::Linear:
+				case FilterType::Anisotropy:
+					return VK_FILTER_LINEAR;
+
+				default:
+					ASSERTION_FAILED("Unknown FilterType ({0})", (Uint32)filter);
+			}
+			return VK_FILTER_NEAREST;
+		}
+
+		VkSamplerMipmapMode FilterTypeToVkSamplerMipmapMode(FilterType filter)
+		{
+			switch(filter) {
+				case FilterType::Point:
+					return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+
+				case FilterType::Linear:
+				case FilterType::Anisotropy:
+					return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+				default:
+					ASSERTION_FAILED("Unknown FilterType ({0})", (Uint32)filter);
+			}
+			return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		}
+
+		VkSamplerAddressMode AddressModeToVkSamplerAddressMode(AddressMode addressMode)
+		{
+			switch(addressMode) {
+				case AddressMode::Wrap:        return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+				case AddressMode::BorderColor: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+				case AddressMode::Clamp:       return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+				case AddressMode::Mirror:      return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+				case AddressMode::MirrorOnce:  return VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE;
+				default: ASSERTION_FAILED("Unknown AddressMode ({0})", (Uint32)addressMode);
+			}
+			return VK_SAMPLER_ADDRESS_MODE_REPEAT;
 		}
 	} // namespace render
 } // namespace cube
