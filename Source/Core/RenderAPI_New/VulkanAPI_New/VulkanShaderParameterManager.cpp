@@ -53,11 +53,11 @@ namespace cube
 					ASSERTION_FAILED("RawData type is stored in VulkanShaderParameterManager. Not ShaderParameterHeap.");
 					break;
 
-				case ShaderParameterType::Sampler:
-					ASSERTION_FAILED("Sampler type is not implemented.");
-					break;
+				case ShaderParameterType::ConstantImage:
 				case ShaderParameterType::StorageImage:
-					ASSERTION_FAILED("StorageImage type is not implemented.");
+				case ShaderParameterType::SampledImage:
+				case ShaderParameterType::Sampler:
+					ASSERTION_FAILED("Image/Sampler cannot be allocated in VulkanShaderParamterHeap.");
 					break;
 
 				default:
@@ -206,14 +206,16 @@ namespace cube
 				return mStorageHeap.Allocate(size);
 
 			case ShaderParameterType::RawData:
-				return AllocateRawData(size);
+				// return AllocateRawData(size);
+				ASSERTION_FAILED("Rawdata type is not implemented.");
+				break;
 
-			case ShaderParameterType::Sampler:
-				ASSERTION_FAILED("Sampler type is not implemented.");
-				return {};
+			case ShaderParameterType::ConstantImage:
 			case ShaderParameterType::StorageImage:
-				ASSERTION_FAILED("StorageImage type is not implemented.");
-				return {};
+			case ShaderParameterType::SampledImage:
+			case ShaderParameterType::Sampler:
+				ASSERTION_FAILED("Image and sampler cannot be allocated to VulkanShaderParameterManager.");
+				break;
 
 			default:
 				ASSERTION_FAILED("Unknown ShaderParameterType ({0})", (Uint32)type);
@@ -232,14 +234,16 @@ namespace cube
 				return mStorageHeap.AllocatePerFrame(size);
 
 			case ShaderParameterType::RawData:
-				return AllocateRawData(size);
+				// return AllocateRawData(size);
+				ASSERTION_FAILED("Rawdata type is not implemented.");
+				break;
 
-			case ShaderParameterType::Sampler:
-				ASSERTION_FAILED("Sampler type is not implemented.");
-				return {};
+			case ShaderParameterType::ConstantImage:
 			case ShaderParameterType::StorageImage:
-				ASSERTION_FAILED("StorageImage type is not implemented.");
-				return {};
+			case ShaderParameterType::SampledImage:
+			case ShaderParameterType::Sampler:
+				ASSERTION_FAILED("Image and sampler cannot be allocated to VulkanShaderParameterManager.");
+				break;
 
 			default:
 				ASSERTION_FAILED("Unknown ShaderParameterType ({0})", (Uint32)type);
@@ -264,14 +268,14 @@ namespace cube
 				break;
 
 			case ShaderParameterType::RawData:
-				mIsRawDataAllocated = false;
+				// RawData allocation will be freed when calling DiscardFrame function
 				break;
 
-			case ShaderParameterType::Sampler:
-				ASSERTION_FAILED("Sampler type is not implemented.");
-				break;
+			case ShaderParameterType::ConstantImage:
 			case ShaderParameterType::StorageImage:
-				ASSERTION_FAILED("StorageImage type is not implemented.");
+			case ShaderParameterType::SampledImage:
+			case ShaderParameterType::Sampler:
+				ASSERTION_FAILED("Image and sampler cannot be freed to VulkanShaderParameterManager.");
 				break;
 
 			default:
@@ -312,24 +316,6 @@ namespace cube
 			
 			res = vkFreeDescriptorSets(mDescriptorPool.GetVkDevice(), mDescriptorPool.mObject, 1, &descSet);
 			CHECK_VK(res, "Failed to free descriptor set.");
-		}
-
-		VulkanShaderParameterAllocation VulkanShaderParameterManager::AllocateRawData(Uint64 size)
-		{
-			CHECK(mIsRawDataAllocated == false, "RawDataBuffer is already allocated. In Vulkan, only one RawData parameter is allowed.");
-			CHECK(RawDataBufferSize >= size, "RawData cannot be allocated size over {0}. (Allocation size: {1})", RawDataBufferSize, size);
-
-			mIsRawDataAllocated = true;
-
-			VulkanShaderParameterAllocation allocation;
-			allocation.type = ShaderParameterType::RawData;
-			allocation.isPerFrame = false;
-			allocation.buffer = VK_NULL_HANDLE;
-			allocation.pData = mRawDataBuffer;
-			allocation.size = size;
-			allocation.dynamicOffset = 0;
-
-			return allocation;
 		}
 	} // namespace render
 } // namespace cube

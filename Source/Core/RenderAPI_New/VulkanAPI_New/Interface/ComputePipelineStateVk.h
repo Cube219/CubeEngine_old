@@ -17,6 +17,7 @@ namespace cube
 			virtual ~ComputePipelineStateVk();
 
 			VkPipeline GetHandle() const { return mPipeline.mObject; }
+			VkPipelineLayout GetLayout() const { return mLayout.mObject; }
 
 		private:
 			VkPipelineWrapper mPipeline;

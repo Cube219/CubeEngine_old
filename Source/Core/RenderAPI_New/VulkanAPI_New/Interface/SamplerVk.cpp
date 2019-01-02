@@ -23,7 +23,7 @@ namespace cube
 			info.addressModeW = AddressModeToVkSamplerAddressMode(attr.addressW);
 			info.mipLodBias = attr.mipLodBias;
 			info.anisotropyEnable = IsAnisotropicFilter(attr.minFilter);
-			info.maxAnisotropy = attr.maxAnisotropy;
+			info.maxAnisotropy = SCast(float)(attr.maxAnisotropy);
 			info.compareEnable = VK_FALSE; // TODO: 차후 구현
 			info.compareOp = VK_COMPARE_OP_ALWAYS;
 			info.minLod = attr.minLod;

@@ -7,6 +7,7 @@
 #include "RenderTargetVk.h"
 #include "GraphicsPipelineStateVk.h"
 #include "ComputePipelineStateVk.h"
+#include "ShaderParametersVk.h"
 #include "EngineCore/Assertion.h"
 
 namespace cube
@@ -56,6 +57,21 @@ namespace cube
 			CHECK_VK(res, "Failed to end the command buffer.");
 		}
 
+		void CommandListVk::Reset()
+		{
+			CHECK(mUsage == CommandListUsage::Graphics || mUsage == CommandListUsage::Compute
+				, "Only graphics and compute command list can be reset. Others can be freed to assign nullptr.");
+
+			VkResult res;
+
+			res = vkResetCommandBuffer(mCommandBuffer, 0);
+			CHECK_VK(res, "Failed to reset command buffer.");
+
+			mBindedRenderPass = nullptr;
+			mBindedGraphicsPipeline = nullptr;
+			mBindedComputePipeline = nullptr;
+		}
+
 		void CommandListVk::CopyBuffer(const Buffer& src, Buffer& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size)
 		{
 			VkBufferCopy copy;
@@ -70,9 +86,9 @@ namespace cube
 		{
 			CHECK(mUsage == CommandListUsage::Compute, "Only compute command list can set compute pipeline state.");
 
-			SPtr<ComputePipelineStateVk> pipelineVk = DPCast(ComputePipelineStateVk)(pipelineState);
+			mBindedComputePipeline = DPCast(ComputePipelineStateVk)(pipelineState);
 
-			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineVk->GetHandle());
+			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, mBindedComputePipeline->GetHandle());
 		}
 
 		void CommandListVk::Dispatch(Uint32 groupX, Uint32 groupY, Uint32 groupZ)
@@ -82,11 +98,47 @@ namespace cube
 			vkCmdDispatch(mCommandBuffer, groupX, groupY, groupZ);
 		}
 
+		void CommandListVk::BindShaderParameters(Uint32 index, SPtr<ShaderParameters>& parameters)
+		{
+			VkPipelineBindPoint bindPoint;
+			VkPipelineLayout layout = VK_NULL_HANDLE;
+			switch(mUsage) {
+				case CommandListUsage::Graphics:
+					bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+					layout = mBindedGraphicsPipeline->GetLayout();
+					break;
+
+				case CommandListUsage::Compute:
+					bindPoint = VK_PIPELINE_BIND_POINT_COMPUTE;
+					layout = mBindedComputePipeline->GetLayout();
+					break;
+
+				case CommandListUsage::TransferImmediate:
+				case CommandListUsage::TransferDeferred:
+					ASSERTION_FAILED("Only graphics and compute command list can bind shader parameters");
+					break;
+
+				default:
+					ASSERTION_FAILED("Unknown CommandListUsage ({0})", (int)mUsage);
+			}
+
+			DPCast(ShaderParametersVk)(parameters)->BindParameters(mCommandBuffer, bindPoint, layout, index);
+		}
+
+		void CommandListVk::SetGraphicsPipelineState(SPtr<GraphicsPipelineState>& pipelineState)
+		{
+			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can set graphics pipeline state.");
+
+			mBindedGraphicsPipeline = DPCast(GraphicsPipelineStateVk)(pipelineState);
+
+			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBindedGraphicsPipeline->GetHandle());
+		}
+
 		void CommandListVk::SetRenderPass(SPtr<RenderPass>& renderPass, Uint32 renderTargetIndex)
 		{
 			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can set render pass.");
 
-			auto renderPassVk = DPCast(RenderPassVk)(renderPass);
+			mBindedRenderPass = DPCast(RenderPassVk)(renderPass);
 
 			if(mUsage == CommandListUsage::Graphics && mIsSub == true) {
 				// If it is a sub-command list for graphics, begin will be deferred to SetRenderPass
@@ -96,9 +148,9 @@ namespace cube
 				VkCommandBufferInheritanceInfo inheritance;
 				inheritance.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 				inheritance.pNext = nullptr;
-				inheritance.renderPass = renderPassVk->GetHandle();
+				inheritance.renderPass = mBindedRenderPass->GetHandle();
 				inheritance.subpass = renderTargetIndex;
-				inheritance.framebuffer = renderPassVk->GetVkFramebuffer();
+				inheritance.framebuffer = mBindedRenderPass->GetVkFramebuffer();
 				inheritance.occlusionQueryEnable = VK_FALSE;
 				inheritance.queryFlags = 0;
 				inheritance.pipelineStatistics = 0;
@@ -115,14 +167,14 @@ namespace cube
 				VkRenderPassBeginInfo info;
 				info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 				info.pNext = nullptr;
-				info.renderPass = renderPassVk->GetHandle();
-				info.framebuffer = renderPassVk->GetVkFramebuffer();
+				info.renderPass = mBindedRenderPass->GetHandle();
+				info.framebuffer = mBindedRenderPass->GetVkFramebuffer();
 
-				Rect2D rect = renderPassVk->GetFramebufferRect2D();
+				Rect2D rect = mBindedRenderPass->GetFramebufferRect2D();
 				VkRect2D vkRect = { 0, 0, rect.width, rect.height };
 				info.renderArea = vkRect;
 
-				auto& renderTargets = renderPassVk->GetRenderTargets();
+				auto& renderTargets = mBindedRenderPass->GetRenderTargets();
 				Vector<VkClearValue> clearValues(renderTargets.size());
 				for(Uint64 i = 0; i < clearValues.size(); i++) {
 					clearValues[i] = renderTargets[i]->GetDefaultClearValue();
@@ -137,15 +189,6 @@ namespace cube
 				else
 					vkCmdBeginRenderPass(mCommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 			}
-		}
-
-		void CommandListVk::SetGraphicsPipelineState(SPtr<GraphicsPipelineState>& pipelineState)
-		{
-			CHECK(mUsage == CommandListUsage::Graphics, "Only graphics command list can set graphics pipeline state.");
-
-			SPtr<GraphicsPipelineStateVk> pipelineVk = DPCast(GraphicsPipelineStateVk)(pipelineState);
-
-			vkCmdBindPipeline(mCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineVk->GetHandle());
 		}
 
 		void CommandListVk::SetViewports(Uint32 numViewports, const Viewport* pViewPorts)

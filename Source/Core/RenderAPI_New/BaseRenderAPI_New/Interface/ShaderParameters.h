@@ -15,6 +15,9 @@ namespace cube
 			virtual ~ShaderParameters() {}
 
 			virtual void UpdateParameter(Uint32 bindIndex, void* pData, Uint32 size) = 0;
+			virtual void UpdateParameter(Uint32 bindIndex, SPtr<TextureView>& textureView) = 0;
+			virtual void UpdateParameter(Uint32 bindIndex, SPtr<Sampler>& sampler) = 0;
+			virtual void UpdateParameter(Uint32 bindIndex, SPtr<TextureView>& textureView, SPtr<Sampler>& sampler) = 0;
 		};
 	} // namespace render
 } // namespace cube

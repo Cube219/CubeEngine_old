@@ -22,20 +22,17 @@ namespace cube
 
 			bool HasRawDataParameter() const { return mHasRawDataParameter; }
 			Uint32 GetRawDataParameterSize() const { return mRawDataParameterSize; }
-			const Vector<ShaderParameterInfo>& GetParameterInfos() const { return mParameterInfos; }
+			const ShaderParameterInfoList& GetParameterList() const { return mParameterList; }
 
 		private:
 			friend class ShaderParametersVk;
 
-			void BindParameters(SPtr<CommandList>& cmdList, PipelineType pipelineType, VkPipelineLayout pipelineLayout,
-				Uint32 parametersIndex, ShaderParametersVk& params);
-
 			VulkanShaderParameterManager& mShaderParameterManager;
+			VkDevice mDevice;
 
-			Vector<ShaderParameterInfo> mParameterInfos;
+			ShaderParameterInfoList mParameterList;
 
 			VkDescriptorSetLayoutWrapper mDescriptorSetLayout;
-			VkDescriptorSet mDescriptorSet;
 
 			bool mHasRawDataParameter = false;
 			Uint32 mRawDataParameterSize;

@@ -31,15 +31,18 @@ namespace cube
 
 			virtual void Begin() = 0;
 			virtual void End() = 0;
+			virtual void Reset() = 0;
 
 			virtual void CopyBuffer(const Buffer& src, Buffer& dst, Uint64 srcOffset, Uint64 dstOffset, Uint64 size) = 0;
 
 			virtual void SetComputePipelineState(SPtr<ComputePipelineState>& pipelineState) = 0;
 			virtual void Dispatch(Uint32 groupX, Uint32 groupY, Uint32 groupZ) = 0;
 
-			virtual void SetRenderPass(SPtr<RenderPass>& renderPass, Uint32 renderTargetIndex = 0) = 0;
+			virtual void BindShaderParameters(Uint32 index, SPtr<ShaderParameters>& parameters) = 0;
 
 			virtual void SetGraphicsPipelineState(SPtr<GraphicsPipelineState>& pipelineState) = 0;
+
+			virtual void SetRenderPass(SPtr<RenderPass>& renderPass, Uint32 renderTargetIndex = 0) = 0;
 
 			virtual void SetViewports(Uint32 numViewports, const Viewport* pViewPorts) = 0;
 			virtual void SetScissors(Uint32 numScissors, const Rect2D* pScissors) = 0;

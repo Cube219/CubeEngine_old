@@ -58,13 +58,15 @@ namespace cube
 		};
 
 		// ----- ShaderParameters -----
-		enum ShaderParameterType
+		enum class ShaderParameterType
 		{
 			RawData,
 			ConstantBuffer,
 			StorageBuffer,
+			ConstantImage,
+			StorageImage,
+			SampledImage,
 			Sampler,
-			StorageImage
 		};
 
 		enum class PipelineType

@@ -15,22 +15,29 @@ namespace cube
 		class ShaderParametersVk final : public ShaderParameters
 		{
 		public:
-			ShaderParametersVk(VulkanShaderParameterManager& parameterManager, ShaderParametersLayoutVk& layout,
-				Vector<VulkanShaderParameterAllocation>& parameterAllocations);
+			ShaderParametersVk(VkDevice& device, VulkanShaderParameterManager& parameterManager, ShaderParametersLayoutVk& layout);
 			virtual ~ShaderParametersVk();
 
 			virtual void UpdateParameter(Uint32 bindIndex, void* pData, Uint32 size) override final;
+			virtual void UpdateParameter(Uint32 bindIndex, SPtr<TextureView>& textureView) override final;
+			virtual void UpdateParameter(Uint32 bindIndex, SPtr<Sampler>& sampler) override final;
+			virtual void UpdateParameter(Uint32 bindIndex, SPtr<TextureView>& textureView, SPtr<Sampler>& sampler) override final;
 
 			const Vector<VulkanShaderParameterAllocation>& GetParameterAllocations() const { return mParameterAllocations; }
+
+			void BindParameters(VkCommandBuffer cmdBuf, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout pipelineLayout,
+				Uint32 parametersIndex);
 
 		private:
 			VulkanShaderParameterAllocation& FindAllocation(Uint32 bindIndex);
 
 			VulkanShaderParameterManager& mParameterManager;
+			VkDevice mDevice;
 
 			ShaderParametersLayoutVk& mLayout;
 
-			Vector<ShaderParameterInfo> mParameterInfos;
+			VkDescriptorSet mDescriptorSet;
+			ShaderParameterInfoList mParameterList;
 			Vector<VulkanShaderParameterAllocation> mParameterAllocations;
 		};
 	} // namespace render
