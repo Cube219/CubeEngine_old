@@ -1,6 +1,7 @@
 ﻿#include "RendererManager.h"
 
 #include "Platform.h"
+
 #include "../EngineCore.h"
 #include "../LogWriter.h"
 #include "../GameThread.h"
@@ -36,12 +37,12 @@ namespace cube
 			Vector3 position[RendererManager::maxPointLightNum];
 		};
 
-		RendererManager::RendererManager(EngineCore* eCore) :
-			mECore(eCore), mIsPrepared(false), mDirLight(nullptr)
+		void RendererManager::Initialize(EngineCore* eCore)
 		{
+			mECore = eCore;
 		}
 
-		RendererManager::~RendererManager()
+		void RendererManager::ShutDown()
 		{
 			mRenderers.clear();
 

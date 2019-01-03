@@ -1,57 +1,50 @@
 ﻿#include "EngineCore.h"
 
 #include "Platform.h"
-#include "Time/TimeManager.h"
 #include "Time/GameTime.h"
-#include "String/StringManager.h"
-#include "Thread/ThreadManager.h"
 #include "LogWriter.h"
-#include "Renderer/RendererManager.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Material/Shader.h"
-#include "Resource/ResourceManager.h"
-#include "ModuleManager.h"
-#include "GameObjectManager.h"
-#include "Component/ComponentManager.h"
 
 namespace cube
 {
 	namespace core
 	{
-		EngineCore* EngineCore::mInstance = nullptr;
+		static EngineCore gEngineCore;
 
-		EngineCore::EngineCore() :
-			mFPSLimit(-1)
+		void EngineCore::Initialize()
 		{
-		}
-
-		EngineCore::~EngineCore()
-		{
-		}
-
-		void EngineCore::Prepare()
-		{
-			mRendererManager = std::make_unique<RendererManager>(this);
+			mRendererManager.Initialize(this);
 
 			LogWriter::Init();
 		}
 
-		void EngineCore::Start()
+		void EngineCore::ShutDown()
 		{
-			mTimeManager->Start();
+			mComponentManager.ShutDown();
+			mGameObjectManager.ShutDown();
 
-			mGameObjectManager->Start();
+			mModuleManager.ShutDown();
+
+			mResourceManager.ShutDown();
+
+			mStringManager.ShutDown();
+			mTimeManager.ShutDown();
+
+			mWillBeDestroyed = true;
 		}
 
-		void EngineCore::Destroy()
+		void EngineCore::Start()
 		{
-			mWillBeDestroyed = true;
+			mTimeManager.Start();
+
+			mGameObjectManager.Start();
 		}
 
 		float EngineCore::GetCurrentFPS()
 		{
 			// TODO: 더 좋은 방법으로 개선
-			return 1.0f / mTimeManager->GetGlobalGameTime()->GetDeltaTime();
+			return 1.0f / mTimeManager.GetGlobalGameTime()->GetDeltaTime();
 		}
 
 		void EngineCore::SetFPSLimit(int limit)
@@ -59,38 +52,38 @@ namespace cube
 			mFPSLimit = limit;
 		}
 
-		void EngineCore::PrepareCore()
+		void EngineCore::InitializeCore()
 		{
-			mTimeManager = std::make_unique<TimeManager>();
-			mStringManager = std::make_unique<StringManager>();
+			mTimeManager.Initialize();
+			mStringManager.Initialize();
 
-			mResourceManager = std::make_unique<ResourceManager>();
+			mResourceManager.Initialize();
 
-			mModuleManager = std::make_shared<ModuleManager>(mThreadManager);
-			mModuleManager->LoadModule(CUBE_T("InputModule"));
-			mModuleManager->InitModules();
+			mModuleManager.Initialize();
+			mModuleManager.LoadModule(CUBE_T("InputModule"));
+			mModuleManager.InitModules();
 
-			mGameObjectManager = std::make_shared<GameObjectManager>();
-			mComponentManager = std::make_shared<ComponentManager>();
+			mGameObjectManager.Initialize();
+			mComponentManager.Initialize();
 		}
 
 		void EngineCore::Update()
 		{
-			mTimeManager->Update();
+			mTimeManager.Update();
 
-			double currentTime = mTimeManager->GetSystemTime(); // For limit FPS 
+			double currentTime = mTimeManager.GetSystemTime(); // For limit FPS 
 
-			float dt = mTimeManager->GetGlobalGameTime()->GetDeltaTime();
+			float dt = mTimeManager.GetGlobalGameTime()->GetDeltaTime();
 
-			mModuleManager->UpdateAllModules(dt);
+			mModuleManager.UpdateAllModules(dt);
 
-			mGameObjectManager->Update(dt);
+			mGameObjectManager.Update(dt);
 
 			// Limit FPS
 			if(mFPSLimit > 0) {
 				double nextTime = currentTime + (1.0 / mFPSLimit);
 
-				currentTime = mTimeManager->GetSystemTime();
+				currentTime = mTimeManager.GetSystemTime();
 
 				double waitTime = nextTime - currentTime;
 
@@ -98,7 +91,7 @@ namespace cube
 					platform::Platform::Sleep(SCast(int)(waitTime * 1000));
 				} else if(waitTime > 0.0) {
 					while(nextTime > currentTime) {
-						currentTime = mTimeManager->GetSystemTime();
+						currentTime = mTimeManager.GetSystemTime();
 					}
 				}
 			}
@@ -106,12 +99,12 @@ namespace cube
 
 		void EngineCore::Resize(uint32_t width, uint32_t height)
 		{
-			mRendererManager->Resize(width, height);
+			mRendererManager.Resize(width, height);
 		}
 
-		EngineCore* ECore()
+		EngineCore& ECore()
 		{
-			return EngineCore::GetInstance();
+			return gEngineCore;
 		}
 	} // namespace core
 } // namespace cube

@@ -9,7 +9,7 @@ namespace cube
 	{
 		RPtr<Mesh> Mesh::Load(const String& path)
 		{
-			return ECore()->GetResourceManager()->LoadResource<Mesh>(path);
+			return ECore().GetResourceManager().LoadResource<Mesh>(path);
 		}
 
 		void Mesh::SetVertex(const Vector<Vertex>& vertices)

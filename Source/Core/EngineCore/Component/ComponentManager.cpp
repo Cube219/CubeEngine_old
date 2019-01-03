@@ -7,11 +7,11 @@ namespace cube
 {
 	namespace core
 	{
-		ComponentManager::ComponentManager()
+		void ComponentManager::Initialize()
 		{
 		}
 
-		ComponentManager::~ComponentManager()
+		void ComponentManager::ShutDown()
 		{
 		}
 

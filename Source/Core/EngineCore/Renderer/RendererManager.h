@@ -34,8 +34,18 @@ namespace cube
 			constexpr static int maxPointLightNum = 10;
 
 		public:
-			RendererManager(EngineCore* eCore);
-			~RendererManager();
+			RendererManager() : 
+				mIsPrepared(false), mDirLight(nullptr)
+			{}
+			~RendererManager() {}
+
+			RendererManager(const RendererManager& other) = delete;
+			RendererManager& operator=(const RendererManager& rhs) = delete;
+			RendererManager(RendererManager&& other) = delete;
+			RendererManager& operator=(RendererManager&& rhs) = delete;
+
+			void Initialize(EngineCore* eCore);
+			void ShutDown();
 
 			void Prepare(RenderType type);
 

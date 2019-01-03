@@ -8,14 +8,15 @@ namespace cube
 {
 	namespace core
 	{
-		ResourceManager::ResourceManager()
+		void ResourceManager::Initialize()
 		{
 		}
 
-		ResourceManager::~ResourceManager()
+		void ResourceManager::ShutDown()
 		{
 			UnloadUnusedResources();
 		}
+
 		void ResourceManager::RegisterImporter(UPtr<ResourceImporter> importer)
 		{
 			mImporters.push_back(std::move(importer));

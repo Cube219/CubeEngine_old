@@ -1,4 +1,4 @@
-#include "GameThread.h"
+﻿#include "GameThread.h"
 
 #include "EngineCore.h"
 #include "LogWriter.h"
@@ -13,19 +13,19 @@ namespace cube
 		std::thread GameThread::mMyThread;
 
 		Mutex GameThread::mMutex;
-		ThreadNotify GameThread::mRunNotify;
+		ThreadSignal GameThread::mRunNotify;
 
-		AsyncStateData GameThread::mPrepareAsyncData;
-		AsyncStateData GameThread::mSimulateAsyncData;
-		AsyncStateData GameThread::mProcessTaskBuffersAndSimulateAsyncData;
-		AsyncStateData GameThread::mDestroyAsyncData;
+		AsyncSignal GameThread::mPrepareAsyncSignal;
+		AsyncSignal GameThread::mSimulateAsyncSignal;
+		AsyncSignal GameThread::mProcessTaskBuffersAndSimulateAsyncSignal;
+		AsyncSignal GameThread::mDestroyAsyncSignal;
 
-		AsyncStateData GameThread::mSimulateNotifyAsyncData;
-		AsyncState GameThread::mSimulateNotifyAsync(&GameThread::mSimulateNotifyAsyncData);
-		AsyncStateData GameThread::mProcessTaskBuffersAndSimulateNotifyAsyncData;
-		AsyncState GameThread::mProcessTaskBuffersAndSimulateNotifyAsync(&GameThread::mProcessTaskBuffersAndSimulateNotifyAsyncData);
-		AsyncStateData GameThread::mDestroyNotifyAsyncData;
-		AsyncState GameThread::mDestroyNotifyAsync(&GameThread::mDestroyNotifyAsyncData);
+		AsyncSignal GameThread::mSimulateNotifyAsyncSignal;
+		Async GameThread::mSimulateNotifyAsync(GameThread::mSimulateNotifyAsyncSignal);
+		AsyncSignal GameThread::mProcessTaskBuffersAndSimulateNotifyAsyncSignal;
+		Async GameThread::mProcessTaskBuffersAndSimulateNotifyAsync(GameThread::mProcessTaskBuffersAndSimulateNotifyAsyncSignal);
+		AsyncSignal GameThread::mDestroyNotifyAsyncSignal;
+		Async GameThread::mDestroyNotifyAsync(GameThread::mDestroyNotifyAsyncSignal);
 
 		Mutex GameThread::mTaskBufferMutex;
 		TaskBuffer GameThread::mTaskBuffer;
@@ -35,50 +35,50 @@ namespace cube
 			mECore = eCore;
 		}
 
-		AsyncState GameThread::PrepareAsync()
+		Async GameThread::PrepareAsync()
 		{
-			mPrepareAsyncData.Reset();
+			mPrepareAsyncSignal.Reset();
 
 			mMyThread = std::thread(&GameThread::ThreadFunc);
 
-			return AsyncState(&mPrepareAsyncData);
+			return Async(mPrepareAsyncSignal);
 		}
 
 		void GameThread::Run()
 		{
 			Lock lock(mMutex);
 
-			mSimulateNotifyAsyncData.Reset();
-			mProcessTaskBuffersAndSimulateNotifyAsyncData.Reset();
+			mSimulateNotifyAsyncSignal.Reset();
+			mProcessTaskBuffersAndSimulateNotifyAsyncSignal.Reset();
 
 			mRunNotify.notify_all();
 		}
 
-		AsyncState GameThread::DestroyAsync()
+		Async GameThread::DestroyAsync()
 		{
-			mDestroyAsyncData.Reset();
+			mDestroyAsyncSignal.Reset();
 
-			mDestroyNotifyAsyncData.DispatchCompletion();
+			mDestroyNotifyAsyncSignal.DispatchCompletion();
 
-			return AsyncState(&mDestroyAsyncData);
+			return Async(mDestroyAsyncSignal);
 		}
 
-		AsyncState GameThread::SimulateAsync()
+		Async GameThread::SimulateAsync()
 		{
-			mSimulateAsyncData.Reset();
+			mSimulateAsyncSignal.Reset();
 
-			mSimulateNotifyAsyncData.DispatchCompletion();
+			mSimulateNotifyAsyncSignal.DispatchCompletion();
 
-			return AsyncState(&mSimulateAsyncData);
+			return Async(mSimulateAsyncSignal);
 		}
 
-		AsyncState GameThread::ProcessTaskBuffersAndSimulateAsync()
+		Async GameThread::ProcessTaskBuffersAndSimulateAsync()
 		{
-			mProcessTaskBuffersAndSimulateAsyncData.Reset();
+			mProcessTaskBuffersAndSimulateAsyncSignal.Reset();
 
-			mProcessTaskBuffersAndSimulateNotifyAsyncData.DispatchCompletion();
+			mProcessTaskBuffersAndSimulateNotifyAsyncSignal.DispatchCompletion();
 
-			return AsyncState(&mProcessTaskBuffersAndSimulateAsyncData);
+			return Async(mProcessTaskBuffersAndSimulateAsyncSignal);
 		}
 
 		void GameThread::ThreadFunc()
@@ -95,9 +95,9 @@ namespace cube
 
 		void GameThread::PrepareInternal()
 		{
-			mECore->PrepareCore();
+			mECore->InitializeCore();
 
-			mPrepareAsyncData.DispatchCompletion();		
+			mPrepareAsyncSignal.DispatchCompletion();		
 		}
 
 		void GameThread::RunInternal()
@@ -105,7 +105,7 @@ namespace cube
 			mSimulateNotifyAsync.WaitUntilFinished();
 
 			mECore->Start();
-			mSimulateAsyncData.DispatchCompletion();
+			mSimulateAsyncSignal.DispatchCompletion();
 
 			while(1) {
 				mProcessTaskBuffersAndSimulateNotifyAsync.WaitUntilFinished();
@@ -117,9 +117,9 @@ namespace cube
 					break;
 				}
 
-				mProcessTaskBuffersAndSimulateAsyncData.DispatchCompletion();
+				mProcessTaskBuffersAndSimulateAsyncSignal.DispatchCompletion();
 
-				mProcessTaskBuffersAndSimulateNotifyAsyncData.Reset();
+				mProcessTaskBuffersAndSimulateNotifyAsyncSignal.Reset();
 
 				/*
 				{
@@ -131,9 +131,9 @@ namespace cube
 				}*/
 			}
 
-			AsyncState destroyRenderAsync = RenderingThread::DestroyAsync();
+			Async destroyRenderAsync = RenderingThread::DestroyAsync();
 			
-			mProcessTaskBuffersAndSimulateAsyncData.DispatchCompletion();
+			mProcessTaskBuffersAndSimulateAsyncSignal.DispatchCompletion();
 
 			destroyRenderAsync.WaitUntilFinished();
 

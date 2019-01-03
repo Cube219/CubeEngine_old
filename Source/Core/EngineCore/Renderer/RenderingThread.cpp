@@ -1,4 +1,4 @@
-#include "RenderingThread.h"
+Ôªø#include "RenderingThread.h"
 
 #include "RendererManager.h"
 #include "../LogWriter.h"
@@ -9,20 +9,20 @@ namespace cube
 {
 	namespace core
 	{
-		SPtr<RendererManager> RenderingThread::mRendererManager = nullptr;
+		RendererManager* RenderingThread::mRendererManager = nullptr;
 
 		EventFunction<void()> RenderingThread::mLoopEventFunc;
 		EventFunction<void(uint32_t, uint32_t)> RenderingThread::mResizeEventFunc;
 
-		AsyncStateData RenderingThread::mDestroyAsyncData;
+		AsyncSignal RenderingThread::mDestroyAsyncSignal;
 
-		AsyncStateData RenderingThread::mDestroyNotifyAsyncData;
-		AsyncState RenderingThread::mDestroyNotifyAsync(&RenderingThread::mDestroyNotifyAsyncData);
+		AsyncSignal RenderingThread::mDestroyNotifyAsyncSignal;
+		Async RenderingThread::mDestroyNotifyAsync(RenderingThread::mDestroyNotifyAsyncSignal);
 
 		Mutex RenderingThread::mTaskBufferMutex;
 		TaskBuffer RenderingThread::mTaskBuffer;
 
-		void RenderingThread::Init(SPtr<RendererManager>& rendererManager)
+		void RenderingThread::Init(RendererManager* rendererManager)
 		{
 			mRendererManager = rendererManager;
 		}
@@ -37,19 +37,19 @@ namespace cube
 
 		void RenderingThread::Run()
 		{
-			AsyncState simulateAsync = GameThread::SimulateAsync();
+			Async simulateAsync = GameThread::SimulateAsync();
 			simulateAsync.WaitUntilFinished();
 
 			platform::Platform::StartLoop();
 		}
 
-		AsyncState RenderingThread::DestroyAsync()
+		Async RenderingThread::DestroyAsync()
 		{
-			mDestroyAsyncData.Reset();
+			mDestroyAsyncSignal.Reset();
 
-			mDestroyNotifyAsyncData.DispatchCompletion();
+			mDestroyNotifyAsyncSignal.DispatchCompletion();
 
-			return AsyncState(&mDestroyAsyncData);
+			return Async(mDestroyAsyncSignal);
 		}
 
 		void RenderingThread::ExecuteLastTaskBuffer()
@@ -63,15 +63,15 @@ namespace cube
 
 			if(mDestroyNotifyAsync.IsDone() == true) {
 				mRendererManager = nullptr; // It is actually destroyed in EngineCore's destructor
-				// TODO: µ˚∑Œ ¡¶∞≈µ«∞‘?
+				// TODO: Îî∞Î°ú Ï†úÍ±∞ÎêòÍ≤å?
 
 				platform::Platform::FinishLoop();
 
-				mDestroyAsyncData.DispatchCompletion();
+				mDestroyAsyncSignal.DispatchCompletion();
 				return;
 			}
 
-			AsyncState async = GameThread::ProcessTaskBuffersAndSimulateAsync();
+			Async async = GameThread::ProcessTaskBuffersAndSimulateAsync();
 
 			Rendering();
 

@@ -6,6 +6,8 @@
 
 #include "Base/Vector.h"
 
+#include <functional>
+
 namespace cube
 {
 	namespace module

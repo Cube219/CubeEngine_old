@@ -1,7 +1,14 @@
 #pragma once
 
 #include "Base/BaseTypes.h"
-#include "EngineCore/EngineCore.h"
+
+namespace cube
+{
+	namespace core
+	{
+		class EngineCore;
+	}
+}
 
 namespace cube
 {

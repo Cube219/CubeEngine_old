@@ -21,7 +21,7 @@ namespace cube
 
 	void CameraComponent::OnInit()
 	{
-		mCameraRenderer3D = core::ECore()->GetRendererManager()->GetCameraRenderer3D();
+		mCameraRenderer3D = core::ECore().GetRendererManager().GetCameraRenderer3D();
 	}
 
 	void CameraComponent::OnUpdate(float dt)

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -11,13 +11,21 @@ namespace cube
 		class ENGINE_CORE_EXPORT ThreadManager
 		{
 		public:
-			ThreadManager(uint32_t poolSize = 8);
-			~ThreadManager();
+			ThreadManager() {}
+			~ThreadManager() {}
+
+			ThreadManager(const ThreadManager& other) = delete;
+			ThreadManager& operator=(const ThreadManager& rhs) = delete;
+			ThreadManager(ThreadManager&& other) = delete;
+			ThreadManager& operator=(ThreadManager&& rhs) = delete;
+
+			void Initialize(Uint32 poolSize = 8);
+			void ShutDown();
 
 			SPtr<Thread> GetThread();
 
 		private:
-			void OnThreadFinish(uint32_t poolIndex);
+			void OnThreadFinish(Uint32 poolIndex);
 
 			Mutex mMutex;
 
@@ -25,8 +33,8 @@ namespace cube
 
 			// Treated like circular queue
 			Vector<uint32_t> mIdleThreadIndices;
-			uint32_t mIdleThreadIndices_front;
-			uint32_t mIdleThreadIndices_back;
+			Uint32 mIdleThreadIndices_front;
+			Uint32 mIdleThreadIndices_back;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

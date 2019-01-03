@@ -1,5 +1,6 @@
 #include "MoveComponent.h"
 
+#include "EngineCore/EngineCore.h"
 #include "EngineCore/ModuleManager.h"
 #include "EngineCore/LogWriter.h"
 #include "EngineCore/GameObject.h"
@@ -19,7 +20,7 @@ namespace cube
 	void MoveComponent::OnInit()
 	{
 		String n = CUBE_T("InputModule");
-		mInputModule = DPCast(module::InputModule)(core::ECore()->GetModuleManager()->GetModule(n));
+		mInputModule = DPCast(module::InputModule)(core::ECore().GetModuleManager().GetModule(n));
 
 		mInputModule->LockCursor();
 	}
@@ -64,7 +65,7 @@ namespace cube
 		String jumpStr = CUBE_T("Jump");
 		bool b = mInputModule->IsActionPressed(jumpStr);
 		if(b == true) {
-			core::ECore()->Destroy();
+			core::ECore().ShutDown();
 		}
 	}
 

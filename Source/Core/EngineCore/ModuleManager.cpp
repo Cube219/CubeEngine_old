@@ -2,6 +2,7 @@
 
 #include "Platform.h"
 
+#include "EngineCore.h"
 #include "Thread/ThreadManager.h"
 #include "Thread/Thread.h"
 
@@ -12,12 +13,11 @@ namespace cube
 {
 	namespace core
 	{
-		ModuleManager::ModuleManager(SPtr<ThreadManager>& threadManager) :
-			mThreadManager(threadManager)
+		void ModuleManager::Initialize()
 		{
 		}
 
-		ModuleManager::~ModuleManager()
+		void ModuleManager::ShutDown()
 		{
 			for(auto& m : mModules) {
 				m.module->Destroy();
@@ -53,7 +53,7 @@ namespace cube
 		void ModuleManager::InitModules()
 		{
 			for(auto& m : mModules) {
-				m.module->Init(ECore());
+				m.module->Init(&ECore());
 			}
 		}
 

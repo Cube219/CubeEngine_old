@@ -11,8 +11,16 @@ namespace cube
 		class ENGINE_CORE_EXPORT ComponentManager
 		{
 		public:
-			ComponentManager();
-			~ComponentManager();
+			ComponentManager() {}
+			~ComponentManager() {}
+
+			ComponentManager(const ComponentManager& other) = delete;
+			ComponentManager& operator=(const ComponentManager& rhs) = delete;
+			ComponentManager(ComponentManager&& other) = delete;
+			ComponentManager& operator=(ComponentManager&& rhs) = delete;
+
+			void Initialize();
+			void ShutDown();
 
 			template <typename T>
 			void RegisterComponent()

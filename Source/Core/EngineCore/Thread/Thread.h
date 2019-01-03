@@ -32,8 +32,8 @@ namespace cube
 
 			Mutex mMutex;
 
-			ThreadNotify mStartNotify;
-			ThreadNotify mIdleNotify;
+			ThreadSignal mStartNotify;
+			ThreadSignal mIdleNotify;
 
 			std::function<void(uint32_t)> mOnFinishCallback;
 

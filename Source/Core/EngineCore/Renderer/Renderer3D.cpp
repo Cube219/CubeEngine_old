@@ -65,10 +65,10 @@ namespace cube
 
 		Renderer3D_RT::Renderer3D_RT()
 		{
-			SPtr<RendererManager> rm = ECore()->GetRendererManager();
-			mRenderAPI_ref = rm->GetRenderAPI();
+			RendererManager& rm = ECore().GetRendererManager();
+			mRenderAPI_ref = rm.GetRenderAPI();
 
-			SPtr<render::DescriptorSetLayout> perObjectDescSetLayout = rm->_GetPerObjectDescriptorSetLayout();
+			SPtr<render::DescriptorSetLayout> perObjectDescSetLayout = rm._GetPerObjectDescriptorSetLayout();
 			mDescriptorSet = mRenderAPI_ref->CreateDescriptorSet(perObjectDescSetLayout);
 		}
 

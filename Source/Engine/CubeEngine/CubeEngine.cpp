@@ -1,6 +1,7 @@
 #include "CubeEngine.h"
 
 #include "Platform.h"
+#include "EngineCore/EngineCore.h"
 #include "EngineCore/GameThread.h"
 #include "EngineCore/Renderer/RenderingThread.h"
 #include "EngineCore/Resource/ResourceManager.h"
@@ -20,47 +21,46 @@ namespace cube
 {
 	EventFunction<void()> CubeEngine::closingEventFunc;
 
-	void CubeEngine::Start(const CubeEngineStartOption& startOption)
+	void CubeEngine::Initialize(const CubeEngineStartOption& startOption)
 	{
 		platform::Platform::Init();
 
 		platform::Platform::InitWindow(startOption.title, startOption.windowWidth, startOption.windowHeight);
 		platform::Platform::ShowWindow();
 
-		core::EngineCore::CreateInstance();
+		
+		core::ECore().Initialize();
 
-		core::ECore()->Prepare();
+		auto& rm = core::ECore().GetRendererManager();
+		core::RenderingThread::Init(&rm);
+		core::GameThread::Init(&core::ECore());
 
-		auto rm = core::ECore()->GetRendererManager();
-		core::RenderingThread::Init(rm);
-		core::GameThread::Init(core::ECore());
-
-		core::AsyncState gameThreadAsync = core::GameThread::PrepareAsync();
+		core::Async gameThreadInitAsync = core::GameThread::PrepareAsync();
 		core::RenderingThread::Prepare();
 
-		gameThreadAsync.WaitUntilFinished();
+		gameThreadInitAsync.WaitUntilFinished();
 
 		RegisterImporters();
 		InitComponents();
 
 		closingEventFunc = platform::Platform::GetClosingEvent().AddListener(&CubeEngine::DefaultClosingFunction);
-		core::ECore()->SetFPSLimit(60);
+		core::ECore().SetFPSLimit(60);
 	}
 
-	void CubeEngine::Run()
-	{
-		core::GameThread::Run();
-		core::RenderingThread::Run();
-	}
-
-	void CubeEngine::Destroy()
+	void CubeEngine::ShutDown()
 	{
 		platform::Platform::GetClosingEvent().RemoveListener(closingEventFunc);
 
 		// TODO: 좀 더 좋은 구조로 만들기
 		core::GameThread::Join();
 		core::RenderingThread::ExecuteLastTaskBuffer();
-		core::ECore()->DestroyInstance();
+		core::ECore().ShutDown();
+	}
+
+	void CubeEngine::Run()
+	{
+		core::GameThread::Run();
+		core::RenderingThread::Run();
 	}
 
 	void CubeEngine::SetCustomClosingFunction(std::function<void()> func)
@@ -71,34 +71,34 @@ namespace cube
 
 	void CubeEngine::RegisterImporters()
 	{
-		SPtr<core::ResourceManager> resManager = core::ECore()->GetResourceManager();
-		SPtr<render::RenderAPI> renderAPI  = core::ECore()->GetRendererManager()->GetRenderAPI();
+		core::ResourceManager& resManager = core::ECore().GetResourceManager();
+		SPtr<render::RenderAPI> renderAPI  = core::ECore().GetRendererManager().GetRenderAPI();
 
-		resManager->RegisterImporter(
+		resManager.RegisterImporter(
 			std::make_unique<TextureImporter>(renderAPI)
 		);
-		resManager->RegisterImporter(
+		resManager.RegisterImporter(
 			std::make_unique<ShaderImporter>(renderAPI)
 		);
-		resManager->RegisterImporter(
+		resManager.RegisterImporter(
 			std::make_unique<ObjImporter>()
 		);
 	}
 
 	void CubeEngine::InitComponents()
 	{
-		SPtr<core::ComponentManager> comManager = core::ECore()->GetComponentManager();
+		core::ComponentManager& comManager = core::ECore().GetComponentManager();
 
-		comManager->RegisterComponent<Renderer3DComponent>();
-		comManager->RegisterComponent<CameraComponent>();
-		comManager->RegisterComponent<MoveComponent>();
-		comManager->RegisterComponent<DirectionalLightComponent>();
-		comManager->RegisterComponent<PointLightComponent>();
+		comManager.RegisterComponent<Renderer3DComponent>();
+		comManager.RegisterComponent<CameraComponent>();
+		comManager.RegisterComponent<MoveComponent>();
+		comManager.RegisterComponent<DirectionalLightComponent>();
+		comManager.RegisterComponent<PointLightComponent>();
 	}
 
 	void CubeEngine::DefaultClosingFunction()
 	{
 		CUBE_LOG(LogType::Info, "Call closing function");
-		core::ECore()->Destroy();
+		core::ECore().ShutDown();
 	}
 } // namespace cube

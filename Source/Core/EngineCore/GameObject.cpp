@@ -17,10 +17,10 @@ namespace cube
 	{
 		HGameObject GameObject::Create()
 		{
-			SPtr<GameObjectManager> manager = ECore()->GetGameObjectManager();
+			GameObjectManager& manager = ECore().GetGameObjectManager();
 
 			SPtr<GameObject> go = std::make_shared<GameObject>();
-			return manager->RegisterGameObject(go);
+			return manager.RegisterGameObject(go);
 		}
 
 		GameObject::GameObject() :
@@ -73,7 +73,7 @@ namespace cube
 				CHECK(com->GetName() != name, "Cannot add component \"{0}\". The component already exists.", name);
 			}
 
-			HComponent c = ECore()->GetComponentManager()->CreateComponent(name);
+			HComponent c = ECore().GetComponentManager().CreateComponent(name);
 			c->AttachGameObject(this);
 			mComponents.push_back(c);
 
@@ -128,7 +128,7 @@ namespace cube
 				c->Destroy();
 			}
 
-			ECore()->GetGameObjectManager()->UnregisterGameObject(mMyHandler);
+			ECore().GetGameObjectManager().UnregisterGameObject(mMyHandler);
 		}
 	} // namespace core
 } // namespace cube

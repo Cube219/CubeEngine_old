@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <mutex>
 #include <atomic>
@@ -12,6 +12,6 @@ namespace cube
 		template <typename T>
 		using Atomic = std::atomic<T>;
 
-		using ThreadNotify = std::condition_variable;
-	}
-}
+		using ThreadSignal = std::condition_variable;
+	} // namespace core
+} // namespace cube

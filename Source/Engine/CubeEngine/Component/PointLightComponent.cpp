@@ -19,7 +19,7 @@ namespace cube
 
 	void PointLightComponent::OnInit()
 	{
-		core::ECore()->GetRendererManager()->RegisterLight(mPointLight);
+		core::ECore().GetRendererManager().RegisterLight(mPointLight);
 	}
 
 	void PointLightComponent::OnUpdate(float dt)
@@ -28,7 +28,7 @@ namespace cube
 
 	void PointLightComponent::OnDestroy()
 	{
-		core::ECore()->GetRendererManager()->UnregisterLight(mPointLight);
+		core::ECore().GetRendererManager().UnregisterLight(mPointLight);
 	}
 
 	void PointLightComponent::OnTransformChanged()

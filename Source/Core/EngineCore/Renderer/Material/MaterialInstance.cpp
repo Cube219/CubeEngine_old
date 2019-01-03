@@ -100,7 +100,7 @@ namespace cube
 
 		MaterialInstance_RT::MaterialInstance_RT(SPtr<Material_RT>& mat)
 		{
-			SPtr<render::RenderAPI> renderAPI = ECore()->GetRendererManager()->GetRenderAPI();
+			SPtr<render::RenderAPI> renderAPI = ECore().GetRendererManager().GetRenderAPI();
 
 			mDescriptorSet = renderAPI->CreateDescriptorSet(mat->GetDescriptorSetLayout());
 

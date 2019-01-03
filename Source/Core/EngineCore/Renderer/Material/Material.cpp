@@ -11,12 +11,12 @@ namespace cube
 	{
 		HMaterial Material::Create(const MaterialInitializer& init)
 		{
-			auto rendererManager = ECore()->GetRendererManager();
+			auto& rendererManager = ECore().GetRendererManager();
 
 			SPtr<Material> mat(new Material(init));
 			mat->Initialize();
 
-			return rendererManager->RegisterMaterial(mat);
+			return rendererManager.RegisterMaterial(mat);
 		}
 
 		Material::Material(const MaterialInitializer& init) : 
@@ -49,12 +49,12 @@ namespace cube
 
 		void Material::Destroy()
 		{
-			ECore()->GetRendererManager()->UnregisterMaterial(mMyHandler);
+			ECore().GetRendererManager().UnregisterMaterial(mMyHandler);
 		}
 
 		Material_RT::Material_RT(const MaterialInitializer& init)
 		{
-			mRenderAPI_ref = ECore()->GetRendererManager()->GetRenderAPI();
+			mRenderAPI_ref = ECore().GetRendererManager().GetRenderAPI();
 
 			using namespace render;
 

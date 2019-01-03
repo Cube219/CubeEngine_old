@@ -9,7 +9,7 @@ namespace cube
 	{
 		RPtr<Shader> Shader::Load(const String& path)
 		{
-			return ECore()->GetResourceManager()->LoadResource<Shader>(path);
+			return ECore().GetResourceManager().LoadResource<Shader>(path);
 		}
 
 		void Shader::_LoadShader(SPtr<render::RenderAPI>& renderAPI, render::ShaderInitializer& init)

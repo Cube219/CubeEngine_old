@@ -5,8 +5,8 @@
 #include <functional>
 
 #include "DLib.h"
-#include "BaseModule/BaseModule.h"
 #include "Thread/MutexLock.h"
+#include "BaseModule/BaseModule.h"
 
 namespace cube
 {
@@ -30,8 +30,16 @@ namespace cube
 		class ENGINE_CORE_EXPORT ModuleManager
 		{
 		public:
-			ModuleManager(SPtr<ThreadManager>& threadManager);
-			~ModuleManager();
+			ModuleManager() {}
+			~ModuleManager() {}
+
+			ModuleManager(const ModuleManager& other) = delete;
+			ModuleManager& operator=(const ModuleManager& rhs) = delete;
+			ModuleManager(ModuleManager&& other) = delete;
+			ModuleManager& operator=(ModuleManager&& rhs) = delete;
+
+			void Initialize();
+			void ShutDown();
 
 			void LoadModule(String moduleName);
 
@@ -51,8 +59,6 @@ namespace cube
 			HashMap<String, SPtr<module::BaseModule>> mModuleLookup;
 
 			Vector<ModuleNode> mModules;
-
-			SPtr<ThreadManager> mThreadManager;
 		};
 	} // namespace core
 } // namespace cube
