@@ -44,10 +44,8 @@ namespace cube
 			RendererManager(RendererManager&& other) = delete;
 			RendererManager& operator=(RendererManager&& rhs) = delete;
 
-			void Initialize(EngineCore* eCore);
+			void Initialize(RenderType type);
 			void ShutDown();
-
-			void Prepare(RenderType type);
 
 			HMaterial RegisterMaterial(SPtr<Material>& material);
 			void UnregisterMaterial(HMaterial& material);
@@ -83,9 +81,6 @@ namespace cube
 			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D_RT>& renderer);
 
 			SPtr<render::GraphicsPipeline> CreatePipeline(SPtr<Material_RT> material);
-
-			EngineCore* mECore;
-			std::thread mGameThread;
 
 			SPtr<platform::DLib> mRenderDLib;
 			SPtr<render::RenderAPI> mRenderAPI;

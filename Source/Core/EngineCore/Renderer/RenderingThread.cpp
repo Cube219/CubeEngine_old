@@ -14,11 +14,6 @@ namespace cube
 		EventFunction<void()> RenderingThread::mLoopEventFunc;
 		EventFunction<void(uint32_t, uint32_t)> RenderingThread::mResizeEventFunc;
 
-		AsyncSignal RenderingThread::mDestroyAsyncSignal;
-
-		AsyncSignal RenderingThread::mDestroyNotifyAsyncSignal;
-		Async RenderingThread::mDestroyNotifyAsync(RenderingThread::mDestroyNotifyAsyncSignal);
-
 		Mutex RenderingThread::mTaskBufferMutex;
 		TaskBuffer RenderingThread::mTaskBuffer;
 
@@ -29,27 +24,25 @@ namespace cube
 
 		void RenderingThread::Prepare()
 		{
-			mRendererManager->Prepare(RenderType::Vulkan);
+			mRendererManager->Initialize(RenderType::Vulkan);
 
 			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(&RenderingThread::Loop);
 			mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(&RenderingThread::OnResize);
 		}
 
-		void RenderingThread::Run()
+		void RenderingThread::Destroy()
 		{
-			Async simulateAsync = GameThread::SimulateAsync();
-			simulateAsync.WaitUntilFinished();
+			platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
+			platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
 
-			platform::Platform::StartLoop();
+			mRendererManager->ShutDown();
 		}
 
-		Async RenderingThread::DestroyAsync()
+		void RenderingThread::Run(Async& gameThreadRunAsync)
 		{
-			mDestroyAsyncSignal.Reset();
+			gameThreadRunAsync.WaitUntilFinished();
 
-			mDestroyNotifyAsyncSignal.DispatchCompletion();
-
-			return Async(mDestroyAsyncSignal);
+			platform::Platform::StartLoop();
 		}
 
 		void RenderingThread::ExecuteLastTaskBuffer()
@@ -60,16 +53,6 @@ namespace cube
 		void RenderingThread::Loop()
 		{
 			ProcessTaskBuffers();
-
-			if(mDestroyNotifyAsync.IsDone() == true) {
-				mRendererManager = nullptr; // It is actually destroyed in EngineCore's destructor
-				// TODO: 따로 제거되게?
-
-				platform::Platform::FinishLoop();
-
-				mDestroyAsyncSignal.DispatchCompletion();
-				return;
-			}
 
 			Async async = GameThread::ProcessTaskBuffersAndSimulateAsync();
 
@@ -89,6 +72,13 @@ namespace cube
 		void RenderingThread::Rendering()
 		{
 			mRendererManager->DrawAll();
+		}
+
+		void RenderingThread::DestroyInternal()
+		{
+			mRendererManager->ShutDown();
+
+			mTaskBuffer.Flush();
 		}
 
 		void RenderingThread::OnResize(uint32_t width, uint32_t height)

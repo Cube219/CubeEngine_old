@@ -1,5 +1,6 @@
 #include "MoveComponent.h"
 
+#include "../CubeEngine.h"
 #include "EngineCore/EngineCore.h"
 #include "EngineCore/ModuleManager.h"
 #include "EngineCore/LogWriter.h"
@@ -65,7 +66,7 @@ namespace cube
 		String jumpStr = CUBE_T("Jump");
 		bool b = mInputModule->IsActionPressed(jumpStr);
 		if(b == true) {
-			core::ECore().ShutDown();
+			CubeEngine::Close();
 		}
 	}
 

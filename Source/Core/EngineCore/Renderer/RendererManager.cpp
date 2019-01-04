@@ -37,19 +37,7 @@ namespace cube
 			Vector3 position[RendererManager::maxPointLightNum];
 		};
 
-		void RendererManager::Initialize(EngineCore* eCore)
-		{
-			mECore = eCore;
-		}
-
-		void RendererManager::ShutDown()
-		{
-			mRenderers.clear();
-
-			CUBE_LOG(LogType::Info, "Destroyed RendererManager");
-		}
-
-		void RendererManager::Prepare(RenderType type)
+		void RendererManager::Initialize(RenderType type)
 		{
 			mWidth = platform::Platform::GetWindowWidth();
 			mHeight = platform::Platform::GetWindowHeight();
@@ -58,13 +46,13 @@ namespace cube
 			mNumThreads = 1;
 
 			switch(type) {
-				case RenderType::Vulkan:
-					mRenderDLib = platform::Platform::LoadDLib(CUBE_T("VulkanAPI"));
-					break;
+			case RenderType::Vulkan:
+				mRenderDLib = platform::Platform::LoadDLib(CUBE_T("VulkanAPI"));
+				break;
 
-				default:
-					ASSERTION_FAILED("Unknown renderer type ({0})", (int)type);
-					return;
+			default:
+				ASSERTION_FAILED("Unknown renderer type ({0})", (int)type);
+				return;
 			}
 
 			using CreateAPIFunction = render::RenderAPI*(*)();
@@ -105,24 +93,24 @@ namespace cube
 			// Create Global / mPerObjectDescriptorSetLayout
 			render::DescriptorSetInitializer descSetInit;
 
-			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 0, 1}); // global
+			descSetInit.descriptors.push_back({ render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 0, 1 }); // global
 			render::BufferInitializer globalUBOBufInit;
 			globalUBOBufInit.type = render::BufferTypeBits::Uniform;
-			globalUBOBufInit.bufferDatas.push_back({nullptr, sizeof(UBOGlobal)});
+			globalUBOBufInit.bufferDatas.push_back({ nullptr, sizeof(UBOGlobal) });
 			mGlobalUBOBuffer = mRenderAPI->CreateBuffer(globalUBOBufInit);
 			mGlobalUBOBuffer->Map();
 
-			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 1, 1}); // dirLight
+			descSetInit.descriptors.push_back({ render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 1, 1 }); // dirLight
 			render::BufferInitializer dirLightBufInit;
 			dirLightBufInit.type = render::BufferTypeBits::Uniform;
-			dirLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBODirLight)});
+			dirLightBufInit.bufferDatas.push_back({ nullptr, sizeof(UBODirLight) });
 			mDirLightBuffer = mRenderAPI->CreateBuffer(dirLightBufInit);
 			mDirLightBuffer->Map();
 
-			descSetInit.descriptors.push_back({render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 2, 1}); // pointLights
+			descSetInit.descriptors.push_back({ render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 2, 1 }); // pointLights
 			render::BufferInitializer pointLightBufInit;
 			pointLightBufInit.type = render::BufferTypeBits::Uniform;
-			pointLightBufInit.bufferDatas.push_back({nullptr, sizeof(UBOPointLights)});
+			pointLightBufInit.bufferDatas.push_back({ nullptr, sizeof(UBOPointLights) });
 			mPointLightsBuffer = mRenderAPI->CreateBuffer(pointLightBufInit);
 			mPointLightsBuffer->Map();
 
@@ -130,10 +118,51 @@ namespace cube
 			mGlobalDescriptorSet = mRenderAPI->CreateDescriptorSet(mGlobalDescriptorSetLayout);
 
 			descSetInit.descriptors.clear();
-			descSetInit.descriptors.push_back({render::ShaderTypeBits::Vertex, render::DescriptorType::UniformBuffer, 0, 1});
+			descSetInit.descriptors.push_back({ render::ShaderTypeBits::Vertex, render::DescriptorType::UniformBuffer, 0, 1 });
 			mPerObjectDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
 
 			mIsPrepared = true;
+		}
+
+		void RendererManager::ShutDown()
+		{
+			mRenderers.clear();
+			mMaterialPipelines.clear();
+			mMaterials.clear();
+
+			mGetImageSemaphore = nullptr;
+			
+			mGraphicsQueue = nullptr;
+
+			mMainCommandBufferSubmitFence = nullptr;
+			mMainCommandBuffer = nullptr;
+			mCommandBuffersCurrentMaterialIndex.clear();
+			mCommandBuffers.clear();
+
+			mRenderPass = nullptr;
+
+			mSwapchain = nullptr;
+
+			mDepthBufferImageView = nullptr;
+			mDepthBufferImage = nullptr;
+
+			mPerObjectDescriptorSetLayout = nullptr;
+			mGlobalUBOBuffer = nullptr;
+			mGlobalDescriptorSet = nullptr;
+			mGlobalDescriptorSetLayout = nullptr;
+
+			mPointLightsBuffer = nullptr;
+			mPointLights.clear();
+
+			mDirLightBuffer = nullptr;
+			mDirLight = nullptr;
+
+			mCameraRenderer_NotRT = nullptr;
+			mCameraRenderer = nullptr;
+
+			mRenderAPI = nullptr;
+
+			mRenderDLib = nullptr;
 		}
 
 		HMaterial RendererManager::RegisterMaterial(SPtr<Material>& material)

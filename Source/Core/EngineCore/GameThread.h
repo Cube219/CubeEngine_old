@@ -17,8 +17,8 @@ namespace cube
 			~GameThread() = delete;
 
 			static void Init(EngineCore* eCore);
+
 			static Async PrepareAsync();
-			static void Run();
 			static Async DestroyAsync();
 
 			static Async SimulateAsync();
@@ -38,30 +38,21 @@ namespace cube
 		private:
 			friend class RenderingThread;
 
-			static void ThreadFunc();
-			static void PrepareInternal();
 			static void RunInternal();
 
-			static void ProcessTaskBuffers();
-			static void Simulate();
+			static void PrepareInternal();
+			static void DestroyInternal();
+
+			static void ProcessTaskBuffersAndSimulateInternal();
+			static void SimulateInternal();
 
 			static EngineCore* mECore;
 			static std::thread mMyThread;
+			static std::function<void()> mRunFunction;
 
-			static Mutex mMutex;
-			static ThreadSignal mRunNotify;
-
-			static AsyncSignal mPrepareAsyncSignal;
-			static AsyncSignal mSimulateAsyncSignal;
-			static AsyncSignal mProcessTaskBuffersAndSimulateAsyncSignal;
-			static AsyncSignal mDestroyAsyncSignal;
-			
-			static AsyncSignal mSimulateNotifyAsyncSignal;
-			static Async mSimulateNotifyAsync;
-			static AsyncSignal mProcessTaskBuffersAndSimulateNotifyAsyncSignal;
-			static Async mProcessTaskBuffersAndSimulateNotifyAsync;
-			static AsyncSignal mDestroyNotifyAsyncSignal;
-			static Async mDestroyNotifyAsync;
+			static AsyncSignal mStartSignal;
+			static AsyncSignal mFinishSignal;
+			static AsyncSignal mDestroySignal;
 
 			static Mutex mTaskBufferMutex;
 			static TaskBuffer mTaskBuffer;

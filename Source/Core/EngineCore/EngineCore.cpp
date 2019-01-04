@@ -12,15 +12,33 @@ namespace cube
 	{
 		static EngineCore gEngineCore;
 
+		void EngineCore::PreInitialize()
+		{
+			LogWriter::Init();
+		}
+
 		void EngineCore::Initialize()
 		{
-			mRendererManager.Initialize(this);
+			// mRendererManager will be initialized in RenderingThread
 
-			LogWriter::Init();
+			mTimeManager.Initialize();
+			mStringManager.Initialize();
+
+			mResourceManager.Initialize();
+
+			mModuleManager.Initialize();
+			mModuleManager.LoadModule(CUBE_T("InputModule"));
+			mModuleManager.InitModules();
+
+			mGameObjectManager.Initialize();
+			mComponentManager.Initialize();
+		
 		}
 
 		void EngineCore::ShutDown()
 		{
+			// mRendererManager will be shutdown in RenderingThread
+
 			mComponentManager.ShutDown();
 			mGameObjectManager.ShutDown();
 
@@ -50,21 +68,6 @@ namespace cube
 		void EngineCore::SetFPSLimit(int limit)
 		{
 			mFPSLimit = limit;
-		}
-
-		void EngineCore::InitializeCore()
-		{
-			mTimeManager.Initialize();
-			mStringManager.Initialize();
-
-			mResourceManager.Initialize();
-
-			mModuleManager.Initialize();
-			mModuleManager.LoadModule(CUBE_T("InputModule"));
-			mModuleManager.InitModules();
-
-			mGameObjectManager.Initialize();
-			mComponentManager.Initialize();
 		}
 
 		void EngineCore::Update()

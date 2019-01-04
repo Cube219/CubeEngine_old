@@ -18,9 +18,11 @@ namespace cube
 			~RenderingThread() = delete;
 
 			static void Init(RendererManager* rendererManager);
+
 			static void Prepare();
-			static void Run();
-			static Async DestroyAsync();
+			static void Destroy();
+
+			static void Run(Async& gameThreadRunAsync);
 			static void ExecuteLastTaskBuffer();
 
 			static void QueueTask(std::function<void()> taskFunc)
@@ -38,6 +40,7 @@ namespace cube
 			static void Loop();
 			static void ProcessTaskBuffers();
 			static void Rendering();
+			static void DestroyInternal();
 
 			static void OnResize(uint32_t width, uint32_t height);
 
@@ -45,11 +48,6 @@ namespace cube
 
 			static EventFunction<void()> mLoopEventFunc;
 			static EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
-
-			static AsyncSignal mDestroyAsyncSignal;
-
-			static AsyncSignal mDestroyNotifyAsyncSignal;
-			static Async mDestroyNotifyAsync;
 
 			static Mutex mTaskBufferMutex;
 			static TaskBuffer mTaskBuffer;

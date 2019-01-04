@@ -30,6 +30,7 @@ namespace cube
 			EngineCore(EngineCore&& other) = delete;
 			EngineCore& operator=(EngineCore&& rhs) = delete;
 
+			void PreInitialize();
 			void Initialize();
 			void ShutDown();
 
@@ -51,8 +52,6 @@ namespace cube
 			friend class CubeEngine;
 			friend class RendererManager;
 			friend class GameThread;
-
-			void InitializeCore();
 
 			void Update();
 

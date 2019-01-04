@@ -1,4 +1,4 @@
-#include "CubeEngine.h"
+癤�#include "CubeEngine.h"
 
 #include "Platform.h"
 #include "EngineCore/EngineCore.h"
@@ -29,7 +29,7 @@ namespace cube
 		platform::Platform::ShowWindow();
 
 		
-		core::ECore().Initialize();
+		core::ECore().PreInitialize();
 
 		auto& rm = core::ECore().GetRendererManager();
 		core::RenderingThread::Init(&rm);
@@ -51,16 +51,23 @@ namespace cube
 	{
 		platform::Platform::GetClosingEvent().RemoveListener(closingEventFunc);
 
-		// TODO: 좀 더 좋은 구조로 만들기
+		core::Async async = core::GameThread::DestroyAsync();
+		async.WaitUntilFinished();
+
+		core::RenderingThread::Destroy();
+
 		core::GameThread::Join();
-		core::RenderingThread::ExecuteLastTaskBuffer();
-		core::ECore().ShutDown();
 	}
 
 	void CubeEngine::Run()
 	{
-		core::GameThread::Run();
-		core::RenderingThread::Run();
+		core::Async async = core::GameThread::SimulateAsync();
+		core::RenderingThread::Run(async);
+	}
+
+	void CubeEngine::Close()
+	{
+		platform::Platform::FinishLoop();
 	}
 
 	void CubeEngine::SetCustomClosingFunction(std::function<void()> func)
@@ -99,6 +106,6 @@ namespace cube
 	void CubeEngine::DefaultClosingFunction()
 	{
 		CUBE_LOG(LogType::Info, "Call closing function");
-		core::ECore().ShutDown();
+		Close();
 	}
 } // namespace cube

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CubeEngineHeader.h"
 
@@ -26,6 +26,8 @@ namespace cube
 		static void ShutDown();
 
 		static void Run();
+
+		static void Close();
 
 		static void SetCustomClosingFunction(std::function<void()> func);
 
