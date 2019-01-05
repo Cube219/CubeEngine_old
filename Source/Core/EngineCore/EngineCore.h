@@ -10,7 +10,7 @@
 #include "Thread/ThreadManager.h"
 #include "Renderer/RendererManager.h"
 #include "Resource/ResourceManager.h"
-#include "ModuleManager.h"
+#include "Module/ModuleManager.h"
 #include "GameObjectManager.h"
 #include "Component/ComponentManager.h"
 

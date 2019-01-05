@@ -11,7 +11,7 @@ namespace cube
 {
 	namespace module
 	{
-		BaseModule* CreateModule()
+		core::BaseModule* CreateModule()
 		{
 			return new InputModule();
 		}

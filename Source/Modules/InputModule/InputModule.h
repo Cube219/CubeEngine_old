@@ -2,7 +2,7 @@
 
 #include "InputModuleHeader.h"
 
-#include "BaseModule/BaseModule.h"
+#include "EngineCore/Module/BaseModule.h"
 
 #include "Base/Vector.h"
 
@@ -45,9 +45,9 @@ namespace cube
 			Vector<VirtualButtonInfo> bindedVirtualButtons;
 		};
 
-		extern "C" INPUT_MODULE_EXPORT BaseModule* CreateModule();
+		extern "C" INPUT_MODULE_EXPORT core::BaseModule* CreateModule();
 
-		class INPUT_MODULE_EXPORT InputModule : public BaseModule
+		class INPUT_MODULE_EXPORT InputModule : public core::BaseModule
 		{
 		public:
 			InputModule();

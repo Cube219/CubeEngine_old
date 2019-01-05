@@ -1,12 +1,11 @@
 ﻿#pragma once
 
-#include "EngineCoreHeader.h"
+#include "../EngineCoreHeader.h"
 
 #include <functional>
 
 #include "DLib.h"
-#include "Thread/MutexLock.h"
-#include "BaseModule/BaseModule.h"
+#include "../Thread/MutexLock.h"
 
 namespace cube
 {
@@ -22,8 +21,8 @@ namespace cube
 			};
 
 			SPtr<platform::DLib> moduleDLib;
-			SPtr<module::BaseModule> module;
-			uint32_t remainDependencyNum;
+			SPtr<BaseModule> module;
+			Uint32 remainDependencyNum;
 			State state;
 		};
 
@@ -45,7 +44,7 @@ namespace cube
 
 			void InitModules();
 
-			SPtr<module::BaseModule> GetModule(String& name);
+			SPtr<BaseModule> GetModule(String& name);
 			
 			template <typename T>
 			SPtr<T> GetModule(String& name)
@@ -56,7 +55,7 @@ namespace cube
 			void UpdateAllModules(float dt);
 
 		private:
-			HashMap<String, SPtr<module::BaseModule>> mModuleLookup;
+			HashMap<String, SPtr<BaseModule>> mModuleLookup;
 
 			Vector<ModuleNode> mModules;
 		};

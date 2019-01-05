@@ -2,7 +2,7 @@
 
 #include "../CubeEngine.h"
 #include "EngineCore/EngineCore.h"
-#include "EngineCore/ModuleManager.h"
+#include "EngineCore/Module/ModuleManager.h"
 #include "EngineCore/LogWriter.h"
 #include "EngineCore/GameObject.h"
 

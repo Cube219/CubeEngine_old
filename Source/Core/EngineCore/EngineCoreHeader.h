@@ -68,6 +68,7 @@ namespace cube
 		class Texture;
 
 		class ModuleManager;
+		class BaseModule;
 
 		class GameObjectManager;
 		class GameObject;

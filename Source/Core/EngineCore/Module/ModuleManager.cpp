@@ -2,12 +2,13 @@
 
 #include "Platform.h"
 
-#include "EngineCore.h"
-#include "Thread/ThreadManager.h"
-#include "Thread/Thread.h"
+#include "../EngineCore.h"
+#include "BaseModule.h"
+#include "../Thread/ThreadManager.h"
+#include "../Thread/Thread.h"
 
-#include "LogWriter.h"
-#include "Assertion.h"
+#include "../LogWriter.h"
+#include "../Assertion.h"
 
 namespace cube
 {
@@ -41,10 +42,10 @@ namespace cube
 			
 			node.moduleDLib = platform::Platform::LoadDLib(moduleName);
 			
-			using CreateModuleFunction = module::BaseModule* (*)();
+			using CreateModuleFunction = BaseModule* (*)();
 
 			auto createModuleFunction = RCast(CreateModuleFunction)(node.moduleDLib->GetFunction(CUBE_T("CreateModule")));
-			node.module = SPtr<module::BaseModule>(createModuleFunction());
+			node.module = SPtr<BaseModule>(createModuleFunction());
 
 			mModules.push_back(node);
 			mModuleLookup[moduleName] = node.module;
@@ -57,7 +58,7 @@ namespace cube
 			}
 		}
 
-		SPtr<module::BaseModule> ModuleManager::GetModule(String& name)
+		SPtr<BaseModule> ModuleManager::GetModule(String& name)
 		{
 			auto temp = mModuleLookup.find(name.c_str());
 			CHECK(temp != mModuleLookup.end(), "Failed to find module \"{0}\".", name);
