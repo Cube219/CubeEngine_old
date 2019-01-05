@@ -190,7 +190,7 @@ namespace cube
 				if(obj.pObjectName != nullptr)
 					objName = obj.pObjectName;
 
-				res += fmt::format(CUBE_T("\n\t\tObject[{0}] - Handle {1}, Name \"{2}\""),
+				res += fmt::format(CUBE_T("\n\t\tObject[{0}] - Handle {1}, Name '{2}'"),
 					GetVkObjectTypeStr(obj.objectType), obj.objectHandle, objName);
 			}
 

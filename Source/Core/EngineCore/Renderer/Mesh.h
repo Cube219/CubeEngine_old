@@ -22,7 +22,7 @@ namespace cube
 		class ENGINE_CORE_EXPORT Mesh : public Resource
 		{
 		public:
-			static RPtr<Mesh> Load(const String& path);
+			static RPtr<Mesh> Load(StringRef path);
 
 		public:
 			Mesh(){ }

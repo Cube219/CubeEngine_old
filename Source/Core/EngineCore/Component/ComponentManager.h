@@ -38,10 +38,10 @@ namespace cube
 				};
 			}
 
-			HComponent CreateComponent(const String& name);
+			HComponent CreateComponent(StringRef name);
 
 		private:
-			void CheckIfComponentExisted(const String& name);
+			void CheckIfComponentExisted(StringRef name);
 
 			HashMap<String, std::function<HComponent()>> mComponentCreators;
 		};

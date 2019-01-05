@@ -59,15 +59,15 @@ namespace cube
 
 			void Destroy() final override;
 
-			bool IsActionPressed(String& name);
+			bool IsActionPressed(StringRef name);
 
-			float GetAxisValue(String& name);
+			float GetAxisValue(StringRef name);
 
 			void LockCursor();
 			void UnlockCursor();
 
-			void SendVibration(uint32_t playerIndex, float time, float intensity);
-			void SendVibration(uint32_t playerIndex, float time, float leftIntensity, float rightIntensity);
+			void SendVibration(Uint32 playerIndex, float time, float intensity);
+			void SendVibration(Uint32 playerIndex, float time, float leftIntensity, float rightIntensity);
 
 			Vector2 GetMousePosition();
 

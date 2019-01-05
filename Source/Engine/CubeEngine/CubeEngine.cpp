@@ -105,7 +105,6 @@ namespace cube
 
 	void CubeEngine::DefaultClosingFunction()
 	{
-		CUBE_LOG(LogType::Info, "Call closing function");
 		Close();
 	}
 } // namespace cube

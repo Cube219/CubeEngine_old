@@ -55,10 +55,10 @@ namespace cube
 			return matIns_rt;
 		}
 
-		void MaterialInstance::SetParamData(String& name, void* pData, uint64_t dataSize)
+		void MaterialInstance::SetParamData(StringRef name, void* pData, uint64_t dataSize)
 		{
-			auto res = mParameterIndexLookupMap.find(name);
-			CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name \"{0}\".", name);
+			auto res = mParameterIndexLookupMap.find(name.GetString());
+			CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name '{0}'.", name.GetString());
 
 			uint64_t paramIndex = res->second;
 
@@ -75,16 +75,16 @@ namespace cube
 		}
 
 		template<>
-		void MaterialInstance::SetParameterData(String& name, RPtr<Texture>& texture)
+		void MaterialInstance::SetParameterData(StringRef name, RPtr<Texture>& texture)
 		{
-			auto res = mParameterIndexLookupMap.find(name);
-			CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name \"{0}\".", name);
+			auto res = mParameterIndexLookupMap.find(name.GetString());
+			CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name '{0}'.", name.GetString());
 
 			uint64_t paramIndex = res->second;
 
 
 			CHECK(mParameters[paramIndex].type == MaterialParameterType::Texture,
-				"The Parameter \"{0}\" is not a Texture parameter.", name);
+				"The Parameter '{0}' is not a Texture parameter.", name.GetString());
 
 			mParameters[paramIndex].texture = texture;
 

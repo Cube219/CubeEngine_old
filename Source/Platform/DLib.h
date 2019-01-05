@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "PlatformHeader.h"
 
@@ -12,11 +12,11 @@ namespace cube
 			DLib(){ }
 			virtual ~DLib(){ }
 
-			void* GetFunction(const String& name);
+			void* GetFunction(StringRef name);
 		};
 
 #define DLIB_DEFINITION(Child)                                 \
-		inline void* DLib::GetFunction(const String& name) {   \
+		inline void* DLib::GetFunction(StringRef name) {   \
 			return RCast(Child*)(this)->GetFunctionImpl(name); \
 		}
 	} // namespace platform

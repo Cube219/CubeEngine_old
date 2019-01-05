@@ -7,7 +7,7 @@ namespace cube
 {
 	namespace core
 	{
-		RPtr<Mesh> Mesh::Load(const String& path)
+		RPtr<Mesh> Mesh::Load(StringRef path)
 		{
 			return ECore().GetResourceManager().LoadResource<Mesh>(path);
 		}

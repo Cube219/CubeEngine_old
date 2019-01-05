@@ -1,4 +1,4 @@
-#ifdef _WIN32
+﻿#ifdef _WIN32
 
 #include "Win32FileSystem.h"
 
@@ -14,7 +14,7 @@ namespace cube
 		//////////
 		// File //
 		//////////
-		uint64_t Win32File::GetFileSizeImpl()
+		Uint64 Win32File::GetFileSizeImpl()
 		{
 			LARGE_INTEGER size_LI;
 			BOOL res = GetFileSizeEx(mFileHandle, &size_LI);
@@ -23,7 +23,7 @@ namespace cube
 			return size_LI.QuadPart;
 		}
 
-		void Win32File::SetFilePointerImpl(uint64_t offset)
+		void Win32File::SetFilePointerImpl(Uint64 offset)
 		{
 			LARGE_INTEGER distance_LI;
 			distance_LI.QuadPart = offset;
@@ -32,7 +32,7 @@ namespace cube
 			PLATFORM_CHECK(res, "Failed to set file pointer. (ErrorCode: {0})", GetLastError());
 		}
 
-		void Win32File::MoveFilePointerImpl(int64_t distance)
+		void Win32File::MoveFilePointerImpl(Int64 distance)
 		{
 			LARGE_INTEGER distance_LI;
 			distance_LI.QuadPart = distance;
@@ -41,13 +41,13 @@ namespace cube
 			PLATFORM_CHECK(res, "Failed to move file pointer. (ErrorCode: {0})", GetLastError());
 		}
 
-		void Win32File::ReadImpl(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize)
+		void Win32File::ReadImpl(void* pReadBuffer, Uint64 bufferSizeToRead, Uint64& readBufferSize)
 		{
 			BOOL res = ReadFile(mFileHandle, pReadBuffer, (DWORD)bufferSizeToRead, (LPDWORD)&readBufferSize, NULL);
 			PLATFORM_CHECK(res, "Failed to read the file. (ErrorCode: {0})", GetLastError());
 		}
 
-		void Win32File::WriteImpl(void* pWriteBuffer, uint64_t bufferSize)
+		void Win32File::WriteImpl(void* pWriteBuffer, Uint64 bufferSize)
 		{
 			DWORD writtenSize;
 			BOOL res = WriteFile(mFileHandle, pWriteBuffer, (DWORD)bufferSize, &writtenSize, nullptr);
@@ -68,10 +68,10 @@ namespace cube
 		// FileSystem //
 		////////////////
 
-		SPtr<File> Win32FileSystem::OpenFileImpl(const String& path, FileAccessModeBits accessModeBits, bool createIfNotExist)
+		SPtr<File> Win32FileSystem::OpenFileImpl(StringRef path, FileAccessModeBits accessModeBits, bool createIfNotExist)
 		{
 			DWORD desiredAccess = GetDwDesiredAccess(accessModeBits);
-			PString pPath = ToPString(path);
+			PString pPath = ToPString(path.GetString());
 
 			HANDLE file = CreateFile(pPath.c_str(), desiredAccess, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -90,7 +90,7 @@ namespace cube
 				err = GetLastError();
 			}
 
-			PLATFORM_ASSERTION_FAILED("Failed to open a file. ({0}) (ErrorCode: {1})", path, err);
+			PLATFORM_ASSERTION_FAILED("Failed to open a file. ({0}) (ErrorCode: {1})", path.GetString(), err);
 			return nullptr;
 		}
 

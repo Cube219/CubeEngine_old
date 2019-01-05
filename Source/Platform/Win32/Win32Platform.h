@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef _WIN32
 
@@ -19,12 +19,12 @@ namespace cube
 
 			static void InitImpl();
 
-			static void InitWindowImpl(const String& title, uint32_t width, uint32_t height);
+			static void InitWindowImpl(StringRef title, Uint32 width, Uint32 height);
 			static void ShowWindowImpl();
 
 			static void StartLoopImpl();
 			static void FinishLoopImpl();
-			static void SleepImpl(uint32_t time);
+			static void SleepImpl(Uint32 time);
 
 			static void ShowCursorImpl();
 			static void HideCursorImpl();
@@ -32,7 +32,7 @@ namespace cube
 			static void MoveCursorImpl(int x, int y);
 			static void GetCursorPosImpl(int& x, int& y);
 
-			static SPtr<DLib> LoadDLibImpl(const String& path);
+			static SPtr<DLib> LoadDLibImpl(StringRef path);
 
 			static HINSTANCE GetInstance();
 			static HWND GetWindow();
