@@ -1,15 +1,15 @@
-#include "StringManager.h"
+﻿#include "StringManager.h"
 
 namespace cube
 {
 	namespace core
 	{
-		StringManager::StringManager()
+		void StringManager::Initialize()
 		{
 		}
 
-		StringManager::~StringManager()
+		void StringManager::ShutDown()
 		{
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

@@ -11,7 +11,7 @@ namespace cube
 {
 	namespace module
 	{
-		BaseModule* CreateModule()
+		core::BaseModule* CreateModule()
 		{
 			return new InputModule();
 		}
@@ -212,14 +212,14 @@ namespace cube
 		{
 		}
 
-		bool InputModule::IsActionPressed(String& name)
+		bool InputModule::IsActionPressed(StringRef name)
 		{
-			return mActions[name].isPressed;
+			return mActions[name.GetString()].isPressed;
 		}
 
-		float InputModule::GetAxisValue(String& name)
+		float InputModule::GetAxisValue(StringRef name)
 		{
-			return mAxes[name].currentValue;
+			return mAxes[name.GetString()].currentValue;
 		}
 
 		void InputModule::LockCursor()
@@ -232,7 +232,7 @@ namespace cube
 			mKMInput->UnlockCursor();
 		}
 
-		void InputModule::SendVibration(uint32_t playerIndex, float time, float intensity)
+		void InputModule::SendVibration(Uint32 playerIndex, float time, float intensity)
 		{
 			mIsVibrated[playerIndex] = true;
 			mRemainedVibrationTime[playerIndex] = time;
@@ -240,7 +240,7 @@ namespace cube
 			mXboxInput->SetVibration(playerIndex, intensity, intensity);
 		}
 
-		void InputModule::SendVibration(uint32_t playerIndex, float time, float leftIntensity, float rightIntensity)
+		void InputModule::SendVibration(Uint32 playerIndex, float time, float leftIntensity, float rightIntensity)
 		{
 			mIsVibrated[playerIndex] = true;
 			mRemainedVibrationTime[playerIndex] = time;

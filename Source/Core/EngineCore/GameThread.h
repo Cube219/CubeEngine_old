@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "EngineCoreHeader.h"
 
@@ -17,12 +17,12 @@ namespace cube
 			~GameThread() = delete;
 
 			static void Init(EngineCore* eCore);
-			static AsyncState PrepareAsync();
-			static void Run();
-			static AsyncState DestroyAsync();
 
-			static AsyncState SimulateAsync();
-			static AsyncState ProcessTaskBuffersAndSimulateAsync();
+			static Async PrepareAsync();
+			static Async DestroyAsync();
+
+			static Async SimulateAsync();
+			static Async ProcessTaskBuffersAndSimulateAsync();
 
 			static void Join(){ mMyThread.join(); }
 
@@ -38,30 +38,21 @@ namespace cube
 		private:
 			friend class RenderingThread;
 
-			static void ThreadFunc();
-			static void PrepareInternal();
 			static void RunInternal();
 
-			static void ProcessTaskBuffers();
-			static void Simulate();
+			static void PrepareInternal();
+			static void DestroyInternal();
+
+			static void ProcessTaskBuffersAndSimulateInternal();
+			static void SimulateInternal();
 
 			static EngineCore* mECore;
 			static std::thread mMyThread;
+			static std::function<void()> mRunFunction;
 
-			static Mutex mMutex;
-			static ThreadNotify mRunNotify;
-
-			static AsyncStateData mPrepareAsyncData;
-			static AsyncStateData mSimulateAsyncData;
-			static AsyncStateData mProcessTaskBuffersAndSimulateAsyncData;
-			static AsyncStateData mDestroyAsyncData;
-			
-			static AsyncStateData mSimulateNotifyAsyncData;
-			static AsyncState mSimulateNotifyAsync;
-			static AsyncStateData mProcessTaskBuffersAndSimulateNotifyAsyncData;
-			static AsyncState mProcessTaskBuffersAndSimulateNotifyAsync;
-			static AsyncStateData mDestroyNotifyAsyncData;
-			static AsyncState mDestroyNotifyAsync;
+			static AsyncSignal mStartSignal;
+			static AsyncSignal mFinishSignal;
+			static AsyncSignal mDestroySignal;
 
 			static Mutex mTaskBufferMutex;
 			static TaskBuffer mTaskBuffer;

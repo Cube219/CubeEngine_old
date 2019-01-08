@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef _WIN32
 
@@ -15,10 +15,10 @@ namespace cube
 		class PLATFORM_EXPORT Win32DLib : public DLib
 		{
 		public:
-			Win32DLib(const String& path);
+			Win32DLib(StringRef path);
 			virtual ~Win32DLib();
 
-			void* GetFunctionImpl(const String& name);
+			void* GetFunctionImpl(StringRef name);
 
 		private:
 			HMODULE mDLib;

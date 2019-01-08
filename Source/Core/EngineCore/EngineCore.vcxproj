@@ -91,7 +91,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI_New;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -123,7 +123,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI_New;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ENGINE_CORE_EXPORTS;GLM_FORCE_RADIANS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -148,7 +148,8 @@
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="GameThread.h" />
     <ClInclude Include="LogWriter.h" />
-    <ClInclude Include="ModuleManager.h" />
+    <ClInclude Include="Module\BaseModule.h" />
+    <ClInclude Include="Module\ModuleManager.h" />
     <ClInclude Include="Renderer\BaseMeshGenerator.h" />
     <ClInclude Include="Renderer\CameraRenderer3D.h" />
     <ClInclude Include="Renderer\Light\BaseLight.h" />
@@ -188,7 +189,8 @@
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="GameThread.cpp" />
     <ClCompile Include="LogWriter.cpp" />
-    <ClCompile Include="ModuleManager.cpp" />
+    <ClCompile Include="Module\BaseModule.cpp" />
+    <ClCompile Include="Module\ModuleManager.cpp" />
     <ClCompile Include="Renderer\BaseMeshGenerator.cpp" />
     <ClCompile Include="Renderer\CameraRenderer3D.cpp" />
     <ClCompile Include="Renderer\Light\BaseLight.cpp" />

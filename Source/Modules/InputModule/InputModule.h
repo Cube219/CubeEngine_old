@@ -2,9 +2,11 @@
 
 #include "InputModuleHeader.h"
 
-#include "BaseModule/BaseModule.h"
+#include "EngineCore/Module/BaseModule.h"
 
 #include "Base/Vector.h"
+
+#include <functional>
 
 namespace cube
 {
@@ -43,9 +45,9 @@ namespace cube
 			Vector<VirtualButtonInfo> bindedVirtualButtons;
 		};
 
-		extern "C" INPUT_MODULE_EXPORT BaseModule* CreateModule();
+		extern "C" INPUT_MODULE_EXPORT core::BaseModule* CreateModule();
 
-		class INPUT_MODULE_EXPORT InputModule : public BaseModule
+		class INPUT_MODULE_EXPORT InputModule : public core::BaseModule
 		{
 		public:
 			InputModule();
@@ -57,15 +59,15 @@ namespace cube
 
 			void Destroy() final override;
 
-			bool IsActionPressed(String& name);
+			bool IsActionPressed(StringRef name);
 
-			float GetAxisValue(String& name);
+			float GetAxisValue(StringRef name);
 
 			void LockCursor();
 			void UnlockCursor();
 
-			void SendVibration(uint32_t playerIndex, float time, float intensity);
-			void SendVibration(uint32_t playerIndex, float time, float leftIntensity, float rightIntensity);
+			void SendVibration(Uint32 playerIndex, float time, float intensity);
+			void SendVibration(Uint32 playerIndex, float time, float leftIntensity, float rightIntensity);
 
 			Vector2 GetMousePosition();
 

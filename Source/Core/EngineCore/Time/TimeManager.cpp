@@ -1,4 +1,4 @@
-#include "TimeManager.h"
+﻿#include "TimeManager.h"
 
 #include "../LogWriter.h"
 
@@ -8,12 +8,12 @@ namespace cube
 {
 	namespace core
 	{
-		TimeManager::TimeManager()
+		void TimeManager::Initialize()
 		{
 			mGlobalGameTime = std::make_shared<GameTime>();
 		}
 
-		TimeManager::~TimeManager()
+		void TimeManager::ShutDown()
 		{
 		}
 
@@ -54,5 +54,5 @@ namespace cube
 		{
 			return std::chrono::time_point_cast<Duration>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

@@ -34,10 +34,18 @@ namespace cube
 			constexpr static int maxPointLightNum = 10;
 
 		public:
-			RendererManager(EngineCore* eCore);
-			~RendererManager();
+			RendererManager() : 
+				mIsPrepared(false), mDirLight(nullptr)
+			{}
+			~RendererManager() {}
 
-			void Prepare(RenderType type);
+			RendererManager(const RendererManager& other) = delete;
+			RendererManager& operator=(const RendererManager& rhs) = delete;
+			RendererManager(RendererManager&& other) = delete;
+			RendererManager& operator=(RendererManager&& rhs) = delete;
+
+			void Initialize(RenderType type);
+			void ShutDown();
 
 			HMaterial RegisterMaterial(SPtr<Material>& material);
 			void UnregisterMaterial(HMaterial& material);
@@ -73,9 +81,6 @@ namespace cube
 			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D_RT>& renderer);
 
 			SPtr<render::GraphicsPipeline> CreatePipeline(SPtr<Material_RT> material);
-
-			EngineCore* mECore;
-			std::thread mGameThread;
 
 			SPtr<platform::DLib> mRenderDLib;
 			SPtr<render::RenderAPI> mRenderAPI;

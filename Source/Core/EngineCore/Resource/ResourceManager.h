@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -11,15 +11,23 @@ namespace cube
 		class ENGINE_CORE_EXPORT ResourceManager
 		{
 		public:
-			ResourceManager();
-			~ResourceManager();
+			ResourceManager() {}
+			~ResourceManager() {}
+
+			ResourceManager(const ResourceManager& other) = delete;
+			ResourceManager& operator=(const ResourceManager& rhs) = delete;
+			ResourceManager(ResourceManager&& other) = delete;
+			ResourceManager& operator=(ResourceManager&& rhs) = delete;
+
+			void Initialize();
+			void ShutDown();
 
 			void RegisterImporter(UPtr<ResourceImporter> importer);
 
-			RPtr<Resource> LoadResource(const String& path);
+			RPtr<Resource> LoadResource(StringRef path);
 
 			template <typename T>
-			RPtr<T> LoadResource(const String& path)
+			RPtr<T> LoadResource(StringRef path)
 			{
 				return LoadResource(path).Cast<T>();
 			}

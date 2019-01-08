@@ -7,10 +7,69 @@
 
 namespace cube
 {
-	using U8String = std::basic_string<char>;
-	using UCS2String = std::basic_string<unsigned short>;
-	using U16String = std::basic_string<char16_t>;
-	using U32String = std::basic_string<char32_t>;
+	// Helper class to reference both c-style string and cpp string
+	// for using c-style string finally
+	// Reference BasicCStringRef in fmt library (made by Victor Zverovich)
+	// (https://github.com/fmtlib/fmt)
+	template <typename C, typename Str>
+	class BaseCStringRef
+	{
+	public:
+		BaseCStringRef(const C* cStr) : 
+			mStr(cStr)
+		{}
+		BaseCStringRef(const Str& cppStr) :
+			mStr(cppStr.c_str())
+		{}
+
+		const C* c_str() const { return mStr; }
+
+	private:
+		const C* mStr;
+	};
+
+	// Helper class to reference both c-style string and cpp string
+	// for using cpp string finally
+	// Reference BasicStringRef in fmt library (made by Victor Zverovich)
+	// (https://github.com/fmtlib/fmt)
+	template <typename C, typename Str>
+	class BaseStringRef
+	{
+	public:
+		BaseStringRef(const C* cStr) : 
+			mStr(cStr), mStrPtr(&mStr)
+		{}
+		BaseStringRef(const Str& cppStr) :
+			mStrPtr(&cppStr)
+		{}
+
+		const Str& GetString() const { return *mStrPtr; }
+		const C* c_str() const { return mStrPtr->c_str(); }
+
+	private:
+		const Str* mStrPtr;
+		const Str mStr; // Use when using constructor of C-style string
+	};
+
+	using U8Character = char;
+	using U8String = std::basic_string<U8Character>;
+	using U8CStringRef = BaseCStringRef<U8Character, U8String>;
+	using U8StringRef = BaseStringRef<U8Character, U8String>;
+
+	using UCS2Character = unsigned short;
+	using UCS2String = std::basic_string<UCS2Character>;
+	using UCS2CStringRef = BaseCStringRef<UCS2Character, UCS2String>;
+	using UCS2StringRef = BaseStringRef<UCS2Character, UCS2String>;
+
+	using U16Character = char16_t;
+	using U16String = std::basic_string<U16Character>;
+	using U16CStringRef = BaseCStringRef<U16Character, U16String>;
+	using U16StringRef = BaseStringRef<U16Character, U16String>;
+
+	using U32Character = char32_t;
+	using U32String = std::basic_string<U32Character>;
+	using U32CStringRef = BaseCStringRef<U32Character, U32String>;
+	using U32StringRef = BaseStringRef<U32Character, U32String>;
 
 	inline void StringMoveNext(U8String::iterator& iter, size_t offset)
 	{
@@ -130,8 +189,10 @@ namespace cube
 
 #if defined (STR_UTF8)
 
-	using Character = char;
+	using Character = U8Character;
 	using String = U8String;
+	using CStringRef = U8CStringRef;
+	using StringRef = U8StringRef;
 	#define CUBE_T(text) u8 ## text
 	inline String ToStringFromASCII(const std::string& str) { return ToU8StringFromASCII(str); }
 	inline String ToString(const U8String& str) { return str; }
@@ -141,8 +202,10 @@ namespace cube
 
 #elif defined (STR_UCS2)
 
-	using Character = unsigned short;
+	using Character = UCS2Character;
 	using String = UCS2String;
+	using CStringRef = UCS2CStringRef;
+	using StringRef = UCS2StringRef;
 	#define CUBE_T(text) (const unsigned short*)u ## text
 	inline String ToStringFromASCII(const std::string& str) { return ToUCS2StringFromASCII(str); }
 	inline String ToString(const U8String& str) { return ToUCS2String(str); }
@@ -152,8 +215,10 @@ namespace cube
 
 #elif defined (STR_UTF16)
 
-	using Character = char16_t;
+	using Character = U16Character;
 	using String = U16String;
+	using CStringRef = U16CStringRef;
+	using StringRef = U16StringRef;
 	#define CUBE_T(text) u ## text
 	inline String ToStringFromASCII(const std::string& str) { return ToU16StringFromASCII(str); }
 	inline String ToString(const U8String& str) { return ToU16String(str); }
@@ -163,8 +228,10 @@ namespace cube
 
 #elif defined (STR_UTF32)
 
-	using Character = char32_t;
+	using Character = U32Character;
 	using String = U32String;
+	using CStringRef = U32CStringRef;
+	using StringRef = U32StringRef;
 	#define CUBE_T(text) U ## text
 	inline String ToStringFromASCII(const std::string& str) { return ToU32StringFromASCII(str); }
 	inline String ToString(const U8String& str) { return ToU32String(str); }

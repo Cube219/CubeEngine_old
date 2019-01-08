@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -17,10 +17,12 @@ namespace cube
 			RenderingThread() = delete;
 			~RenderingThread() = delete;
 
-			static void Init(SPtr<RendererManager>& rendererManager);
+			static void Init(RendererManager* rendererManager);
+
 			static void Prepare();
-			static void Run();
-			static AsyncState DestroyAsync();
+			static void Destroy();
+
+			static void Run(Async& gameThreadRunAsync);
 			static void ExecuteLastTaskBuffer();
 
 			static void QueueTask(std::function<void()> taskFunc)
@@ -38,18 +40,14 @@ namespace cube
 			static void Loop();
 			static void ProcessTaskBuffers();
 			static void Rendering();
+			static void DestroyInternal();
 
 			static void OnResize(uint32_t width, uint32_t height);
 
-			static SPtr<RendererManager> mRendererManager;
+			static RendererManager* mRendererManager;
 
 			static EventFunction<void()> mLoopEventFunc;
 			static EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
-
-			static AsyncStateData mDestroyAsyncData;
-
-			static AsyncStateData mDestroyNotifyAsyncData;
-			static AsyncState mDestroyNotifyAsync;
 
 			static Mutex mTaskBufferMutex;
 			static TaskBuffer mTaskBuffer;

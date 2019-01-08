@@ -1,4 +1,4 @@
-#include "RenderingThread.h"
+ï»¿#include "RenderingThread.h"
 
 #include "RendererManager.h"
 #include "../LogWriter.h"
@@ -9,47 +9,40 @@ namespace cube
 {
 	namespace core
 	{
-		SPtr<RendererManager> RenderingThread::mRendererManager = nullptr;
+		RendererManager* RenderingThread::mRendererManager = nullptr;
 
 		EventFunction<void()> RenderingThread::mLoopEventFunc;
 		EventFunction<void(uint32_t, uint32_t)> RenderingThread::mResizeEventFunc;
 
-		AsyncStateData RenderingThread::mDestroyAsyncData;
-
-		AsyncStateData RenderingThread::mDestroyNotifyAsyncData;
-		AsyncState RenderingThread::mDestroyNotifyAsync(&RenderingThread::mDestroyNotifyAsyncData);
-
 		Mutex RenderingThread::mTaskBufferMutex;
 		TaskBuffer RenderingThread::mTaskBuffer;
 
-		void RenderingThread::Init(SPtr<RendererManager>& rendererManager)
+		void RenderingThread::Init(RendererManager* rendererManager)
 		{
 			mRendererManager = rendererManager;
 		}
 
 		void RenderingThread::Prepare()
 		{
-			mRendererManager->Prepare(RenderType::Vulkan);
+			mRendererManager->Initialize(RenderType::Vulkan);
 
 			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(&RenderingThread::Loop);
 			mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(&RenderingThread::OnResize);
 		}
 
-		void RenderingThread::Run()
+		void RenderingThread::Destroy()
 		{
-			AsyncState simulateAsync = GameThread::SimulateAsync();
-			simulateAsync.WaitUntilFinished();
+			platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
+			platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
 
-			platform::Platform::StartLoop();
+			mRendererManager->ShutDown();
 		}
 
-		AsyncState RenderingThread::DestroyAsync()
+		void RenderingThread::Run(Async& gameThreadRunAsync)
 		{
-			mDestroyAsyncData.Reset();
+			gameThreadRunAsync.WaitUntilFinished();
 
-			mDestroyNotifyAsyncData.DispatchCompletion();
-
-			return AsyncState(&mDestroyAsyncData);
+			platform::Platform::StartLoop();
 		}
 
 		void RenderingThread::ExecuteLastTaskBuffer()
@@ -61,17 +54,7 @@ namespace cube
 		{
 			ProcessTaskBuffers();
 
-			if(mDestroyNotifyAsync.IsDone() == true) {
-				mRendererManager = nullptr; // It is actually destroyed in EngineCore's destructor
-				// TODO: µû·Î Á¦°ÅµÇ°Ô?
-
-				platform::Platform::FinishLoop();
-
-				mDestroyAsyncData.DispatchCompletion();
-				return;
-			}
-
-			AsyncState async = GameThread::ProcessTaskBuffersAndSimulateAsync();
+			Async async = GameThread::ProcessTaskBuffersAndSimulateAsync();
 
 			Rendering();
 
@@ -89,6 +72,13 @@ namespace cube
 		void RenderingThread::Rendering()
 		{
 			mRendererManager->DrawAll();
+		}
+
+		void RenderingThread::DestroyInternal()
+		{
+			mRendererManager->ShutDown();
+
+			mTaskBuffer.Flush();
 		}
 
 		void RenderingThread::OnResize(uint32_t width, uint32_t height)

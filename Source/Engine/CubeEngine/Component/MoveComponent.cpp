@@ -1,6 +1,8 @@
 #include "MoveComponent.h"
 
-#include "EngineCore/ModuleManager.h"
+#include "../CubeEngine.h"
+#include "EngineCore/EngineCore.h"
+#include "EngineCore/Module/ModuleManager.h"
 #include "EngineCore/LogWriter.h"
 #include "EngineCore/GameObject.h"
 
@@ -19,19 +21,16 @@ namespace cube
 	void MoveComponent::OnInit()
 	{
 		String n = CUBE_T("InputModule");
-		mInputModule = DPCast(module::InputModule)(core::ECore()->GetModuleManager()->GetModule(n));
+		mInputModule = DPCast(module::InputModule)(core::ECore().GetModuleManager().GetModule(n));
 
 		mInputModule->LockCursor();
 	}
 
 	void MoveComponent::OnUpdate(float dt)
 	{
-		String xStr = CUBE_T("MoveHorizontally");
-		float x = mInputModule->GetAxisValue(xStr);
-		String yStr = CUBE_T("MoveVertically");
-		float y = mInputModule->GetAxisValue(yStr);
-		String upStr = CUBE_T("MoveUpDown");
-		float u = mInputModule->GetAxisValue(upStr);
+		float x = mInputModule->GetAxisValue(CUBE_T("MoveHorizontally"));
+		float y = mInputModule->GetAxisValue(CUBE_T("MoveVertically"));
+		float u = mInputModule->GetAxisValue(CUBE_T("MoveUpDown"));
 
 		Vector3 pos = GetGameObject()->GetPosition();
 		pos += GetGameObject()->GetForward() * y * 0.2f;
@@ -40,10 +39,8 @@ namespace cube
 
 		GetGameObject()->SetPosition(pos);
 
-		String lookXStr = CUBE_T("LookHorizontally");
-		float lookX = mInputModule->GetAxisValue(lookXStr);
-		String lookYStr = CUBE_T("LookVertically");
-		float lookY = mInputModule->GetAxisValue(lookYStr);
+		float lookX = mInputModule->GetAxisValue(CUBE_T("LookHorizontally"));
+		float lookY = mInputModule->GetAxisValue(CUBE_T("LookVertically"));
 
 		Vector3 rot = GetGameObject()->GetRotation();
 
@@ -61,10 +58,9 @@ namespace cube
 
 		GetGameObject()->SetRotation(rot);
 
-		String jumpStr = CUBE_T("Jump");
-		bool b = mInputModule->IsActionPressed(jumpStr);
+		bool b = mInputModule->IsActionPressed(CUBE_T("Jump"));
 		if(b == true) {
-			core::ECore()->Destroy();
+			CubeEngine::Close();
 		}
 	}
 

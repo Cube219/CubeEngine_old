@@ -8,20 +8,21 @@ namespace cube
 {
 	namespace core
 	{
-		ResourceManager::ResourceManager()
+		void ResourceManager::Initialize()
 		{
 		}
 
-		ResourceManager::~ResourceManager()
+		void ResourceManager::ShutDown()
 		{
 			UnloadUnusedResources();
 		}
+
 		void ResourceManager::RegisterImporter(UPtr<ResourceImporter> importer)
 		{
 			mImporters.push_back(std::move(importer));
 		}
 		
-		RPtr<Resource> ResourceManager::LoadResource(const String& path)
+		RPtr<Resource> ResourceManager::LoadResource(StringRef path)
 		{
 			using namespace platform;
 
@@ -29,7 +30,7 @@ namespace cube
 			{
 				Lock lock(mLoadedResourcesMutex);
 
-				auto findIter = mLoadedResources.find(path); // TODO: UUID로 바꾸기
+				auto findIter = mLoadedResources.find(path.GetString()); // TODO: UUID로 바꾸기
 				if(findIter != mLoadedResources.end()) {
 					RPtr<Resource> resPtr(findIter->second);
 					return resPtr;
@@ -37,7 +38,7 @@ namespace cube
 			}
 
 			// Get a metadata
-			String metaPath = path;
+			String metaPath = path.GetString();
 			metaPath.append(CUBE_T(".cmeta"));
 			SPtr<File> metaFile = platform::FileSystem::OpenFile(metaPath, FileAccessModeBits::Read);
 
@@ -59,7 +60,7 @@ namespace cube
 			bool isFindImporter = false;
 			for(auto& importer : mImporters) {
 				if(importer->GetName() == importerName) {
-					SPtr<File> resFile = platform::FileSystem::OpenFile(path, FileAccessModeBits::Read);
+					SPtr<File> resFile = platform::FileSystem::OpenFile(path.GetString(), FileAccessModeBits::Read);
 					Json info = metaJson["info"];
 
 					loadedRes = importer->Import(resFile, info);
@@ -68,13 +69,13 @@ namespace cube
 				}
 			}
 
-			CHECK(isFindImporter == true, "Failed to find the importer \"{0}\".", importerName);
+			CHECK(isFindImporter == true, "Failed to find the importer '{0}'.", importerName);
 			CHECK(loadedRes != nullptr, "Failed to load the resource.");
 
 			{
 				Lock lock(mLoadedResourcesMutex);
 
-				mLoadedResources[path] = loadedRes; // TODO: UUID로 바꾸기
+				mLoadedResources[path.GetString()] = loadedRes; // TODO: UUID로 바꾸기
 			}
 			return RPtr<Resource>(loadedRes);
 		}

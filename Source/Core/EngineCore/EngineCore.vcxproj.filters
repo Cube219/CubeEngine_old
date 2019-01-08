@@ -15,7 +15,6 @@
     <ClInclude Include="Renderer\Vertex.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Renderer\Mesh.h">
       <Filter>Renderer</Filter>
@@ -106,6 +105,12 @@
     <ClInclude Include="Thread\Async.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="Module\ModuleManager.h">
+      <Filter>Module</Filter>
+    </ClInclude>
+    <ClInclude Include="Module\BaseModule.h">
+      <Filter>Module</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -118,7 +123,6 @@
     <ClCompile Include="Renderer\RendererManager.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Renderer\Mesh.cpp">
       <Filter>Renderer</Filter>
@@ -198,6 +202,12 @@
     <ClCompile Include="Thread\Async.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
+    <ClCompile Include="Module\ModuleManager.cpp">
+      <Filter>Module</Filter>
+    </ClCompile>
+    <ClCompile Include="Module\BaseModule.cpp">
+      <Filter>Module</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderer">
@@ -223,6 +233,9 @@
     </Filter>
     <Filter Include="Component">
       <UniqueIdentifier>{cd517b62-17a3-465a-9ba5-f3d52f34b794}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Module">
+      <UniqueIdentifier>{6222080d-35f1-4a24-86c1-2f7c2fac36cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -8,10 +8,10 @@ namespace cube
 {
 	namespace core
 	{
-		class ENGINE_CORE_EXPORT AsyncStateData
+		class ENGINE_CORE_EXPORT AsyncSignal
 		{
 		public:
-			AsyncStateData();
+			AsyncSignal();
 
 			void UpdateState(float progress);
 			void DispatchCompletion();
@@ -19,43 +19,45 @@ namespace cube
 			void Reset();
 
 		private:
-			friend class AsyncState;
+			friend class Async;
 
-			ThreadNotify mFinishNofity;
+			ThreadSignal mFinishSignal;
 			Mutex mMutex;
 			bool mIsFinished;
 			float mProgress;
 		};
 
-		class ENGINE_CORE_EXPORT AsyncState
+		class ENGINE_CORE_EXPORT Async
 		{
 		public:
-			AsyncState(AsyncStateData* dataPtr) : mAsyncDataPtr(dataPtr)
+			Async(AsyncSignal& signal) : mAsyncSignal(signal)
 			{ }
 
 			void WaitUntilFinished()
 			{
-				Lock lock(mAsyncDataPtr->mMutex);
+				Lock lock(mAsyncSignal.mMutex);
 
-				if(mAsyncDataPtr->mIsFinished == false) {
-					mAsyncDataPtr->mFinishNofity.wait(lock);
+				if(mAsyncSignal.mIsFinished == false) {
+					mAsyncSignal.mFinishSignal.wait(lock);
 				}
 			}
+
 			bool IsDone()
 			{
-				Lock lock(mAsyncDataPtr->mMutex);
+				Lock lock(mAsyncSignal.mMutex);
 
-				return mAsyncDataPtr->mIsFinished;
+				return mAsyncSignal.mIsFinished;
 			}
+
 			float GetProgress()
 			{
-				Lock lock(mAsyncDataPtr->mMutex);
+				Lock lock(mAsyncSignal.mMutex);
 
-				return mAsyncDataPtr->mProgress;
+				return mAsyncSignal.mProgress;
 			}
 
 		private:
-			AsyncStateData* mAsyncDataPtr;
+			AsyncSignal& mAsyncSignal;
 		};
 	} // namespace core
 } // namespace cube

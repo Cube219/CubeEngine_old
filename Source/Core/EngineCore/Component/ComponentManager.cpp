@@ -7,27 +7,27 @@ namespace cube
 {
 	namespace core
 	{
-		ComponentManager::ComponentManager()
+		void ComponentManager::Initialize()
 		{
 		}
 
-		ComponentManager::~ComponentManager()
+		void ComponentManager::ShutDown()
 		{
 		}
 
-		HComponent ComponentManager::CreateComponent(const String& name)
+		HComponent ComponentManager::CreateComponent(StringRef name)
 		{
-			auto findIter = mComponentCreators.find(name);
-			CHECK(findIter != mComponentCreators.end(), "Failed to create component \"{0}\". It hasn't been registered", name);
+			auto findIter = mComponentCreators.find(name.GetString());
+			CHECK(findIter != mComponentCreators.end(), "Failed to create component '{0}'. It hasn't been registered", name.GetString());
 
 			return findIter->second();
 		}
 
-		void ComponentManager::CheckIfComponentExisted(const String& name)
+		void ComponentManager::CheckIfComponentExisted(StringRef name)
 		{
-			auto findIter = mComponentCreators.find(name);
+			auto findIter = mComponentCreators.find(name.GetString());
 			if(findIter != mComponentCreators.end()) {
-				CUBE_LOG(LogType::Error, "Component \"{0}\" is already registered", name);
+				CUBE_LOG(LogType::Error, "Component '{0}' is already registered", name.GetString());
 				return;
 			}
 		}

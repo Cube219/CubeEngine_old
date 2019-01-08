@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -16,8 +16,16 @@ namespace cube
 		class ENGINE_CORE_EXPORT TimeManager
 		{
 		public:
-			TimeManager();
-			~TimeManager();
+			TimeManager() {}
+			~TimeManager() {}
+
+			TimeManager(const TimeManager& other) = delete;
+			TimeManager& operator=(const TimeManager& rhs) = delete;
+			TimeManager(TimeManager&& other) = delete;
+			TimeManager& operator=(TimeManager&& rhs) = delete;
+
+			void Initialize();
+			void ShutDown();
 
 			double GetSystemTime();
 
@@ -38,5 +46,5 @@ namespace cube
 			SPtr<GameTime> mGlobalGameTime;
 			Vector<SPtr<GameTime>> mGameTimes;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

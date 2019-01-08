@@ -4,28 +4,28 @@ namespace cube
 {
 	namespace core
 	{
-		AsyncStateData::AsyncStateData() : 
+		AsyncSignal::AsyncSignal() : 
 			mProgress(0.0f), mIsFinished(false)
 		{
 		}
 
-		void AsyncStateData::UpdateState(float progress)
+		void AsyncSignal::UpdateState(float progress)
 		{
 			Lock lock(mMutex);
 
 			mProgress = progress;
 		}
 
-		void AsyncStateData::DispatchCompletion()
+		void AsyncSignal::DispatchCompletion()
 		{
 			Lock lock(mMutex);
 
 			mProgress = 1.0f;
 			mIsFinished = true;
-			mFinishNofity.notify_all();
+			mFinishSignal.notify_all();
 		}
 
-		void AsyncStateData::Reset()
+		void AsyncSignal::Reset()
 		{
 			Lock lock(mMutex);
 

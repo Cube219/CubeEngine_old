@@ -286,7 +286,7 @@ namespace cube
 		startOption.windowHeight = 807;
 		startOption.isWindowMode = true;
 
-		CubeEngine::Start(startOption);
+		CubeEngine::Initialize(startOption);
 
 		PrepareResources();
 		CreateGameObjects();
@@ -295,7 +295,7 @@ namespace cube
 
 		DestroyAll();
 
-		CubeEngine::Destroy();
+		CubeEngine::ShutDown();
 	}
 } // namespace cube
 

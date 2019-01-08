@@ -10,9 +10,9 @@ namespace cube
 {
 	namespace core
 	{
-		RPtr<Texture> Texture::Load(const String& path)
+		RPtr<Texture> Texture::Load(StringRef path)
 		{
-			return ECore()->GetResourceManager()->LoadResource<Texture>(path);
+			return ECore().GetResourceManager().LoadResource<Texture>(path);
 		}
 
 		void Texture::WriteData(SPtr<render::RenderAPI>& renderAPI, void* data, uint64_t size, uint32_t width, uint32_t height)

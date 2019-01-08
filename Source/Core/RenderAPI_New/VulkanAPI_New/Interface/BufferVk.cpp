@@ -119,7 +119,7 @@ namespace cube
 					VkBufferCreateInfo stagingBufferInfo = info;
 					stagingBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
-					U8String stagingBufDebugName = fmt::format("Staging buffer for \"{0}\"", attr.debugName);
+					U8String stagingBufDebugName = fmt::format("Staging buffer for '{0}'", attr.debugName);
 
 					VkBufferWrapper stagingBuffer =
 						device.GetLogicalDevice()->CreateVkBufferWrapper(stagingBufferInfo, stagingBufDebugName.c_str());

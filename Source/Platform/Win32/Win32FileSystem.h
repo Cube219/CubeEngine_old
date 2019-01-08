@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef _WIN32
 
@@ -22,13 +22,13 @@ namespace cube
 			Win32File(HANDLE fileHandle);
 			virtual ~Win32File();
 
-			uint64_t GetFileSizeImpl();
+			Uint64 GetFileSizeImpl();
 
-			void SetFilePointerImpl(uint64_t offset);
-			void MoveFilePointerImpl(int64_t distance);
+			void SetFilePointerImpl(Uint64 offset);
+			void MoveFilePointerImpl(Int64 distance);
 
-			void ReadImpl(void* pReadBuffer, uint64_t bufferSizeToRead, uint64_t& readBufferSize);
-			void WriteImpl(void* pWriteBuffer, uint64_t bufferSize);
+			void ReadImpl(void* pReadBuffer, Uint64 bufferSizeToRead, Uint64& readBufferSize);
+			void WriteImpl(void* pWriteBuffer, Uint64 bufferSize);
 
 		private:
 			HANDLE mFileHandle;
@@ -45,7 +45,7 @@ namespace cube
 			Win32FileSystem() = delete;
 			~Win32FileSystem() = delete;
 
-			static SPtr<File> OpenFileImpl(const String& path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
+			static SPtr<File> OpenFileImpl(StringRef path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
 
 		private:
 			static DWORD GetDwDesiredAccess(FileAccessModeBits accessMode);

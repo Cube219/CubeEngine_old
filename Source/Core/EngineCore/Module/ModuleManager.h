@@ -1,12 +1,11 @@
 ﻿#pragma once
 
-#include "EngineCoreHeader.h"
+#include "../EngineCoreHeader.h"
 
 #include <functional>
 
 #include "DLib.h"
-#include "BaseModule/BaseModule.h"
-#include "Thread/MutexLock.h"
+#include "../Thread/MutexLock.h"
 
 namespace cube
 {
@@ -22,25 +21,33 @@ namespace cube
 			};
 
 			SPtr<platform::DLib> moduleDLib;
-			SPtr<module::BaseModule> module;
-			uint32_t remainDependencyNum;
+			SPtr<BaseModule> module;
+			Uint32 remainDependencyNum;
 			State state;
 		};
 
 		class ENGINE_CORE_EXPORT ModuleManager
 		{
 		public:
-			ModuleManager(SPtr<ThreadManager>& threadManager);
-			~ModuleManager();
+			ModuleManager() {}
+			~ModuleManager() {}
 
-			void LoadModule(String moduleName);
+			ModuleManager(const ModuleManager& other) = delete;
+			ModuleManager& operator=(const ModuleManager& rhs) = delete;
+			ModuleManager(ModuleManager&& other) = delete;
+			ModuleManager& operator=(ModuleManager&& rhs) = delete;
+
+			void Initialize();
+			void ShutDown();
+
+			void LoadModule(StringRef moduleName);
 
 			void InitModules();
 
-			SPtr<module::BaseModule> GetModule(String& name);
+			SPtr<BaseModule> GetModule(StringRef name);
 			
 			template <typename T>
-			SPtr<T> GetModule(String& name)
+			SPtr<T> GetModule(StringRef name)
 			{
 				return DPCast(T)(GetModule(name));
 			}
@@ -48,11 +55,9 @@ namespace cube
 			void UpdateAllModules(float dt);
 
 		private:
-			HashMap<String, SPtr<module::BaseModule>> mModuleLookup;
+			HashMap<String, SPtr<BaseModule>> mModuleLookup;
 
 			Vector<ModuleNode> mModules;
-
-			SPtr<ThreadManager> mThreadManager;
 		};
 	} // namespace core
 } // namespace cube

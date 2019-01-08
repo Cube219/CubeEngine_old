@@ -8,12 +8,11 @@ namespace cube
 {
 	namespace core
 	{
-		GameObjectManager::GameObjectManager() :
-			mNextID(1)
+		void GameObjectManager::Initialize()
 		{
 		}
 
-		GameObjectManager::~GameObjectManager()
+		void GameObjectManager::ShutDown()
 		{
 			for(auto& go : mGameObjects) {
 				go.second->data = nullptr;

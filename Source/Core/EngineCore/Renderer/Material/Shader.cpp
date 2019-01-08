@@ -7,9 +7,9 @@ namespace cube
 {
 	namespace core
 	{
-		RPtr<Shader> Shader::Load(const String& path)
+		RPtr<Shader> Shader::Load(StringRef path)
 		{
-			return ECore()->GetResourceManager()->LoadResource<Shader>(path);
+			return ECore().GetResourceManager().LoadResource<Shader>(path);
 		}
 
 		void Shader::_LoadShader(SPtr<render::RenderAPI>& renderAPI, render::ShaderInitializer& init)

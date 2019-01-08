@@ -381,15 +381,15 @@ namespace cube
 
 		RPtr<Mesh> BaseMeshGenerator::RegisterToResourceManager(Mesh* mesh)
 		{
-			auto resManager = ECore()->GetResourceManager();
+			auto& resManager = ECore().GetResourceManager();
 
 			String tempID = fmt::format(CUBE_T("_BaseMesh{0}"), nextTempID);
 			nextTempID++;
 
 			{
-				Lock lock(resManager->mLoadedResourcesMutex);
+				Lock lock(resManager.mLoadedResourcesMutex);
 
-				resManager->mLoadedResources[tempID] = mesh;
+				resManager.mLoadedResources[tempID] = mesh;
 			}
 
 			return RPtr<Mesh>(mesh);

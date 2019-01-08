@@ -1,11 +1,10 @@
-#pragma once
+﻿#pragma once
 
-#include "Base/BaseTypes.h"
-#include "EngineCore/EngineCore.h"
+#include "../EngineCoreHeader.h"
 
 namespace cube
 {
-	namespace module
+	namespace core
 	{
 		struct ModuleInfo
 		{
@@ -13,11 +12,11 @@ namespace cube
 			Vector<const char*> dependencies;
 		};
 
-		class BaseModule
+		class ENGINE_CORE_EXPORT BaseModule
 		{
 		public:
-			BaseModule(){ }
-			virtual ~BaseModule(){ }
+			BaseModule() {}
+			virtual ~BaseModule() {}
 
 			ModuleInfo GetModuleInfo() const { return mInfo; }
 
@@ -30,5 +29,5 @@ namespace cube
 		protected:
 			ModuleInfo mInfo;
 		};
-	}
-}
+	} // namespace core
+} // namespace cube

@@ -12,10 +12,10 @@ namespace cube
 	{
 		std::mutex Win32DebugUtility::printMutex;
 
-		void Win32DebugUtility::AssertionFailedImpl(const String& msg, const char* funcName, const char* fileName, int line)
+		void Win32DebugUtility::AssertionFailedImpl(StringRef msg, const char* funcName, const char* fileName, int line)
 		{
 			String str = fmt::format(CUBE_T("Assertion failed!\n\n[{0}:{1}] : {2}\n\n(Press Retry to debug the application)"),
-				GetBaseName(fileName), line, msg);
+				GetBaseName(fileName), line, msg.GetString());
 			PString pMsg = ToPString(str);
 
 			int nCode = MessageBox(NULL, pMsg.c_str(), L"Assertion failed",
@@ -37,9 +37,9 @@ namespace cube
 			}
 		}
 
-		void Win32DebugUtility::PrintToConsoleImpl(const String& str)
+		void Win32DebugUtility::PrintToConsoleImpl(StringRef str)
 		{
-			PString pStr = ToPString(str);
+			PString pStr = ToPString(str.GetString());
 
 			std::unique_lock<std::mutex> lock(printMutex);
 			std::wcout << pStr << std::endl;

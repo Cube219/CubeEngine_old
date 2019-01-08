@@ -24,12 +24,12 @@ namespace cube
 
 			T* operator->() const
 			{
-				CHECK(mData != nullptr && mData->data != nullptr, "Handler \"{0}\" does not have the data", typeid(T).name());
+				CHECK(mData != nullptr && mData->data != nullptr, "Handler '{0}' does not have the data", typeid(T).name());
 				return &*(mData->data);
 			}
 			T& operator*() const
 			{
-				CHECK(mData != nullptr && mData->data != nullptr, "Handler \"{0}\" does not have the data", typeid(T).name());
+				CHECK(mData != nullptr && mData->data != nullptr, "Handler '{0}' does not have the data", typeid(T).name());
 				return *(mData->data);
 			}
 

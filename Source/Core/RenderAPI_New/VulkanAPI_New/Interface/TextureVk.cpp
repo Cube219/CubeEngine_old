@@ -140,7 +140,7 @@ namespace cube
 				stagingBufInfo.pQueueFamilyIndices = nullptr;
 				stagingBufInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-				U8String stagingBufDebugName = fmt::format("Staging buffer for \"{0}\"", attr.debugName);
+				U8String stagingBufDebugName = fmt::format("Staging buffer for '{0}'", attr.debugName);
 
 				VkBufferWrapper stagingBuf =
 					device.GetLogicalDevice()->CreateVkBufferWrapper(stagingBufInfo, stagingBufDebugName.c_str());

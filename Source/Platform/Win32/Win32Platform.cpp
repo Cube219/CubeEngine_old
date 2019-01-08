@@ -28,10 +28,10 @@ namespace cube
 		Event<void(MouseButtonType)> Platform::mouseDownEvent;
 		Event<void(MouseButtonType)> Platform::mouseUpEvent;
 		Event<void(int)> Platform::mouseWheelEvent;
-		Event<void(uint32_t, uint32_t)> Platform::mousePosEvent;
+		Event<void(Uint32, Uint32)> Platform::mousePosEvent;
 
 		Event<void()> Platform::loopEvent;
-		Event<void(uint32_t, uint32_t)> Platform::resizeEvent;
+		Event<void(Uint32, Uint32)> Platform::resizeEvent;
 		Event<void(WindowActivatedState)> Platform::activatedEvent;
 		Event<void()> Platform::closingEvent;
 
@@ -43,7 +43,7 @@ namespace cube
 		{
 		}
 
-		void Win32Platform::InitWindowImpl(const String& title, uint32_t width, uint32_t height)
+		void Win32Platform::InitWindowImpl(StringRef title, Uint32 width, Uint32 height)
 		{
 			// Show console if it is debug mode
 #ifdef _DEBUG
@@ -63,7 +63,7 @@ namespace cube
 			}
 #endif // _DEBUG
 
-			Platform::title = ToPString(title);
+			Platform::title = ToPString(title.GetString());
 			Platform::width = width;
 			Platform::height = height;
 
@@ -122,7 +122,7 @@ namespace cube
 			isFinished = true;
 		}
 
-		void Win32Platform::SleepImpl(uint32_t time)
+		void Win32Platform::SleepImpl(Uint32 time)
 		{
 			::Sleep(time);
 		}
@@ -164,7 +164,7 @@ namespace cube
 			y = p.y;
 		}
 
-		SPtr<DLib> Win32Platform::LoadDLibImpl(const String& path)
+		SPtr<DLib> Win32Platform::LoadDLibImpl(StringRef path)
 		{
 			return std::make_shared<Win32DLib>(path);
 		}
@@ -213,9 +213,7 @@ namespace cube
 				}
 
 				case WM_CLOSE:
-					//PostQuitMessage(0);
 					Platform::closingEvent.Dispatch();
-					return 0;
 					break;
 
 				case WM_SIZE:

@@ -31,7 +31,7 @@ namespace cube
 			Vector3 GetUp() const { return mUp; }
 			Vector3 GetRight() const { return mRight; }
 
-			HComponent GetComponent(const String& name);
+			HComponent GetComponent(StringRef name);
 			template <typename T>
 			BasicHandler<T> GetComponent()
 			{
@@ -39,7 +39,7 @@ namespace cube
 				return GetComponent(nameToGet).Cast<T>();
 			}
 
-			HComponent AddComponent(const String& name);
+			HComponent AddComponent(StringRef name);
 			template <typename T>
 			BasicHandler<T> AddComponent()
 			{

@@ -1,4 +1,4 @@
-#include "ThreadManager.h"
+﻿#include "ThreadManager.h"
 
 #include "Thread.h"
 
@@ -10,11 +10,11 @@ namespace cube
 {
 	namespace core
 	{
-		ThreadManager::ThreadManager(uint32_t poolSize)
+		void ThreadManager::Initialize(Uint32 poolSize)
 		{
 			mThreads.resize(poolSize);
 
-			for(uint32_t i = 0; i < poolSize; i++) {
+			for(Uint32 i = 0; i < poolSize; i++) {
 				mThreads[i] = SPtr<Thread>(new Thread(i, std::bind(&ThreadManager::OnThreadFinish, this, _1)));
 
 				mIdleThreadIndices.push_back(i);
@@ -24,7 +24,7 @@ namespace cube
 			mIdleThreadIndices_back = poolSize - 1;
 		}
 
-		ThreadManager::~ThreadManager()
+		void ThreadManager::ShutDown()
 		{
 			for(auto& t : mThreads) {
 				t->Destroy();
@@ -44,12 +44,12 @@ namespace cube
 			return mThreads[index];
 		}
 
-		void ThreadManager::OnThreadFinish(uint32_t poolIndex)
+		void ThreadManager::OnThreadFinish(Uint32 poolIndex)
 		{
 			Lock lock(mMutex);
 
 			mIdleThreadIndices_back = (mIdleThreadIndices_back + 1) % mThreads.size();
 			mIdleThreadIndices[mIdleThreadIndices_back] = poolIndex;
 		}
-	}
-}
+	} // namespace core
+} // namespace cube

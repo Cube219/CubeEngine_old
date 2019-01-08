@@ -9,8 +9,17 @@ namespace cube
 		class ENGINE_CORE_EXPORT GameObjectManager
 		{
 		public:
-			GameObjectManager();
-			~GameObjectManager();
+			GameObjectManager() : mNextID(1)
+			{}
+			~GameObjectManager() {}
+
+			GameObjectManager(const GameObjectManager& other) = delete;
+			GameObjectManager& operator=(const GameObjectManager& rhs) = delete;
+			GameObjectManager(GameObjectManager&& other) = delete;
+			GameObjectManager& operator=(GameObjectManager&& rhs) = delete;
+
+			void Initialize();
+			void ShutDown();
 
 			HGameObject RegisterGameObject(SPtr<GameObject>& go);
 			void UnregisterGameObject(HGameObject& go);
