@@ -6,10 +6,10 @@
 #include "Vertex.h"
 #include "Base/Matrix.h"
 #include "../BasicHandler.h"
-#include "BaseRenderAPI/Wrapper/Buffer.h"
-#include "BaseRenderAPI/Wrapper/CommandBuffer.h"
-#include "BaseRenderAPI/Wrapper/Descriptor.h"
-#include "BaseRenderAPI/RenderAPI.h"
+#include "BaseRenderAPI_New/Interface/ShaderParameters.h"
+#include "BaseRenderAPI_New/Interface/Device.h"
+#include "BaseRenderAPI_New/Interface/Buffer.h"
+#include "BaseRenderAPI_New/Interface/CommandList.h"
 
 namespace cube
 {
@@ -54,9 +54,9 @@ namespace cube
 			void SyncMaterialInstance(HMaterialInstance materialIns, uint32_t index);
 			void SyncModelMatrix(const Matrix& modelMatrix);
 
-			SPtr<render::DescriptorSet> GetDescriptorSet() const { return mDescriptorSet; };
+			SPtr<render::ShaderParameters> GetShaderParameters() const { return mShaderParameters; };
 
-			void PrepareDraw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D_RT>& camera);
+			void PrepareDraw(SPtr<render::CommandList>& commandList, SPtr<CameraRenderer3D_RT>& camera);
 
 		private:
 			friend class Renderer3D;
@@ -74,14 +74,14 @@ namespace cube
 			Vector<SPtr<MaterialInstance_RT>> mMaterialInses;
 
 			UBOPerObject mUBOPerObject;
-			SPtr<render::DescriptorSet> mDescriptorSet;
+			SPtr<render::ShaderParameters> mShaderParameters;
 
-			SPtr<render::Buffer> mDataBuffer; // Combine vertex / index / uboPerObject data
-			uint64_t mVertexIndex;
-			uint64_t mIndexIndex;
-			uint64_t mUBOIndex;
+			SPtr<render::Buffer> mDataBuffer; // Combine vertex / index
+			void* mDataBufferMappedPtr;
+			Uint32 mVertexOffset;
+			Uint32 mIndexOffset;
 
-			SPtr<render::RenderAPI> mRenderAPI_ref;
+			SPtr<render::Device> mDevice;
 		};
 	} // namespace core
 } // namespace cube

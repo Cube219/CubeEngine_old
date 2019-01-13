@@ -9,7 +9,8 @@ namespace cube
 {
 	namespace render
 	{
-		RenderTargetVk::RenderTargetVk(const RenderTargetAttribute& attr)
+		RenderTargetVk::RenderTargetVk(const RenderTargetAttribute& attr) : 
+			mDebugName(attr.debugName)
 		{
 			mAttachmentDesc.format = VK_FORMAT_UNDEFINED;
 			mAttachmentDesc.samples = VK_SAMPLE_COUNT_1_BIT; // TODO: MultiSampling 구현 때 구현

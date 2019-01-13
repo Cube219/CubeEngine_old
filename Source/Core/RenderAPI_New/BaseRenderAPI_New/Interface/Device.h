@@ -24,6 +24,7 @@ namespace cube
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) = 0;
 			virtual SPtr<Texture> CreateTexture(const TextureAttribute& attr) = 0;
 			virtual SPtr<SwapChain> CreateSwapChain(const SwapChainAttribute& attr) = 0;
+			virtual SPtr<Sampler> CreateSampler(const SamplerAttribute& attr) = 0;
 
 			virtual SPtr<RenderTarget> CreateRenderTarget(const RenderTargetAttribute& attr) = 0;
 			virtual SPtr<RenderPass> CreateRenderPass(const RenderPassAttribute& attr) = 0;
@@ -34,7 +35,6 @@ namespace cube
 			virtual SPtr<ComputePipelineState> CreateComputePipelineState(const ComputePipelineStateAttribute& attr) = 0;
 
 			virtual SPtr<Fence> GetFence(const char* debugName = "") = 0;
-			// CreateSampler
 
 			virtual SPtr<CommandList> GetCommandList(const CommandListAttribute& attr) = 0;
 			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) = 0;

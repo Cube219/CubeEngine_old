@@ -28,6 +28,7 @@ namespace cube
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) override final;
 			virtual SPtr<Texture> CreateTexture(const TextureAttribute& attr) override final;
 			virtual SPtr<SwapChain> CreateSwapChain(const SwapChainAttribute& attr) override final;
+			virtual SPtr<Sampler> CreateSampler(const SamplerAttribute& attr) override final;
 
 			virtual SPtr<RenderTarget> CreateRenderTarget(const RenderTargetAttribute& attr) override final;
 			virtual SPtr<RenderPass> CreateRenderPass(const RenderPassAttribute& attr) override final;

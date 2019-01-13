@@ -3,22 +3,22 @@
 #include "../CubeEngineHeader.h"
 
 #include "EngineCore/Resource/BaseResource.h"
-#include "BaseRenderAPI/RenderAPI.h"
+#include "BaseRenderAPI_New/Interface/Device.h"
 
 namespace cube
 {
 	struct ShaderCompileDesc
 	{
 		render::ShaderLanguage language;
-		render::ShaderTypeBits type;
+		render::ShaderType type;
 		U8String entryPoint;
 	};
 
 	class ShaderImporter : public core::ResourceImporter
 	{
 	public:
-		ShaderImporter(SPtr<render::RenderAPI>& renderAPI) :
-			mRenderAPI(renderAPI)
+		ShaderImporter(SPtr<render::Device>& device) :
+			mDevice(device)
 		{
 			mName = CUBE_T("ShaderImporter");
 		}
@@ -28,6 +28,6 @@ namespace cube
 	private:
 		ShaderCompileDesc GetCompileDesc(Json& info);
 
-		SPtr<render::RenderAPI> mRenderAPI;
+		SPtr<render::Device> mDevice;
 	};
 } // namespace cube

@@ -20,7 +20,7 @@ namespace cube
 
 		// Create texture resource
 		core::Texture* texture = new core::Texture();
-		texture->WriteData(mRenderAPI, imageData, width * height * 4, width, height);
+		texture->WriteData(mDevice, imageData, width * height * 4, width, height);
 
 		stbi_image_free(imageData);
 		free(rawData);

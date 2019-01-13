@@ -2,7 +2,7 @@
 
 #include "../../EngineCore.h"
 #include "../RendererManager.h"
-#include "BaseRenderAPI/RenderAPI.h"
+#include "BaseRenderAPI_New/Interface/Device.h"
 #include "Material.h"
 #include "../Texture.h"
 #include "../../Assertion.h"
@@ -100,22 +100,18 @@ namespace cube
 
 		MaterialInstance_RT::MaterialInstance_RT(SPtr<Material_RT>& mat)
 		{
-			SPtr<render::RenderAPI> renderAPI = ECore().GetRendererManager().GetRenderAPI();
+			using namespace render;
 
-			mDescriptorSet = renderAPI->CreateDescriptorSet(mat->GetDescriptorSetLayout());
+			SPtr<Device> device = ECore().GetRendererManager().GetDevice();
 
-			// Create dataBuffer used in descriptor set based on parameterInfos
-			render::BufferInitializer bufInit;
-			bufInit.type = render::BufferTypeBits::Uniform;
-
-			render::BufferInitializer::BufferData bufData;
-			bufData.data = nullptr;
+			mShaderParameters = mat->GetShaderParametersLayout()->CreateParameters();
 
 			const Vector<MaterialParameterInfo>& paramInfos = mat->GetParameterInfos();
 
 			uint64_t paramNum = paramInfos.size();
 			mParameters.resize(paramNum);
 
+			/*
 			for(uint64_t i = 0; i < paramNum; i++) {
 				mParameters[i].type = paramInfos[i].type;
 				mParameters[i].size = paramInfos[i].dataSize;
@@ -130,35 +126,18 @@ namespace cube
 			}
 			if(bufInit.bufferDatas.size() > 0)
 				mParametersBuffer = renderAPI->CreateBuffer(bufInit);
-		}
-
-		void MaterialInstance_RT::WriteParameterInBuffer(uint64_t index)
-		{
-			mParametersBuffer->Map();
-			mParametersBuffer->UpdateBufferData(index, mParameters[index].data, mParameters[index].size);
-			mParametersBuffer->Unmap();
-
-			render::BufferInfo bufInfo = mParametersBuffer->GetInfo(index);
-			mDescriptorSet->WriteBufferInDescriptor(index, 1, &bufInfo);
-		}
-
-		void MaterialInstance_RT::WriteTextureParameterInBuffer(uint64_t index)
-		{
-			RPtr<Texture>& texture = mParameters[index].texture;
-
-			SPtr<render::ImageView> imageView = texture->GetImageView();
-			SPtr<render::Sampler> sampler = texture->GetSampler();
-
-			mDescriptorSet->WriteImagesInDescriptor(index, 1, &imageView, &sampler);
+				*/
 		}
 
 		MaterialInstance_RT::~MaterialInstance_RT()
 		{
+			/*
 			for(auto& param : mParameters) {
 				if(param.type == MaterialParameterType::Data) {
 					free(param.data);
 				}
 			}
+			*/
 		}
 
 		void MaterialInstance_RT::SyncParameterData(uint64_t index, MaterialParameter& param)
@@ -168,13 +147,12 @@ namespace cube
 
 			switch(param.type) {
 				case MaterialParameterType::Data:
-					memcpy(mParameters[index].data, param.data, param.size);
-					WriteParameterInBuffer(index);
+					mShaderParameters->UpdateParameter(index, mParameters[index].data, mParameters[index].size);
 					break;
 
 				case MaterialParameterType::Texture:
-					mParameters[index].texture = param.texture;
-					WriteTextureParameterInBuffer(index);
+					mShaderParameters->UpdateParameter(index,
+						mParameters[index].texture->GetTextureView(), mParameters[index].texture->GetSampler());
 					break;
 			}
 		}

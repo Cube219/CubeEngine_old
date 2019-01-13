@@ -16,6 +16,7 @@
 #include "GraphicsPipelineStateVk.h"
 #include "ComputePipelineStateVk.h"
 #include "FenceVk.h"
+#include "SamplerVk.h"
 
 namespace cube
 {
@@ -56,6 +57,11 @@ namespace cube
 		SPtr<SwapChain> DeviceVk::CreateSwapChain(const SwapChainAttribute& attr)
 		{
 			return std::make_shared<SwapChainVk>(mInstance, *this, attr, mQueueManager, mSemaphorePool);
+		}
+
+		SPtr<Sampler> DeviceVk::CreateSampler(const SamplerAttribute& attr)
+		{
+			return std::make_shared<SamplerVk>(*this, attr);
 		}
 
 		SPtr<RenderTarget> DeviceVk::CreateRenderTarget(const RenderTargetAttribute& attr)

@@ -3,8 +3,8 @@
 #include "../../EngineCoreHeader.h"
 
 #include "../RenderObject.h"
-#include "BaseRenderAPI/Wrapper/Descriptor.h"
 #include "../../BasicHandler.h"
+#include "BaseRenderAPI_New/Interface/ShaderParametersLayout.h"
 
 namespace cube
 {
@@ -64,7 +64,7 @@ namespace cube
 
 			const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
 
-			SPtr<render::DescriptorSetLayout> GetDescriptorSetLayout() const { return mDescriptorSetLayout; }
+			SPtr<render::ShaderParametersLayout> GetShaderParametersLayout() const { return mShaderParamsLayout; }
 
 		private:
 			friend class Material;
@@ -77,9 +77,9 @@ namespace cube
 			Vector<MaterialParameterInfo> mParamInfos;
 
 			Vector<RPtr<Shader>> mShaders;
-			SPtr<render::DescriptorSetLayout> mDescriptorSetLayout;
+			SPtr<render::ShaderParametersLayout> mShaderParamsLayout;
 
-			SPtr<render::RenderAPI> mRenderAPI_ref;
+			SPtr<render::Device> mDevice;
 		};
 
 	} // namespace core

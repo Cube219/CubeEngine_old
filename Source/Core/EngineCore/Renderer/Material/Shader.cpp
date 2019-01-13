@@ -12,11 +12,14 @@ namespace cube
 			return ECore().GetResourceManager().LoadResource<Shader>(path);
 		}
 
-		void Shader::_LoadShader(SPtr<render::RenderAPI>& renderAPI, render::ShaderInitializer& init)
+		void Shader::_LoadShader(SPtr<render::Device>& device, render::ShaderAttribute& attr)
 		{
-			mLanguage = init.language;
-			mType = init.type;
-			mRenderShader = renderAPI->CreateShader(init);
+			mLanguage = attr.language;
+			mType = attr.type;
+
+			attr.debugName = "Shader";
+
+			mRenderShader = device->CreateShader(attr);
 		}
 	} // namespace render
 } // namespace cube
