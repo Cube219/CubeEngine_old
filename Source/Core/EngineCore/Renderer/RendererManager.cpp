@@ -98,6 +98,8 @@ namespace cube
 			
 			commandListAttr.isSub = true;
 			for(Uint32 i = 0; i < mNumThreads; i++) {
+				commandListAttr.threadIndex = i;
+
 				mCommandLists.push_back(mDevice->GetCommandList(commandListAttr));
 				mCommandListsCurrentMaterialIndex.push_back(-1);
 			}
@@ -378,8 +380,10 @@ namespace cube
 			attr.debugName = "Depth buffer texture";
 
 			mDepthBufferTexture = mDevice->CreateTexture(attr);
-			mDepthBufferTextureView =
-				mDepthBufferTexture->CreateView(mDepthBufferTexture->GetDefaultViewAttr());
+			// Disable stencil bit (Set only depth bit)
+			auto viewAttr = mDepthBufferTexture->GetDefaultViewAttr();
+			viewAttr.componentFlags = TextureViewComponentFlagBits::Depth_Bit;
+			mDepthBufferTextureView = mDepthBufferTexture->CreateView(viewAttr);
 		}
 
 		void RendererManager::CreateRenderpass()

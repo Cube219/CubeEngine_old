@@ -14,7 +14,7 @@ namespace cube
 {
 	namespace render
 	{
-		CommandListVk::CommandListVk(SPtr<VulkanCommandListPool> pool, VkCommandBuffer commandBuffer,
+		CommandListVk::CommandListVk(VulkanCommandListPool& pool, VkCommandBuffer commandBuffer,
 			CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex,
 			bool isSub) :
 			CommandList(usage),
@@ -27,7 +27,7 @@ namespace cube
 
 		CommandListVk::~CommandListVk()
 		{
-			mPool->Free(*this);
+			mPool.Free(*this);
 		}
 
 		void CommandListVk::Begin()

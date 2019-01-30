@@ -34,13 +34,13 @@ namespace cube
 
 			switch(type) {
 			case LogType::Info:
-				prefix = "   INFO [";
+				prefix = "    INFO [";
 				break;
 			case LogType::Warning:
-				prefix = "WARNING [";
+				prefix = " WARNING [";
 				break;
 			case LogType::Error:
-				prefix = "  ERROR [";
+				prefix = "   ERROR [";
 				break;
 
 			default:

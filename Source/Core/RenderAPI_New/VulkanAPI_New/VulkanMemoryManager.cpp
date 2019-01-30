@@ -157,7 +157,7 @@ namespace cube
 			Uint64 heapSize = memProperties.memoryHeaps[memProperties.memoryTypes[gpuIndex].heapIndex].size;
 			Uint64 pageSize = Math::Min(heapSize / 8, gpuPageSize);
 			mHeaps[gpuIndex] = VulkanMemoryHeap(device, MemoryUsage::GPU, gpuIndex, heapSize, pageSize);
-			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::GPU] = gpuIndex;
+			mMemTypeIndexAsMemoryUsage[(Uint32)MemoryUsage::GPU] = gpuIndex;
 
 			// Setup CPU heap
 			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
@@ -168,7 +168,7 @@ namespace cube
 			pageSize = hostVisiblePageSize;
 			if(mHeaps[cpuIndex].mDevice == nullptr)
 				mHeaps[cpuIndex] = VulkanMemoryHeap(device, MemoryUsage::CPU, cpuIndex, heapSize, pageSize);
-			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::CPU] = cpuIndex;
+			mMemTypeIndexAsMemoryUsage[(Uint32)MemoryUsage::CPU] = cpuIndex;
 			
 			// Setup CPUtoGPU heap
 			// TODO: HOST_COHERENT가 없을 경우 Flush하는 기능 추가
@@ -182,7 +182,7 @@ namespace cube
 			pageSize = hostVisiblePageSize;
 			if(mHeaps[CtoGindex].mDevice == nullptr)
 				mHeaps[CtoGindex] = VulkanMemoryHeap(device, MemoryUsage::CPUtoGPU, CtoGindex, heapSize, pageSize);
-			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::CPUtoGPU] = CtoGindex;
+			mMemTypeIndexAsMemoryUsage[(Uint32)MemoryUsage::CPUtoGPU] = CtoGindex;
 
 			// Setup GPUtoCPU heap
 			requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
@@ -194,7 +194,7 @@ namespace cube
 			pageSize = hostVisiblePageSize;
 			if(mHeaps[GtoCindex].mDevice == nullptr)
 				mHeaps[GtoCindex] = VulkanMemoryHeap(device, MemoryUsage::GPUtoCPU, GtoCindex, heapSize, pageSize);
-			mHeapIndexAsMemoryUsage[(Uint32)MemoryUsage::GPUtoCPU] = GtoCindex;
+			mMemTypeIndexAsMemoryUsage[(Uint32)MemoryUsage::GPUtoCPU] = GtoCindex;
 		}
 
 		VulkanMemoryManager::~VulkanMemoryManager()
@@ -203,14 +203,14 @@ namespace cube
 
 		VulkanAllocation VulkanMemoryManager::Allocate(Uint64 size, Uint64 alignment, MemoryUsage usage)
 		{
-			Uint32 index = mHeapIndexAsMemoryUsage[(Uint32)usage];
+			Uint32 index = mMemTypeIndexAsMemoryUsage[(Uint32)usage];
 			return mHeaps[index].Allocate(size, alignment);
 		}
 		
 		VulkanAllocation VulkanMemoryManager::Allocate(const VkMemoryRequirements& memRequirements, MemoryUsage usage)
 		{
-			Uint32 index = mHeapIndexAsMemoryUsage[(Uint32)usage];
-			CHECK((index & memRequirements.memoryTypeBits) != 0,
+			Uint32 index = mMemTypeIndexAsMemoryUsage[(Uint32)usage];
+			CHECK(((1 << index) & memRequirements.memoryTypeBits) != 0,
 				"Failed to allocate VulkanMemory. MemoryTypeBits in VkMemoryRequirements({0}) doesn't have index {1}",
 				memRequirements.memoryTypeBits, index);
 
@@ -224,8 +224,8 @@ namespace cube
 
 			CHECK(memRequirements.pNext != nullptr, "You must add VkMemoryDedicatedRequirements in pNext of VkMemoryRequirements2.");
 
-			Uint32 index = mHeapIndexAsMemoryUsage[(Uint32)usage];
-			CHECK((index & memRequirements.memoryRequirements.memoryTypeBits) != 0,
+			Uint32 index = mMemTypeIndexAsMemoryUsage[(Uint32)usage];
+			CHECK(((1 << index) & memRequirements.memoryRequirements.memoryTypeBits) != 0,
 				"Failed to allocate VulkanMemory. MemoryTypeBits in VkMemoryRequirements({0}) doesn't have index {1}",
 				memRequirements.memoryRequirements.memoryTypeBits, index);
 

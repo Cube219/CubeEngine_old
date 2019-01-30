@@ -30,7 +30,7 @@ namespace cube
 					if(maxBindIndex < info.bindIndex)
 						maxBindIndex = info.bindIndex;
 				}
-				parameterInfoBindIndexLookupTable.resize(maxBindIndex, Uint32InvalidValue);
+				parameterInfoBindIndexLookupTable.resize(maxBindIndex + 1, Uint32InvalidValue);
 				for(Uint64 i = 0; i < parameterInfos.size(); i++) {
 					parameterInfoBindIndexLookupTable[parameterInfos[i].bindIndex] = SCast(Uint32)(i);
 				}

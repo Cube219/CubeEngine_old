@@ -101,10 +101,10 @@ namespace cube
 					info.commandPool = mGraphicsCommandPools[threadIndex];
 
 					core::Lock lock(mGraphicsCommandPoolMutexes[threadIndex]);
-					vkAllocateCommandBuffers(mDevice->GetHandle(), nullptr, &cmdBuf);
-					lock.release();
+					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
+					lock.unlock();
 
-					cmd = std::make_shared<CommandListVk>(shared_from_this(), cmdBuf, usage, threadIndex, mGraphicsQueueFamilyIndex,
+					cmd = std::make_shared<CommandListVk>(*this, cmdBuf, usage, threadIndex, mGraphicsQueueFamilyIndex,
 						isSub);
 					break;
 				}
@@ -114,10 +114,10 @@ namespace cube
 					info.commandPool = mTransferImmediateCommandPools[threadIndex];
 
 					core::Lock lock(mTransferImmediateCommandPoolMutexes[threadIndex]);
-					vkAllocateCommandBuffers(mDevice->GetHandle(), nullptr, &cmdBuf);
-					lock.release();
+					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
+					lock.unlock();
 
-					cmd = std::make_shared<CommandListVk>(shared_from_this(), cmdBuf, usage, threadIndex, mTransferImmediateQueueFamilyIndex,
+					cmd = std::make_shared<CommandListVk>(*this, cmdBuf, usage, threadIndex, mTransferImmediateQueueFamilyIndex,
 						isSub);
 					break;
 				}
@@ -127,10 +127,10 @@ namespace cube
 					info.commandPool = mTransferDeferredCommandPools[threadIndex];
 
 					core::Lock lock(mTransferDeferredCommandPoolMutexes[threadIndex]);
-					vkAllocateCommandBuffers(mDevice->GetHandle(), nullptr, &cmdBuf);
-					lock.release();
+					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
+					lock.unlock();
 
-					cmd = std::make_shared<CommandListVk>(shared_from_this(), cmdBuf, usage, threadIndex, mTransferDeferredQueueFamilyIndex,
+					cmd = std::make_shared<CommandListVk>(*this, cmdBuf, usage, threadIndex, mTransferDeferredQueueFamilyIndex,
 						isSub);
 					break;
 				}
@@ -140,10 +140,10 @@ namespace cube
 					info.commandPool = mComputeCommandPools[threadIndex];
 
 					core::Lock lock(mComputeCommandPoolMutexes[threadIndex]);
-					vkAllocateCommandBuffers(mDevice->GetHandle(), nullptr, &cmdBuf);
-					lock.release();
+					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
+					lock.unlock();
 
-					cmd = std::make_shared<CommandListVk>(shared_from_this(), cmdBuf, usage, threadIndex, mComputeQueueFamilyIndex,
+					cmd = std::make_shared<CommandListVk>(*this, cmdBuf, usage, threadIndex, mComputeQueueFamilyIndex,
 						isSub);
 					break;
 				}

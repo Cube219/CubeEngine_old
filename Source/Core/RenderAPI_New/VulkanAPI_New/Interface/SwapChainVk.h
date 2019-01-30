@@ -27,7 +27,7 @@ namespace cube
 			virtual void SetWindowedMode() override final;
 
 			VulkanSemaphore& GetDrawCompleteSemaphore() { return mDrawCompleteSemaphores[mCurrentBackImageIndex]; }
-			Vector<VkImageView> GetBackImages() const { return mBackImageViews; }
+			const Vector<VkImageView>& GetBackImages() const { return mBackImageViews; }
 
 			VkFormat GetColorVkFormat() const { return mColorFormat; }
 			Uint32 GetImageCount() const { return mImageCount; }

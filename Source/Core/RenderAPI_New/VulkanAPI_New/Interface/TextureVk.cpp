@@ -94,7 +94,7 @@ namespace cube
 
 			if(attr.isDedicated) {
 				VkImageMemoryRequirementsInfo2 memRequireInfo;
-				memRequireInfo.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
+				memRequireInfo.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
 				memRequireInfo.pNext = nullptr;
 				memRequireInfo.image = mImage.mObject;
 

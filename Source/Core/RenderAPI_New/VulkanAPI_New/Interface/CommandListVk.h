@@ -11,7 +11,7 @@ namespace cube
 		class CommandListVk final : public CommandList
 		{
 		public:
-			CommandListVk(SPtr<VulkanCommandListPool> pool, VkCommandBuffer commandBuffer,
+			CommandListVk(VulkanCommandListPool& pool, VkCommandBuffer commandBuffer,
 				CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex, bool isSub);
 			virtual ~CommandListVk();
 
@@ -50,7 +50,7 @@ namespace cube
 		private:
 			friend class VulkanCommandListPool;
 
-			SPtr<VulkanCommandListPool> mPool;
+			VulkanCommandListPool& mPool;
 			Uint32 mCommandPoolIndex;
 			Uint32 mSubmitQueueFamilyIndex;
 

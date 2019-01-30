@@ -64,13 +64,13 @@ namespace cube
 				descHelper.inputs.resize(subpass.inputs.size());
 				for(Uint64 j = 0; j < descHelper.inputs.size(); j++) {
 					index = subpass.inputs[j];
-					descHelper.inputs[j] = { index, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
+					descHelper.inputs[j] = { index, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 				}
 
 				descHelper.colors.resize(subpass.colorOutputs.size());
 				for(Uint64 j = 0; j < descHelper.colors.size(); j++) {
 					index = subpass.colorOutputs[j];
-					descHelper.colors[j] = { index, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+					descHelper.colors[j] = { index, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
 				}
 
 				index = subpass.depthStencilOutput;
@@ -145,7 +145,7 @@ namespace cube
 			}
 
 			Vector<VkImageView> attachments(mRenderTargets.size());
-
+			
 			VkFramebufferCreateInfo info;
 			info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			info.pNext = nullptr;
@@ -157,16 +157,18 @@ namespace cube
 			info.height = height;
 			info.layers = 1;
 
-			for(Uint64 i = 0; i < attachments.size(); i++) {
-				auto& renderTarget = mRenderTargets[i];
+			for(Uint64 i = 0; i < mFramebuffers.size(); i++) {
+				for(Uint64 j = 0; j < attachments.size(); j++) {
+					auto& renderTarget = mRenderTargets[j];
 
-				if(renderTarget->HasSwapChain()) {
-					attachments[i] = renderTarget->GetSwapChainVk()->GetBackImages()[i];
-				} else {
-					attachments[i] = renderTarget->GetTextureViewVk()->GetHandle();
+					if(renderTarget->HasSwapChain()) {
+						attachments[j] = renderTarget->GetSwapChainVk()->GetBackImages()[i];
+					} else {
+						attachments[j] = renderTarget->GetTextureViewVk()->GetHandle();
+					}
 				}
 
-				mDevice.GetLogicalDevice()->CreateVkFramebufferWrapper(info,
+				mFramebuffers[i] = mDevice.GetLogicalDevice()->CreateVkFramebufferWrapper(info,
 					fmt::format("Framebuffer[{0}] in {1}", i, mRenderPass.mDebugName).c_str());
 			}
 		}

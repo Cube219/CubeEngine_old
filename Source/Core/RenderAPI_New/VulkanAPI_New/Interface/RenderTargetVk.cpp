@@ -12,6 +12,7 @@ namespace cube
 		RenderTargetVk::RenderTargetVk(const RenderTargetAttribute& attr) : 
 			mDebugName(attr.debugName)
 		{
+			mAttachmentDesc.flags = 0;
 			mAttachmentDesc.format = VK_FORMAT_UNDEFINED;
 			mAttachmentDesc.samples = VK_SAMPLE_COUNT_1_BIT; // TODO: MultiSampling 구현 때 구현
 			mAttachmentDesc.loadOp = LoadOperatorToVkAttachmentLoadOp(attr.loadOp);

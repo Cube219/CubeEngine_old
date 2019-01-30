@@ -82,11 +82,11 @@ namespace cube
 				}
 
 				if(isFound) {
-					CUBE_LOG(LogType::Warning, "The color image format '{0}' is not supported. So it will be replaced with '{1}'.",
+					CUBE_LOG(LogType::Info, "The color image format '{0}' is not supported. So it will be replaced with '{1}'.",
 						mColorFormat, alterFormat);
 					mColorFormat = alterFormat;
 				} else {
-					CUBE_LOG(LogType::Warning, "The color image format '{0}' is not supported and it cannot be replaced similar. So it will be used the first supported format '{1}'.",
+					CUBE_LOG(LogType::Info, "The color image format '{0}' is not supported and it cannot be replaced similar. So it will be used the first supported format '{1}'.",
 						mColorFormat, supportedFormats[0].format);
 					mColorFormat = supportedFormats[0].format;
 					mColorSpace = supportedFormats[0].colorSpace;

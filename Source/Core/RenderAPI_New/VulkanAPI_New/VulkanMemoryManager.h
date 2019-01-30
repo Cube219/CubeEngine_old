@@ -137,7 +137,7 @@ namespace cube
 		private:
 			SPtr<VulkanLogicalDevice> mDevice;
 
-			Array<Uint32, (Uint32)MemoryUsage::Count> mHeapIndexAsMemoryUsage;
+			Array<Uint32, (Uint32)MemoryUsage::Count> mMemTypeIndexAsMemoryUsage;
 			Vector<VulkanMemoryHeap> mHeaps;
 		};
 
