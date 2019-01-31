@@ -210,7 +210,7 @@ namespace cube
 
 			platform::PlatformDebugUtility::PrintToConsole(res);
 			if(isError) {
-				//platform::PlatformDebugUtility::AssertionFailed(res, __FUNCTION__, __FILE__, __LINE__);
+				platform::PlatformDebugUtility::AssertionFailed(res, __FUNCTION__, __FILE__, __LINE__);
 			}
 
 			return true;

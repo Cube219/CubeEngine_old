@@ -14,7 +14,7 @@ namespace cube
 			return (offset + (alignment - 1)) & ~(alignment - 1);
 		}
 
-		// Reference VariableSizeAllocationsManager of DiligentEngine
+		// Refer to VariableSizeAllocationsManager of DiligentEngine
 		// https://github.com/DiligentGraphics/DiligentEngine (VariableSizeAllocationsManager.h)
 
 		class VariableSizeMemoryPage
@@ -27,6 +27,12 @@ namespace cube
 				InsertFreeBlock(startOffset, size);
 			}
 			~VariableSizeMemoryPage() {}
+
+			VariableSizeMemoryPage(const VariableSizeMemoryPage& other) = delete;
+			VariableSizeMemoryPage& operator=(const VariableSizeMemoryPage& rhs) = delete;
+			
+			VariableSizeMemoryPage(VariableSizeMemoryPage&& other) = default;
+			VariableSizeMemoryPage& operator=(VariableSizeMemoryPage&& rhs) = default;
 
 			struct Allocation
 			{

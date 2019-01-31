@@ -16,10 +16,14 @@ namespace cube
 			mLayout(layout),
 			mParameterList(layout.GetParameterList())
 		{
+			mDescriptorSet = parameterManager.AllocateDescriptorSet(layout.GetVkDescriptorSetLayout(), "DescSet");
+
 			// Write descriptor set to sub-allocated buffers
 			// Only uniform / storage buffer be updated
 			Vector<VkWriteDescriptorSet> writeDescSets;
 			Vector<VkDescriptorBufferInfo> writeBufferInfos;
+			// For preventing reallocation
+			writeBufferInfos.reserve(mParameterList.parameterInfos.size());
 
 			for(auto& param : mParameterList.parameterInfos) {
 				VkWriteDescriptorSet write;
@@ -71,6 +75,9 @@ namespace cube
 			// Allocate parameters (Only uniform/storage buffer)
 			for(Uint64 i = 0; i < mParameterList.parameterInfos.size(); i++) {
 				auto& info = mParameterList.parameterInfos[i];
+
+				if(info.isChangedPerFrame == true)
+					continue;
 
 				if(info.type == ShaderParameterType::ConstantBuffer ||
 					info.type == ShaderParameterType::StorageBuffer) {

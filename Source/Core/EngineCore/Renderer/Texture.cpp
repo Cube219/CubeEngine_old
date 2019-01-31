@@ -19,7 +19,7 @@ namespace cube
 			TextureAttribute attr;
 			attr.usage = ResourceUsage::Default;
 			attr.type = TextureType::Texture2D;
-			attr.format = TextureFormat::RGB_8_UNorm;
+			attr.format = TextureFormat::RGBA_8_UNorm;
 			attr.bindTypeFlags = TextureBindTypeFlagBits::ShaderResource_Bit;
 			attr.textureData.pData = data;
 			attr.textureData.size = size;

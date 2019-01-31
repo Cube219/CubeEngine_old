@@ -45,6 +45,12 @@ namespace cube
 			VulkanMemoryPage(VulkanMemoryHeap& myHeap, Uint64 size, MemoryUsage memoryUsage, Uint32 memoryTypeIndex);
 			~VulkanMemoryPage();
 
+			VulkanMemoryPage(const VulkanMemoryPage& other) = delete;
+			VulkanMemoryPage& operator=(const VulkanMemoryPage& rhs) = delete;
+
+			VulkanMemoryPage(VulkanMemoryPage&& other) = default;
+			VulkanMemoryPage& operator=(VulkanMemoryPage&& rhs) = default;
+
 			VulkanAllocation Allocate(Uint64 size, Uint64 alignment);
 			void Free(VulkanAllocation& alloc);
 			void Free(VulkanAllocation&& alloc);
