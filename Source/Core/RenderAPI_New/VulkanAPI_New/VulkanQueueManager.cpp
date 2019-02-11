@@ -35,24 +35,49 @@ namespace cube
 		{
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitCommandList(CommandListVk& commandList)
+		void VulkanQueueManager::SubmitCommandList(CommandListVk& commandList)
 		{
 			CommandListUsage usage = commandList.GetUsage();
 			switch(usage) {
 				case CommandListUsage::Graphics:
-					return SubmitGraphicsQueue(commandList);
+					SubmitGraphicsQueue(commandList, false);
+					break;
 
 				case CommandListUsage::TransferImmediate:
-					return SubmitTransferImmediateQueue(commandList);
+					SubmitTransferImmediateQueue(commandList, false);
+					break;
 
 				case CommandListUsage::TransferDeferred:
-					return SubmitTransferDeferredQueue(commandList);
+					SubmitTransferDeferredQueue(commandList, false);
+					break;
 
 				case CommandListUsage::Compute:
-					return SubmitComputeQueue(commandList);
+					SubmitComputeQueue(commandList, false);
+					break;
 
 				default:
-					return nullptr;
+					return;
+			}
+		}
+
+		SPtr<FenceVk> VulkanQueueManager::SubmitCommandListWithFence(CommandListVk& commandList)
+		{
+			CommandListUsage usage = commandList.GetUsage();
+			switch(usage) {
+			case CommandListUsage::Graphics:
+				return SubmitGraphicsQueue(commandList, true);
+
+			case CommandListUsage::TransferImmediate:
+				return SubmitTransferImmediateQueue(commandList, true);
+
+			case CommandListUsage::TransferDeferred:
+				return SubmitTransferDeferredQueue(commandList, true);
+
+			case CommandListUsage::Compute:
+				return SubmitComputeQueue(commandList, true);
+
+			default:
+				return nullptr;
 			}
 		}
 
@@ -246,7 +271,7 @@ namespace cube
 			return true;
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitGraphicsQueue(CommandListVk& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitGraphicsQueue(CommandListVk& commandList, bool getFence)
 		{
 			CHECK(commandList.GetSubmitQueueFamilyIndex() == mGraphicsQueueFamilyIndex,
 				"Submit queue family index in commandList doesn't match graphics queue family index.");
@@ -296,9 +321,17 @@ namespace cube
 			submitInfo.signalSemaphoreCount = 0;
 			submitInfo.pSignalSemaphores = nullptr;
 
-			SPtr<FenceVk> fence = mFencePool.GetFence("Fence to complete to submit grpahics queue");
+			SPtr<FenceVk> fence;
+			VkFence vkFence;
+			if(getFence == true) {
+				fence = mFencePool.GetFence("Fence to complete to submit grpahics queue");
+				vkFence = fence->GetHandle();
+			} else {
+				fence = nullptr;
+				vkFence = VK_NULL_HANDLE;
+			}
 
-			res = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, fence->GetHandle());
+			res = vkQueueSubmit(mGraphicsQueue, 1, &submitInfo, vkFence);
 			CHECK_VK(res, "Failed to submit command list to the graphics queue.");
 			
 			// Update last fence / semaphores
@@ -308,7 +341,7 @@ namespace cube
 			return fence;
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitTransferImmediateQueue(CommandListVk& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitTransferImmediateQueue(CommandListVk& commandList, bool getFence)
 		{
 			CHECK(commandList.GetSubmitQueueFamilyIndex() == mTransferImmediateQueueFamilyIndex,
 				"Submit queue family index in commandList doesn't match transfer immediate queue family index.");
@@ -343,15 +376,23 @@ namespace cube
 				mImmediateCompleteSemaphores.push_back(completeSemaphore);
 			}
 
-			SPtr<FenceVk> fence = mFencePool.GetFence("Fence to complete to submit transfer immediate");
+			SPtr<FenceVk> fence;
+			VkFence vkFence;
+			if(getFence == true) {
+				fence = mFencePool.GetFence("Fence to complete to submit transfer immediate");
+				vkFence = fence->GetHandle();;
+			} else {
+				fence = nullptr;
+				vkFence = VK_NULL_HANDLE;
+			}
 
-			res = vkQueueSubmit(queueToSubmit, 1, &submitInfo, fence->GetHandle());
+			res = vkQueueSubmit(queueToSubmit, 1, &submitInfo, vkFence);
 			CHECK_VK(res, "Failed to submit command list to the transfer immediate queue.");
 
 			return fence;
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitTransferDeferredQueue(CommandListVk& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitTransferDeferredQueue(CommandListVk& commandList, bool getFence)
 		{
 			CHECK(commandList.GetSubmitQueueFamilyIndex() == mTransferDeferredQueueFamilyIndex,
 				"Submit queue family index in commandList doesn't match transfer deferred queue family index.");
@@ -379,15 +420,23 @@ namespace cube
 				mTransferDeferredCurrentIndex %= mTransferDeferredQueues.size();
 			}
 
-			SPtr<FenceVk> fence = mFencePool.GetFence("Fence to complete to submit transfer deferred");
+			SPtr<FenceVk> fence;
+			VkFence vkFence;
+			if(getFence == true) {
+				fence = mFencePool.GetFence("Fence to complete to submit transfer deferred");
+				vkFence = fence->GetHandle();
+			} else {
+				fence = nullptr;
+				vkFence = VK_NULL_HANDLE;
+			}
 
-			res = vkQueueSubmit(queueToSubmit, 1, &submitInfo, fence->GetHandle());
+			res = vkQueueSubmit(queueToSubmit, 1, &submitInfo, vkFence);
 			CHECK_VK(res, "Failed to submit command list to the transfer deferred queue.");
 			
 			return fence;
 		}
 
-		SPtr<FenceVk> VulkanQueueManager::SubmitComputeQueue(CommandListVk& commandList)
+		SPtr<FenceVk> VulkanQueueManager::SubmitComputeQueue(CommandListVk& commandList, bool getFence)
 		{
 			CHECK(commandList.GetSubmitQueueFamilyIndex() == mComputeQueueFamilyIndex,
 				"Submit queue family index in commandList doesn't match compute queue family index.");

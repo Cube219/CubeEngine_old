@@ -159,6 +159,25 @@ namespace cube
 				SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(CommandListUsage::TransferImmediate, 0, false);
 				cmdBuf->Begin();
 				VkCommandBuffer vkCmdBuf = cmdBuf->GetHandle();
+
+				VkImageMemoryBarrier imgBarrier;
+				imgBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+				imgBarrier.pNext = nullptr;
+				imgBarrier.srcAccessMask = 0; // NONE;
+				imgBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+				imgBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				imgBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+				imgBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				imgBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				imgBarrier.image = mImage.mObject;
+				imgBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // TODO: 차후 수정?
+				imgBarrier.subresourceRange.baseMipLevel = 0;
+				imgBarrier.subresourceRange.levelCount = 1;
+				imgBarrier.subresourceRange.baseArrayLayer = 0;
+				imgBarrier.subresourceRange.layerCount = 1;
+				vkCmdPipelineBarrier(vkCmdBuf, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+					0, nullptr, 0, nullptr, 1, &imgBarrier);
+
 				VkBufferImageCopy bufImgCopy;
 				bufImgCopy.bufferOffset = 0;
 				bufImgCopy.bufferRowLength = 0;

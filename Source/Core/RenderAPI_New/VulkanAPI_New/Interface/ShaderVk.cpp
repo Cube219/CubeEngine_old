@@ -9,7 +9,8 @@ namespace cube
 {
 	namespace render
 	{
-		ShaderVk::ShaderVk(DeviceVk& device, const ShaderAttribute& attr)
+		ShaderVk::ShaderVk(DeviceVk& device, const ShaderAttribute& attr) : 
+			mEntryPoint(attr.entryPoint)
 		{
 			mType = attr.type;
 
@@ -45,7 +46,7 @@ namespace cube
 				default: ASSERTION_FAILED("Unknown ShaderType ({0}).", (Uint32)attr.type);
 			}
 
-			mShaderStageInfo.pName = attr.entryPoint;
+			mShaderStageInfo.pName = mEntryPoint.data();
 			mShaderStageInfo.module = mShaderModule.mObject;
 		}
 

@@ -37,7 +37,8 @@ namespace cube
 			virtual SPtr<Fence> GetFence(const char* debugName = "") = 0;
 
 			virtual SPtr<CommandList> GetCommandList(const CommandListAttribute& attr) = 0;
-			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) = 0;
+			virtual void SubmitCommandList(SPtr<CommandList>& commandList) = 0;
+			virtual SPtr<Fence> SubmitCommandListWithFence(SPtr<CommandList>& commandList) = 0;
 
 			virtual void StartFrame() = 0;
 		};

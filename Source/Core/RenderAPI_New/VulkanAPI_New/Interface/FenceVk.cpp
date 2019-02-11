@@ -8,23 +8,24 @@ namespace cube
 	namespace render
 	{
 		FenceVk::FenceVk(VkFenceWrapper& fence, Uint32 poolIndex, VulkanFencePool& pool) :
-			mFence(fence), mFencePoolIndex(poolIndex), mPool(pool)
+			mFence(fence), mFencePoolIndex(poolIndex), mPool(pool),
+			mIsReleased(false)
 		{
 		}
 
 		FenceVk::~FenceVk()
 		{
-			mPool.FreeFence(*this);
+			mIsReleased = true;
 		}
 
 		void FenceVk::Release()
 		{
-			mPool.FreeFence(*this);
+			mIsReleased = true;
 		}
 
 		FenceWaitResult FenceVk::Wait(float timeout)
 		{
-			if(mFence.IsEmpty()) {
+			if(mIsReleased == true) {
 				ASSERTION_FAILED("Failed to wait the fence. The fence already released.");
 				return FenceWaitResult::Error;
 			}

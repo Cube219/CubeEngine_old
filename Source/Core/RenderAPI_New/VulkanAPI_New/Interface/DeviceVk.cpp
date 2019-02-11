@@ -99,10 +99,16 @@ namespace cube
 			return mFencePool.GetFence(debugName);;
 		}
 
-		SPtr<Fence> DeviceVk::SubmitCommandList(SPtr<CommandList>& commandList)
+		void DeviceVk::SubmitCommandList(SPtr<CommandList>& commandList)
 		{
 			SPtr<CommandListVk> commandListVk = DPCast(CommandListVk)(commandList);
-			return mQueueManager.SubmitCommandList(*commandListVk);
+			mQueueManager.SubmitCommandList(*commandListVk);
+		}
+
+		SPtr<Fence> DeviceVk::SubmitCommandListWithFence(SPtr<CommandList>& commandList)
+		{
+			SPtr<CommandListVk> commandListVk = DPCast(CommandListVk)(commandList);
+			return mQueueManager.SubmitCommandListWithFence(*commandListVk);
 		}
 
 		void DeviceVk::StartFrame()

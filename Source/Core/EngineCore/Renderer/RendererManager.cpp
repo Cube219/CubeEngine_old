@@ -25,9 +25,9 @@ namespace cube
 
 		struct UBODirLight
 		{
+			int isExisted;
 			Vector4 color;
 			Vector3 direction;
-			int isExisted;
 		};
 
 		struct UBOPointLights
@@ -330,7 +330,7 @@ namespace cube
 
 			RewriteCommandBuffer();
 
-			SPtr<Fence> fence = mDevice->SubmitCommandList(mMainCommandList);
+			SPtr<Fence> fence = mDevice->SubmitCommandListWithFence(mMainCommandList);
 			
 			FenceWaitResult res = fence->Wait(15.0f);
 			CHECK(res == FenceWaitResult::Success, "Failed to submit main command list ({0}).", (int)res);
@@ -713,7 +713,7 @@ namespace cube
 			attr.renderPass = mRenderPass;
 
 			attr.shaderParameterLayouts.push_back(mGlobalShaderParametersLayout);
-			// attr.shaderParameterLayouts.push_back(perMaterial);
+			attr.shaderParameterLayouts.push_back(material->GetShaderParametersLayout());
 			attr.shaderParameterLayouts.push_back(mPerObjectShaderParametersLayout);
 
 			attr.debugName = "Pipeline";

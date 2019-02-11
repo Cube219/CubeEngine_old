@@ -78,10 +78,13 @@ namespace cube
 
 		void VulkanFencePool::FreeFence(FenceVk& fence)
 		{
-			if(fence.mFence.IsEmpty() || mFences.empty())
+			CHECK(vkGetFenceStatus(fence.mFence.GetVkDevice(), fence.mFence.mObject) == VK_SUCCESS,
+				"Cannot free a fence that has not been signaled.");
+
+			if(fence.mIsReleased == true)
 				return;
 
-			fence.mFence.Release();
+			fence.Release();
 			{
 				core::Lock lock(mFencesMutex);
 

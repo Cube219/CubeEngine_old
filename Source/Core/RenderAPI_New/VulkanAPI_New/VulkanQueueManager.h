@@ -16,7 +16,8 @@ namespace cube
 				VulkanFencePool& fencePool, VulkanSemaphorePool& semaphorePool);
 			~VulkanQueueManager();
 
-			SPtr<FenceVk> SubmitCommandList(CommandListVk& commandList);
+			void SubmitCommandList(CommandListVk& commandList);
+			SPtr<FenceVk> SubmitCommandListWithFence(CommandListVk& commandList);
 
 			Uint32 GetGraphicsQueueFamilyIndex() const { return mGraphicsQueueFamilyIndex; }
 			Uint32 GetTransferImmediateQueueFamilyIndex() const { return mTransferImmediateQueueFamilyIndex; }
@@ -30,10 +31,10 @@ namespace cube
 			bool InitTransferDeferredQueues();
 			bool InitComputeQueues();
 
-			SPtr<FenceVk> SubmitGraphicsQueue(CommandListVk& commandList);
-			SPtr<FenceVk> SubmitTransferImmediateQueue(CommandListVk& commandList);
-			SPtr<FenceVk> SubmitTransferDeferredQueue(CommandListVk& commandList);
-			SPtr<FenceVk> SubmitComputeQueue(CommandListVk& commandList);
+			SPtr<FenceVk> SubmitGraphicsQueue(CommandListVk& commandList, bool getFence);
+			SPtr<FenceVk> SubmitTransferImmediateQueue(CommandListVk& commandList, bool getFence);
+			SPtr<FenceVk> SubmitTransferDeferredQueue(CommandListVk& commandList, bool getFence);
+			SPtr<FenceVk> SubmitComputeQueue(CommandListVk& commandList, bool getFence);
 
 			SPtr<VulkanLogicalDevice>& mDevice;
 			VulkanPhysicalDevice& mPhysicalDevice;

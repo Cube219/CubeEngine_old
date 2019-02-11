@@ -27,6 +27,7 @@ namespace cube
 			friend class VulkanFencePool;
 
 			VkFenceWrapper& mFence;
+			bool mIsReleased;
 
 			Uint32 mFencePoolIndex;
 			VulkanFencePool& mPool;

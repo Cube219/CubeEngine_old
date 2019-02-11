@@ -28,6 +28,7 @@ namespace cube
 			VkPipelineShaderStageCreateInfo mShaderStageInfo;
 
 			Vector<Uint32> mSPIRV;
+			std::string mEntryPoint;
 		};
 	} // namespace render
 } // namespace cube

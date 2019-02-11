@@ -41,7 +41,8 @@ namespace cube
 			virtual SPtr<Fence> GetFence(const char* debugName = "") override final;
 
 			virtual SPtr<CommandList> GetCommandList(const CommandListAttribute& attr) override final;
-			virtual SPtr<Fence> SubmitCommandList(SPtr<CommandList>& commandList) override final;
+			virtual void SubmitCommandList(SPtr<CommandList>& commandList) override final;
+			virtual SPtr<Fence> SubmitCommandListWithFence(SPtr<CommandList>& commandList) override final;
 
 			virtual void StartFrame() override final;
 
