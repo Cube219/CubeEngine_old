@@ -74,6 +74,7 @@ namespace cube
 
 			res = vkBindBufferMemory(mBuffer.GetVkDevice(), mBuffer.mObject,
 				mBufferMemoryAllocation.deviceMemory, mBufferMemoryAllocation.offset);
+			CHECK_VK(res, "Failed to bind buffer memory.");
 
 			mStartOffset = mBufferMemoryAllocation.offset;
 			mEndOffset = mBufferMemoryAllocation.offset + mBufferMemoryAllocation.size;

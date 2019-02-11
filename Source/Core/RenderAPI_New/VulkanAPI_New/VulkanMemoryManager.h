@@ -48,8 +48,17 @@ namespace cube
 			VulkanMemoryPage(const VulkanMemoryPage& other) = delete;
 			VulkanMemoryPage& operator=(const VulkanMemoryPage& rhs) = delete;
 
-			VulkanMemoryPage(VulkanMemoryPage&& other) = default;
-			VulkanMemoryPage& operator=(VulkanMemoryPage&& rhs) = default;
+			VulkanMemoryPage(VulkanMemoryPage&& other) noexcept : 
+				mMyHeap(other.mMyHeap),
+				mPage(std::move(other.mPage)),
+				mDeviceMemory(other.mDeviceMemory),
+				mMappedData(other.mMappedData)
+			{
+				other.mDeviceMemory = VK_NULL_HANDLE;
+				other.mMappedData = nullptr;
+			}
+			// Delete move assignment because reference member(mMyHeap) cannot be reassigned.
+			VulkanMemoryPage& operator=(VulkanMemoryPage&& rhs) = delete;
 
 			VulkanAllocation Allocate(Uint64 size, Uint64 alignment);
 			void Free(VulkanAllocation& alloc);
@@ -82,17 +91,19 @@ namespace cube
 			VulkanMemoryHeap(const VulkanMemoryHeap& other) = delete;
 			VulkanMemoryHeap& operator=(const VulkanMemoryHeap& rhs) = delete;
 
-			VulkanMemoryHeap(VulkanMemoryHeap&& other) : 
+			VulkanMemoryHeap(VulkanMemoryHeap&& other) noexcept : 
 				mDevice(std::move(other.mDevice)),
+				mMemoryUsage(other.mMemoryUsage),
 				mMemoryTypeIndex(other.mMemoryTypeIndex),
 				mHeapSize(other.mHeapSize),
 				mPageSize(other.mPageSize),
 				// mPagesMutex(other.mPagesMutex), // It cannot be moved.
 				mPages(std::move(other.mPages))
 			{}
-			VulkanMemoryHeap& operator=(VulkanMemoryHeap&& rhs)
+			VulkanMemoryHeap& operator=(VulkanMemoryHeap&& rhs) noexcept
 			{
 				mDevice = std::move(rhs.mDevice);
+				mMemoryUsage = rhs.mMemoryUsage;
 				mMemoryTypeIndex = rhs.mMemoryTypeIndex;
 				mHeapSize = rhs.mHeapSize;
 				mPageSize = rhs.mPageSize;
@@ -101,6 +112,8 @@ namespace cube
 
 				return *this;
 			}
+
+			Uint32 GetMemoryTypeIndex() const { return mMemoryTypeIndex; }
 
 			VulkanAllocation Allocate(Uint64 size, Uint64 alignment);
 
@@ -143,8 +156,11 @@ namespace cube
 		private:
 			SPtr<VulkanLogicalDevice> mDevice;
 
+			/*
 			Array<Uint32, (Uint32)MemoryUsage::Count> mMemTypeIndexAsMemoryUsage;
 			Vector<VulkanMemoryHeap> mHeaps;
+			*/
+			Array<VulkanMemoryHeap, (Uint32)MemoryUsage::Count> mHeaps;
 		};
 
 		inline void VulkanAllocation::Free()
