@@ -182,7 +182,7 @@ namespace cube
 				VkBufferImageCopy bufImgCopy;
 				bufImgCopy.bufferOffset = 0;
 				bufImgCopy.bufferRowLength = 0;
-				bufImgCopy.bufferRowLength = 0;
+				bufImgCopy.bufferImageHeight = 0;
 
 				bufImgCopy.imageSubresource.aspectMask = 0;
 				if((attr.bindTypeFlags & TextureBindTypeFlagBits::DepthStencil_Bit) > 0) {

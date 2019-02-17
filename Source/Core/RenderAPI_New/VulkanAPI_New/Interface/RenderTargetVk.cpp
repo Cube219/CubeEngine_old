@@ -48,6 +48,11 @@ namespace cube
 				SPtr<SwapChainVk> swapChainVk = DPCast(SwapChainVk)(attr.swapChain);
 				mSwapChain = swapChainVk;
 
+				mDefaultClearValue.color.float32[0] = attr.defaultColor[0];
+				mDefaultClearValue.color.float32[1] = attr.defaultColor[1];
+				mDefaultClearValue.color.float32[2] = attr.defaultColor[2];
+				mDefaultClearValue.color.float32[3] = attr.defaultColor[3];
+
 				mAttachmentDesc.format = swapChainVk->GetColorVkFormat();
 				mAttachmentDesc.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 			}

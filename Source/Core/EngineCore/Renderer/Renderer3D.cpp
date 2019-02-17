@@ -107,6 +107,8 @@ namespace cube
 			}
 
 			// Update mvp matrix
+			mUBOPerObject.mvp = mUBOPerObject.modelMatrix * camera->GetViewProjectionMatrix();
+
 			mShaderParameters->UpdateParameter(0, &mUBOPerObject, sizeof(UBOPerObject));
 
 			// Bind vertex / index data
