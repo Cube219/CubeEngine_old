@@ -99,7 +99,6 @@ namespace cube
 			SPtr<render::GraphicsPipelineState> CreatePipeline(SPtr<Material_RT> material);
 
 			SPtr<platform::DLib> mRenderDLib;
-			//[old] SPtr<render::RenderAPI> mRenderAPI;
 			SPtr<render::RenderAPI> mRenderAPI;
 			SPtr<render::Device> mDevice;
 
@@ -110,48 +109,29 @@ namespace cube
 
 			Mutex mMaterialsMutex;
 			Vector<SPtr<Material_RT>> mMaterials;
-			//[old] Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
 			Vector <SPtr<render::GraphicsPipelineState>> mMaterialPipelines;
 
 			SPtr<DirectionalLight_RT> mDirLight;
-			//[old] SPtr<render::Buffer> mDirLightBuffer;
 
 			Mutex mPointLightsMutex;
 			Vector<SPtr<PointLight_RT>> mPointLights;
-			//[old] SPtr<render::Buffer> mPointLightsBuffer;
 
-			//[old] SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
-			//[old] SPtr<render::DescriptorSet> mGlobalDescriptorSet;
-			//[old] SPtr<render::Buffer> mGlobalUBOBuffer;
-			//[old] SPtr<render::DescriptorSetLayout> mPerObjectDescriptorSetLayout;
 			SPtr<render::ShaderParametersLayout> mGlobalShaderParametersLayout;
 			SPtr<render::ShaderParameters> mGlobalShaderParameters;
 			SPtr<render::ShaderParametersLayout> mPerObjectShaderParametersLayout;
 
-			//[old] SPtr<render::Image> mDepthBufferImage;
-			//[old] SPtr<render::ImageView> mDepthBufferImageView;
 			SPtr<render::Texture> mDepthBufferTexture;
 			SPtr<render::TextureView> mDepthBufferTextureView;
 
-			//[old] SPtr<render::Swapchain> mSwapchain;
 			SPtr<render::SwapChain> mSwapChain;
 
-			//[old] SPtr<render::RenderPass> mRenderPass;
 			SPtr<render::RenderTarget> mColorRenderTarget;
 			SPtr<render::RenderTarget> mDepthStencilRenderTarget;
 			SPtr<render::RenderPass> mRenderPass;
 
-			//[old] Vector<SPtr<render::CommandBuffer>> mCommandBuffers;
-			//[old] Vector<int> mCommandBuffersCurrentMaterialIndex;
-			//[old] SPtr<render::CommandBuffer> mMainCommandBuffer;
-			//[old] SPtr<render::Fence> mMainCommandBufferSubmitFence;
 			Vector<SPtr<render::CommandList>> mCommandLists;
 			Vector<int> mCommandListsCurrentMaterialIndex;
 			SPtr<render::CommandList> mMainCommandList;
-
-			//[old] SPtr<render::Queue> mGraphicsQueue;
-
-			//[old] SPtr<render::Semaphore> mGetImageSemaphore;
 
 			bool mIsPrepared;
 

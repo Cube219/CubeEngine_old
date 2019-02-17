@@ -153,6 +153,10 @@ namespace cube
 
 		void RendererManager::ShutDown()
 		{
+			mMaterialPipelines.clear();
+			mMaterials.clear();
+			mRenderers.clear();
+
 			mGlobalShaderParametersLayout = nullptr;
 			mGlobalShaderParameters = nullptr;
 
