@@ -54,7 +54,8 @@ namespace cube
 			info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; // 차후 구현?
 
 			info.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-			// info.usage |= VK_IMAGE_USAGE_SAMPLED_BIT; // TODO: 샘플링 구현하면서 구현
+			info.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+
 			if((attr.bindTypeFlags & TextureBindTypeFlagBits::RenderTarget_Bit) > 0) {
 				info.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 			}

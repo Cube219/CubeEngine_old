@@ -26,6 +26,7 @@ namespace cube
 			virtual void SetFullscreenMode() override final;
 			virtual void SetWindowedMode() override final;
 
+			Uint32 GetCurrentBackImageIndex() const { return mCurrentBackImageIndex; }
 			VulkanSemaphore& GetDrawCompleteSemaphore() { return mDrawCompleteSemaphores[mCurrentBackImageIndex]; }
 			const Vector<VkImageView>& GetBackImages() const { return mBackImageViews; }
 
@@ -37,6 +38,7 @@ namespace cube
 			void CreateImages();
 
 			VulkanSemaphorePool& mSemaphorePool;
+			VulkanQueueManager& mQueueManager;
 
 			VkSwapChainWrapper mSwapChain;
 			SwapChainAttribute mAttribute;

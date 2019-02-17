@@ -78,6 +78,7 @@ namespace cube
 			SPtr<render::RenderAPI> GetRenderAPI() const { return mRenderAPI; }
 			SPtr<render::Device> GetDevice() const { return mDevice; }
 
+			void StartFrame();
 			void DrawAll();
 
 			void Resize(uint32_t width, uint32_t height);

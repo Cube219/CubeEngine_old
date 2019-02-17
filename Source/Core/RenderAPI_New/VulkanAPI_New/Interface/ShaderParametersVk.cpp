@@ -76,13 +76,19 @@ namespace cube
 			for(Uint64 i = 0; i < mParameterList.parameterInfos.size(); i++) {
 				auto& info = mParameterList.parameterInfos[i];
 
-				if(info.isChangedPerFrame == true)
-					continue;
-
 				if(info.type == ShaderParameterType::ConstantBuffer ||
 					info.type == ShaderParameterType::StorageBuffer) {
-					
-					VulkanShaderParameterAllocation alloc = mParameterManager.Allocate(info.type, info.size);
+
+					VulkanShaderParameterAllocation alloc;
+
+					if(info.isChangedPerFrame == true) {
+						// PerFrame will be allocated in UpdateParameter
+						alloc.isPerFrame = true;
+						alloc.type = info.type;
+						alloc.size = info.size;
+					} else {
+						alloc = mParameterManager.Allocate(info.type, info.size);
+					}
 					alloc.bindIndex = info.bindIndex;
 					mParameterAllocations.push_back(alloc);
 				}
@@ -117,7 +123,7 @@ namespace cube
 
 			memcpy(alloc.pData, pData, size);
 		}
-		// RN: perFrame 업데이트 구현
+		// TODO: perFrame 업데이트 구현
 		void ShaderParametersVk::UpdateParameter(Uint32 bindIndex, SPtr<TextureView>& textureView)
 		{
 			ShaderParameterInfo& info = mParameterList.FindInfo(bindIndex);
@@ -142,6 +148,9 @@ namespace cube
 			else if(info.type == ShaderParameterType::StorageImage)
 				imgInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
+			write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+			write.pImageInfo = &imgInfo;
+
 			vkUpdateDescriptorSets(mDevice, 1, &write, 0, nullptr);
 		}
 
@@ -163,6 +172,9 @@ namespace cube
 			imgInfo.imageView = VK_NULL_HANDLE;
 			imgInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
+			write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+			write.pImageInfo = &imgInfo;
+
 			vkUpdateDescriptorSets(mDevice, 1, &write, 0, nullptr);
 		}
 
@@ -183,6 +195,9 @@ namespace cube
 			imgInfo.sampler = DPCast(SamplerVk)(sampler)->GetHandle();
 			imgInfo.imageView = DPCast(TextureViewVk)(textureView)->GetHandle();
 			imgInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+			write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			write.pImageInfo = &imgInfo;
 
 			vkUpdateDescriptorSets(mDevice, 1, &write, 0, nullptr);
 		}

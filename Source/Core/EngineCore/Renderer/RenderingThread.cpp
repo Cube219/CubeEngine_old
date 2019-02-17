@@ -42,6 +42,9 @@ namespace cube
 		{
 			gameThreadRunAsync.WaitUntilFinished();
 
+			// For fulshing initial resources
+			mRendererManager->DrawAll();
+
 			platform::Platform::StartLoop();
 		}
 
@@ -71,6 +74,8 @@ namespace cube
 
 		void RenderingThread::Rendering()
 		{
+			mRendererManager->StartFrame();
+
 			mRendererManager->DrawAll();
 		}
 

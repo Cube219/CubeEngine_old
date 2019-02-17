@@ -51,6 +51,9 @@ namespace cube
 
 		void CommandListVk::End()
 		{
+			if(mBindedRenderPass != nullptr && mIsSub == false)
+				vkCmdEndRenderPass(mCommandBuffer);
+
 			VkResult res;
 
 			res = vkEndCommandBuffer(mCommandBuffer);

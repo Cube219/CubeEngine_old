@@ -16,6 +16,8 @@ namespace cube
 				VulkanFencePool& fencePool, VulkanSemaphorePool& semaphorePool);
 			~VulkanQueueManager();
 
+			void AddWaitSemaphoreForGraphics(const VulkanSemaphore& semaphore, VkPipelineStageFlags stageFlags);
+
 			void SubmitCommandList(CommandListVk& commandList);
 			SPtr<FenceVk> SubmitCommandListWithFence(CommandListVk& commandList);
 
@@ -43,8 +45,10 @@ namespace cube
 
 			VkQueue mGraphicsQueue;
 			Uint32 mGraphicsQueueFamilyIndex;
-			SPtr<FenceVk> mLastGraphicsFence;
+			SPtr<FenceVk> mLastGraphicsFence = nullptr;
 			Vector<VulkanSemaphore> mLastGraphicsSemaphores;
+			Vector<VulkanSemaphore> mWaitSemaphores; // For graphics
+			Vector<VkPipelineStageFlags> mWaitSemaphoreStages;
 
 			Vector<VkQueue> mTransferImmediateQueues;
 			Uint32 mTransferImmediateQueueFamilyIndex;

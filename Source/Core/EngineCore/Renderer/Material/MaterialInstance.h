@@ -79,8 +79,6 @@ namespace cube
 
 			SPtr<Material_RT> mMaterial;
 
-			Vector<MaterialParameter> mParameters;
-
 			SPtr<render::ShaderParameters> mShaderParameters;
 		};
 	} // namespace core

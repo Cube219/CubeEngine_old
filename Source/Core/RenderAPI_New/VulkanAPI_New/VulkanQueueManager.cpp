@@ -35,6 +35,12 @@ namespace cube
 		{
 		}
 
+		void VulkanQueueManager::AddWaitSemaphoreForGraphics(const VulkanSemaphore& semaphore, VkPipelineStageFlags stageFlags)
+		{
+			mWaitSemaphores.push_back(semaphore);
+			mWaitSemaphoreStages.push_back(stageFlags);
+		}
+
 		void VulkanQueueManager::SubmitCommandList(CommandListVk& commandList)
 		{
 			CommandListUsage usage = commandList.GetUsage();
@@ -139,6 +145,7 @@ namespace cube
 
 			// Only use the first queue in queue family
 			vkGetDeviceQueue(mDevice->GetHandle(), mGraphicsQueueFamilyIndex, 0, &mGraphicsQueue);
+
 			return true;
 		}
 
@@ -278,21 +285,25 @@ namespace cube
 
 			VkResult res;
 
-			Vector<VulkanSemaphore> waitSemaphores;
 			{
 				core::Lock lock(mImmediateCompleteSemaphoresMutex);
 				
-				waitSemaphores = mImmediateCompleteSemaphores;
+				// Append
+				mWaitSemaphores.insert(mWaitSemaphores.cend(), mImmediateCompleteSemaphores.begin(), mImmediateCompleteSemaphores.end());
+				// TODO: 나중에 waitStage들을 transfer immediate를 submit할 때 지정할 수 있게 하기
+				mWaitSemaphoreStages.insert(mWaitSemaphoreStages.cend(), mImmediateCompleteSemaphores.size(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
 				mImmediateCompleteSemaphores.clear();
 			}
 
 			// Wait for last submit for freeing semaphores used last submit
-			FenceWaitResult fenceRes = mLastGraphicsFence->Wait(100000.0f);
-			if(fenceRes == FenceWaitResult::Timeout) {
-				ASSERTION_FAILED("Failed to submit graphcis queue. Last submit isn't completed too long(over 100000s).");
-			}
-			if(fenceRes == FenceWaitResult::Error) {
-				ASSERTION_FAILED("Failed to submit graphcis queue. Last submit has some error.");
+			if(mLastGraphicsFence != nullptr) {
+				FenceWaitResult fenceRes = mLastGraphicsFence->Wait(100000.0f);
+				if(fenceRes == FenceWaitResult::Timeout) {
+					ASSERTION_FAILED("Failed to submit graphcis queue. Last submit isn't completed too long(over 100000s).");
+				}
+				if(fenceRes == FenceWaitResult::Error) {
+					ASSERTION_FAILED("Failed to submit graphcis queue. Last submit has some error.");
+				}
 			}
 			
 			// Free semaphores used last submit
@@ -303,19 +314,16 @@ namespace cube
 
 			VkCommandBuffer cmdBufToSubmit = commandList.GetHandle();
 
-			// TODO: 나중에 waitStage들을 transfer immediate를 submit할 때 지정할 수 있게 하기
-			Vector<VkPipelineStageFlags> waitStages(waitSemaphores.size(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
-
-			Vector<VkSemaphore> rawSemaphores(waitSemaphores.size());
-			for(Uint32 i = 0; i < (Uint32)waitSemaphores.size(); i++) {
-				rawSemaphores[i] = waitSemaphores[i].handle;
+			Vector<VkSemaphore> waitRawSemaphores(mWaitSemaphores.size());
+			for(Uint32 i = 0; i < (Uint32)mWaitSemaphores.size(); i++) {
+				waitRawSemaphores[i] = mWaitSemaphores[i].handle;
 			}
 			VkSubmitInfo submitInfo = {};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 			submitInfo.pNext = nullptr;
-			submitInfo.waitSemaphoreCount = SCast(Uint32)(rawSemaphores.size());
-			submitInfo.pWaitSemaphores = rawSemaphores.data();
-			submitInfo.pWaitDstStageMask = waitStages.data();
+			submitInfo.waitSemaphoreCount = SCast(Uint32)(waitRawSemaphores.size());
+			submitInfo.pWaitSemaphores = waitRawSemaphores.data();
+			submitInfo.pWaitDstStageMask = mWaitSemaphoreStages.data();
 			submitInfo.commandBufferCount = 1;
 			submitInfo.pCommandBuffers = &cmdBufToSubmit;
 			submitInfo.signalSemaphoreCount = 0;
@@ -336,7 +344,11 @@ namespace cube
 			
 			// Update last fence / semaphores
 			mLastGraphicsFence = fence;
-			mLastGraphicsSemaphores = waitSemaphores;
+			mLastGraphicsSemaphores = mWaitSemaphores;
+
+			// Clear wait semaphores (But not release semaphore)
+			mWaitSemaphores.clear();
+			mWaitSemaphoreStages.clear();
 
 			return fence;
 		}

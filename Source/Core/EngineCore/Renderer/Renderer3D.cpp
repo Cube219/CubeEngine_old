@@ -99,7 +99,7 @@ namespace cube
 				RecreateDataBuffer();
 
 				memcpy((Uint8*)mDataBufferMappedPtr + mVertexOffset, vertices.data(), vertices.size() * sizeof(Vertex));
-				memcpy((Uint8*)mDataBufferMappedPtr + mIndexOffset, indices.data(), indices.size() * sizeof(Vertex));
+				memcpy((Uint8*)mDataBufferMappedPtr + mIndexOffset, indices.data(), indices.size() * sizeof(Index));
 
 				mDataBuffer->Unmap();
 

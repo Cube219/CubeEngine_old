@@ -20,7 +20,8 @@ namespace cube
 			mSwapChain(VK_NULL_HANDLE, device.GetLogicalDevice()),
 			mAttribute(attr),
 			mWidth(attr.width), mHeight(attr.height), mImageCount(attr.bufferCount), mVsync(attr.vsync),
-			mSemaphorePool(semaphorePool)
+			mSemaphorePool(semaphorePool),
+			mQueueManager(device.GetQueueManager())
 		{
 			VkResult res;
 
@@ -137,9 +138,13 @@ namespace cube
 		{
 			VkResult res;
 
+			VulkanSemaphore signalSemaphore = mSemaphorePool.GetSemaphore();
+
 			res = vkAcquireNextImageKHR(mSwapChain.GetVkDevice(), mSwapChain.mObject, UINT64_MAX,
-				VK_NULL_HANDLE, VK_NULL_HANDLE, &mCurrentBackImageIndex);
+				signalSemaphore.handle, VK_NULL_HANDLE, &mCurrentBackImageIndex);
 			CHECK_VK(res, "Failed to acquire next image.");
+
+			mQueueManager.AddWaitSemaphoreForGraphics(signalSemaphore, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 		}
 
 		void SwapChainVk::Present()
@@ -152,8 +157,11 @@ namespace cube
 			info.swapchainCount = 1;
 			info.pSwapchains = &mSwapChain.mObject;
 			info.pImageIndices = &mCurrentBackImageIndex;
-			info.waitSemaphoreCount = 1;
-			info.pWaitSemaphores = &mDrawCompleteSemaphores[mCurrentBackImageIndex].handle;
+			// TODO: 일단 Fence로 draw가 끝날 때 Present를 하니까 waitSemaphore는 없어도 될 듯
+			// info.waitSemaphoreCount = 1;
+			// info.pWaitSemaphores = &mDrawCompleteSemaphores[mCurrentBackImageIndex].handle;
+			info.waitSemaphoreCount = 0;
+			info.pWaitSemaphores = nullptr;
 			info.pResults = nullptr;
 
 			res = vkQueuePresentKHR(mPresentQueue, &info);
@@ -248,7 +256,7 @@ namespace cube
 			}*/
 			mDrawCompleteSemaphores.resize(mImageCount);
 			for(Uint32 i = 0; i < mImageCount; i++) {
-				mDrawCompleteSemaphores.push_back(mSemaphorePool.GetSemaphore(fmt::format("DrawCompleteSemaphores[{0}]", i).c_str()));
+				mDrawCompleteSemaphores[i] = mSemaphorePool.GetSemaphore(fmt::format("DrawCompleteSemaphores[{0}]", i).c_str());
 			}
 		}
 

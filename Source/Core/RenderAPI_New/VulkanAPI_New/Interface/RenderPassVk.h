@@ -25,7 +25,7 @@ namespace cube
 			Uint32 GetRenderTargetNum() const { return SCast(Uint32)(mRenderTargets.size()); }
 			const Vector<SPtr<RenderTargetVk>>& GetRenderTargets() const { return mRenderTargets; }
 
-			VkFramebuffer GetVkFramebuffer() const { return mFramebuffers[0].mObject; }
+			VkFramebuffer GetVkFramebuffer() const;
 			Rect2D GetFramebufferRect2D() const { return mFramebufferRect2D; }
 
 		private:
@@ -39,6 +39,7 @@ namespace cube
 
 			Vector<SPtr<RenderTargetVk>> mRenderTargets;
 			bool mHasSwapchainRenderTarget;
+			SPtr<SwapChainVk> mSwapChain = nullptr;
 			Vector<VkFramebufferWrapper> mFramebuffers;
 			Rect2D mFramebufferRect2D;
 		};

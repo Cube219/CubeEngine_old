@@ -108,10 +108,10 @@ namespace cube
 
 			const Vector<MaterialParameterInfo>& paramInfos = mat->GetParameterInfos();
 
+			/*
 			uint64_t paramNum = paramInfos.size();
 			mParameters.resize(paramNum);
 
-			/*
 			for(uint64_t i = 0; i < paramNum; i++) {
 				mParameters[i].type = paramInfos[i].type;
 				mParameters[i].size = paramInfos[i].dataSize;
@@ -142,17 +142,14 @@ namespace cube
 
 		void MaterialInstance_RT::SyncParameterData(uint64_t index, MaterialParameter& param)
 		{
-			mParameters[index].type = param.type;
-			mParameters[index].size = param.size;
-
 			switch(param.type) {
 				case MaterialParameterType::Data:
-					mShaderParameters->UpdateParameter(index, mParameters[index].data, mParameters[index].size);
+					mShaderParameters->UpdateParameter(index, param.data, param.size);
 					break;
 
 				case MaterialParameterType::Texture:
 					mShaderParameters->UpdateParameter(index,
-						mParameters[index].texture->GetTextureView(), mParameters[index].texture->GetSampler());
+						param.texture->GetTextureView(), param.texture->GetSampler());
 					break;
 			}
 		}

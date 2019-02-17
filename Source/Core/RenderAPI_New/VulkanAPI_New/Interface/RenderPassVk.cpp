@@ -123,23 +123,30 @@ namespace cube
 			CreateFramebuffer(width, height);
 		}
 
+		VkFramebuffer RenderPassVk::GetVkFramebuffer() const
+		{
+			if(mHasSwapchainRenderTarget) {
+				return mFramebuffers[mSwapChain->GetCurrentBackImageIndex()].mObject;
+			} else {
+				return mFramebuffers[0].mObject;
+			}
+		}
+
 		void RenderPassVk::CreateFramebuffer(Uint32 width, Uint32 height)
 		{
 			mFramebufferRect2D = { 0, 0, width, height };
-
-			SPtr<SwapChainVk> swapChainVk;
 
 			mHasSwapchainRenderTarget = false;
 			for(auto& rt : mRenderTargets) {
 				if(rt->HasSwapChain()) {
 					mHasSwapchainRenderTarget = true;
-					swapChainVk = rt->GetSwapChainVk();
+					mSwapChain = rt->GetSwapChainVk();
 					break;
 				}
 			}
 
 			if(mHasSwapchainRenderTarget) {
-				mFramebuffers.resize(swapChainVk->GetImageCount());
+				mFramebuffers.resize(mSwapChain->GetImageCount());
 			} else {
 				mFramebuffers.resize(1);
 			}

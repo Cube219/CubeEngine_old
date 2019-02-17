@@ -115,8 +115,6 @@ namespace cube
 		{
 			core::Lock lock(mReleaseQueueMutex);
 
-			mReleaseFuncQueue.clear();
-
 			for(auto& func : mReleaseFuncQueue) {
 				func();
 			}

@@ -319,6 +319,11 @@ namespace cube
 			return mCameraRenderer_NotRT;
 		}
 
+		void RendererManager::StartFrame()
+		{
+			mDevice->StartFrame();
+		}
+
 		void RendererManager::DrawAll()
 		{
 			using namespace render;
