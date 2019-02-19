@@ -49,7 +49,7 @@ namespace cube
 
 			switch(type) {
 			case RenderType::Vulkan:
-				mRenderDLib = platform::Platform::LoadDLib(CUBE_T("VulkanAPI_New"));
+				mRenderDLib = platform::Platform::LoadDLib(CUBE_T("VulkanAPI"));
 				break;
 
 			default:
@@ -71,7 +71,10 @@ namespace cube
 			// Get device
 			DeviceAttribute deviceAttr;
 			deviceAttr.GPUIndex = 0;
+			deviceAttr.enableDebugLayer = false;
+#ifdef _DEBUG
 			deviceAttr.enableDebugLayer = true;
+#endif // _DEBUG
 			deviceAttr.debugName = "Main Device";
 			mDevice = mRenderAPI->GetDevice(deviceAttr);
 
@@ -570,83 +573,6 @@ namespace cube
 		{
 			using namespace render;
 
-			/*
-			render::GraphicsPipelineInitializer initializer;
-
-			uint32_t currentVertexOffset = 0;
-			render::GraphicsPipelineInitializer::VertexInputAttribute attr;
-			attr.location = 0; // Position data
-			attr.format = DataFormat::R32G32B32A32_SFloat;
-			attr.offset = 0;
-			initializer.vertexInputAttributes.push_back(attr);
-
-			attr.location = 1; // Color
-			attr.format = DataFormat::R32G32B32A32_SFloat;
-			attr.offset = 16;
-			initializer.vertexInputAttributes.push_back(attr);
-
-			attr.location = 2; // Normal
-			attr.format = DataFormat::R32G32B32_SFloat;
-			attr.offset = 32;
-			initializer.vertexInputAttributes.push_back(attr);
-
-			attr.location = 3; // Texture coordination
-			attr.format = DataFormat::R32G32_SFloat;
-			attr.offset = 48;
-			initializer.vertexInputAttributes.push_back(attr);
-
-			initializer.vertexSize = sizeof(Vertex);
-			initializer.vertexTopology = VertexTopology::Triangle;
-
-			initializer.rasterizer = {PolygonMode::Fill, PolygonFrontFace::Clockwise, CullMode::Back};
-
-			render::GraphicsPipelineInitializer::ColorBlendAttachment colorAttr;
-			colorAttr.blendEnable = false;
-			colorAttr.srcColorBlendFactor = BlendFactor::Zero;
-			colorAttr.dstColorBlendFactor = BlendFactor::Zero;
-			colorAttr.colorBlendOp = BlendOperator::Add;
-			colorAttr.srcAlphaBlendFactor = BlendFactor::Zero;
-			colorAttr.dstAlphaBlendFactor = BlendFactor::Zero;
-			colorAttr.alphaBlendOp = BlendOperator::Add;
-
-			initializer.colorBlendAttachments.push_back(colorAttr);
-
-			initializer.isScissorDynamic = true;
-			initializer.isViewportDynamic = true;
-
-			initializer.depthStencil.depthTestEnable = true;
-			initializer.depthStencil.depthBoundsTestEnable = false;
-			initializer.depthStencil.depthWriteEnable = true;
-			initializer.depthStencil.depthCompareOperator = CompareOperator::Less;
-			initializer.depthStencil.minDepthBounds = 0;
-			initializer.depthStencil.maxDepthBounds = 0;
-
-			initializer.depthStencil.stencilTestEnable = false;
-			StencilOperatorState stencilOpState;
-			stencilOpState.failOperator = StencilOperator::Keep;
-			stencilOpState.passOperator = StencilOperator::Keep;
-			stencilOpState.compareOperator = CompareOperator::Always;
-			stencilOpState.compareMask = 0;
-			stencilOpState.reference = 0;
-			stencilOpState.depthFailOperator = StencilOperator::Keep;
-			stencilOpState.writeMask = 0;
-
-			initializer.depthStencil.front = stencilOpState;
-			initializer.depthStencil.back = stencilOpState;
-
-			auto shaders = material->GetShaders();
-			for(auto& shader : shaders) {
-				initializer.shaders.push_back(shader->GetRenderShader());
-			}
-
-			initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
-			initializer.descSetLayouts.push_back(material->GetDescriptorSetLayout());
-			initializer.descSetLayouts.push_back(mPerObjectDescriptorSetLayout);
-
-			initializer.renderPass = mRenderPass;
-
-			return mRenderAPI->CreateGraphicsPipeline(initializer);
-			*/
 			GraphicsPipelineStateAttribute attr;
 			attr.inputLayouts.resize(1);
 			attr.inputLayouts[0].size = sizeof(Vertex);

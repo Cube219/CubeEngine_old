@@ -6,30 +6,17 @@
 
 #include "DLib.h"
 
-/*
-[old]
-#include "BaseRenderAPI/RenderAPI.h"
-#include "BaseRenderAPI/Wrapper/Shader.h"
-#include "BaseRenderAPI/Wrapper/GraphicsPipeline.h"
-#include "BaseRenderAPI/Wrapper/Image.h"
-#include "BaseRenderAPI/Wrapper/Swapchain.h"
-#include "BaseRenderAPI/Wrapper/CommandBuffer.h"
-#include "BaseRenderAPI/Wrapper/Queue.h"
-#include "BaseRenderAPI/Wrapper/Semaphore.h"
-#include "BaseRenderAPI/Wrapper/Fence.h"
-#include "BaseRenderAPI/Wrapper/RenderPass.h"
-*/
-#include "BaseRenderAPI_New/RenderAPI.h"
-#include "BaseRenderAPI_New/Interface/Device.h"
-#include "BaseRenderAPI_New/Interface/Texture.h"
-#include "BaseRenderAPI_New/Interface/SwapChain.h"
-#include "BaseRenderAPI_New/Interface/RenderTarget.h"
-#include "BaseRenderAPI_New/Interface/RenderPass.h"
-#include "BaseRenderAPI_New/Interface/CommandList.h"
-#include "BaseRenderAPI_New/Interface/ShaderParametersLayout.h"
-#include "BaseRenderAPI_New/Interface/ShaderParameters.h"
-#include "BaseRenderAPI_New/Interface/Fence.h"
-#include "BaseRenderAPI_New/Interface/GraphicsPipelineState.h"
+#include "RenderAPI/RenderAPI.h"
+#include "RenderAPI/Interface/Device.h"
+#include "RenderAPI/Interface/Texture.h"
+#include "RenderAPI/Interface/SwapChain.h"
+#include "RenderAPI/Interface/RenderTarget.h"
+#include "RenderAPI/Interface/RenderPass.h"
+#include "RenderAPI/Interface/CommandList.h"
+#include "RenderAPI/Interface/ShaderParametersLayout.h"
+#include "RenderAPI/Interface/ShaderParameters.h"
+#include "RenderAPI/Interface/Fence.h"
+#include "RenderAPI/Interface/GraphicsPipelineState.h"
 
 #include "../Thread/MutexLock.h"
 

@@ -3,90 +3,59 @@
 #pragma warning(disable:4275)
 
 #include "Base/BaseTypes.h"
+#include "RenderAPI/RenderAPIHeader.h"
 
 #include <vulkan/vulkan.h>
-#include "VulkanUtility.h"
 
 namespace cube
 {
 	namespace render
 	{
-		class VulkanAPI;
+		class DeviceVk;
 
-		class VulkanBuffer;
-		
-		class VulkanCommandBuffer;
-		
-		class VulkanCommandPool;
-		
-		class VulkanDescriptorPool;
-		
-		class VulkanDescriptorSetLayout;
-		class VulkanDescriptorSet;
-		
-		class VulkanDeviceInitializer;
-		class VulkanDevice;
-		
-		class VulkanFence;
-		
-		struct VulkanFramebufferInitializer;
-		class VulkanFramebuffer;
-		
-		class VulkanGraphicsPipeline;
-		
-		class VulkanImageView;
-		
-		class VulkanImage;
+		class BufferVk;
+		class BufferViewVk;
 
-		class VulkanSampler;
-		
-		struct VulkanInstanceInitializer;
-		class VulkanInstance;
-		
-		enum class VulkanPhysicalDeviceFeature;
-		class VulkanPhysicalDeviceFeatures
-		{
-		public:
-			VulkanPhysicalDeviceFeatures();
-			VulkanPhysicalDeviceFeatures(VkPhysicalDeviceFeatures features);
+		class CommandListVk;
+		class FenceVk;
 
-			void SetFeature(VulkanPhysicalDeviceFeature feature, VkBool32 on);
+		class GraphicsPipelineStateVk;
+		class ComputePipelineStateVk;
 
-			operator VkPhysicalDeviceFeatures()
-			{
-				return vkFeatures;
-			}
+		class TextureVk;
+		class TextureViewVk;
 
-			VulkanPhysicalDeviceFeatures operator&(const VulkanPhysicalDeviceFeatures& other);
-			VulkanPhysicalDeviceFeatures operator|(const VulkanPhysicalDeviceFeatures& other);
+		class SwapChainVk;
 
-		private:
-			VkPhysicalDeviceFeatures vkFeatures;
-		};
+		class ShaderVk;
+		class ShaderParametersVk;
+		class ShaderParametersLayoutVk;
+
+		class SamplerVk;
+
+		class RenderTargetVk;
+		class RenderPassVk;
+
 		class VulkanPhysicalDevice;
-		
-		class VulkanQueue;
-		struct VulkanQueueFamily
-		{
-			VkQueueFamilyProperties mProperties;
-			uint32_t mIndex;
-		};
-		
-		class VulkanSubpass;
-		class VulkanRenderPass;
-		
-		class VulkanSemaphore;
-		
-		class VulkanShader;
-		
-		class VulkanSwapchain;
-		struct VulkanSwapchainImage
-		{
-			SPtr<VulkanImage> colorImage;
-			SPtr<VulkanImageView> colorImageView;
-		};
-		
-		class VulkanWindowSurface;
+		class VulkanLogicalDevice;
+
+		struct VulkanAllocation;
+		class VulkanMemoryPage;
+		class VulkanMemoryHeap;
+		class VulkanMemoryManager;
+
+		struct VulkanUploadAllocation;
+		class VulkanUploadHeap;
+
+		struct VulkanShaderParameterAllocation;
+		class VulkanShaderParameterHeap;
+		class VulkanShaderParameterManager;
+
+		class VulkanQueueManager;
+
+		class VulkanCommandListPool;
+		class VulkanFencePool;
+		class VulkanSemaphorePool;
 	} // namespace render
 } // namespace cube
 

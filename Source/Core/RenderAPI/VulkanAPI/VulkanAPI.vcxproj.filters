@@ -1,119 +1,145 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="VulkanAPI.h" />
-    <ClInclude Include="VulkanAPIHeader.h" />
-    <ClInclude Include="VulkanUtility.h" />
-    <ClInclude Include="Wrapper\VulkanBuffer.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanCommandBuffer.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanDescriptor.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanDevice.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanFence.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanFramebuffer.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanGraphicsPipeline.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanImage.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanInstance.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanPhysicalDevice.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanQueue.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanRenderPass.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanSemaphore.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanShader.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanSwapchain.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanWindowSurface.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Wrapper\VulkanSampler.h">
-      <Filter>Wrapper</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="Interface\DeviceVk.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
     <ClCompile Include="VulkanAPI.cpp" />
     <ClCompile Include="VulkanUtility.cpp" />
-    <ClCompile Include="Wrapper\VulkanBuffer.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="VulkanPhysicalDevice.cpp" />
+    <ClCompile Include="Interface\BufferVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanCommandBuffer.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="VulkanDebug.cpp" />
+    <ClCompile Include="VulkanMemoryManager.cpp" />
+    <ClCompile Include="Interface\CommandListVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanDescriptor.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="VulkanUploadHeap.cpp" />
+    <ClCompile Include="VulkanQueueManager.cpp" />
+    <ClCompile Include="VulkanCommandListPool.cpp" />
+    <ClCompile Include="Interface\FenceVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanDevice.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="VulkanFencePool.cpp" />
+    <ClCompile Include="VulkanSemaphorePool.cpp" />
+    <ClCompile Include="VulkanLogicalDevice.cpp" />
+    <ClCompile Include="Interface\BufferViewVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanFence.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\TextureVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanFramebuffer.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="VulkanTypeConversion.cpp" />
+    <ClCompile Include="Interface\SwapChainVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanGraphicsPipeline.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\TextureViewVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanImage.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\GraphicsPipelineStateVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanInstance.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\ShaderVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanPhysicalDevice.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Tools\GLSLTool.cpp">
+      <Filter>Tools</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanQueue.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\RenderPassVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanRenderPass.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\RenderTargetVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanSemaphore.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\ShaderParametersLayoutVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanShader.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="VulkanShaderParameterManager.cpp" />
+    <ClCompile Include="Interface\ShaderParametersVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanSwapchain.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\ComputePipelineStateVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Wrapper\VulkanWindowSurface.cpp">
-      <Filter>Wrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="Wrapper\VulkanSampler.cpp">
-      <Filter>Wrapper</Filter>
+    <ClCompile Include="Interface\SamplerVk.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Wrapper">
-      <UniqueIdentifier>{dbb1b629-2613-4abb-b8a3-923b2367fb47}</UniqueIdentifier>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{78aadf1e-7e8f-43e1-99c1-6daa7220f952}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{0fe3b6d6-74e1-4004-879a-1982e5b81ea0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interface\DeviceVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanAPIHeader.h" />
+    <ClInclude Include="VulkanAPI.h" />
+    <ClInclude Include="VulkanUtility.h" />
+    <ClInclude Include="VulkanPhysicalDevice.h" />
+    <ClInclude Include="Interface\BufferVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanDebug.h" />
+    <ClInclude Include="VulkanMemoryManager.h" />
+    <ClInclude Include="Interface\CommandListVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanUploadHeap.h" />
+    <ClInclude Include="VulkanQueueManager.h" />
+    <ClInclude Include="VulkanCommandListPool.h" />
+    <ClInclude Include="Interface\FenceVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanFencePool.h" />
+    <ClInclude Include="VulkanSemaphorePool.h" />
+    <ClInclude Include="VkObject.h" />
+    <ClInclude Include="VulkanLogicalDevice.h" />
+    <ClInclude Include="Interface\BufferViewVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\TextureVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanTypeConversion.h" />
+    <ClInclude Include="Interface\SwapChainVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\TextureViewVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\GraphicsPipelineStateVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ShaderVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\GLSLTool.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\RenderPassVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\RenderTargetVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ShaderParametersLayoutVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanShaderParameterManager.h" />
+    <ClInclude Include="Interface\ShaderParametersVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ComputePipelineStateVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\SamplerVk.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,10 +6,10 @@
 #include "Vertex.h"
 #include "Base/Matrix.h"
 #include "../BasicHandler.h"
-#include "BaseRenderAPI_New/Interface/ShaderParameters.h"
-#include "BaseRenderAPI_New/Interface/Device.h"
-#include "BaseRenderAPI_New/Interface/Buffer.h"
-#include "BaseRenderAPI_New/Interface/CommandList.h"
+#include "RenderAPI/Interface/ShaderParameters.h"
+#include "RenderAPI/Interface/Device.h"
+#include "RenderAPI/Interface/Buffer.h"
+#include "RenderAPI/Interface/CommandList.h"
 
 namespace cube
 {

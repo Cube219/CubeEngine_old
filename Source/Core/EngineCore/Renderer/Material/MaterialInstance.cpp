@@ -2,7 +2,7 @@
 
 #include "../../EngineCore.h"
 #include "../RendererManager.h"
-#include "BaseRenderAPI_New/Interface/Device.h"
+#include "RenderAPI/Interface/Device.h"
 #include "Material.h"
 #include "../Texture.h"
 #include "../../Assertion.h"
@@ -105,39 +105,10 @@ namespace cube
 			SPtr<Device> device = ECore().GetRendererManager().GetDevice();
 
 			mShaderParameters = mat->GetShaderParametersLayout()->CreateParameters();
-
-			const Vector<MaterialParameterInfo>& paramInfos = mat->GetParameterInfos();
-
-			/*
-			uint64_t paramNum = paramInfos.size();
-			mParameters.resize(paramNum);
-
-			for(uint64_t i = 0; i < paramNum; i++) {
-				mParameters[i].type = paramInfos[i].type;
-				mParameters[i].size = paramInfos[i].dataSize;
-
-				// Texture data is not saved in data buffer
-				if(paramInfos[i].type != MaterialParameterType::Texture) {
-					bufData.size = paramInfos[i].dataSize;
-					bufInit.bufferDatas.push_back(bufData);
-
-					mParameters[i].data = (char*)malloc(paramInfos[i].dataSize);
-				}
-			}
-			if(bufInit.bufferDatas.size() > 0)
-				mParametersBuffer = renderAPI->CreateBuffer(bufInit);
-				*/
 		}
 
 		MaterialInstance_RT::~MaterialInstance_RT()
 		{
-			/*
-			for(auto& param : mParameters) {
-				if(param.type == MaterialParameterType::Data) {
-					free(param.data);
-				}
-			}
-			*/
 		}
 
 		void MaterialInstance_RT::SyncParameterData(uint64_t index, MaterialParameter& param)

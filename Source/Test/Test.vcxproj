@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI_New;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -115,7 +115,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI_New;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source\Base;$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Modules;$(SolutionDir)Source\Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -127,8 +127,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\RenderAPI_New\BaseRenderAPI_New\BaseRenderAPI_New.vcxproj">
-      <Project>{2fcae55f-785c-4dc1-b604-0c219471afc0}</Project>
+    <ProjectReference Include="..\Core\RenderAPI\RenderAPI\RenderAPI.vcxproj">
+      <Project>{037b8862-0d26-4300-9a0f-64eb573998b2}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Platform\Platform.vcxproj">
       <Project>{22a0e1be-e953-4d07-b5a3-b06a0256929b}</Project>

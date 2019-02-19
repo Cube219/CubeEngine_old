@@ -3,10 +3,10 @@
 #include "../EngineCoreHeader.h"
 
 #include "../Resource/BaseResource.h"
-#include "BaseRenderAPI_New/Interface/Texture.h"
-#include "BaseRenderAPI_New/Interface/TextureView.h"
-#include "BaseRenderAPI_New/Interface/Sampler.h"
-#include "BaseRenderAPI_New/Interface/Device.h"
+#include "RenderAPI/Interface/Texture.h"
+#include "RenderAPI/Interface/TextureView.h"
+#include "RenderAPI/Interface/Sampler.h"
+#include "RenderAPI/Interface/Device.h"
 
 namespace cube
 {

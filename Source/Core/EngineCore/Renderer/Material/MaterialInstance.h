@@ -4,7 +4,7 @@
 
 #include "../RenderObject.h"
 #include "../../BasicHandler.h"
-#include "BaseRenderAPI_New/Interface/ShaderParameters.h"
+#include "RenderAPI/Interface/ShaderParameters.h"
 
 namespace cube
 {
@@ -73,9 +73,6 @@ namespace cube
 			friend class Material;
 
 			MaterialInstance_RT(SPtr<Material_RT>& mat);
-
-			void WriteParameterInBuffer(uint64_t index);
-			void WriteTextureParameterInBuffer(uint64_t index);
 
 			SPtr<Material_RT> mMaterial;
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{63E20E2B-991C-4F89-89BC-FEF4504A93FD}</ProjectGuid>
-    <RootNamespace>VulkanAPI</RootNamespace>
+    <ProjectGuid>{7593D4E0-6BA6-40A9-BB66-628234D34E0F}</ProjectGuid>
+    <RootNamespace>VulkanAPINew</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,31 +70,35 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(SolutionDir)Dependencies\Vulkan\include;$(SolutionDir)Dependencies\glslang\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Dependencies\Vulkan\lib;$(SolutionDir)Dependencies\glslang\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(SourcePath)</SourcePath>
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(SolutionDir)Dependencies\Vulkan\include;$(SolutionDir)Dependencies\glslang\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Dependencies\Vulkan\lib;$(SolutionDir)Dependencies\glslang\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(SourcePath)</SourcePath>
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>OSDependentd.lib;SPVRemapperd.lib;SPIRVd.lib;OGLCompilerd.lib;HLSLd.lib;glslangd.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y
+xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -102,6 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -111,6 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -124,9 +130,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Source\Platform;$(SolutionDir)Source\Core\RenderAPI;$(SolutionDir)Source\Base;$(SolutionDir)Source\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VK_USE_PLATFORM_WIN32_KHR;VULKAN_API_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -134,52 +143,10 @@
       <AdditionalDependencies>OSDependent.lib;SPVRemapper.lib;SPIRV.lib;OGLCompiler.lib;HLSL.lib;glslang.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y</Command>
+      <Command>xcopy "$(SolutionDir)Dependencies\Vulkan\vulkan-1.dll" "$(OutDir)" /Y
+xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="VulkanAPI.h" />
-    <ClInclude Include="VulkanAPIHeader.h" />
-    <ClInclude Include="VulkanUtility.h" />
-    <ClInclude Include="Wrapper\VulkanBuffer.h" />
-    <ClInclude Include="Wrapper\VulkanCommandBuffer.h" />
-    <ClInclude Include="Wrapper\VulkanDescriptor.h" />
-    <ClInclude Include="Wrapper\VulkanDevice.h" />
-    <ClInclude Include="Wrapper\VulkanFence.h" />
-    <ClInclude Include="Wrapper\VulkanFramebuffer.h" />
-    <ClInclude Include="Wrapper\VulkanGraphicsPipeline.h" />
-    <ClInclude Include="Wrapper\VulkanImage.h" />
-    <ClInclude Include="Wrapper\VulkanInstance.h" />
-    <ClInclude Include="Wrapper\VulkanPhysicalDevice.h" />
-    <ClInclude Include="Wrapper\VulkanQueue.h" />
-    <ClInclude Include="Wrapper\VulkanRenderPass.h" />
-    <ClInclude Include="Wrapper\VulkanSampler.h" />
-    <ClInclude Include="Wrapper\VulkanSemaphore.h" />
-    <ClInclude Include="Wrapper\VulkanShader.h" />
-    <ClInclude Include="Wrapper\VulkanSwapchain.h" />
-    <ClInclude Include="Wrapper\VulkanWindowSurface.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="VulkanAPI.cpp" />
-    <ClCompile Include="VulkanUtility.cpp" />
-    <ClCompile Include="Wrapper\VulkanBuffer.cpp" />
-    <ClCompile Include="Wrapper\VulkanCommandBuffer.cpp" />
-    <ClCompile Include="Wrapper\VulkanDescriptor.cpp" />
-    <ClCompile Include="Wrapper\VulkanDevice.cpp" />
-    <ClCompile Include="Wrapper\VulkanFence.cpp" />
-    <ClCompile Include="Wrapper\VulkanFramebuffer.cpp" />
-    <ClCompile Include="Wrapper\VulkanGraphicsPipeline.cpp" />
-    <ClCompile Include="Wrapper\VulkanImage.cpp" />
-    <ClCompile Include="Wrapper\VulkanInstance.cpp" />
-    <ClCompile Include="Wrapper\VulkanPhysicalDevice.cpp" />
-    <ClCompile Include="Wrapper\VulkanQueue.cpp" />
-    <ClCompile Include="Wrapper\VulkanRenderPass.cpp" />
-    <ClCompile Include="Wrapper\VulkanSampler.cpp" />
-    <ClCompile Include="Wrapper\VulkanSemaphore.cpp" />
-    <ClCompile Include="Wrapper\VulkanShader.cpp" />
-    <ClCompile Include="Wrapper\VulkanSwapchain.cpp" />
-    <ClCompile Include="Wrapper\VulkanWindowSurface.cpp" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Base\Base\Base.vcxproj">
       <Project>{84d3a49e-2aef-4370-aa37-3d297a45fc91}</Project>
@@ -190,9 +157,72 @@
     <ProjectReference Include="..\..\EngineCore\EngineCore.vcxproj">
       <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\BaseRenderAPI\BaseRenderAPI.vcxproj">
-      <Project>{b11ffb66-deb2-41ae-8b3c-1c9cfb2e2167}</Project>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Interface\BufferViewVk.cpp" />
+    <ClCompile Include="Interface\ComputePipelineStateVk.cpp" />
+    <ClCompile Include="Interface\FenceVk.cpp" />
+    <ClCompile Include="Interface\GraphicsPipelineStateVk.cpp" />
+    <ClCompile Include="Interface\RenderPassVk.cpp" />
+    <ClCompile Include="Interface\RenderTargetVk.cpp" />
+    <ClCompile Include="Interface\SamplerVk.cpp" />
+    <ClCompile Include="Interface\ShaderParametersLayoutVk.cpp" />
+    <ClCompile Include="Interface\ShaderParametersVk.cpp" />
+    <ClCompile Include="Interface\ShaderVk.cpp" />
+    <ClCompile Include="Interface\SwapChainVk.cpp" />
+    <ClCompile Include="Interface\TextureViewVk.cpp" />
+    <ClCompile Include="Interface\TextureVk.cpp" />
+    <ClCompile Include="Tools\GLSLTool.cpp" />
+    <ClCompile Include="VulkanCommandListPool.cpp" />
+    <ClCompile Include="Interface\BufferVk.cpp" />
+    <ClCompile Include="Interface\CommandListVk.cpp" />
+    <ClCompile Include="Interface\DeviceVk.cpp" />
+    <ClCompile Include="VulkanFencePool.cpp" />
+    <ClCompile Include="VulkanLogicalDevice.cpp" />
+    <ClCompile Include="VulkanQueueManager.cpp" />
+    <ClCompile Include="VulkanAPI.cpp" />
+    <ClCompile Include="VulkanDebug.cpp" />
+    <ClCompile Include="VulkanMemoryManager.cpp" />
+    <ClCompile Include="VulkanPhysicalDevice.cpp" />
+    <ClCompile Include="VulkanSemaphorePool.cpp" />
+    <ClCompile Include="VulkanShaderParameterManager.cpp" />
+    <ClCompile Include="VulkanTypeConversion.cpp" />
+    <ClCompile Include="VulkanUploadHeap.cpp" />
+    <ClCompile Include="VulkanUtility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interface\BufferViewVk.h" />
+    <ClInclude Include="Interface\ComputePipelineStateVk.h" />
+    <ClInclude Include="Interface\FenceVk.h" />
+    <ClInclude Include="Interface\GraphicsPipelineStateVk.h" />
+    <ClInclude Include="Interface\RenderPassVk.h" />
+    <ClInclude Include="Interface\RenderTargetVk.h" />
+    <ClInclude Include="Interface\SamplerVk.h" />
+    <ClInclude Include="Interface\ShaderParametersLayoutVk.h" />
+    <ClInclude Include="Interface\ShaderParametersVk.h" />
+    <ClInclude Include="Interface\ShaderVk.h" />
+    <ClInclude Include="Interface\SwapChainVk.h" />
+    <ClInclude Include="Interface\TextureViewVk.h" />
+    <ClInclude Include="Interface\TextureVk.h" />
+    <ClInclude Include="Tools\GLSLTool.h" />
+    <ClInclude Include="VkObject.h" />
+    <ClInclude Include="VulkanCommandListPool.h" />
+    <ClInclude Include="Interface\BufferVk.h" />
+    <ClInclude Include="Interface\CommandListVk.h" />
+    <ClInclude Include="Interface\DeviceVk.h" />
+    <ClInclude Include="VulkanFencePool.h" />
+    <ClInclude Include="VulkanLogicalDevice.h" />
+    <ClInclude Include="VulkanQueueManager.h" />
+    <ClInclude Include="VulkanAPI.h" />
+    <ClInclude Include="VulkanAPIHeader.h" />
+    <ClInclude Include="VulkanDebug.h" />
+    <ClInclude Include="VulkanMemoryManager.h" />
+    <ClInclude Include="VulkanPhysicalDevice.h" />
+    <ClInclude Include="VulkanSemaphorePool.h" />
+    <ClInclude Include="VulkanShaderParameterManager.h" />
+    <ClInclude Include="VulkanTypeConversion.h" />
+    <ClInclude Include="VulkanUploadHeap.h" />
+    <ClInclude Include="VulkanUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

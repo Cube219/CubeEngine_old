@@ -3,12 +3,9 @@
 #include "../../EngineCoreHeader.h"
 
 #include "../../Resource/BaseResource.h"
-/*
-#include "BaseRenderAPI/RenderAPI.h"
-#include "BaseRenderAPI/Wrapper/Shader.h"
-*/
-#include "BaseRenderAPI_New/Interface/Device.h"
-#include "BaseRenderAPI_New/Interface/Shader.h"
+
+#include "RenderAPI/Interface/Device.h"
+#include "RenderAPI/Interface/Shader.h"
 
 namespace cube
 {

@@ -15,7 +15,7 @@
 #include "Component/MoveComponent.h"
 #include "Component/DirectionalLightComponent.h"
 #include "Component/PointLightComponent.h"
-#include "BaseRenderAPI_New/Interface/Device.h"
+#include "RenderAPI/Interface/Device.h"
 
 namespace cube
 {
