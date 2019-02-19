@@ -19,10 +19,14 @@ namespace cube
 			static void Init(EngineCore* eCore);
 
 			static Async PrepareAsync();
-			static Async DestroyAsync();
 
 			static Async SimulateAsync();
 			static Async ProcessTaskBuffersAndSimulateAsync();
+
+			static Async PrepareDestroyAsync();
+			static Async DestroyAsync();
+
+			static void SetDestroy() { mWillBeDestroyed = true; }
 
 			static void Join(){ mMyThread.join(); }
 
@@ -41,14 +45,18 @@ namespace cube
 			static void RunInternal();
 
 			static void PrepareInternal();
-			static void DestroyInternal();
 
 			static void ProcessTaskBuffersAndSimulateInternal();
 			static void SimulateInternal();
 
+			static void PrepareDestroyInternal();
+			static void DestroyInternal();
+
 			static EngineCore* mECore;
 			static std::thread mMyThread;
 			static std::function<void()> mRunFunction;
+
+			static bool mWillBeDestroyed;
 
 			static AsyncSignal mStartSignal;
 			static AsyncSignal mFinishSignal;

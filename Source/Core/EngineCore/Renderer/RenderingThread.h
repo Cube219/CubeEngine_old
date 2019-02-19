@@ -20,6 +20,7 @@ namespace cube
 			static void Init(RendererManager* rendererManager);
 
 			static void Prepare();
+			static void PrepareDestroy();
 			static void Destroy();
 
 			static void Run(Async& gameThreadRunAsync);

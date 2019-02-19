@@ -67,7 +67,7 @@ namespace cube
 
 	void CubeEngine::Close()
 	{
-		platform::Platform::FinishLoop();
+		core::GameThread::SetDestroy();
 	}
 
 	void CubeEngine::SetCustomClosingFunction(std::function<void()> func)

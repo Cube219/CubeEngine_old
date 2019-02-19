@@ -13,6 +13,8 @@ namespace cube
 		std::thread GameThread::mMyThread;
 		std::function<void()> GameThread::mRunFunction = nullptr;
 
+		bool GameThread::mWillBeDestroyed = false;
+
 		AsyncSignal GameThread::mStartSignal;
 		AsyncSignal GameThread::mFinishSignal;
 		AsyncSignal GameThread::mDestroySignal;
@@ -41,19 +43,6 @@ namespace cube
 			return Async(mFinishSignal);
 		}
 
-		Async GameThread::DestroyAsync()
-		{
-			Async a = Async(mFinishSignal);
-			a.WaitUntilFinished();
-
-			mRunFunction = &GameThread::DestroyInternal;
-			mStartSignal.DispatchCompletion();
-
-			mFinishSignal.Reset();
-
-			return Async(mFinishSignal);
-		}
-
 		Async GameThread::SimulateAsync()
 		{
 			mECore->Start();
@@ -75,6 +64,32 @@ namespace cube
 			a.WaitUntilFinished();
 
 			mRunFunction = &GameThread::ProcessTaskBuffersAndSimulateInternal;
+			mStartSignal.DispatchCompletion();
+
+			mFinishSignal.Reset();
+
+			return Async(mFinishSignal);
+		}
+
+		Async GameThread::PrepareDestroyAsync()
+		{
+			Async a = Async(mFinishSignal);
+			a.WaitUntilFinished();
+
+			mRunFunction = &GameThread::PrepareDestroyInternal;
+			mStartSignal.DispatchCompletion();
+
+			mFinishSignal.Reset();
+
+			return Async(mFinishSignal);
+		}
+
+		Async GameThread::DestroyAsync()
+		{
+			Async a = Async(mFinishSignal);
+			a.WaitUntilFinished();
+
+			mRunFunction = &GameThread::DestroyInternal;
 			mStartSignal.DispatchCompletion();
 
 			mFinishSignal.Reset();
@@ -116,15 +131,6 @@ namespace cube
 			mECore->Initialize();
 		}
 
-		void GameThread::DestroyInternal()
-		{
-			mECore->ShutDown();
-
-			mTaskBuffer.Flush();
-
-			mDestroySignal.DispatchCompletion();
-		}
-
 		void GameThread::ProcessTaskBuffersAndSimulateInternal()
 		{
 			TaskBuffer& buf = RenderingThread::_GetTaskBuffer();
@@ -138,6 +144,19 @@ namespace cube
 		void GameThread::SimulateInternal()
 		{
 			mECore->Update();
+		}
+
+		void GameThread::PrepareDestroyInternal()
+		{
+			mTaskBuffer.Flush();
+		}
+
+		void GameThread::DestroyInternal()
+		{
+			mECore->ShutDown();
+			mTaskBuffer.Flush();
+
+			mDestroySignal.DispatchCompletion();
 		}
 	} // namespace core
 } // namespace cube
