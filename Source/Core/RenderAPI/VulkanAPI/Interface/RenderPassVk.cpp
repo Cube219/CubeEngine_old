@@ -10,6 +10,7 @@ namespace cube
 	namespace render
 	{
 		RenderPassVk::RenderPassVk(DeviceVk& device, const RenderPassAttribute& attr) : 
+			RenderPass(attr.debugName),
 			mDevice(device)
 		{
 			// Attachment

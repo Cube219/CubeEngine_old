@@ -11,7 +11,7 @@ namespace cube
 		{
 		public:
 			VkObject() : 
-				mObject(VK_NULL_HANDLE), mDevice(nullptr), mDebugName("")
+				mObject(VK_NULL_HANDLE), mDevice(nullptr), mDebugName("Null VkObject")
 			{}
 			VkObject(T object, SPtr<VulkanLogicalDevice> device, const char* debugName = "") : 
 				mObject(object), mDevice(device), mDebugName(debugName)
@@ -26,7 +26,8 @@ namespace cube
 
 			VkObject(VkObject&& other) :
 				mObject(other.mObject),
-				mDevice(std::move(other.mDevice))
+				mDevice(std::move(other.mDevice)),
+				mDebugName(other.mDebugName)
 			{
 				other.mObject = VK_NULL_HANDLE;
 			}
@@ -34,6 +35,7 @@ namespace cube
 			{
 				mObject = rhs.mObject;
 				mDevice = std::move(rhs.mDevice);
+				mDebugName = rhs.mDebugName;
 				
 				rhs.mObject = VK_NULL_HANDLE;
 

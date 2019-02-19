@@ -12,6 +12,7 @@ namespace cube
 	{
 		TextureVk::TextureVk(DeviceVk& device, const TextureAttribute& attr,
 			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool) : 
+			Texture(attr.debugName),
 			mDevice(device)
 		{
 			VkResult res;

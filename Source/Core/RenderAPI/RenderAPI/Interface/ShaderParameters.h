@@ -8,10 +8,10 @@ namespace cube
 {
 	namespace render
 	{
-		class ShaderParameters
+		class ShaderParameters : public BaseRenderObject
 		{
 		public:
-			ShaderParameters() {}
+			ShaderParameters(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~ShaderParameters() {}
 
 			virtual void UpdateParameter(Uint32 bindIndex, void* pData, Uint32 size) = 0;

@@ -13,10 +13,10 @@ namespace cube
 			Error
 		};
 
-		class Fence
+		class Fence : public BaseRenderObject
 		{
 		public:
-			Fence() {}
+			Fence(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~Fence() {}
 
 			virtual void Release() = 0;

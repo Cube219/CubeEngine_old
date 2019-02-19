@@ -6,21 +6,19 @@ namespace cube
 {
 	namespace render
 	{
-		struct ShaderAttribute
+		struct ShaderAttribute : public BaseAttribute
 		{
 			ShaderType type;
 			ShaderLanguage language;
 
 			const char* code;
 			const char* entryPoint;
-
-			const char* debugName = nullptr;
 		};
 
-		class Shader
+		class Shader : public BaseRenderObject
 		{
 		public:
-			Shader() {}
+			Shader(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~Shader() {}
 
 			ShaderType GetType() const { return mType; }

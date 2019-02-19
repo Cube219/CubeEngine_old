@@ -6,7 +6,7 @@ namespace cube
 {
 	namespace render
 	{
-		struct SamplerAttribute
+		struct SamplerAttribute : public BaseAttribute
 		{
 			FilterType minFilter;
 			FilterType magFilter;
@@ -23,14 +23,12 @@ namespace cube
 			float maxLod;
 
 			float borderColor[4];
-
-			const char* debugName = nullptr;
 		};
 
-		class Sampler
+		class Sampler : public BaseRenderObject
 		{
 		public:
-			Sampler() {}
+			Sampler(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~Sampler() {}
 		};
 	} // namespace render

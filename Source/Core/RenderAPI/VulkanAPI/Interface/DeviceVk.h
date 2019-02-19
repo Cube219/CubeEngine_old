@@ -22,7 +22,7 @@ namespace cube
 		class DeviceVk final : public Device, public std::enable_shared_from_this<DeviceVk>
 		{
 		public:
-			DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device);
+			DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device, const char* debugName);
 			virtual ~DeviceVk();
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) override final;

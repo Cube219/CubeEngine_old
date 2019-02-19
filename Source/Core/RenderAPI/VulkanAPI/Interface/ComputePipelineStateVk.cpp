@@ -9,7 +9,8 @@ namespace cube
 {
 	namespace render
 	{
-		ComputePipelineStateVk::ComputePipelineStateVk(DeviceVk& device, const ComputePipelineStateAttribute& attr)
+		ComputePipelineStateVk::ComputePipelineStateVk(DeviceVk& device, const ComputePipelineStateAttribute& attr) :
+			ComputePipelineState(attr.debugName)
 		{
 			// Shader stage
 			VkPipelineShaderStageCreateInfo shaderStage;

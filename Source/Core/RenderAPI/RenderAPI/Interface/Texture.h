@@ -14,7 +14,7 @@ namespace cube
 			Uint64 size;
 		};
 
-		struct TextureAttribute
+		struct TextureAttribute : public BaseAttribute
 		{
 			ResourceUsage usage;
 			TextureType type;
@@ -30,14 +30,12 @@ namespace cube
 			Uint32 mipLevels;
 
 			bool isDedicated = false;
-
-			const char* debugName = nullptr;
 		};
 
-		class Texture
+		class Texture : public BaseRenderObject
 		{
 		public:
-			Texture() {}
+			Texture(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~Texture() {}
 
 			virtual void UpdateData(CommandList& cmdList, const void* pData, Uint64 size, Uint32 width, Uint32 height) = 0;

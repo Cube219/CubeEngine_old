@@ -14,7 +14,7 @@ namespace cube
 		class FenceVk final : public Fence
 		{
 		public:
-			FenceVk(VkFenceWrapper& fence, Uint32 poolIndex, VulkanFencePool& pool);
+			FenceVk(VkFenceWrapper& fence, Uint32 poolIndex, VulkanFencePool& pool, const char* debugName);
 			virtual ~FenceVk();
 
 			VkFence GetHandle() const { return mFence.mObject; }

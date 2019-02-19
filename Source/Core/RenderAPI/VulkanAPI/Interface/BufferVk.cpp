@@ -15,7 +15,8 @@ namespace cube
 	namespace render
 	{
 		BufferVk::BufferVk(DeviceVk& device, const BufferAttribute& attr,
-			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool)
+			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool) :
+			Buffer(attr.debugName)
 		{
 			mUsage = attr.usage;
 

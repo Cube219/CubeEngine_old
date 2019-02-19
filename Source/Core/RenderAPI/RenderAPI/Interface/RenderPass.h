@@ -21,7 +21,7 @@ namespace cube
 			Uint32 dstIndex;
 		};
 
-		struct RenderPassAttribute
+		struct RenderPassAttribute : public BaseAttribute
 		{
 			Vector<SPtr<RenderTarget>> renderTargets;
 
@@ -30,14 +30,12 @@ namespace cube
 
 			Uint32 width;
 			Uint32 height;
-
-			const char* debugName = nullptr;
 		};
 
-		class RenderPass
+		class RenderPass : public BaseRenderObject
 		{
 		public:
-			RenderPass() {}
+			RenderPass(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~RenderPass() {}
 
 			virtual void Resize(Uint32 width, Uint32 height) = 0;

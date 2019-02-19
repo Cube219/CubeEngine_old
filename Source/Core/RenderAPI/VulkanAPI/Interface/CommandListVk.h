@@ -12,7 +12,8 @@ namespace cube
 		{
 		public:
 			CommandListVk(VulkanCommandListPool& pool, VkCommandBuffer commandBuffer,
-				CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex, bool isSub);
+				CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex, bool isSub,
+				const char* debugName);
 			virtual ~CommandListVk();
 
 			VkCommandBuffer GetHandle() const { return mCommandBuffer; }

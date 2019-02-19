@@ -7,7 +7,8 @@ namespace cube
 {
 	namespace render
 	{
-		FenceVk::FenceVk(VkFenceWrapper& fence, Uint32 poolIndex, VulkanFencePool& pool) :
+		FenceVk::FenceVk(VkFenceWrapper& fence, Uint32 poolIndex, VulkanFencePool& pool, const char* debugName) :
+			Fence(debugName),
 			mFence(fence), mFencePoolIndex(poolIndex), mPool(pool),
 			mIsReleased(false)
 		{

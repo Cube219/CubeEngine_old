@@ -6,7 +6,7 @@ namespace cube
 {
 	namespace render
 	{
-		struct TextureViewAttribute
+		struct TextureViewAttribute : public BaseAttribute
 		{
 			TextureViewType type;
 			TextureFormat format;
@@ -16,14 +16,12 @@ namespace cube
 			Uint32 numMipLevels;
 			Uint32 firstArrayIndex;
 			Uint32 numArray;
-
-			const char* debugName = "";
 		};
 
-		class TextureView
+		class TextureView : public BaseRenderObject
 		{
 		public:
-			TextureView() {}
+			TextureView(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~TextureView() {}
 		};
 	} // namespace render

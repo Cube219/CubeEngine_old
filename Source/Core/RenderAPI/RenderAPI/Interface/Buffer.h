@@ -12,7 +12,7 @@ namespace cube
 			Uint64 dataSize;
 		};
 
-		struct BufferAttribute
+		struct BufferAttribute : public BaseAttribute
 		{
 			Uint64 size = 0;
 			bool cpuAccessible = false;
@@ -20,13 +20,12 @@ namespace cube
 			BufferBindTypeFlags bindTypeFlags = 0;
 			const BufferData* pData = nullptr;
 			bool isDedicated = false;
-			const char* debugName = nullptr;
 		};
 
-		class Buffer
+		class Buffer : public BaseRenderObject
 		{
 		public:
-			Buffer() {}
+			Buffer(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~Buffer() {}
 
 			virtual void UpdateData(CommandList& cmdList, Uint64 offset, Uint64 size, const void* pData) = 0;

@@ -8,17 +8,16 @@ namespace cube
 {
 	namespace render
 	{
-		struct DeviceAttribute
+		struct DeviceAttribute : public BaseAttribute
 		{
 			uint32_t GPUIndex;
 			bool enableDebugLayer;
-			const char* debugName;
 		};
 
-		class Device
+		class Device : public BaseRenderObject
 		{
 		public:
-			Device() {}
+			Device(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~Device() {}
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) = 0;

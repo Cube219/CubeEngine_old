@@ -72,7 +72,7 @@ namespace cube
 			Vector<RenderTargetBlendState> renderTargets;
 		};
 
-		struct GraphicsPipelineStateAttribute
+		struct GraphicsPipelineStateAttribute : public BaseAttribute
 		{
 			Vector<InputLayout> inputLayouts;
 
@@ -96,14 +96,12 @@ namespace cube
 			SPtr<RenderPass> renderPass;
 
 			Vector<SPtr<ShaderParametersLayout>> shaderParameterLayouts;
-
-			const char* debugName = nullptr;
 		};
 
-		class GraphicsPipelineState
+		class GraphicsPipelineState : public BaseRenderObject
 		{
 		public:
-			GraphicsPipelineState() {}
+			GraphicsPipelineState(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~GraphicsPipelineState() {}
 		};
 	} // namespace render

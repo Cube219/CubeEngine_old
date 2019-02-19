@@ -17,6 +17,7 @@ namespace cube
 	{
 		SwapChainVk::SwapChainVk(VkInstance ins, DeviceVk& device, const SwapChainAttribute& attr,
 			VulkanQueueManager& queueManager, VulkanSemaphorePool& semaphorePool) :
+			SwapChain(attr.debugName),
 			mSwapChain(VK_NULL_HANDLE, device.GetLogicalDevice()),
 			mAttribute(attr),
 			mWidth(attr.width), mHeight(attr.height), mImageCount(attr.bufferCount), mVsync(attr.vsync),

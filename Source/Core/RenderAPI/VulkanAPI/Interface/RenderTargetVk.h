@@ -29,8 +29,6 @@ namespace cube
 			SPtr<SwapChainVk> mSwapChain;
 
 			VkClearValue mDefaultClearValue;
-
-			const char* mDebugName;
 		};
 	} // namespace render
 } // namespace cube

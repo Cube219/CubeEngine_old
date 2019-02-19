@@ -9,7 +9,8 @@ namespace cube
 {
 	namespace render
 	{
-		ShaderVk::ShaderVk(DeviceVk& device, const ShaderAttribute& attr) : 
+		ShaderVk::ShaderVk(DeviceVk& device, const ShaderAttribute& attr) :
+			Shader(attr.debugName),
 			mEntryPoint(attr.entryPoint)
 		{
 			mType = attr.type;

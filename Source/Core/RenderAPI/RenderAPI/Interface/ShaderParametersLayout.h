@@ -7,15 +7,13 @@ namespace cube
 {
 	namespace render
 	{
-		struct ShaderParameterInfo
+		struct ShaderParameterInfo : public BaseAttribute
 		{
 			ShaderParameterType type;
 			Uint32 size;
 			Uint32 count;
 			Uint32 bindIndex;
 			bool isChangedPerFrame;
-
-			const char* debugName = "";
 		};
 
 		// Helper structure to store parameter infos
@@ -60,10 +58,10 @@ namespace cube
 			const char* debugName = "";
 		};
 
-		class ShaderParametersLayout
+		class ShaderParametersLayout : public BaseRenderObject
 		{
 		public:
-			ShaderParametersLayout() {}
+			ShaderParametersLayout(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~ShaderParametersLayout() {}
 
 			virtual SPtr<ShaderParameters> CreateParameters() = 0;

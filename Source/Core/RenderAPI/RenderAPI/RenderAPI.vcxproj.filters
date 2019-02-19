@@ -68,5 +68,8 @@
     <ClInclude Include="Interface\ComputePipelineState.h">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Utilities\BaseRenderObject.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

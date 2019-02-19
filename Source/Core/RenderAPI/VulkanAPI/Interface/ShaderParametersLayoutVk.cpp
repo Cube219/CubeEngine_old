@@ -12,7 +12,8 @@ namespace cube
 {
 	namespace render
 	{
-		ShaderParametersLayoutVk::ShaderParametersLayoutVk(DeviceVk& device, const ShaderParametersLayoutAttribute& attr) : 
+		ShaderParametersLayoutVk::ShaderParametersLayoutVk(DeviceVk& device, const ShaderParametersLayoutAttribute& attr) :
+			ShaderParametersLayout(attr.debugName),
 			mShaderParameterManager(device.GetShaderParameterManager()),
 			mParameterList(attr.paramInfos)
 		{
@@ -88,7 +89,7 @@ namespace cube
 
 		SPtr<ShaderParameters> ShaderParametersLayoutVk::CreateParameters()
 		{
-			return std::make_shared<ShaderParametersVk>(mDevice, mShaderParameterManager, *this);
+			return std::make_shared<ShaderParametersVk>(mDevice, mShaderParameterManager, *this, mDebugName);
 		}
 	} // namespace render
 } // namespace cube

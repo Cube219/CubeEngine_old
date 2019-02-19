@@ -15,7 +15,8 @@ namespace cube
 		class ShaderParametersVk final : public ShaderParameters
 		{
 		public:
-			ShaderParametersVk(VkDevice& device, VulkanShaderParameterManager& parameterManager, ShaderParametersLayoutVk& layout);
+			ShaderParametersVk(VkDevice& device, VulkanShaderParameterManager& parameterManager, ShaderParametersLayoutVk& layout,
+				const char* debugName);
 			virtual ~ShaderParametersVk();
 
 			virtual void UpdateParameter(Uint32 bindIndex, void* pData, Uint32 size) override final;

@@ -73,7 +73,7 @@ namespace cube
 			vkResetFences(mDevice->GetHandle(), 1, &mFences[index].mObject);
 			VulkanDebug::SetObjectName(mDevice->GetHandle(), mFences[index].mObject, debugName);
 
-			return std::make_shared<FenceVk>(mFences[index], index, *this);
+			return std::make_shared<FenceVk>(mFences[index], index, *this, debugName);
 		}
 
 		void VulkanFencePool::FreeFence(FenceVk& fence)

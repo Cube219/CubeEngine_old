@@ -14,7 +14,7 @@ namespace cube
 			Compute
 		};
 
-		struct CommandListAttribute
+		struct CommandListAttribute : public BaseAttribute
 		{
 			CommandListUsage usage;
 			Uint32 threadIndex;
@@ -22,10 +22,10 @@ namespace cube
 			bool isSub = false;
 		};
 
-		class CommandList
+		class CommandList : public BaseRenderObject
 		{
 		public:
-			CommandList(CommandListUsage usage) : mUsage(usage)
+			CommandList(CommandListUsage usage, const char* debugName) : BaseRenderObject(debugName), mUsage(usage)
 			{}
 			virtual ~CommandList() {}
 

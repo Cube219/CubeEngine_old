@@ -6,19 +6,17 @@ namespace cube
 {
 	namespace render
 	{
-		struct ComputePipelineStateAttribute
+		struct ComputePipelineStateAttribute : public BaseAttribute
 		{
 			SPtr<Shader> shader;
 
 			Vector<SPtr<ShaderParametersLayout>> shaderParameterLayouts;
-
-			const char* debugName = nullptr;
 		};
 
-		class ComputePipelineState
+		class ComputePipelineState : public BaseRenderObject
 		{
 		public:
-			ComputePipelineState() {}
+			ComputePipelineState(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~ComputePipelineState() {}
 		};
 	} // namespace render

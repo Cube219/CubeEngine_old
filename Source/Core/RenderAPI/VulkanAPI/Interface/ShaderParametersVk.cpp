@@ -10,13 +10,15 @@ namespace cube
 {
 	namespace render
 	{
-		ShaderParametersVk::ShaderParametersVk(VkDevice& device, VulkanShaderParameterManager& parameterManager, ShaderParametersLayoutVk& layout) :
+		ShaderParametersVk::ShaderParametersVk(VkDevice& device, VulkanShaderParameterManager& parameterManager, ShaderParametersLayoutVk& layout,
+			const char* debugName) :
+			ShaderParameters(debugName),
 			mDevice(device),
 			mParameterManager(parameterManager),
 			mLayout(layout),
 			mParameterList(layout.GetParameterList())
 		{
-			mDescriptorSet = parameterManager.AllocateDescriptorSet(layout.GetVkDescriptorSetLayout(), "DescSet");
+			mDescriptorSet = parameterManager.AllocateDescriptorSet(layout.GetVkDescriptorSetLayout(), debugName);
 
 			// Write descriptor set to sub-allocated buffers
 			// Only uniform / storage buffer be updated

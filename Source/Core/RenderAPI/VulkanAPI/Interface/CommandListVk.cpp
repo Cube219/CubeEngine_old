@@ -16,8 +16,8 @@ namespace cube
 	{
 		CommandListVk::CommandListVk(VulkanCommandListPool& pool, VkCommandBuffer commandBuffer,
 			CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex,
-			bool isSub) :
-			CommandList(usage),
+			bool isSub, const char* debugName) :
+			CommandList(usage, debugName),
 			mPool(pool), mCommandBuffer(commandBuffer),
 			mCommandPoolIndex(commandPoolIndex),
 			mSubmitQueueFamilyIndex(submitQueueFamilyIndex),

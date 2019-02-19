@@ -146,6 +146,7 @@
     <ClInclude Include="Interface\TextureView.h" />
     <ClInclude Include="RenderAPI.h" />
     <ClInclude Include="RenderAPIHeader.h" />
+    <ClInclude Include="Utilities\BaseRenderObject.h" />
     <ClInclude Include="Utilities\VariableSizeMemoryPage.h" />
   </ItemGroup>
   <ItemGroup>

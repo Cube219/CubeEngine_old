@@ -21,7 +21,8 @@ namespace cube
 {
 	namespace render
 	{
-		DeviceVk::DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device) :
+		DeviceVk::DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device, const char* debugName) :
+			Device(debugName),
 			mInstance(ins),
 			mDevice(std::move(device)),
 			mMemoryManager(mDevice, 256*1024*1024, 32*1024*1024), // gpuPage: 256 MiB, hostVisiblePage: 32 MiB
@@ -36,6 +37,7 @@ namespace cube
 
 		DeviceVk::~DeviceVk()
 		{
+			CHECK(shared_from_this().use_count() <= 2, "Some VkObjects doesn't be released. All VkObjects must be release before destroy VkDevice.");
 		}
 
 		SPtr<Buffer> DeviceVk::CreateBuffer(const BufferAttribute& attr)

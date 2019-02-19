@@ -6,7 +6,7 @@ namespace cube
 {
 	namespace render
 	{
-		struct RenderTargetAttribute
+		struct RenderTargetAttribute : public BaseAttribute
 		{
 			SPtr<TextureView> textureView;
 			bool isSwapChain;
@@ -21,14 +21,12 @@ namespace cube
 			float defaultColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			float defaultDepth = 1.0f;
 			Uint32 defaultStencil = 0;
-
-			const char* debugName = nullptr;
 		};
 
-		class RenderTarget
+		class RenderTarget : public BaseRenderObject
 		{
 		public:
-			RenderTarget() {}
+			RenderTarget(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~RenderTarget() {}
 		};
 	} // namespace render

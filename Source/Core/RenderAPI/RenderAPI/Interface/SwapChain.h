@@ -8,7 +8,7 @@ namespace cube
 {
 	namespace render
 	{
-		struct SwapChainAttribute
+		struct SwapChainAttribute : public BaseAttribute
 		{
 			Uint32 width;
 			Uint32 height;
@@ -19,14 +19,12 @@ namespace cube
 			bool vsync;
 
 			Uint32 bufferCount;
-
-			const char* debugName = nullptr;
 		};
 
-		class SwapChain
+		class SwapChain : public BaseRenderObject
 		{
 		public:
-			SwapChain() {}
+			SwapChain(const char* debugName) : BaseRenderObject(debugName) {}
 			virtual ~SwapChain() {}
 
 			virtual void AcquireNextImage() = 0;
