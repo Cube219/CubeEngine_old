@@ -3,17 +3,21 @@
 #include "../RenderAPIHeader.h"
 #include "EngineCore/Assertion.h"
 
+#include "../Utilities/BaseRenderObject.h"
+
 namespace cube
 {
 	namespace render
 	{
-		struct ShaderParameterInfo : public BaseAttribute
+		struct ShaderParameterInfo
 		{
 			ShaderParameterType type;
 			Uint32 size;
 			Uint32 count;
 			Uint32 bindIndex;
 			bool isChangedPerFrame;
+
+			const char* debugName = "";
 		};
 
 		// Helper structure to store parameter infos
@@ -51,11 +55,9 @@ namespace cube
 			Vector<Uint32> parameterInfoBindIndexLookupTable;
 		};
 
-		struct ShaderParametersLayoutAttribute
+		struct ShaderParametersLayoutAttribute : public BaseAttribute
 		{
 			Vector<ShaderParameterInfo> paramInfos;
-
-			const char* debugName = "";
 		};
 
 		class ShaderParametersLayout : public BaseRenderObject

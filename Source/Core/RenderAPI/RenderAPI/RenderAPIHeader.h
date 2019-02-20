@@ -2,7 +2,6 @@
 
 #include "Base/BaseTypes.h"
 #include "Interface/RenderTypes.h"
-#include "Utilities/BaseRenderObject.h"
 
 namespace cube
 {

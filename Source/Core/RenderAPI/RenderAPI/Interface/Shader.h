@@ -2,6 +2,8 @@
 
 #include "../RenderAPIHeader.h"
 
+#include "../Utilities/BaseRenderObject.h"
+
 namespace cube
 {
 	namespace render

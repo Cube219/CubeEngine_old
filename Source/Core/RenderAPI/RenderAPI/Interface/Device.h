@@ -2,6 +2,7 @@
 
 #include "../RenderAPIHeader.h"
 
+#include "../Utilities/BaseRenderObject.h"
 #include "CommandList.h"
 
 namespace cube

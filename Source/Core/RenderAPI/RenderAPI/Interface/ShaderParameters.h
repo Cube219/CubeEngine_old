@@ -2,6 +2,7 @@
 
 #include "../RenderAPIHeader.h"
 
+#include "../Utilities/BaseRenderObject.h"
 #include "ShaderParametersLayout.h"
 
 namespace cube

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "DebugStringHeap.h"
+
 namespace cube
 {
 	namespace render
@@ -12,8 +14,10 @@ namespace cube
 		class BaseRenderObject
 		{
 		public:
-			BaseRenderObject(const char* debugName) : mDebugName(debugName)
-				{}
+			BaseRenderObject(const char* debugName)
+			{
+				mDebugName = DebugStringHeap::Allocate(debugName);
+			}
 			virtual ~BaseRenderObject() {}
 
 			const char* GetDebugName() const { return mDebugName; }

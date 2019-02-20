@@ -157,6 +157,9 @@ xcopy "$(SolutionDir)Dependencies\Vulkan\lib\vulkan-1.pdb" "$(OutDir)" /Y</Comma
     <ProjectReference Include="..\..\EngineCore\EngineCore.vcxproj">
       <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\RenderAPI\RenderAPI.vcxproj">
+      <Project>{037b8862-0d26-4300-9a0f-64eb573998b2}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Interface\BufferViewVk.cpp" />

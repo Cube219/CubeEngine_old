@@ -2,6 +2,7 @@
 
 #include "../RenderAPIHeader.h"
 
+#include "../Utilities/BaseRenderObject.h"
 #include "RenderAPI/Interface/TextureView.h"
 
 namespace cube

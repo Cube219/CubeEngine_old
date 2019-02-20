@@ -1,5 +1,6 @@
 #include "VulkanAPI.h"
 
+#include "RenderAPI/Utilities/DebugStringHeap.h"
 #include "VulkanUtility.h"
 #include "Interface/DeviceVk.h"
 #include "VulkanPhysicalDevice.h"
@@ -23,6 +24,8 @@ namespace cube
 
 			VulkanDebug::Free();
 			vkDestroyInstance(mInstance, nullptr);
+
+			DebugStringHeap::Disable();
 
 			GLSLTool::Finalize();
 		}
@@ -59,7 +62,7 @@ namespace cube
 
 			auto logicalDevice = std::make_shared<VulkanLogicalDevice>(mPhysicalDevices[attr.GPUIndex], features, attr);
 
-			auto deviceVk = std::make_shared<DeviceVk>(mInstance, std::move(logicalDevice));
+			auto deviceVk = std::make_shared<DeviceVk>(mInstance, std::move(logicalDevice), attr.debugName);
 
 			// Set physical device debug name
 			for(Uint32 i = 0; i < SCast(Uint32)(mPhysicalDevices.size()); i++) {
@@ -110,6 +113,7 @@ namespace cube
 
 			if(attr.enableDebugLayer == true) {
 				VulkanDebug::Setup(mInstance);
+				DebugStringHeap::Enable();
 			}
 		}
 	} // namespace render

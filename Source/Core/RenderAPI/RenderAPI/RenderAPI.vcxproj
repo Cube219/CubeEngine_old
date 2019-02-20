@@ -125,6 +125,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="a.cpp" />
+    <ClCompile Include="Utilities\DebugStringHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interface\Buffer.h" />
@@ -147,12 +148,8 @@
     <ClInclude Include="RenderAPI.h" />
     <ClInclude Include="RenderAPIHeader.h" />
     <ClInclude Include="Utilities\BaseRenderObject.h" />
+    <ClInclude Include="Utilities\DebugStringHeap.h" />
     <ClInclude Include="Utilities\VariableSizeMemoryPage.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\EngineCore\EngineCore.vcxproj">
-      <Project>{79cd5ef1-c2fb-432b-a38e-3db371c00c98}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

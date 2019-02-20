@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="a.cpp" />
+    <ClCompile Include="Utilities\DebugStringHeap.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -69,6 +72,9 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="Utilities\BaseRenderObject.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\DebugStringHeap.h">
       <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
