@@ -9,6 +9,7 @@
 #include "Texture.h"
 #include "Material/Shader.h"
 #include "CameraRenderer3D.h"
+#include "RenderAPI/Interface/Device.h"
 
 namespace cube
 {
@@ -66,10 +67,10 @@ namespace cube
 		Renderer3D_RT::Renderer3D_RT()
 		{
 			RendererManager& rm = ECore().GetRendererManager();
-			mRenderAPI_ref = rm.GetRenderAPI();
+			mDevice = rm.GetDevice();
 
-			SPtr<render::DescriptorSetLayout> perObjectDescSetLayout = rm._GetPerObjectDescriptorSetLayout();
-			mDescriptorSet = mRenderAPI_ref->CreateDescriptorSet(perObjectDescSetLayout);
+			SPtr<render::ShaderParametersLayout> perObjectShaderParametersLayout = rm._GetPerObjectShaderParametersLayout();
+			mShaderParameters = perObjectShaderParametersLayout->CreateParameters();
 		}
 
 		void Renderer3D_RT::SyncMesh(RPtr<Mesh>& mesh)
@@ -89,7 +90,7 @@ namespace cube
 			mUBOPerObject.modelMatrix = modelMatrix;
 		}
 
-		void Renderer3D_RT::PrepareDraw(SPtr<render::CommandBuffer>& commandBuffer, SPtr<CameraRenderer3D_RT>& camera)
+		void Renderer3D_RT::PrepareDraw(SPtr<render::CommandList>& commandList, SPtr<CameraRenderer3D_RT>& camera)
 		{
 			if(mIsMeshUpdated == true) {
 				Vector<Vertex>& vertices = mMesh->GetVertex();
@@ -97,57 +98,42 @@ namespace cube
 
 				RecreateDataBuffer();
 
-				mDataBuffer->Unmap();
-				mDataBuffer->Map(mVertexIndex, mIndexIndex);
-
-				mDataBuffer->UpdateBufferData(mVertexIndex, vertices.data(), vertices.size() * sizeof(Vertex));
-				mDataBuffer->UpdateBufferData(mIndexIndex, indices.data(), indices.size() * sizeof(Index));
+				memcpy((Uint8*)mDataBufferMappedPtr + mVertexOffset, vertices.data(), vertices.size() * sizeof(Vertex));
+				memcpy((Uint8*)mDataBufferMappedPtr + mIndexOffset, indices.data(), indices.size() * sizeof(Index));
 
 				mDataBuffer->Unmap();
-				mDataBuffer->Map(mUBOIndex, mUBOIndex);
 
 				mIsMeshUpdated = false;
 			}
 
 			// Update mvp matrix
 			mUBOPerObject.mvp = mUBOPerObject.modelMatrix * camera->GetViewProjectionMatrix();
-			mDataBuffer->UpdateBufferData(mUBOIndex, &mUBOPerObject, sizeof(mUBOPerObject));
 
-			render::BufferInfo bufInfo = mDataBuffer->GetInfo(mUBOIndex);
-			mDescriptorSet->WriteBufferInDescriptor(0, 1, &bufInfo);
+			mShaderParameters->UpdateParameter(0, &mUBOPerObject, sizeof(UBOPerObject));
 
 			// Bind vertex / index data
-			uint64_t vertexOffset = mDataBuffer->GetInfo(mVertexIndex).offset;
-			commandBuffer->BindVertexBuffers(1, &mDataBuffer, &vertexOffset);
-			commandBuffer->BindIndexBuffer(mDataBuffer, mDataBuffer->GetInfo(mIndexIndex).offset);
+			commandList->BindVertexBuffers(0, 1, &mDataBuffer, &mVertexOffset);
+			commandList->BindIndexBuffer(mDataBuffer, mIndexOffset);
 		}
 
 		void Renderer3D_RT::RecreateDataBuffer()
 		{
-			render::BufferInitializer init;
-			init.type = render::BufferTypeBits::Uniform | render::BufferTypeBits::Vertex | render::BufferTypeBits::Index;
+			using namespace render;
 
-			render::BufferInitializer::BufferData bufData;
-			bufData.data = nullptr;
+			BufferAttribute attr;
+			attr.size = mMesh->GetVertex().size() * sizeof(Vertex) + mMesh->GetIndex().size() * sizeof(Index);
+			attr.cpuAccessible = true;
+			attr.usage = ResourceUsage::Dynamic;
+			attr.bindTypeFlags = BufferBindTypeFlagBits::Uniform_Bit | BufferBindTypeFlagBits::Vertex_Bit | BufferBindTypeFlagBits::Index_Bit;
+			attr.pData = nullptr;
+			attr.isDedicated = false;
+			attr.debugName = "Renderer3D data buffer";
 
-			// 0. Vertex
-			bufData.size = mMesh->GetVertex().size() * sizeof(Vertex);
-			init.bufferDatas.push_back(bufData);
-			mVertexIndex = 0;
+			mDataBuffer = mDevice->CreateBuffer(attr);
+			mDataBuffer->Map(mDataBufferMappedPtr);
 
-			// 1. Index
-			bufData.size = mMesh->GetIndex().size() * sizeof(Index);
-			init.bufferDatas.push_back(bufData);
-			mIndexIndex = 1;
-
-			// 2. UBO
-			bufData.size = sizeof(UBOPerObject);
-			init.bufferDatas.push_back(bufData);
-			mUBOIndex = 2;
-
-			mDataBuffer = mRenderAPI_ref->CreateBuffer(init);
-
-			mDataBuffer->Map(mUBOIndex, mUBOIndex);
+			mVertexOffset = 0;
+			mIndexOffset = mMesh->GetVertex().size() * sizeof(Vertex);
 		}
 	} // namespace core
 } // namespace cube

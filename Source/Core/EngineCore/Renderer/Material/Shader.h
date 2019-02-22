@@ -3,8 +3,9 @@
 #include "../../EngineCoreHeader.h"
 
 #include "../../Resource/BaseResource.h"
-#include "BaseRenderAPI/RenderAPI.h"
-#include "BaseRenderAPI/Wrapper/Shader.h"
+
+#include "RenderAPI/Interface/Device.h"
+#include "RenderAPI/Interface/Shader.h"
 
 namespace cube
 {
@@ -20,16 +21,16 @@ namespace cube
 			~Shader() { }
 
 			render::ShaderLanguage GetLanguage() const { return mLanguage; }
-			render::ShaderTypeBits GetType() const { return mType; }
+			render::ShaderType GetType() const { return mType; }
 
-			void _LoadShader(SPtr<render::RenderAPI>& renderAPI, render::ShaderInitializer& init);
+			void _LoadShader(SPtr<render::Device>& device, render::ShaderAttribute& attr);
 
 		private:
 			friend class RendererManager;
 			SPtr<render::Shader> GetRenderShader() const { return mRenderShader; }
 
 			render::ShaderLanguage mLanguage;
-			render::ShaderTypeBits mType;
+			render::ShaderType mType;
 
 			SPtr<render::Shader> mRenderShader;
 		};

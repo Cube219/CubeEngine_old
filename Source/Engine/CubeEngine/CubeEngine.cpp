@@ -6,7 +6,6 @@
 #include "EngineCore/Renderer/RenderingThread.h"
 #include "EngineCore/Resource/ResourceManager.h"
 #include "EngineCore/Renderer/RendererManager.h"
-#include "BaseRenderAPI/RenderAPI.h"
 #include "ResourceImporter/ShaderImporter.h"
 #include "ResourceImporter/TextureImporter.h"
 #include "ResourceImporter/ObjImporter.h"
@@ -16,6 +15,7 @@
 #include "Component/MoveComponent.h"
 #include "Component/DirectionalLightComponent.h"
 #include "Component/PointLightComponent.h"
+#include "RenderAPI/Interface/Device.h"
 
 namespace cube
 {
@@ -67,7 +67,7 @@ namespace cube
 
 	void CubeEngine::Close()
 	{
-		platform::Platform::FinishLoop();
+		core::GameThread::SetDestroy();
 	}
 
 	void CubeEngine::SetCustomClosingFunction(std::function<void()> func)
@@ -79,13 +79,13 @@ namespace cube
 	void CubeEngine::RegisterImporters()
 	{
 		core::ResourceManager& resManager = core::ECore().GetResourceManager();
-		SPtr<render::RenderAPI> renderAPI  = core::ECore().GetRendererManager().GetRenderAPI();
+		SPtr<render::Device> device = core::ECore().GetRendererManager().GetDevice();
 
 		resManager.RegisterImporter(
-			std::make_unique<TextureImporter>(renderAPI)
+			std::make_unique<TextureImporter>(device)
 		);
 		resManager.RegisterImporter(
-			std::make_unique<ShaderImporter>(renderAPI)
+			std::make_unique<ShaderImporter>(device)
 		);
 		resManager.RegisterImporter(
 			std::make_unique<ObjImporter>()

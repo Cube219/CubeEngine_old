@@ -25,9 +25,9 @@ namespace cube
 
 		struct UBODirLight
 		{
+			int isExisted;
 			Vector4 color;
 			Vector3 direction;
-			int isExisted;
 		};
 
 		struct UBOPointLights
@@ -39,6 +39,8 @@ namespace cube
 
 		void RendererManager::Initialize(RenderType type)
 		{
+			using namespace render;
+
 			mWidth = platform::Platform::GetWindowWidth();
 			mHeight = platform::Platform::GetWindowHeight();
 
@@ -57,33 +59,53 @@ namespace cube
 
 			using CreateAPIFunction = render::RenderAPI*(*)();
 
-			auto createAPIFunction = RCast(CreateAPIFunction)(mRenderDLib->GetFunction(CUBE_T("CreateAPI")));
+			auto createAPIFunction = RCast(CreateAPIFunction)(mRenderDLib->GetFunction(CUBE_T("GetAPI")));
 			// TODO: 좀 더 좋은 방법은 없을까?
 			SPtr<render::RenderAPI> temp(createAPIFunction());
 			mRenderAPI = std::move(temp);
 
-			mRenderAPI->Init();
+			RenderAPIAttribute renderAPIAttr;
+			renderAPIAttr.enableDebugLayer = true;
+			mRenderAPI->Init(renderAPIAttr);
 
-			// Graphics queue
-			mGraphicsQueue = mRenderAPI->GetQueue(render::QueueTypeBits::GraphicsBit, 0);
+			// Get device
+			DeviceAttribute deviceAttr;
+			deviceAttr.GPUIndex = 0;
+			deviceAttr.enableDebugLayer = false;
+#ifdef _DEBUG
+			deviceAttr.enableDebugLayer = true;
+#endif // _DEBUG
+			deviceAttr.debugName = "Main Device";
+			mDevice = mRenderAPI->GetDevice(deviceAttr);
 
 			CreateDepthBuffer();
 
-			mSwapchain = mRenderAPI->CreateSwapchain();
-			mSwapchain->Recreate(2, mWidth, mHeight, true);
+			SwapChainAttribute swapChainAttr;
+			swapChainAttr.width = mWidth;
+			swapChainAttr.height = mHeight;
+			swapChainAttr.colorBufferFormat = TextureFormat::RGBA_8_sRGB;
+			swapChainAttr.depthBufferFormat = TextureFormat::D16_UNorm;
+			swapChainAttr.vsync = false;
+			swapChainAttr.bufferCount = 2;
+			swapChainAttr.debugName = "SwapChain";
+			mSwapChain = mDevice->CreateSwapChain(swapChainAttr);
 
 			CreateRenderpass();
 
-			// Get a main command buffer
-			mMainCommandBuffer = mRenderAPI->CreateCommandBuffer();
-			mMainCommandBufferSubmitFence = mRenderAPI->CreateFence();
+			// Get command lists
+			CommandListAttribute commandListAttr;
+			commandListAttr.usage = CommandListUsage::Graphics;
+			commandListAttr.threadIndex = 0;
+			commandListAttr.isSub = false;
+			mMainCommandList = mDevice->GetCommandList(commandListAttr);
+			
+			commandListAttr.isSub = true;
+			for(Uint32 i = 0; i < mNumThreads; i++) {
+				commandListAttr.threadIndex = i;
 
-			for(uint32_t i = 0; i < mNumThreads; i++) {
-				mCommandBuffers.push_back(mRenderAPI->CreateCommandBuffer(false));
-				mCommandBuffersCurrentMaterialIndex.push_back(-1);
+				mCommandLists.push_back(mDevice->GetCommandList(commandListAttr));
+				mCommandListsCurrentMaterialIndex.push_back(-1);
 			}
-
-			mGetImageSemaphore = mRenderAPI->CreateSemaphore();
 
 			// Create camera renderer
 			// TODO: multiple camera
@@ -91,77 +113,77 @@ namespace cube
 			mCameraRenderer = mCameraRenderer_NotRT->GetRenderObject_RT();
 
 			// Create Global / mPerObjectDescriptorSetLayout
-			render::DescriptorSetInitializer descSetInit;
+			ShaderParametersLayoutAttribute paramsLayoutAttr;
+			ShaderParameterInfo paramInfo;
 
-			descSetInit.descriptors.push_back({ render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 0, 1 }); // global
-			render::BufferInitializer globalUBOBufInit;
-			globalUBOBufInit.type = render::BufferTypeBits::Uniform;
-			globalUBOBufInit.bufferDatas.push_back({ nullptr, sizeof(UBOGlobal) });
-			mGlobalUBOBuffer = mRenderAPI->CreateBuffer(globalUBOBufInit);
-			mGlobalUBOBuffer->Map();
+			// Global shader parameters (layout)
+			paramInfo.type = ShaderParameterType::ConstantBuffer;
+			paramInfo.size = sizeof(UBOGlobal);
+			paramInfo.count = 1;
+			paramInfo.bindIndex = 0;
+			paramInfo.isChangedPerFrame = false;
+			paramInfo.debugName = "UBOGlobal parameter";
+			paramsLayoutAttr.paramInfos.push_back(paramInfo);
 
-			descSetInit.descriptors.push_back({ render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 1, 1 }); // dirLight
-			render::BufferInitializer dirLightBufInit;
-			dirLightBufInit.type = render::BufferTypeBits::Uniform;
-			dirLightBufInit.bufferDatas.push_back({ nullptr, sizeof(UBODirLight) });
-			mDirLightBuffer = mRenderAPI->CreateBuffer(dirLightBufInit);
-			mDirLightBuffer->Map();
+			paramInfo.size = sizeof(UBODirLight);
+			paramInfo.bindIndex = 1;
+			paramInfo.debugName = "UBODirLight parameter";
+			paramsLayoutAttr.paramInfos.push_back(paramInfo);
 
-			descSetInit.descriptors.push_back({ render::ShaderTypeBits::Fragment, render::DescriptorType::UniformBuffer, 2, 1 }); // pointLights
-			render::BufferInitializer pointLightBufInit;
-			pointLightBufInit.type = render::BufferTypeBits::Uniform;
-			pointLightBufInit.bufferDatas.push_back({ nullptr, sizeof(UBOPointLights) });
-			mPointLightsBuffer = mRenderAPI->CreateBuffer(pointLightBufInit);
-			mPointLightsBuffer->Map();
+			paramInfo.size = sizeof(UBOPointLights);
+			paramInfo.bindIndex = 2;
+			paramInfo.debugName = "UBOPointLights parameter";
+			paramsLayoutAttr.paramInfos.push_back(paramInfo);
 
-			mGlobalDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
-			mGlobalDescriptorSet = mRenderAPI->CreateDescriptorSet(mGlobalDescriptorSetLayout);
+			paramsLayoutAttr.debugName = "Global shader parameters layout";
+			mGlobalShaderParametersLayout = mDevice->CreateShaderParametersLayout(paramsLayoutAttr);
+			mGlobalShaderParameters = mGlobalShaderParametersLayout->CreateParameters();
 
-			descSetInit.descriptors.clear();
-			descSetInit.descriptors.push_back({ render::ShaderTypeBits::Vertex, render::DescriptorType::UniformBuffer, 0, 1 });
-			mPerObjectDescriptorSetLayout = mRenderAPI->CreateDescriptorSetLayout(descSetInit);
+			// Per-object shader parameters layout
+			paramsLayoutAttr.paramInfos.clear();
+			
+			paramInfo.size = sizeof(UBOPerObject);
+			paramInfo.bindIndex = 0;
+			paramInfo.isChangedPerFrame = true;
+			paramInfo.debugName = "UBOPerObjecrt parameter";
+			paramsLayoutAttr.paramInfos.push_back(paramInfo);
+
+			paramsLayoutAttr.debugName = "Per-object shader parameters layout";
+			mPerObjectShaderParametersLayout = mDevice->CreateShaderParametersLayout(paramsLayoutAttr);
 
 			mIsPrepared = true;
 		}
 
 		void RendererManager::ShutDown()
 		{
-			mRenderers.clear();
 			mMaterialPipelines.clear();
 			mMaterials.clear();
+			mRenderers.clear();
 
-			mGetImageSemaphore = nullptr;
-			
-			mGraphicsQueue = nullptr;
+			mGlobalShaderParametersLayout = nullptr;
+			mGlobalShaderParameters = nullptr;
 
-			mMainCommandBufferSubmitFence = nullptr;
-			mMainCommandBuffer = nullptr;
-			mCommandBuffersCurrentMaterialIndex.clear();
-			mCommandBuffers.clear();
+			mPerObjectShaderParametersLayout = nullptr;
 
-			mRenderPass = nullptr;
-
-			mSwapchain = nullptr;
-
-			mDepthBufferImageView = nullptr;
-			mDepthBufferImage = nullptr;
-
-			mPerObjectDescriptorSetLayout = nullptr;
-			mGlobalUBOBuffer = nullptr;
-			mGlobalDescriptorSet = nullptr;
-			mGlobalDescriptorSetLayout = nullptr;
-
-			mPointLightsBuffer = nullptr;
-			mPointLights.clear();
-
-			mDirLightBuffer = nullptr;
-			mDirLight = nullptr;
-
-			mCameraRenderer_NotRT = nullptr;
 			mCameraRenderer = nullptr;
+			mCameraRenderer_NotRT = nullptr;
+
+			mCommandListsCurrentMaterialIndex.clear();
+			mCommandLists.clear();
+			mMainCommandList = nullptr;
+			
+			mRenderPass = nullptr;
+			mDepthStencilRenderTarget = nullptr;
+			mColorRenderTarget = nullptr;
+
+			mSwapChain = nullptr;
+
+			mDepthBufferTextureView = nullptr;
+			mDepthBufferTexture = nullptr;
+
+			mDevice = nullptr;
 
 			mRenderAPI = nullptr;
-
 			mRenderDLib = nullptr;
 		}
 
@@ -304,23 +326,28 @@ namespace cube
 			return mCameraRenderer_NotRT;
 		}
 
+		void RendererManager::StartFrame()
+		{
+			mDevice->StartFrame();
+		}
+
 		void RendererManager::DrawAll()
 		{
+			using namespace render;
+
 			if(mIsPrepared == false)
 				return;
 
-			mSwapchain->AcquireNextImageIndex(mGetImageSemaphore);
+			mSwapChain->AcquireNextImage();
 
 			RewriteCommandBuffer();
 
-			mMainCommandBufferSubmitFence->Reset();
-			auto temp = std::make_pair(mGetImageSemaphore, render::PipelineStageBits::ColorAttachmentOutputBit);
-			mMainCommandBuffer->Submit(mGraphicsQueue, 1, &temp, 0, nullptr, mMainCommandBufferSubmitFence);
+			SPtr<Fence> fence = mDevice->SubmitCommandListWithFence(mMainCommandList);
 			
-			bool r = mMainCommandBufferSubmitFence->Wait(100000000);
-			CHECK(r == true, "Main command buffer submit fence time out");
+			FenceWaitResult res = fence->Wait(15.0f);
+			CHECK(res == FenceWaitResult::Success, "Failed to submit main command list ({0}).", (int)res);
 
-			mSwapchain->Present(0, nullptr);
+			mSwapChain->Present();
 		}
 
 		void RendererManager::Resize(uint32_t width, uint32_t height)
@@ -333,7 +360,7 @@ namespace cube
 
 			CreateDepthBuffer();
 
-			mSwapchain->Recreate(2, width, height, mVsync);
+			mSwapChain->Resize(mWidth, mHeight, mVsync);
 
 			CreateRenderpass();
 
@@ -344,72 +371,86 @@ namespace cube
 		{
 			mVsync = vsync;
 
-			mSwapchain->Recreate(2, mWidth, mHeight, vsync);
+			mSwapChain->Resize(mWidth, mHeight, mVsync);
 		}
 
 		void RendererManager::CreateDepthBuffer()
 		{
 			using namespace render;
 
-			ImageInitializer imageInit;
-			imageInit.type = ImageType::Image2D;
-			imageInit.format = DataFormat::D16_Unorm;
-			imageInit.width = mWidth;
-			imageInit.height = mHeight;
-			imageInit.depth = 1;
-			imageInit.mipLevels = 1;
-			imageInit.usage = ImageUsageBits::DepthStencilAttachmentBit;
-			mDepthBufferImage = mRenderAPI->CreateImage(imageInit);
-			mDepthBufferImageView = mDepthBufferImage->GetImageView(DataFormat::D16_Unorm, ImageAspectBits::Depth, ImageViewType::Image2D);
+			TextureAttribute attr;
+			attr.usage = ResourceUsage::Default;
+			attr.type = TextureType::Texture2D;
+			attr.format = TextureFormat::D16_UNorm;
+			attr.bindTypeFlags = TextureBindTypeFlagBits::DepthStencil_Bit;
+			attr.width = mWidth;
+			attr.height = mHeight;
+			attr.depth = 1;
+			attr.arraySize = 1;
+			attr.mipLevels = 1;
+			attr.isDedicated = true;
+			attr.debugName = "Depth buffer texture";
+
+			mDepthBufferTexture = mDevice->CreateTexture(attr);
+			// Disable stencil bit (Set only depth bit)
+			auto viewAttr = mDepthBufferTexture->GetDefaultViewAttr();
+			viewAttr.componentFlags = TextureViewComponentFlagBits::Depth_Bit;
+			mDepthBufferTextureView = mDepthBufferTexture->CreateView(viewAttr);
 		}
 
 		void RendererManager::CreateRenderpass()
 		{
 			using namespace render;
 
-			Color c;
-			DepthStencilValue v;
+			// Color render target
+			RenderTargetAttribute rtAttr;
+			rtAttr.textureView = nullptr;
+			rtAttr.isSwapChain = true;
+			rtAttr.swapChain = mSwapChain;
+			rtAttr.loadOp = LoadOperator::Clear;
+			rtAttr.storeOp = StoreOperator::Store;
+			rtAttr.stencilLoadOp = LoadOperator::DontCare;
+			rtAttr.stencilStoreOp = StoreOperator::DontCare;
+			rtAttr.defaultColor[0] = 0.02f;
+			rtAttr.defaultColor[1] = 0.02f;
+			rtAttr.defaultColor[2] = 0.02f;
+			rtAttr.defaultColor[3] = 0.0f;
+			rtAttr.defaultDepth = 1.0f;
+			rtAttr.defaultStencil = 0;
+			rtAttr.debugName = "Color render target";
+			mColorRenderTarget = mDevice->CreateRenderTarget(rtAttr);
 
-			render::RenderPassInitializer renderPassInit;
-			// Depth buffer attachment
-			render::RenderPassInitializer::Attachment att;
-			att.imageView = mDepthBufferImageView;
-			att.format = DataFormat::D16_Unorm;
-			att.loadOp = LoadOperator::Clear;
-			att.storeOp = StoreOperator::DontCare;
-			c.float32 = {0, 0, 0, 0};
-			att.clearColor = c;
-			att.initialLayout = ImageLayout::Undefined;
-			att.finalLayout = ImageLayout::DepthStencilAttachmentOptimal;
+			// Depth-stencil render target
+			rtAttr.textureView = mDepthBufferTextureView;
+			rtAttr.isSwapChain = false;
+			rtAttr.swapChain = nullptr;
+			rtAttr.loadOp = LoadOperator::Clear;
+			rtAttr.storeOp = StoreOperator::DontCare;
+			rtAttr.stencilLoadOp = LoadOperator::DontCare;
+			rtAttr.stencilStoreOp = StoreOperator::DontCare;
+			rtAttr.defaultColor[0] = 0.0f;
+			rtAttr.defaultColor[1] = 0.0f;
+			rtAttr.defaultColor[2] = 0.0f;
+			rtAttr.defaultColor[3] = 0.0f;
+			rtAttr.defaultDepth = 1.0f;
+			rtAttr.defaultStencil = 0;
+			rtAttr.debugName = "Depth-stencil render target";
+			mDepthStencilRenderTarget = mDevice->CreateRenderTarget(rtAttr);
 
-			att.isDepthStencil = true;
-			att.stencilLoadOp = LoadOperator::DontCare;
-			att.stencilStoreOp = StoreOperator::DontCare;
-			v.depth = 1.0f;
-			v.stencil = 0;
-			att.clearDepthStencil = v;
-			renderPassInit.attachments.push_back(att);
+			// Render pass / sub pass
+			Subpass subpass;
+			subpass.colorOutputs.push_back(0); // Color render target
+			subpass.depthStencilOutput = 1; // Depth-stencil render target
+			subpass.debugName = "Subpass";
 
-			// Swapchain attachment
-			render::RenderPassInitializer::SwapchainAttachment swapAtt;
-			swapAtt.swapchain = mSwapchain;
-			swapAtt.loadOp = LoadOperator::Clear;
-			swapAtt.storeOp = StoreOperator::Store;
-			c.float32 = {0.02f, 0.02f, 0.02f, 0};
-			swapAtt.clearColor = c;
-			swapAtt.initialLayout = ImageLayout::Undefined;
-			swapAtt.finalLayout = ImageLayout::PresentSource;
-			renderPassInit.hasSwapchain = true;
-			renderPassInit.swapchainAttachment = swapAtt;
-
-			// Subpass
-			render::Subpass subpass;
-			subpass.mColors.push_back({1, ImageLayout::ColorAttachmentOptimal});
-			subpass.mDepthStencil.index = 0;
-			subpass.mDepthStencil.layout = ImageLayout::DepthStencilAttachmentOptimal;
-			renderPassInit.subpasses.push_back(subpass);
-
-			mRenderPass = mRenderAPI->CreateRenderPass(renderPassInit);
+			RenderPassAttribute rpAttr;
+			rpAttr.renderTargets.push_back(mColorRenderTarget);        // 0
+			rpAttr.renderTargets.push_back(mDepthStencilRenderTarget); // 1
+			rpAttr.subpasses.push_back(subpass);
+			rpAttr.width = mWidth;
+			rpAttr.height = mHeight;
+			rpAttr.debugName = "Render pass";
+			mRenderPass = mDevice->CreateRenderPass(rpAttr);
 		}
 
 		void RendererManager::RewriteCommandBuffer()
@@ -439,10 +480,7 @@ namespace cube
 			// Update global
 			UBOGlobal uboGlobal;
 			uboGlobal.cameraPos = mCameraRenderer->GetPosition();
-
-			mGlobalUBOBuffer->UpdateBufferData(0, &uboGlobal, sizeof(UBOGlobal));
-			render::BufferInfo globalUBOBufInfo = mGlobalUBOBuffer->GetInfo(0);
-			mGlobalDescriptorSet->WriteBufferInDescriptor(0, 1, &globalUBOBufInfo);
+			mGlobalShaderParameters->UpdateParameter(0, &uboGlobal, sizeof(UBOGlobal));
 
 			// Update directional lights
 			UBODirLight uboDirLight;
@@ -453,10 +491,7 @@ namespace cube
 			} else {
 				uboDirLight.isExisted = 0;
 			}
-			mDirLightBuffer->UpdateBufferData(0, &uboDirLight, sizeof(UBODirLight));
-
-			render::BufferInfo bufInfo = mDirLightBuffer->GetInfo(0);
-			mGlobalDescriptorSet->WriteBufferInDescriptor(1, 1, &bufInfo);
+			mGlobalShaderParameters->UpdateParameter(1, &uboDirLight, sizeof(UBODirLight));
 
 			// Update point lights
 			UBOPointLights uboPointLights;
@@ -465,22 +500,19 @@ namespace cube
 				uboPointLights.color[i] = mPointLights[i]->GetColor();
 				uboPointLights.position[i] = mPointLights[i]->GetPosition();
 			}
-			mPointLightsBuffer->UpdateBufferData(0, &uboPointLights, sizeof(UBOPointLights));
-			
-			render::BufferInfo pointLightBufInfo = mPointLightsBuffer->GetInfo(0);
-			mGlobalDescriptorSet->WriteBufferInDescriptor(2, 1, &pointLightBufInfo);
+			mGlobalShaderParameters->UpdateParameter(2, &uboPointLights, sizeof(UBOPointLights));
 
-			// Prepare command buffers
-			for(uint32_t i = 0; i < mCommandBuffers.size(); i++) {
-				mCommandBuffers[i]->Reset();
-				mCommandBuffers[i]->Begin();
+			// Prepare command lists
+			for(Uint64 i = 0; i < mCommandLists.size(); i++) {
+				mCommandLists[i]->Reset();
+				mCommandLists[i]->Begin();
 
-				mCommandBuffers[i]->SetRenderPass(mRenderPass, renderArea);
+				mCommandLists[i]->SetRenderPass(mRenderPass, 0);
 
-				mCommandBuffers[i]->SetViewport(0, 1, &vp);
-				mCommandBuffers[i]->SetScissor(0, 1, &scissor);
+				mCommandLists[i]->SetViewports(1, &vp);
+				mCommandLists[i]->SetScissors(1, &scissor);
 
-				mCommandBuffersCurrentMaterialIndex[i] = -1;
+				mCommandListsCurrentMaterialIndex[i] = -1;
 			}
 
 			// TODO: multiple thread rendering
@@ -488,28 +520,28 @@ namespace cube
 				DrawRenderer3D(0, renderer);
 			}
 
-			for(auto& cmd : mCommandBuffers) {
+			for(auto& cmd : mCommandLists) {
 				cmd->End();
 			}
 
 			// Main command buffer
-			mMainCommandBuffer->Reset();
+			mMainCommandList->Reset();
 
-			mMainCommandBuffer->Begin();
+			mMainCommandList->Begin();
 
-			mMainCommandBuffer->SetRenderPass(mRenderPass, renderArea);
+			mMainCommandList->SetRenderPass(mRenderPass, 0);
 
-			mMainCommandBuffer->ExecuteCommands((uint32_t)mCommandBuffers.size(), mCommandBuffers.data());
+			mMainCommandList->ExecuteCommands((Uint32)mCommandLists.size(), mCommandLists.data());
 
-			mMainCommandBuffer->End();
+			mMainCommandList->End();
 		}
 
-		void RendererManager::DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D_RT>& renderer)
+		void RendererManager::DrawRenderer3D(Uint32 commandListIndex, SPtr<Renderer3D_RT>& renderer)
 		{
 			using namespace render;
 
-			SPtr<CommandBuffer>& cmd = mCommandBuffers[commandBufferIndex];
-			int& currentMatIndex = mCommandBuffersCurrentMaterialIndex[commandBufferIndex];
+			SPtr<CommandList>& cmd = mCommandLists[commandListIndex];
+			int& currentMatIndex = mCommandListsCurrentMaterialIndex[commandListIndex];
 
 			renderer->PrepareDraw(cmd, mCameraRenderer);
 
@@ -519,103 +551,109 @@ namespace cube
 				int matIndex = matIns->GetMaterial()->mIndex;
 
 				if(matIndex != currentMatIndex) {
-					cmd->BindGraphicsPipeline(mMaterialPipelines[matIndex]);
+					cmd->SetGraphicsPipelineState(mMaterialPipelines[matIndex]);
 					currentMatIndex = matIndex;
 				}
 
-				SPtr<DescriptorSet> matInsDesc = matIns->GetDescriptorSet();
+				SPtr<ShaderParameters> matInsShaderPameters = matIns->GetShaderParameters();
 
-				cmd->BindDescriptorSets(PipelineType::Graphics, 0, 1, &mGlobalDescriptorSet);
-				cmd->BindDescriptorSets(PipelineType::Graphics, 1, 1, &matInsDesc);
-				cmd->BindDescriptorSets(render::PipelineType::Graphics, 2, 1, &(renderer->mDescriptorSet));
+				cmd->BindShaderParameters(0, mGlobalShaderParameters);
+				cmd->BindShaderParameters(1, matInsShaderPameters);
+				cmd->BindShaderParameters(2, renderer->mShaderParameters);
 
 				cmd->DrawIndexed(
-					SCast(uint32_t)(subMeshes[i].indexCount),
-					SCast(uint32_t)(subMeshes[i].indexOffset),
-					SCast(uint32_t)(subMeshes[i].vertexOffset),
+					SCast(Uint32)(subMeshes[i].indexCount),
+					SCast(Uint32)(subMeshes[i].indexOffset),
+					SCast(Uint32)(subMeshes[i].vertexOffset),
 					1, 0);
 			}
 		}
 
-		SPtr<render::GraphicsPipeline> RendererManager::CreatePipeline(SPtr<Material_RT> material)
+		SPtr<render::GraphicsPipelineState> RendererManager::CreatePipeline(SPtr<Material_RT> material)
 		{
 			using namespace render;
 
-			render::GraphicsPipelineInitializer initializer;
+			GraphicsPipelineStateAttribute attr;
+			attr.inputLayouts.resize(1);
+			attr.inputLayouts[0].size = sizeof(Vertex);
+			attr.inputLayouts[0].elements.resize(4);
 
-			uint32_t currentVertexOffset = 0;
-			render::GraphicsPipelineInitializer::VertexInputAttribute attr;
-			attr.location = 0; // Position data
-			attr.format = DataFormat::R32G32B32A32_SFloat;
-			attr.offset = 0;
-			initializer.vertexInputAttributes.push_back(attr);
+			// Position
+			attr.inputLayouts[0].elements[0].format = TextureFormat::RGBA_32_Float;
+			attr.inputLayouts[0].elements[0].offset = 0;
+			// Color
+			attr.inputLayouts[0].elements[1].format = TextureFormat::RGBA_32_Float;
+			attr.inputLayouts[0].elements[1].offset = 16;
+			// Normal
+			attr.inputLayouts[0].elements[2].format = TextureFormat::RGBA_32_Float;
+			attr.inputLayouts[0].elements[2].offset = 32;
+			// Texture UV
+			attr.inputLayouts[0].elements[3].format = TextureFormat::RGBA_32_Float;
+			attr.inputLayouts[0].elements[3].offset = 48;
 
-			attr.location = 1; // Color
-			attr.format = DataFormat::R32G32B32A32_SFloat;
-			attr.offset = 16;
-			initializer.vertexInputAttributes.push_back(attr);
+			attr.primitiveTopology = PrimitiveTopology::TriangleList;
 
-			attr.location = 2; // Normal
-			attr.format = DataFormat::R32G32B32_SFloat;
-			attr.offset = 32;
-			initializer.vertexInputAttributes.push_back(attr);
+			attr.rasterizerState.fillMode = FillMode::Fill;
+			attr.rasterizerState.cullMode = CullMode::Back;
+			attr.rasterizerState.frontFace = TriangleFrontFace::Clockwise;
 
-			attr.location = 3; // Texture coordination
-			attr.format = DataFormat::R32G32_SFloat;
-			attr.offset = 48;
-			initializer.vertexInputAttributes.push_back(attr);
+			attr.depthStencilState.enableDepthTest = true;
+			attr.depthStencilState.enableDepthWrite = true;
+			attr.depthStencilState.depthCompareFunc = ComparisonFunction::Less;
 
-			initializer.vertexSize = sizeof(Vertex);
-			initializer.vertexTopology = VertexTopology::Triangle;
+			attr.depthStencilState.enableStencilTest = false;
+			StencilState stencilState;
+			stencilState.depthFailOp = StencilOperator::Keep;
+			stencilState.failOp = StencilOperator::Keep;
+			stencilState.passOp = StencilOperator::Keep;
+			stencilState.compareFunc = ComparisonFunction::Always;
+			stencilState.readMask = 0;
+			stencilState.writeMask = 0;
+			attr.depthStencilState.frontFace = stencilState;
+			attr.depthStencilState.backFace = stencilState;
 
-			initializer.rasterizer = {PolygonMode::Fill, PolygonFrontFace::Clockwise, CullMode::Back};
+			// TODO: 일단 colorRenderTArget만
+			//       왜냐하면 Vulkan에서는 color만 blend를 적용하기 땜누
+			//       근데 그냥 depth에도 하면 안 되나?
+			attr.blendState.renderTargets.resize(1);
+			attr.blendState.renderTargets[0].enableBlend = false;
+			attr.blendState.renderTargets[0].srcBlend = BlendFactor::Zero;
+			attr.blendState.renderTargets[0].dstBlend = BlendFactor::Zero;
+			attr.blendState.renderTargets[0].blendOp = BlendOperator::Add;
+			attr.blendState.renderTargets[0].srcAlphaBlend = BlendFactor::Zero;
+			attr.blendState.renderTargets[0].dstAlphaBlend = BlendFactor::Zero;
+			attr.blendState.renderTargets[0].alphaBlendOp = BlendOperator::Add;
+			attr.blendState.renderTargets[0].writeMask = ColorWriteMaskBits::All_Bit;
 
-			render::GraphicsPipelineInitializer::ColorBlendAttachment colorAttr;
-			colorAttr.blendEnable = false;
-			colorAttr.srcColorBlendFactor = BlendFactor::Zero;
-			colorAttr.dstColorBlendFactor = BlendFactor::Zero;
-			colorAttr.colorBlendOp = BlendOperator::Add;
-			colorAttr.srcAlphaBlendFactor = BlendFactor::Zero;
-			colorAttr.dstAlphaBlendFactor = BlendFactor::Zero;
-			colorAttr.alphaBlendOp = BlendOperator::Add;
+			attr.renderTargetFormats.resize(1);
+			attr.renderTargetFormats[0] = TextureFormat::RGBA_8_sRGB;
 
-			initializer.colorBlendAttachments.push_back(colorAttr);
+			attr.depthStencilFormat = TextureFormat::D16_UNorm;
 
-			initializer.isScissorDynamic = true;
-			initializer.isViewportDynamic = true;
-
-			initializer.depthStencil.depthTestEnable = true;
-			initializer.depthStencil.depthBoundsTestEnable = false;
-			initializer.depthStencil.depthWriteEnable = true;
-			initializer.depthStencil.depthCompareOperator = CompareOperator::Less;
-			initializer.depthStencil.minDepthBounds = 0;
-			initializer.depthStencil.maxDepthBounds = 0;
-
-			initializer.depthStencil.stencilTestEnable = false;
-			StencilOperatorState stencilOpState;
-			stencilOpState.failOperator = StencilOperator::Keep;
-			stencilOpState.passOperator = StencilOperator::Keep;
-			stencilOpState.compareOperator = CompareOperator::Always;
-			stencilOpState.compareMask = 0;
-			stencilOpState.reference = 0;
-			stencilOpState.depthFailOperator = StencilOperator::Keep;
-			stencilOpState.writeMask = 0;
-
-			initializer.depthStencil.front = stencilOpState;
-			initializer.depthStencil.back = stencilOpState;
-
-			auto shaders = material->GetShaders();
+			auto& shaders = material->GetShaders();
 			for(auto& shader : shaders) {
-				initializer.shaders.push_back(shader->GetRenderShader());
+				switch(shader->GetType()) {
+					case ShaderType::Vertex:   attr.vertexShader = shader->GetRenderShader(); break;
+					case ShaderType::Pixel:    attr.pixelShader = shader->GetRenderShader(); break;
+					case ShaderType::Geometry: attr.geometryShader = shader->GetRenderShader(); break;
+					case ShaderType::Hull:     attr.hullShader = shader->GetRenderShader(); break;
+					case ShaderType::Domain:   attr.domainShader = shader->GetRenderShader(); break;
+					// case ShaderType::Compute:  attr.computeSh = shader->GetRenderShader(); break;
+
+					default: ASSERTION_FAILED("Unknown Shader type ({0}).", (int)(shader->GetType()));
+						break;
+				}
 			}
 
-			initializer.descSetLayouts.push_back(mGlobalDescriptorSetLayout);
-			initializer.descSetLayouts.push_back(material->GetDescriptorSetLayout());
-			initializer.descSetLayouts.push_back(mPerObjectDescriptorSetLayout);
+			attr.renderPass = mRenderPass;
 
-			initializer.renderPass = mRenderPass;
+			attr.shaderParameterLayouts.push_back(mGlobalShaderParametersLayout);
+			attr.shaderParameterLayouts.push_back(material->GetShaderParametersLayout());
+			attr.shaderParameterLayouts.push_back(mPerObjectShaderParametersLayout);
 
-			return mRenderAPI->CreateGraphicsPipeline(initializer);
+			attr.debugName = "Pipeline";
+
+			return mDevice->CreateGraphicsPipelineState(attr);
 		}
 	} // namespace core
 } // namespace cube

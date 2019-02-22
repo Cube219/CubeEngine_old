@@ -3,9 +3,8 @@
 #include "../../EngineCoreHeader.h"
 
 #include "../RenderObject.h"
-#include "BaseRenderAPI/Wrapper/Buffer.h"
-#include "BaseRenderAPI/Wrapper/Descriptor.h"
 #include "../../BasicHandler.h"
+#include "RenderAPI/Interface/ShaderParameters.h"
 
 namespace cube
 {
@@ -67,7 +66,7 @@ namespace cube
 
 			SPtr<Material_RT> GetMaterial() const { return mMaterial; }
 
-			SPtr<render::DescriptorSet> GetDescriptorSet() const { return mDescriptorSet; }
+			SPtr<render::ShaderParameters> GetShaderParameters() const { return mShaderParameters; }
 
 		private:
 			friend class MaterialInstance;
@@ -75,15 +74,9 @@ namespace cube
 
 			MaterialInstance_RT(SPtr<Material_RT>& mat);
 
-			void WriteParameterInBuffer(uint64_t index);
-			void WriteTextureParameterInBuffer(uint64_t index);
-
 			SPtr<Material_RT> mMaterial;
 
-			Vector<MaterialParameter> mParameters;
-			SPtr<render::Buffer> mParametersBuffer;
-
-			SPtr<render::DescriptorSet> mDescriptorSet;
+			SPtr<render::ShaderParameters> mShaderParameters;
 		};
 	} // namespace core
 } // namespace cube

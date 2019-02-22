@@ -6,16 +6,17 @@
 
 #include "DLib.h"
 
-#include "BaseRenderAPI/RenderAPI.h"
-#include "BaseRenderAPI/Wrapper/Shader.h"
-#include "BaseRenderAPI/Wrapper/GraphicsPipeline.h"
-#include "BaseRenderAPI/Wrapper/Image.h"
-#include "BaseRenderAPI/Wrapper/Swapchain.h"
-#include "BaseRenderAPI/Wrapper/CommandBuffer.h"
-#include "BaseRenderAPI/Wrapper/Queue.h"
-#include "BaseRenderAPI/Wrapper/Semaphore.h"
-#include "BaseRenderAPI/Wrapper/Fence.h"
-#include "BaseRenderAPI/Wrapper/RenderPass.h"
+#include "RenderAPI/RenderAPI.h"
+#include "RenderAPI/Interface/Device.h"
+#include "RenderAPI/Interface/Texture.h"
+#include "RenderAPI/Interface/SwapChain.h"
+#include "RenderAPI/Interface/RenderTarget.h"
+#include "RenderAPI/Interface/RenderPass.h"
+#include "RenderAPI/Interface/CommandList.h"
+#include "RenderAPI/Interface/ShaderParametersLayout.h"
+#include "RenderAPI/Interface/ShaderParameters.h"
+#include "RenderAPI/Interface/Fence.h"
+#include "RenderAPI/Interface/GraphicsPipelineState.h"
 
 #include "../Thread/MutexLock.h"
 
@@ -62,14 +63,16 @@ namespace cube
 			SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: 차후 저렇게 바꾸기
 
 			SPtr<render::RenderAPI> GetRenderAPI() const { return mRenderAPI; }
+			SPtr<render::Device> GetDevice() const { return mDevice; }
 
+			void StartFrame();
 			void DrawAll();
 
 			void Resize(uint32_t width, uint32_t height);
 
 			void SetVsync(bool vsync);
 
-			SPtr<render::DescriptorSetLayout> _GetPerObjectDescriptorSetLayout(){ return mPerObjectDescriptorSetLayout; }
+			SPtr<render::ShaderParametersLayout> _GetPerObjectShaderParametersLayout(){ return mPerObjectShaderParametersLayout; }
 
 		private:
 			friend class EngineCore;
@@ -78,12 +81,13 @@ namespace cube
 			void CreateRenderpass();
 
 			void RewriteCommandBuffer();
-			void DrawRenderer3D(uint32_t commandBufferIndex, SPtr<Renderer3D_RT>& renderer);
+			void DrawRenderer3D(Uint32 commandListIndex, SPtr<Renderer3D_RT>& renderer);
 
-			SPtr<render::GraphicsPipeline> CreatePipeline(SPtr<Material_RT> material);
+			SPtr<render::GraphicsPipelineState> CreatePipeline(SPtr<Material_RT> material);
 
 			SPtr<platform::DLib> mRenderDLib;
 			SPtr<render::RenderAPI> mRenderAPI;
+			SPtr<render::Device> mDevice;
 
 			Mutex mRenderersMutex;
 			Vector<SPtr<Renderer3D_RT>> mRenderers;
@@ -92,43 +96,37 @@ namespace cube
 
 			Mutex mMaterialsMutex;
 			Vector<SPtr<Material_RT>> mMaterials;
-			Vector<SPtr<render::GraphicsPipeline>> mMaterialPipelines;
+			Vector <SPtr<render::GraphicsPipelineState>> mMaterialPipelines;
 
 			SPtr<DirectionalLight_RT> mDirLight;
-			SPtr<render::Buffer> mDirLightBuffer;
 
 			Mutex mPointLightsMutex;
 			Vector<SPtr<PointLight_RT>> mPointLights;
-			SPtr<render::Buffer> mPointLightsBuffer;
 
-			SPtr<render::DescriptorSetLayout> mGlobalDescriptorSetLayout;
-			SPtr<render::DescriptorSet> mGlobalDescriptorSet;
-			SPtr<render::Buffer> mGlobalUBOBuffer;
-			SPtr<render::DescriptorSetLayout> mPerObjectDescriptorSetLayout;
+			SPtr<render::ShaderParametersLayout> mGlobalShaderParametersLayout;
+			SPtr<render::ShaderParameters> mGlobalShaderParameters;
+			SPtr<render::ShaderParametersLayout> mPerObjectShaderParametersLayout;
 
-			SPtr<render::Image> mDepthBufferImage;
-			SPtr<render::ImageView> mDepthBufferImageView;
+			SPtr<render::Texture> mDepthBufferTexture;
+			SPtr<render::TextureView> mDepthBufferTextureView;
 
-			SPtr<render::Swapchain> mSwapchain;
+			SPtr<render::SwapChain> mSwapChain;
 
+			SPtr<render::RenderTarget> mColorRenderTarget;
+			SPtr<render::RenderTarget> mDepthStencilRenderTarget;
 			SPtr<render::RenderPass> mRenderPass;
 
-			Vector<SPtr<render::CommandBuffer>> mCommandBuffers;
-			Vector<int> mCommandBuffersCurrentMaterialIndex;
-			SPtr<render::CommandBuffer> mMainCommandBuffer;
-			SPtr<render::Fence> mMainCommandBufferSubmitFence;
-
-			SPtr<render::Queue> mGraphicsQueue;
-
-			SPtr<render::Semaphore> mGetImageSemaphore;
+			Vector<SPtr<render::CommandList>> mCommandLists;
+			Vector<int> mCommandListsCurrentMaterialIndex;
+			SPtr<render::CommandList> mMainCommandList;
 
 			bool mIsPrepared;
 
 			bool mVsync;
-			uint32_t mWidth;
-			uint32_t mHeight;
+			Uint32 mWidth;
+			Uint32 mHeight;
 
-			uint32_t mNumThreads;
+			Uint32 mNumThreads;
 		};
 	} // namespace core
 } // namespace cube

@@ -2,9 +2,6 @@
 
 #include "../EngineCore.h"
 #include "../Resource/ResourceManager.h"
-#include "BaseRenderAPI/Wrapper/Fence.h"
-#include "BaseRenderAPI/Wrapper/GraphicsPipeline.h"
-#include "BaseRenderAPI/Wrapper/Queue.h"
 
 namespace cube
 {
@@ -15,59 +12,46 @@ namespace cube
 			return ECore().GetResourceManager().LoadResource<Texture>(path);
 		}
 
-		void Texture::WriteData(SPtr<render::RenderAPI>& renderAPI, void* data, uint64_t size, uint32_t width, uint32_t height)
+		void Texture::WriteData(SPtr<render::Device>& device, void* data, Uint64 size, Uint32 width, Uint32 height)
 		{
-			// Add image data in buffer
-			render::BufferInitializer bufInit;
-			bufInit.type = render::BufferTypeBits::TransferSource;
-
-			render::BufferInitializer::BufferData bufData;
-			bufData.data = nullptr;
-			bufData.size = size;
-			bufInit.bufferDatas.push_back(bufData);
-
-			mStagingBuffer = renderAPI->CreateBuffer(bufInit);
-
-			mStagingBuffer->Map();
-			mStagingBuffer->UpdateBufferData(0, data, size);
-			mStagingBuffer->Unmap();
-
-			render::ImageInitializer init;
-			init.type = render::ImageType::Image2D;
-			init.format = render::DataFormat::R8G8B8A8_Unorm;
-			init.width = width;
-			init.height = height;
-			init.depth = 1;
-			init.mipLevels = 1;
-			init.usage = render::ImageUsageBits::TransferDestinationBit | render::ImageUsageBits::SampledBit;
-			mImage = renderAPI->CreateImage(init);
-
-			// Copy buffer to image
-			auto cmd = renderAPI->CreateCommandBuffer();
-			auto cmdSubmitFence = renderAPI->CreateFence();
-			cmd->Begin();
-
 			using namespace render;
-			cmd->PipelineImageMemoryBarrier(render::PipelineStageBits::TopBit, PipelineStageBits::TransferBit, AccessBits::None, AccessBits::TransferWriteBit,
-				ImageLayout::Undefined, ImageLayout::TransferDestinationOptimal, mImage); // Undefined -> transfer
-			cmd->CopyBufferToImage(mStagingBuffer, 0, mImage, 0, 0, 0, width, height, 1, ImageAspectBits::Color);
-			cmd->PipelineImageMemoryBarrier(PipelineStageBits::TransferBit, PipelineStageBits::FragmentShaderBit, AccessBits::TransferWriteBit, AccessBits::ShaderReadBit,
-				ImageLayout::TransferDestinationOptimal, ImageLayout::ShaderReadOnlyOptimal, mImage); // Transfer -> fragment shader reading
 
-			cmd->End();
+			TextureAttribute attr;
+			attr.usage = ResourceUsage::Default;
+			attr.type = TextureType::Texture2D;
+			attr.format = TextureFormat::RGBA_8_UNorm;
+			attr.bindTypeFlags = TextureBindTypeFlagBits::ShaderResource_Bit;
+			attr.textureData.pData = data;
+			attr.textureData.size = size;
+			attr.width = width;
+			attr.height = height;
+			attr.depth = 1;
+			attr.arraySize = 1;
+			attr.mipLevels = 1;
+			attr.isDedicated = false;
+			attr.debugName = "Texture";
 
-			auto graphicsQueue = renderAPI->GetQueue(QueueTypeBits::GraphicsBit, 0);
-			cmd->Submit(graphicsQueue, 0, nullptr, 0, nullptr, cmdSubmitFence);
-			cmdSubmitFence->Wait(100000000);
+			mTexture = device->CreateTexture(attr);
+			mTextureView = mTexture->CreateView(mTexture->GetDefaultViewAttr());
 
-			mImageView = mImage->GetImageView(DataFormat::R8G8B8A8_Unorm, ImageAspectBits::Color, ImageViewType::Image2D);
+			SamplerAttribute samplerAttr;
+			samplerAttr.minFilter = FilterType::Linear;
+			samplerAttr.magFilter = FilterType::Linear;
+			samplerAttr.mipMapFilter = FilterType::Linear;
+			samplerAttr.addressU = AddressMode::Wrap;
+			samplerAttr.addressV = AddressMode::Wrap;
+			samplerAttr.addressW = AddressMode::Wrap;
+			samplerAttr.maxAnisotropy = 16;
+			samplerAttr.mipLodBias = 0;
+			samplerAttr.minLod = 0;
+			samplerAttr.maxLod = 0;
+			samplerAttr.borderColor[0] = 0.0f;
+			samplerAttr.borderColor[1] = 0.0f;
+			samplerAttr.borderColor[2] = 0.0f;
+			samplerAttr.borderColor[3] = 1.0f;
+			samplerAttr.debugName = "Sampler";
 
-			mSampler = renderAPI->CreateSampler();
-		}
-
-		void Texture::SendTextureData(SPtr<render::CommandBuffer>& commandBuffer)
-		{
-			commandBuffer->CopyBufferToImage(mStagingBuffer, 0, mImage, 0, 0, 0, mWidth, mHeight, 1, render::ImageAspectBits::Color);
+			mSampler = device->CreateSampler(samplerAttr);
 		}
 	} // namespace core
 } // namespace cube

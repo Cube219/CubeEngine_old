@@ -1,7 +1,7 @@
 #include "Platform.h"
-#include "BaseRenderAPI_New/RenderAPI.h"
-#include "BaseRenderAPI_New/Interface/Device.h"
-#include "BaseRenderAPI_New/Interface/SwapChain.h"
+#include "RenderAPI/RenderAPI.h"
+#include "RenderAPI/Interface/Device.h"
+#include "RenderAPI/Interface/SwapChain.h"
 
 using namespace cube;
 

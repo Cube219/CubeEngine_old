@@ -3,11 +3,10 @@
 #include "../EngineCoreHeader.h"
 
 #include "../Resource/BaseResource.h"
-#include "BaseRenderAPI/Wrapper/Buffer.h"
-#include "BaseRenderAPI/Wrapper/Image.h"
-#include "BaseRenderAPI/Wrapper/Sampler.h"
-#include "BaseRenderAPI/Wrapper/CommandBuffer.h"
-#include "BaseRenderAPI/RenderAPI.h"
+#include "RenderAPI/Interface/Texture.h"
+#include "RenderAPI/Interface/TextureView.h"
+#include "RenderAPI/Interface/Sampler.h"
+#include "RenderAPI/Interface/Device.h"
 
 namespace cube
 {
@@ -22,24 +21,21 @@ namespace cube
 			Texture(){ }
 			virtual ~Texture() { }
 
-			void WriteData(SPtr<render::RenderAPI>& renderAPI, void* data, uint64_t size, uint32_t width, uint32_t height);
+			void WriteData(SPtr<render::Device>& device, void* data, Uint64 size, Uint32 width, Uint32 height);
 
-			void SendTextureData(SPtr<render::CommandBuffer>& commandBuffer);
-
-			SPtr<render::ImageView> GetImageView() const { return mImageView; }
+			SPtr<render::TextureView> GetTextureView() const { return mTextureView; }
 			SPtr<render::Sampler> GetSampler() const { return mSampler; }
 
 		private:
-			uint64_t mImageSize;
+			Uint64 mImageSize;
 
-			uint32_t mWidth;
-			uint32_t mHeight;
+			Uint32 mWidth;
+			Uint32 mHeight;
 
-			uint32_t mMipLevel;
+			Uint32 mMipLevel;
 
-			SPtr<render::Buffer> mStagingBuffer;
-			SPtr<render::Image> mImage;
-			SPtr<render::ImageView> mImageView;
+			SPtr<render::Texture> mTexture;
+			SPtr<render::TextureView> mTextureView;
 			SPtr<render::Sampler> mSampler;
 
 			SPtr<RendererManager> mManager_ref;

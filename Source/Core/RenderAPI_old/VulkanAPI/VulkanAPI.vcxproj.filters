@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="VulkanAPI.h" />
+    <ClInclude Include="VulkanAPIHeader.h" />
+    <ClInclude Include="VulkanUtility.h" />
+    <ClInclude Include="Wrapper\VulkanBuffer.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanCommandBuffer.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanDescriptor.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanDevice.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanFence.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanFramebuffer.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanGraphicsPipeline.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanImage.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanInstance.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanPhysicalDevice.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanQueue.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanRenderPass.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanSemaphore.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanShader.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanSwapchain.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanWindowSurface.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\VulkanSampler.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="VulkanAPI.cpp" />
+    <ClCompile Include="VulkanUtility.cpp" />
+    <ClCompile Include="Wrapper\VulkanBuffer.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanCommandBuffer.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanDescriptor.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanDevice.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanFence.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanFramebuffer.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanGraphicsPipeline.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanImage.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanInstance.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanPhysicalDevice.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanQueue.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanRenderPass.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanSemaphore.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanShader.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanSwapchain.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanWindowSurface.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\VulkanSampler.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Wrapper">
+      <UniqueIdentifier>{dbb1b629-2613-4abb-b8a3-923b2367fb47}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,7 +1,7 @@
 #include "ShaderImporter.h"
 
 #include "EngineCore/Renderer/Material/Shader.h"
-#include "BaseRenderAPI/Wrapper/Shader.h"
+#include "RenderAPI/Interface/Shader.h"
 
 namespace cube
 {
@@ -16,14 +16,14 @@ namespace cube
 
 		ShaderCompileDesc desc = GetCompileDesc(info);
 
-		render::ShaderInitializer shaderInit;
+		render::ShaderAttribute shaderInit;
 		shaderInit.language = desc.language;
 		shaderInit.type = desc.type;
 		shaderInit.entryPoint = desc.entryPoint.c_str();
-		shaderInit.code = (const char*)(rawData);
+		shaderInit.code = rawData;
 
 		core::Shader* shader = new core::Shader();
-		shader->_LoadShader(mRenderAPI, shaderInit);
+		shader->_LoadShader(mDevice, shaderInit);
 
 		free(rawData);
 
@@ -45,17 +45,17 @@ namespace cube
 		} else if(language == "hsls") {
 			desc.language = ShaderLanguage::HLSL;
 		} else if(language == "spir-v") {
-			desc.language = ShaderLanguage::SPIR_V;
+			desc.language = ShaderLanguage::SPIRV;
 		}
 
 		if(type == "vertex") {
-			desc.type = ShaderTypeBits::Vertex;
+			desc.type = ShaderType::Vertex;
 		} else if(type == "fragment") {
-			desc.type = ShaderTypeBits::Fragment;
+			desc.type = ShaderType::Pixel;
 		} else if(type == "pixel") {
-			desc.type = ShaderTypeBits::Pixel;
+			desc.type = ShaderType::Pixel;
 		} else if(type == "compute") {
-			desc.type = ShaderTypeBits::Compute;
+			desc.type = ShaderType::Compute;
 		}
 
 		desc.entryPoint = entryPoint;

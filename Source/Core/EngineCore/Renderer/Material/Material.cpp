@@ -54,35 +54,37 @@ namespace cube
 
 		Material_RT::Material_RT(const MaterialInitializer& init)
 		{
-			mRenderAPI_ref = ECore().GetRendererManager().GetRenderAPI();
+			mDevice = ECore().GetRendererManager().GetDevice();
 
 			using namespace render;
 
 			mParamInfos = init.parameters;
 			mShaders = init.shaders;
 
-			render::DescriptorSetInitializer descSetInit;
-			render::DescriptorSetInitializer::Descriptor desc;
-			desc.shaderType = ShaderTypeBits::Vertex | ShaderTypeBits::Fragment; // TODO: 사용자 설정으로
-			desc.count = 1;
-			for(uint32_t i = 0; i < mParamInfos.size(); i++) {
-				desc.bindingIndex = i;
-
+			ShaderParametersLayoutAttribute attr;
+			attr.paramInfos.resize(mParamInfos.size());
+			for(Uint64 i = 0; i < mParamInfos.size(); i++) {
 				switch(mParamInfos[i].type) {
 					case MaterialParameterType::Data:
-						desc.type = DescriptorType::UniformBuffer;
+						attr.paramInfos[i].type = ShaderParameterType::ConstantBuffer;
 						break;
 
 					case MaterialParameterType::Texture:
-						desc.type = DescriptorType::CombinedImageSampler;
+						attr.paramInfos[i].type = ShaderParameterType::SampledImage;
 						break;
 
 					default:
+						ASSERTION_FAILED("Unknown MaterialParameterType ({0).", (int)mParamInfos[i].type);
 						break;
 				}
-				descSetInit.descriptors.push_back(desc);
+				attr.paramInfos[i].size = mParamInfos[i].dataSize;
+				attr.paramInfos[i].count = 1;
+				attr.paramInfos[i].bindIndex = i;
+				attr.paramInfos[i].isChangedPerFrame = false;
+				attr.paramInfos[i].debugName = "Material shader parameter layout param info";
 			}
-			mDescriptorSetLayout = mRenderAPI_ref->CreateDescriptorSetLayout(descSetInit);
+			attr.debugName = "Material shader parameter layout";
+			mShaderParamsLayout = mDevice->CreateShaderParametersLayout(attr);
 		}
 	} // namespace core
 } // namespace cube

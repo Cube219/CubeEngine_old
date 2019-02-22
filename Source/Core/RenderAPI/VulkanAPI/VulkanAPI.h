@@ -2,59 +2,29 @@
 
 #include "VulkanAPIHeader.h"
 
-#include "BaseRenderAPI/RenderAPI.h"
+#include "RenderAPI/RenderAPI.h"
 
 namespace cube
 {
 	namespace render
 	{
-		extern "C" VULKAN_API_EXPORT RenderAPI* CreateAPI();
+		extern "C" VULKAN_API_EXPORT RenderAPI* GetAPI();
 
-		class VULKAN_API_EXPORT VulkanAPI : public RenderAPI
+		class VULKAN_API_EXPORT VulkanAPI final : public RenderAPI
 		{
 		public:
-			VulkanAPI();
+			VulkanAPI() {}
 			virtual ~VulkanAPI();
 
-			void Init() final override;
+			virtual void Init(const RenderAPIAttribute& attr) override final;
 
-			SPtr<Buffer> CreateBuffer(BufferInitializer& initializer) final override;
-
-			SPtr<DescriptorSetLayout> CreateDescriptorSetLayout(DescriptorSetInitializer& initializer) final override;
-
-			SPtr<DescriptorSet> CreateDescriptorSet(SPtr<DescriptorSetLayout>& layout) final override;
-
-			SPtr<Queue> GetQueue(QueueTypeBits types, uint32_t index) final override;
-
-			SPtr<Swapchain> CreateSwapchain() final override;
-
-			SPtr<RenderPass> CreateRenderPass(RenderPassInitializer& initializer) final override;
-
-			SPtr<Shader> CreateShader(ShaderInitializer& initializer) final override;
-
-			SPtr<GraphicsPipeline> CreateGraphicsPipeline(GraphicsPipelineInitializer& initializer) final override;
-
-			SPtr<CommandBuffer> CreateCommandBuffer(bool isPrimary = true) final override;
-
-			SPtr<Image> CreateImage(ImageInitializer& initializer) final override;
-
-			SPtr<Sampler> CreateSampler() final override;
-
-			SPtr<Fence> CreateFence() final override;
-#undef CreateSemaphore // Disable the macro defined in synchapi.h (WinAPI)
-			SPtr<Semaphore> CreateSemaphore() final override;
+			virtual SPtr<Device> GetDevice(const DeviceAttribute& attr) override final;
 
 		private:
-			SPtr<VulkanInstance> mInstance;
-			Vector<SPtr<VulkanPhysicalDevice>> mPhysicalDevices;
-			SPtr<VulkanPhysicalDevice> mMainPhysicalDevice;
-			SPtr<VulkanDevice> mDevice;
+			void CreateInstance(const RenderAPIAttribute& attr);
 
-			SPtr<VulkanCommandPool> mCommandPool;
-
-			SPtr<VulkanWindowSurface> mWindowSurface;
-
-			SPtr<VulkanDescriptorPool> mDescriptorPool;
+			VkInstance mInstance;
+			Vector<VulkanPhysicalDevice> mPhysicalDevices;
 		};
 	} // namespace render
 } // namespace cube

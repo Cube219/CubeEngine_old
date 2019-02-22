@@ -8,9 +8,9 @@ layout (set = 0, binding = 0) uniform _global {
 } global;
 
 layout (set = 0, binding = 1) uniform _dirLight {
+	int isExisted;
 	vec4 color;
 	vec3 direction;
-	int isExisted;
 } dirLight;
 
 layout (set = 0, binding = 2) uniform _pointLights {

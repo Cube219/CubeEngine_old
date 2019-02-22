@@ -1,158 +1,120 @@
 #include "VulkanAPI.h"
 
-#include "Wrapper/VulkanInstance.h"
-#include "Wrapper/VulkanPhysicalDevice.h"
-#include "Wrapper/VulkanDevice.h"
-#include "Wrapper/VulkanCommandBuffer.h"
-#include "Wrapper/VulkanQueue.h"
-#include "Wrapper/VulkanWindowSurface.h"
-#include "Wrapper/VulkanSwapchain.h"
-#include "Wrapper/VulkanImage.h"
-#include "Wrapper/VulkanSampler.h"
-#include "Wrapper/VulkanDescriptor.h"
-#include "Wrapper/VulkanRenderPass.h"
-#include "Wrapper/VulkanFramebuffer.h"
-#include "Wrapper/VulkanShader.h"
-#include "Wrapper/VulkanGraphicsPipeline.h"
-#include "Wrapper/VulkanBuffer.h"
-#include "Wrapper/VulkanRenderPass.h"
-#include "Wrapper/VulkanSwapchain.h"
-#include "Wrapper/VulkanFence.h"
-#include "Wrapper/VulkanSemaphore.h"
+#include "RenderAPI/Utilities/DebugStringHeap.h"
+#include "VulkanUtility.h"
+#include "Interface/DeviceVk.h"
+#include "VulkanPhysicalDevice.h"
+#include "VulkanLogicalDevice.h"
+#include "VulkanDebug.h"
+#include "VulkanTypeConversion.h"
+#include "Tools/GLSLTool.h"
 
 namespace cube
 {
 	namespace render
 	{
-		RenderAPI* CreateAPI()
+		VULKAN_API_EXPORT RenderAPI* GetAPI()
 		{
 			return new VulkanAPI();
 		}
 
-		VulkanAPI::VulkanAPI()
-		{
-		}
-
 		VulkanAPI::~VulkanAPI()
 		{
+			mPhysicalDevices.clear();
+
+			VulkanDebug::Free();
+			vkDestroyInstance(mInstance, nullptr);
+
+			DebugStringHeap::Disable();
+
+			GLSLTool::Finalize();
 		}
 
-		void VulkanAPI::Init()
+		void VulkanAPI::Init(const RenderAPIAttribute& attr)
 		{
-			// Init instance
-			VulkanInstanceInitializer instanceInit;
-			instanceInit.appName = "CubeEngine Application";
-			instanceInit.appVersion = 1;
-			instanceInit.engineName = "CubeEngine";
-			instanceInit.engineVersion = 1;
-			instanceInit.apiVersion = VK_API_VERSION_1_0;
-#ifdef _DEBUG
-			instanceInit.layerNames.push_back("VK_LAYER_LUNARG_standard_validation");
-#endif // _DEBUG
-			instanceInit.extensionNames.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-#ifdef _WIN32
-			instanceInit.extensionNames.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-#endif // _WIN32
-			mInstance = std::make_shared<VulkanInstance>(instanceInit);
+			TypeConversionInit();
 
-			// Enumerate physical devices
-			mPhysicalDevices = mInstance->EnumeratePhysicalDevices();
-			mMainPhysicalDevice = mPhysicalDevices[0];
+			GLSLTool::Init();
 
-			// Create a device
-			VulkanDeviceInitializer deviceInitializer;
-			deviceInitializer.AddExtension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-#ifdef _DEBUG
-			deviceInitializer.AddExtension(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
-#endif // _DEBUG
+			CreateInstance(attr);
 
-			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::TessellationShader, true, true);
-			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::GeometryShader, true, true);
-			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::SamplerAnisotropy, true, true);
-			deviceInitializer.AddFeatures(VulkanPhysicalDeviceFeature::MultiDrawIndirect, true, false);
-
-			mDevice = std::make_shared<VulkanDevice>(mMainPhysicalDevice, deviceInitializer);
-
-
-			// Create a command pool
-			mCommandPool = std::make_shared<VulkanCommandPool>(mDevice, mDevice->GetGraphicsQueueFamily());
-
-			// Create a surface
-			mWindowSurface = std::make_shared<VulkanWindowSurface>(mInstance, mMainPhysicalDevice, mDevice);
-
-			// Create a descriptor pool
-			mDescriptorPool = std::make_shared<VulkanDescriptorPool>(mDevice);
+			// Get PhysicalDevices(GPU)
+			VkResult res;
+			uint32_t physicalDeviceNum;
+			res = vkEnumeratePhysicalDevices(mInstance, &physicalDeviceNum, nullptr);
+			CHECK_VK(res, "Failed to get physical device number.");
+			Vector<VkPhysicalDevice> pd;
+			pd.resize(physicalDeviceNum);
+			res = vkEnumeratePhysicalDevices(mInstance, &physicalDeviceNum, pd.data());
+			CHECK_VK(res, "Failed to enumerate physical devices.");
+			for (size_t i = 0; i < pd.size(); i++) {
+				mPhysicalDevices.emplace_back(pd[i]);
+			}
 		}
 
-		SPtr<Buffer> VulkanAPI::CreateBuffer(BufferInitializer& initializer)
+		SPtr<Device> VulkanAPI::GetDevice(const DeviceAttribute& attr)
 		{
-			return std::make_shared<VulkanBuffer>(mDevice, initializer);
+			VkPhysicalDeviceFeatures features = {};
+			features.tessellationShader = true;
+			features.geometryShader = true;
+			features.samplerAnisotropy = true;
+			features.multiDrawIndirect = true;
+
+			auto logicalDevice = std::make_shared<VulkanLogicalDevice>(mPhysicalDevices[attr.GPUIndex], features, attr);
+
+			auto deviceVk = std::make_shared<DeviceVk>(mInstance, std::move(logicalDevice), attr.debugName);
+
+			// Set physical device debug name
+			for(Uint32 i = 0; i < SCast(Uint32)(mPhysicalDevices.size()); i++) {
+				U8String debugName = fmt::format("Physical Device {0}", i);
+				VulkanDebug::SetObjectName(deviceVk->GetLogicalDevice()->GetHandle(), mPhysicalDevices[i].GetHandle(), debugName.c_str());
+			}
+
+			return deviceVk;
 		}
 
-		SPtr<DescriptorSetLayout> VulkanAPI::CreateDescriptorSetLayout(DescriptorSetInitializer& initializer)
+		void VulkanAPI::CreateInstance(const RenderAPIAttribute& attr)
 		{
-			return std::make_shared<VulkanDescriptorSetLayout>(mDevice, initializer);
-		}
+			VkResult res;
 
-		SPtr<DescriptorSet> VulkanAPI::CreateDescriptorSet(SPtr<DescriptorSetLayout>& layout)
-		{
-			return std::make_shared<VulkanDescriptorSet>(mDevice, mDescriptorPool, layout);
-		}
+			Vector<const char*> layers;
+			Vector<const char*> extensions;
+			extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+			extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+#endif // VK_USE_PLATFORM_WIN32_KHR
 
-		SPtr<Queue> VulkanAPI::GetQueue(QueueTypeBits types, uint32_t index)
-		{
-			return mDevice->GetQueue(GetVkQueueFlags(types), index);
-		}
+			if(attr.enableDebugLayer == true) {
+				layers.push_back("VK_LAYER_LUNARG_standard_validation");
+				extensions.push_back("VK_EXT_debug_utils");
+			}
 
-		SPtr<Swapchain> VulkanAPI::CreateSwapchain()
-		{
-			return std::make_shared<VulkanSwapchain>(mDevice, mWindowSurface, 2, 10, 10, false);
-		}
+			VkApplicationInfo appInfo = {};
+			appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+			appInfo.pNext = nullptr;
+			appInfo.pApplicationName = nullptr;
+			appInfo.applicationVersion = 0;
+			appInfo.pEngineName = "Cube Engine";
+			appInfo.engineVersion = 0;
+			appInfo.apiVersion = VK_API_VERSION_1_0;
 
-		SPtr<RenderPass> VulkanAPI::CreateRenderPass(RenderPassInitializer& initializer)
-		{
-			return std::make_shared<VulkanRenderPass>(mDevice, initializer);
-		}
+			VkInstanceCreateInfo instanceCreateInfo = {};
+			instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+			instanceCreateInfo.pNext = nullptr;
+			instanceCreateInfo.flags = 0;
+			instanceCreateInfo.pApplicationInfo = &appInfo;
+			instanceCreateInfo.enabledExtensionCount = SCast(uint32_t)(extensions.size());
+			instanceCreateInfo.ppEnabledExtensionNames = extensions.data();
+			instanceCreateInfo.enabledLayerCount = SCast(uint32_t)(layers.size());
+			instanceCreateInfo.ppEnabledLayerNames = layers.data();
 
-		SPtr<Shader> VulkanAPI::CreateShader(ShaderInitializer& initializer)
-		{
-			return std::make_shared<VulkanShader>(mDevice, initializer);
-		}
+			res = vkCreateInstance(&instanceCreateInfo, nullptr, &mInstance);
+			CHECK_VK(res, "Failed to create VulkanInstance.");
 
-		SPtr<GraphicsPipeline> VulkanAPI::CreateGraphicsPipeline(GraphicsPipelineInitializer& initializer)
-		{
-			return std::make_shared<VulkanGraphicsPipeline>(mDevice, initializer);
-		}
-
-		SPtr<CommandBuffer> VulkanAPI::CreateCommandBuffer(bool isPrimary)
-		{
-			VkCommandBufferLevel level;
-
-			if(isPrimary == true)
-				level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-			else
-				level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
-
-			return mCommandPool->AllocateCommandBuffer(level);
-		}
-
-		SPtr<Image> VulkanAPI::CreateImage(ImageInitializer& initializer)
-		{
-			return std::make_shared<VulkanImage>(mDevice, initializer);
-		}
-		SPtr<Sampler> VulkanAPI::CreateSampler()
-		{
-			return std::make_shared<VulkanSampler>(mDevice);
-		}
-
-		SPtr<Fence> VulkanAPI::CreateFence()
-		{
-			return std::make_shared<VulkanFence>(mDevice);
-		}
-
-		SPtr<Semaphore> VulkanAPI::CreateSemaphore()
-		{
-			return std::make_shared<VulkanSemaphore>(mDevice);
+			if(attr.enableDebugLayer == true) {
+				VulkanDebug::Setup(mInstance);
+				DebugStringHeap::Enable();
+			}
 		}
 	} // namespace render
 } // namespace cube
