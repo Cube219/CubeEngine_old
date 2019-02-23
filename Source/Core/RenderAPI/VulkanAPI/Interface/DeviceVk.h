@@ -55,7 +55,7 @@ namespace cube
 			template <typename VkObjectType>
 			void ReleaseAtNextFrame(VkObjectType&& vkObject)
 			{
-				core::Lock lock(mReleaseQueueMutex);
+				Lock lock(mReleaseQueueMutex);
 
 				mReleaseVkObjectQueue.push_back(VkObjectStorage::Create(std::move(vkObject)));
 			}
@@ -63,7 +63,7 @@ namespace cube
 			template <typename T>
 			void ReleaseAtNextFrame(SPtr<T> ptrObject)
 			{
-				core::Lock lock(mReleaseQueueMutex);
+				Lock lock(mReleaseQueueMutex);
 
 				mReleaseFuncQueue.push_back([ptrObject]() mutable {
 					ptrObject.reset();
@@ -83,7 +83,7 @@ namespace cube
 			VulkanShaderParameterManager mShaderParameterManager;
 			VulkanUploadHeap mUploadHeap;
 
-			core::Mutex mReleaseQueueMutex;
+			Mutex mReleaseQueueMutex;
 			Vector<std::function<void()>> mReleaseFuncQueue;
 			Vector<VkObjectStorage> mReleaseVkObjectQueue;
 		};

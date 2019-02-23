@@ -5,13 +5,10 @@
 
 namespace cube
 {
-	namespace core
-	{
-		using Mutex = std::mutex;
-		using Lock = std::unique_lock<Mutex>;
-		template <typename T>
-		using Atomic = std::atomic<T>;
+	using Mutex = std::mutex;
+	using Lock = std::unique_lock<Mutex>;
+	template <typename T>
+	using Atomic = std::atomic<T>;
 
-		using ThreadSignal = std::condition_variable;
-	} // namespace core
+	using ThreadSignal = std::condition_variable;
 } // namespace cube

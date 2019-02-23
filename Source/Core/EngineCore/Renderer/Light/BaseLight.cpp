@@ -2,42 +2,39 @@
 
 namespace cube
 {
-	namespace core
+	BaseLight::BaseLight()
 	{
-		BaseLight::BaseLight()
-		{
-		}
+	}
 
-		BaseLight::~BaseLight()
-		{
-		}
+	BaseLight::~BaseLight()
+	{
+	}
 
-		SPtr<BaseLight> BaseLight::Create()
-		{
-			SPtr<BaseLight> baseLight(new BaseLight());
-			baseLight->Initialize();
+	SPtr<BaseLight> BaseLight::Create()
+	{
+		SPtr<BaseLight> baseLight(new BaseLight());
+		baseLight->Initialize();
 
-			return baseLight;
-		}
+		return baseLight;
+	}
 
-		SPtr<rt::RenderObject> BaseLight::CreateRenderObject() const
-		{
-			SPtr<rt::BaseLight> baseLight_rt(new rt::BaseLight());
-			baseLight_rt->Initialize();
+	SPtr<rt::RenderObject> BaseLight::CreateRenderObject() const
+	{
+		SPtr<rt::BaseLight> baseLight_rt(new rt::BaseLight());
+		baseLight_rt->Initialize();
 
-			return baseLight_rt;
-		}
+		return baseLight_rt;
+	}
 
-		void BaseLight::SetColor(const Vector4& color)
-		{
-			mColor = color;
-			SyncPrimaryData(mColor, GetRenderObject()->mColor);
-		}
+	void BaseLight::SetColor(const Vector4& color)
+	{
+		mColor = color;
+		SyncPrimaryData(mColor, GetRenderObject()->mColor);
+	}
 
-		void BaseLight::SetPosition(const Vector3& pos)
-		{
-			mPosition = pos;
-			SyncPrimaryData(mPosition, GetRenderObject()->mPosition);
-		}
-	} // namespace core
+	void BaseLight::SetPosition(const Vector3& pos)
+	{
+		mPosition = pos;
+		SyncPrimaryData(mPosition, GetRenderObject()->mPosition);
+	}
 } // namespace cube

@@ -45,7 +45,7 @@ namespace cube
 
 			VulkanSemaphore semaphore;
 			{
-				core::Lock lock(mSemaphoresMutex);
+				Lock lock(mSemaphoresMutex);
 
 				if(mIdleSemaphoreIndices.empty()) {
 					VkSemaphoreCreateInfo info;
@@ -79,7 +79,7 @@ namespace cube
 
 			semaphore.handle = 0;
 			{
-				core::Lock lock(mSemaphoresMutex);
+				Lock lock(mSemaphoresMutex);
 
 				mIdleSemaphoreIndices.push_back(semaphore.poolIndex);
 			}

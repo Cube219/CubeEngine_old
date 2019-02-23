@@ -105,10 +105,10 @@
     <ClInclude Include="Thread\Async.h">
       <Filter>Thread</Filter>
     </ClInclude>
-    <ClInclude Include="Module\ModuleManager.h">
+    <ClInclude Include="Module\BaseModule.h">
       <Filter>Module</Filter>
     </ClInclude>
-    <ClInclude Include="Module\BaseModule.h">
+    <ClInclude Include="Module\ModuleManager.h">
       <Filter>Module</Filter>
     </ClInclude>
   </ItemGroup>
@@ -202,10 +202,10 @@
     <ClCompile Include="Thread\Async.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
-    <ClCompile Include="Module\ModuleManager.cpp">
+    <ClCompile Include="Module\BaseModule.cpp">
       <Filter>Module</Filter>
     </ClCompile>
-    <ClCompile Include="Module\BaseModule.cpp">
+    <ClCompile Include="Module\ModuleManager.cpp">
       <Filter>Module</Filter>
     </ClCompile>
   </ItemGroup>

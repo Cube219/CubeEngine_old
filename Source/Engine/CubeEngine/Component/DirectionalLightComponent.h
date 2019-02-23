@@ -7,7 +7,7 @@
 
 namespace cube
 {
-	class CUBE_ENGINE_EXPORT DirectionalLightComponent : public core::Component
+	class CUBE_ENGINE_EXPORT DirectionalLightComponent : public Component
 	{
 	public:
 		static const String& GetName() { return mName; }
@@ -27,9 +27,9 @@ namespace cube
 		void SetColor(const Vector4& color);
 
 	private:
-		SPtr<core::DirectionalLight> mDirLight;
+		SPtr<DirectionalLight> mDirLight;
 	};
 
-	using DirectionalLightComponentData = core::BasicHandlerData<DirectionalLightComponent>;
-	using HDirectionalLightComponent = core::BasicHandler<DirectionalLightComponent>;
+	using DirectionalLightComponentData = BasicHandlerData<DirectionalLightComponent>;
+	using HDirectionalLightComponent = BasicHandler<DirectionalLightComponent>;
 } // namespace cube

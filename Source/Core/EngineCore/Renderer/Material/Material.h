@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../../EngineCoreHeader.h"
 
@@ -8,81 +8,78 @@
 
 namespace cube
 {
-	namespace core
+	enum class MaterialParameterType
 	{
-		enum class MaterialParameterType
-		{
-			Data,
-			Texture
-		};
+		Data,
+		Texture
+	};
 
-		struct ENGINE_CORE_EXPORT MaterialParameterInfo
-		{
-			String name;
-			MaterialParameterType type;
-			size_t dataSize;
-		};
+	struct ENGINE_CORE_EXPORT MaterialParameterInfo
+	{
+		String name;
+		MaterialParameterType type;
+		size_t dataSize;
+	};
 
-		struct MaterialInitializer
-		{
-			Vector<RPtr<Shader>> shaders;
-			Vector<MaterialParameterInfo> parameters;
-		};
+	struct MaterialInitializer
+	{
+		Vector<RPtr<Shader>> shaders;
+		Vector<MaterialParameterInfo> parameters;
+	};
 
-		class ENGINE_CORE_EXPORT Material : public RenderObject
+	class ENGINE_CORE_EXPORT Material : public RenderObject
+	{
+	public:
+		static HMaterial Create(const MaterialInitializer& init);
+
+	public:
+		virtual ~Material();
+
+		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+		SPtr<rt::Material> GetRenderObject() const { return DPCast(rt::Material)(mRenderObject); }
+
+		HMaterialInstance CreateInstance();
+
+		void Destroy();
+
+	private:
+		friend class RendererManager;
+		friend class MaterialInstance;
+
+		Material(const MaterialInitializer& init);
+
+		MaterialInitializer mMaterialInit;
+
+		HMaterial mMyHandler;
+	};
+
+	namespace rt
+	{
+		class Material : public RenderObject
 		{
 		public:
-			static HMaterial Create(const MaterialInitializer& init);
+			virtual ~Material() {}
 
-		public:
-			virtual ~Material();
+			const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mParamInfos; }
 
-			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
-			SPtr<rt::Material> GetRenderObject() const { return DPCast(rt::Material)(mRenderObject); }
+			const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
 
-			HMaterialInstance CreateInstance();
-
-			void Destroy();
+			SPtr<render::ShaderParametersLayout> GetShaderParametersLayout() const { return mShaderParamsLayout; }
 
 		private:
+			friend class cube::Material;
 			friend class RendererManager;
-			friend class MaterialInstance;
 
 			Material(const MaterialInitializer& init);
 
-			MaterialInitializer mMaterialInit;
+			int mIndex = -1; // Used in RendererManager
 
-			HMaterial mMyHandler;
+			Vector<MaterialParameterInfo> mParamInfos;
+
+			Vector<RPtr<Shader>> mShaders;
+			SPtr<render::ShaderParametersLayout> mShaderParamsLayout;
+
+			SPtr<render::Device> mDevice;
 		};
-
-		namespace rt
-		{
-			class Material : public RenderObject
-			{
-			public:
-				virtual ~Material() {}
-
-				const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mParamInfos; }
-
-				const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
-
-				SPtr<render::ShaderParametersLayout> GetShaderParametersLayout() const { return mShaderParamsLayout; }
-
-			private:
-				friend class cube::core::Material;
-				friend class RendererManager;
-
-				Material(const MaterialInitializer& init);
-
-				int mIndex = -1; // Used in RendererManager
-
-				Vector<MaterialParameterInfo> mParamInfos;
-
-				Vector<RPtr<Shader>> mShaders;
-				SPtr<render::ShaderParametersLayout> mShaderParamsLayout;
-
-				SPtr<render::Device> mDevice;
-			};
-		} // namespace rt
-	} // namespace core
+	} // namespace rt
 } // namespace cube

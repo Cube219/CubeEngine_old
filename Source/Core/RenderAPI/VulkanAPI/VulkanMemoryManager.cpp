@@ -114,7 +114,7 @@ namespace cube
 		{
 			VulkanAllocation allocation;
 
-			core::Lock lock(mPagesMutex);
+			Lock lock(mPagesMutex);
 
 			for(auto& page : mPages) {
 				allocation = page.Allocate(size, alignment);

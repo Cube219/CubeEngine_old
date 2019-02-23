@@ -48,7 +48,7 @@ namespace cube
 		private:
 			VulkanMemoryManager& mMemoryManager;
 
-			core::Mutex mPagesMutex;
+			Mutex mPagesMutex;
 			Vector<VulkanUploadPage> mPages;
 			Uint64 mDefaultPageSize;
 		};

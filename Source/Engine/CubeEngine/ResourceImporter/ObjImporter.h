@@ -10,7 +10,7 @@
 
 namespace cube
 {
-	class ObjImporter : public core::ResourceImporter
+	class ObjImporter : public ResourceImporter
 	{
 	public:
 		ObjImporter()
@@ -18,10 +18,10 @@ namespace cube
 			mName = CUBE_T("ObjImporter");
 		}
 
-		core::Resource* Import(SPtr<platform::File>& file, Json info) final override;
+		Resource* Import(SPtr<platform::File>& file, Json info) final override;
 
 	private:
-		void InsertMeshData(const aiScene* scene, core::Mesh* mesh);
+		void InsertMeshData(const aiScene* scene, Mesh* mesh);
 
 		Assimp::Importer mImporter;
 	};

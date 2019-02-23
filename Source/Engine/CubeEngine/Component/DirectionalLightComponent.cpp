@@ -10,7 +10,7 @@ namespace cube
 
 	DirectionalLightComponent::DirectionalLightComponent()
 	{
-		mDirLight = core::DirectionalLight::Create();
+		mDirLight = DirectionalLight::Create();
 	}
 
 	DirectionalLightComponent::~DirectionalLightComponent()
@@ -19,7 +19,7 @@ namespace cube
 
 	void DirectionalLightComponent::OnInit()
 	{
-		core::ECore().GetRendererManager().RegisterLight(mDirLight);
+		ECore().GetRendererManager().RegisterLight(mDirLight);
 	}
 
 	void DirectionalLightComponent::OnUpdate(float dt)
@@ -31,7 +31,7 @@ namespace cube
 
 	void DirectionalLightComponent::OnDestroy()
 	{
-		core::ECore().GetRendererManager().UnregisterLight(mDirLight);
+		ECore().GetRendererManager().UnregisterLight(mDirLight);
 	}
 
 	void DirectionalLightComponent::OnTransformChanged()

@@ -14,7 +14,7 @@ namespace cube
 		U8String entryPoint;
 	};
 
-	class ShaderImporter : public core::ResourceImporter
+	class ShaderImporter : public ResourceImporter
 	{
 	public:
 		ShaderImporter(SPtr<render::Device>& device) :
@@ -23,7 +23,7 @@ namespace cube
 			mName = CUBE_T("ShaderImporter");
 		}
 
-		core::Resource* Import(SPtr<platform::File>& file, Json info) final override;
+		Resource* Import(SPtr<platform::File>& file, Json info) final override;
 
 	private:
 		ShaderCompileDesc GetCompileDesc(Json& info);

@@ -16,63 +16,60 @@
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT EngineCore
 	{
-		class ENGINE_CORE_EXPORT EngineCore
-		{
-		public:
-			EngineCore() : mFPSLimit(-1)
-			{}
-			~EngineCore() {}
+	public:
+		EngineCore() : mFPSLimit(-1)
+		{}
+		~EngineCore() {}
 
-			EngineCore(const EngineCore& other) = delete;
-			EngineCore& operator=(const EngineCore& rhs) = delete;
-			EngineCore(EngineCore&& other) = delete;
-			EngineCore& operator=(EngineCore&& rhs) = delete;
+		EngineCore(const EngineCore& other) = delete;
+		EngineCore& operator=(const EngineCore& rhs) = delete;
+		EngineCore(EngineCore&& other) = delete;
+		EngineCore& operator=(EngineCore&& rhs) = delete;
 
-			void PreInitialize();
-			void Initialize();
-			void ShutDown();
+		void PreInitialize();
+		void Initialize();
+		void ShutDown();
 
-			void Start();
+		void Start();
 
-			float GetCurrentFPS();
+		float GetCurrentFPS();
 
-			void SetFPSLimit(int limit);
+		void SetFPSLimit(int limit);
 
-			RendererManager& GetRendererManager() { return mRendererManager; }
-			ResourceManager& GetResourceManager() { return mResourceManager; }
-			TimeManager& GetTimeManager() { return mTimeManager; }
-			StringManager& GetStringManager() { return mStringManager; }
-			ModuleManager& GetModuleManager() { return mModuleManager; }
-			ComponentManager& GetComponentManager() { return mComponentManager; }
-			GameObjectManager& GetGameObjectManager() { return mGameObjectManager; }
+		RendererManager& GetRendererManager() { return mRendererManager; }
+		ResourceManager& GetResourceManager() { return mResourceManager; }
+		TimeManager& GetTimeManager() { return mTimeManager; }
+		StringManager& GetStringManager() { return mStringManager; }
+		ModuleManager& GetModuleManager() { return mModuleManager; }
+		ComponentManager& GetComponentManager() { return mComponentManager; }
+		GameObjectManager& GetGameObjectManager() { return mGameObjectManager; }
 
-		private:
-			friend class CubeEngine;
-			friend class RendererManager;
-			friend class GameThread;
+	private:
+		friend class CubeEngine;
+		friend class RendererManager;
+		friend class GameThread;
 
-			void Update();
+		void Update();
 
-			void Resize(uint32_t width, uint32_t height);
+		void Resize(Uint32 width, Uint32 height);
 
-			RendererManager mRendererManager;
+		RendererManager mRendererManager;
 
-			ResourceManager mResourceManager;
-			TimeManager mTimeManager;
-			StringManager mStringManager;
+		ResourceManager mResourceManager;
+		TimeManager mTimeManager;
+		StringManager mStringManager;
 
-			ThreadManager mThreadManager;
+		ThreadManager mThreadManager;
 
-			ModuleManager mModuleManager;
-			ComponentManager mComponentManager;
-			GameObjectManager mGameObjectManager;
+		ModuleManager mModuleManager;
+		ComponentManager mComponentManager;
+		GameObjectManager mGameObjectManager;
 
-			int mFPSLimit;
-			bool mWillBeDestroyed = false; // Used in GameThread
-		};
+		int mFPSLimit;
+		bool mWillBeDestroyed = false; // Used in GameThread
+	};
 
-		ENGINE_CORE_EXPORT EngineCore& ECore();
-	} // namespace core
+	ENGINE_CORE_EXPORT EngineCore& ECore();
 } // namespace cube

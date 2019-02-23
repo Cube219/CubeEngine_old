@@ -5,7 +5,7 @@
 
 namespace cube
 {
-	core::Resource* ShaderImporter::Import(SPtr<platform::File>& file, Json info)
+	Resource* ShaderImporter::Import(SPtr<platform::File>& file, Json info)
 	{
 		uint64_t size = file->GetFileSize();
 
@@ -22,7 +22,7 @@ namespace cube
 		shaderInit.entryPoint = desc.entryPoint.c_str();
 		shaderInit.code = rawData;
 
-		core::Shader* shader = new core::Shader();
+		Shader* shader = new Shader();
 		shader->_LoadShader(mDevice, shaderInit);
 
 		free(rawData);

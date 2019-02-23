@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -7,42 +7,39 @@
 
 namespace cube
 {
-	namespace core
+	using Index = Uint32;
+
+	struct ENGINE_CORE_EXPORT SubMesh
 	{
-		using Index = uint32_t;
+		String name;
+		Uint64 vertexOffset;
+		Uint64 indexOffset;
+		Uint64 indexCount;
+	};
 
-		struct ENGINE_CORE_EXPORT SubMesh
-		{
-			String name;
-			uint64_t vertexOffset;
-			uint64_t indexOffset;
-			uint64_t indexCount;
-		};
+	class ENGINE_CORE_EXPORT Mesh : public Resource
+	{
+	public:
+		static RPtr<Mesh> Load(StringRef path);
 
-		class ENGINE_CORE_EXPORT Mesh : public Resource
-		{
-		public:
-			static RPtr<Mesh> Load(StringRef path);
+	public:
+		Mesh(){ }
+		virtual ~Mesh(){ }
 
-		public:
-			Mesh(){ }
-			virtual ~Mesh(){ }
+		void SetVertex(const Vector<Vertex>& vertices);
+		void SetIndex(const Vector<Index>& indices);
+		void AddSubMesh(const SubMesh& subMesh);
 
-			void SetVertex(const Vector<Vertex>& vertices);
-			void SetIndex(const Vector<Index>& indices);
-			void AddSubMesh(const SubMesh& subMesh);
+		Vector<Vertex>& GetVertex() { return mVertices; }
+		Vector<Index>& GetIndex() { return mIndices; }
+		Vector<SubMesh>& GetSubMeshes() { return mSubMeshes; }
 
-			Vector<Vertex>& GetVertex() { return mVertices; }
-			Vector<Index>& GetIndex() { return mIndices; }
-			Vector<SubMesh>& GetSubMeshes() { return mSubMeshes; }
+	private:
+		friend class BaseMeshGenerator;
 
-		private:
-			friend class BaseMeshGenerator;
+		Vector<Vertex> mVertices;
+		Vector<Index> mIndices;
 
-			Vector<Vertex> mVertices;
-			Vector<Index> mIndices;
-
-			Vector<SubMesh> mSubMeshes;
-		};
-	} // namespace core
+		Vector<SubMesh> mSubMeshes;
+	};
 } // namespace cube

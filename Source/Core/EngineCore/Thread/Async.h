@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -6,58 +6,55 @@
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT AsyncSignal
 	{
-		class ENGINE_CORE_EXPORT AsyncSignal
+	public:
+		AsyncSignal();
+
+		void UpdateState(float progress);
+		void DispatchCompletion();
+
+		void Reset();
+
+	private:
+		friend class Async;
+
+		ThreadSignal mFinishSignal;
+		Mutex mMutex;
+		bool mIsFinished;
+		float mProgress;
+	};
+
+	class ENGINE_CORE_EXPORT Async
+	{
+	public:
+		Async(AsyncSignal& signal) : mAsyncSignal(signal)
+		{ }
+
+		void WaitUntilFinished()
 		{
-		public:
-			AsyncSignal();
+			Lock lock(mAsyncSignal.mMutex);
 
-			void UpdateState(float progress);
-			void DispatchCompletion();
+			if(mAsyncSignal.mIsFinished == false) {
+				mAsyncSignal.mFinishSignal.wait(lock);
+			}
+		}
 
-			void Reset();
-
-		private:
-			friend class Async;
-
-			ThreadSignal mFinishSignal;
-			Mutex mMutex;
-			bool mIsFinished;
-			float mProgress;
-		};
-
-		class ENGINE_CORE_EXPORT Async
+		bool IsDone()
 		{
-		public:
-			Async(AsyncSignal& signal) : mAsyncSignal(signal)
-			{ }
+			Lock lock(mAsyncSignal.mMutex);
 
-			void WaitUntilFinished()
-			{
-				Lock lock(mAsyncSignal.mMutex);
+			return mAsyncSignal.mIsFinished;
+		}
 
-				if(mAsyncSignal.mIsFinished == false) {
-					mAsyncSignal.mFinishSignal.wait(lock);
-				}
-			}
+		float GetProgress()
+		{
+			Lock lock(mAsyncSignal.mMutex);
 
-			bool IsDone()
-			{
-				Lock lock(mAsyncSignal.mMutex);
+			return mAsyncSignal.mProgress;
+		}
 
-				return mAsyncSignal.mIsFinished;
-			}
-
-			float GetProgress()
-			{
-				Lock lock(mAsyncSignal.mMutex);
-
-				return mAsyncSignal.mProgress;
-			}
-
-		private:
-			AsyncSignal& mAsyncSignal;
-		};
-	} // namespace core
+	private:
+		AsyncSignal& mAsyncSignal;
+	};
 } // namespace cube

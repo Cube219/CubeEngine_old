@@ -2,36 +2,33 @@
 
 namespace cube
 {
-	namespace core
+	DirectionalLight::DirectionalLight()
 	{
-		DirectionalLight::DirectionalLight()
-		{
-		}
+	}
 
-		DirectionalLight::~DirectionalLight()
-		{
-		}
+	DirectionalLight::~DirectionalLight()
+	{
+	}
 
-		SPtr<DirectionalLight> DirectionalLight::Create()
-		{
-			SPtr<DirectionalLight> dirLight(new DirectionalLight());
-			dirLight->Initialize();
+	SPtr<DirectionalLight> DirectionalLight::Create()
+	{
+		SPtr<DirectionalLight> dirLight(new DirectionalLight());
+		dirLight->Initialize();
 
-			return dirLight;
-		}
+		return dirLight;
+	}
 
-		SPtr<rt::RenderObject> DirectionalLight::CreateRenderObject() const
-		{
-			SPtr<rt::DirectionalLight> dirLight_rt(new rt::DirectionalLight());
-			dirLight_rt->Initialize();
+	SPtr<rt::RenderObject> DirectionalLight::CreateRenderObject() const
+	{
+		SPtr<rt::DirectionalLight> dirLight_rt(new rt::DirectionalLight());
+		dirLight_rt->Initialize();
 
-			return dirLight_rt;
-		}
+		return dirLight_rt;
+	}
 
-		void DirectionalLight::SetDirection(const Vector3& direction)
-		{
-			mDirection = direction;
-			SyncPrimaryData(mDirection, GetRenderObject()->mDirection);
-		}
-	} // namespace core
+	void DirectionalLight::SetDirection(const Vector3& direction)
+	{
+		mDirection = direction;
+		SyncPrimaryData(mDirection, GetRenderObject()->mDirection);
+	}
 } // namespace cube

@@ -45,15 +45,15 @@ namespace cube
 			Vector<VirtualButtonInfo> bindedVirtualButtons;
 		};
 
-		extern "C" INPUT_MODULE_EXPORT core::BaseModule* CreateModule();
+		extern "C" INPUT_MODULE_EXPORT BaseModule* CreateModule();
 
-		class INPUT_MODULE_EXPORT InputModule : public core::BaseModule
+		class INPUT_MODULE_EXPORT InputModule : public BaseModule
 		{
 		public:
 			InputModule();
 			~InputModule();
 
-			void Init(core::EngineCore* eCore, ...) final override;
+			void Init(EngineCore* eCore, ...) final override;
 
 			void Update(float dt) final override;
 

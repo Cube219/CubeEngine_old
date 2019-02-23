@@ -6,35 +6,32 @@
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT PointLight : public BaseLight
 	{
-		class ENGINE_CORE_EXPORT PointLight : public BaseLight
+	public:
+		virtual ~PointLight();
+
+		static SPtr<PointLight> Create();
+
+		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+
+		SPtr<rt::PointLight> GetRenderObject() const { return DPCast(rt::PointLight)(mRenderObject); }
+
+	private:
+		PointLight();
+	};
+
+	namespace rt
+	{
+		class PointLight : public BaseLight
 		{
 		public:
-			virtual ~PointLight();
-
-			static SPtr<PointLight> Create();
-
-			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
-
-			SPtr<rt::PointLight> GetRenderObject() const { return DPCast(rt::PointLight)(mRenderObject); }
+			virtual ~PointLight() {}
 
 		private:
-			PointLight();
+			friend class cube::PointLight;
+
+			PointLight() {}
 		};
-
-		namespace rt
-		{
-			class PointLight : public BaseLight
-			{
-			public:
-				virtual ~PointLight() {}
-
-			private:
-				friend class cube::core::PointLight;
-
-				PointLight() {}
-			};
-		} // namespace rt
-	} // namespace core
+	} // namespace rt
 } // namespace cube

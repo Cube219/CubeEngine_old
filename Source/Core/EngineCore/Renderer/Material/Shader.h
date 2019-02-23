@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../../EngineCoreHeader.h"
 
@@ -9,30 +9,27 @@
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT Shader : public Resource
 	{
-		class ENGINE_CORE_EXPORT Shader : public Resource
-		{
-		public:
-			static RPtr<Shader> Load(StringRef path);
+	public:
+		static RPtr<Shader> Load(StringRef path);
 
-		public:
-			Shader() { }
-			~Shader() { }
+	public:
+		Shader() { }
+		~Shader() { }
 
-			render::ShaderLanguage GetLanguage() const { return mLanguage; }
-			render::ShaderType GetType() const { return mType; }
+		render::ShaderLanguage GetLanguage() const { return mLanguage; }
+		render::ShaderType GetType() const { return mType; }
 
-			void _LoadShader(SPtr<render::Device>& device, render::ShaderAttribute& attr);
+		void _LoadShader(SPtr<render::Device>& device, render::ShaderAttribute& attr);
 
-		private:
-			friend class RendererManager;
-			SPtr<render::Shader> GetRenderShader() const { return mRenderShader; }
+	private:
+		friend class RendererManager;
+		SPtr<render::Shader> GetRenderShader() const { return mRenderShader; }
 
-			render::ShaderLanguage mLanguage;
-			render::ShaderType mType;
+		render::ShaderLanguage mLanguage;
+		render::ShaderType mType;
 
-			SPtr<render::Shader> mRenderShader;
-		};
-	} // namespace core
+		SPtr<render::Shader> mRenderShader;
+	};
 } // namespace cube

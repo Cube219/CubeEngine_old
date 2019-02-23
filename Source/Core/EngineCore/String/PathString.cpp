@@ -1,15 +1,12 @@
-#include "PathString.h"
+﻿#include "PathString.h"
 
 namespace cube
 {
-	namespace core
+	PathString::PathString()
 	{
-		PathString::PathString()
-		{
-		}
-
-		PathString::~PathString()
-		{
-		}
 	}
-}
+
+	PathString::~PathString()
+	{
+	}
+} // namespace cube

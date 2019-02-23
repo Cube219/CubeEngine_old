@@ -114,7 +114,7 @@ namespace cube
 
 		void DeviceVk::StartFrame()
 		{
-			core::Lock lock(mReleaseQueueMutex);
+			Lock lock(mReleaseQueueMutex);
 
 			for(auto& func : mReleaseFuncQueue) {
 				func();

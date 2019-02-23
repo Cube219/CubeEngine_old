@@ -10,7 +10,7 @@ namespace cube
 
 	PointLightComponent::PointLightComponent()
 	{
-		mPointLight = core::PointLight::Create();
+		mPointLight = PointLight::Create();
 	}
 
 	PointLightComponent::~PointLightComponent()
@@ -19,7 +19,7 @@ namespace cube
 
 	void PointLightComponent::OnInit()
 	{
-		core::ECore().GetRendererManager().RegisterLight(mPointLight);
+		ECore().GetRendererManager().RegisterLight(mPointLight);
 	}
 
 	void PointLightComponent::OnUpdate(float dt)
@@ -28,7 +28,7 @@ namespace cube
 
 	void PointLightComponent::OnDestroy()
 	{
-		core::ECore().GetRendererManager().UnregisterLight(mPointLight);
+		ECore().GetRendererManager().UnregisterLight(mPointLight);
 	}
 
 	void PointLightComponent::OnTransformChanged()

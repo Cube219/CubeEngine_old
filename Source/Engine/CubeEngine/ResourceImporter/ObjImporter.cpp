@@ -6,7 +6,7 @@
 
 namespace cube
 {
-	core::Resource* ObjImporter::Import(SPtr<platform::File>& file, Json info)
+	Resource* ObjImporter::Import(SPtr<platform::File>& file, Json info)
 	{
 		uint64_t size = file->GetFileSize();
 
@@ -17,7 +17,7 @@ namespace cube
 		const aiScene* scene = mImporter.ReadFileFromMemory(rawData, readSize, aiProcess_Triangulate | aiProcess_FlipUVs);
 		CHECK(scene && scene->mRootNode, "Failed to import obj file.");
 
-		core::Mesh* meshPtr = new core::Mesh();
+		Mesh* meshPtr = new Mesh();
 		InsertMeshData(scene, meshPtr);
 
 		mImporter.FreeScene();
@@ -26,10 +26,10 @@ namespace cube
 		return meshPtr;
 	}
 
-	void ObjImporter::InsertMeshData(const aiScene* scene, core::Mesh* mesh)
+	void ObjImporter::InsertMeshData(const aiScene* scene, Mesh* mesh)
 	{
-		Vector<core::Vertex>& meshVertices = mesh->GetVertex();
-		Vector<core::Index>& meshIndices = mesh->GetIndex();
+		Vector<Vertex>& meshVertices = mesh->GetVertex();
+		Vector<Index>& meshIndices = mesh->GetIndex();
 
 		// Reserve the size of vertices/indices for avoiding reallocation
 		uint64_t vertexNum = 0, indexNum = 0;
@@ -44,14 +44,14 @@ namespace cube
 		for(uint32_t i = 0; i < scene->mNumMeshes; i++) {
 			aiMesh* aiMesh = scene->mMeshes[i];
 
-			core::SubMesh subMesh;
+			SubMesh subMesh;
 			subMesh.name = ToStringFromASCII(aiMesh->mName.C_Str());
 			subMesh.vertexOffset = meshVertices.size();
 			subMesh.indexOffset = meshIndices.size();
 			subMesh.indexCount = aiMesh->mNumFaces * aiMesh->mFaces[0].mNumIndices;
 
 			for(uint32_t j = 0; j < aiMesh->mNumVertices; j++) {
-				core::Vertex v;
+				Vertex v;
 				v.pos = Vector4::Zero();
 				v.normal = Vector3::Zero();
 				v.texCoord = Vector2::Zero();

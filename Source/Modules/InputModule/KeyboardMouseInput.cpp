@@ -97,7 +97,7 @@ namespace cube
 
 		void KeyboardMouseInput::LockCursor()
 		{
-			core::GameThread::QueueTask([]() {
+			GameThread::QueueTask([]() {
 				platform::Platform::HideCursor();
 			});
 			mIsCursorLocked = true;
@@ -105,7 +105,7 @@ namespace cube
 
 		void KeyboardMouseInput::UnlockCursor()
 		{
-			core::GameThread::QueueTask([]() {
+			GameThread::QueueTask([]() {
 				platform::Platform::ShowCursor();
 			});
 			mIsCursorLocked = false;

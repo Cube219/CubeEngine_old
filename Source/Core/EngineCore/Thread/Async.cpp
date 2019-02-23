@@ -1,36 +1,33 @@
-#include "Async.h"
+﻿#include "Async.h"
 
 namespace cube
 {
-	namespace core
+	AsyncSignal::AsyncSignal() : 
+		mProgress(0.0f), mIsFinished(false)
 	{
-		AsyncSignal::AsyncSignal() : 
-			mProgress(0.0f), mIsFinished(false)
-		{
-		}
+	}
 
-		void AsyncSignal::UpdateState(float progress)
-		{
-			Lock lock(mMutex);
+	void AsyncSignal::UpdateState(float progress)
+	{
+		Lock lock(mMutex);
 
-			mProgress = progress;
-		}
+		mProgress = progress;
+	}
 
-		void AsyncSignal::DispatchCompletion()
-		{
-			Lock lock(mMutex);
+	void AsyncSignal::DispatchCompletion()
+	{
+		Lock lock(mMutex);
 
-			mProgress = 1.0f;
-			mIsFinished = true;
-			mFinishSignal.notify_all();
-		}
+		mProgress = 1.0f;
+		mIsFinished = true;
+		mFinishSignal.notify_all();
+	}
 
-		void AsyncSignal::Reset()
-		{
-			Lock lock(mMutex);
+	void AsyncSignal::Reset()
+	{
+		Lock lock(mMutex);
 
-			mProgress = 0.0f;
-			mIsFinished = false;
-		}
-	} // namespace core
+		mProgress = 0.0f;
+		mIsFinished = false;
+	}
 } // namesapce cube

@@ -1,100 +1,97 @@
-#include "Thread.h"
+﻿#include "Thread.h"
 
 #include "../LogWriter.h"
 
 namespace cube
 {
-	namespace core
+	Thread::Thread(Uint32 poolIndex, std::function<void(Uint32)> onFinishCallback) :
+		mPoolIndex(poolIndex), mIsDestroyed(false),
+		mIsRun(false), mRunFunction(nullptr),
+		mOnFinishCallback(onFinishCallback)
 	{
-		Thread::Thread(uint32_t poolIndex, std::function<void(uint32_t)> onFinishCallback) :
-			mPoolIndex(poolIndex), mIsDestroyed(false),
-			mIsRun(false), mRunFunction(nullptr),
-			mOnFinishCallback(onFinishCallback)
+		mThread = std::thread(std::bind(&Thread::Run, this));
+	}
+
+	Thread::~Thread()
+	{
+	}
+
+	void Thread::Start(std::function<void()> function)
+	{
+		Lock lock(mMutex);
+
+		if(mIsRun == true) {
+			CUBE_LOG(LogType::Warning, "Already started thread.");
+			return;
+		}
+			
+		mRunFunction = function;
+
+		mStartNotify.notify_one();
+	}
+
+	void Thread::WaitUntilFinished()
+	{
+		Lock lock(mMutex);
+
+		if(mIsRun == false)
+			return;
+
+		mIdleNotify.wait(lock);
+	}
+
+	void Thread::Destroy()
+	{
 		{
-			mThread = std::thread(std::bind(&Thread::Run, this));
+			Lock lock(mMutex);
+			mIsDestroyed = true;
 		}
 
-		Thread::~Thread()
-		{
-		}
-
-		void Thread::Start(std::function<void()> function)
 		{
 			Lock lock(mMutex);
 
-			if(mIsRun == true) {
-				CUBE_LOG(LogType::Warning, "Already started thread.");
-				return;
-			}
-			
-			mRunFunction = function;
+			if(mIsRun == true)
+				mIdleNotify.wait(lock);
 
 			mStartNotify.notify_one();
 		}
 
-		void Thread::WaitUntilFinished()
-		{
-			Lock lock(mMutex);
+		mThread.join();
+	}
 
-			if(mIsRun == false)
-				return;
+	bool Thread::IsRun()
+	{
+		Lock lock(mMutex);
 
-			mIdleNotify.wait(lock);
-		}
+		return mIsRun;
+	}
 
-		void Thread::Destroy()
-		{
-			{
-				Lock lock(mMutex);
-				mIsDestroyed = true;
-			}
-
-			{
+	void Thread::Run()
+	{
+		while(true) {
+			{ // Wait until start
 				Lock lock(mMutex);
 
-				if(mIsRun == true)
-					mIdleNotify.wait(lock);
+				mStartNotify.wait(lock);
 
-				mStartNotify.notify_one();
+				if(mIsDestroyed)
+					break;
+
+				mIsRun = true;
 			}
 
-			mThread.join();
-		}
+			mRunFunction();
 
-		bool Thread::IsRun()
-		{
-			Lock lock(mMutex);
+			{ // Finish
+				Lock lock(mMutex);
 
-			return mIsRun;
-		}
+				mRunFunction = nullptr;
+				mIsRun = false;
 
-		void Thread::Run()
-		{
-			while(true) {
-				{ // Wait until start
-					Lock lock(mMutex);
+				mOnFinishCallback(mPoolIndex);
 
-					mStartNotify.wait(lock);
-
-					if(mIsDestroyed)
-						break;
-
-					mIsRun = true;
-				}
-
-				mRunFunction();
-
-				{ // Finish
-					Lock lock(mMutex);
-
-					mRunFunction = nullptr;
-					mIsRun = false;
-
-					mOnFinishCallback(mPoolIndex);
-
-					mIdleNotify.notify_one();
-				}
+				mIdleNotify.notify_one();
 			}
 		}
 	}
-}
+} // namespace cube

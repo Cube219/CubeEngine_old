@@ -7,7 +7,7 @@
 
 namespace cube
 {
-	core::Resource* TextureImporter::Import(SPtr<platform::File>& file, Json info)
+	Resource* TextureImporter::Import(SPtr<platform::File>& file, Json info)
 	{
 		uint64_t size = file->GetFileSize();
 
@@ -19,7 +19,7 @@ namespace cube
 		stbi_uc* imageData = stbi_load_from_memory(SCast(const stbi_uc*)(rawData), (int)(size), &width, &height, &channel, STBI_rgb_alpha);
 
 		// Create texture resource
-		core::Texture* texture = new core::Texture();
+		Texture* texture = new Texture();
 		texture->WriteData(mDevice, imageData, width * height * 4, width, height);
 
 		stbi_image_free(imageData);

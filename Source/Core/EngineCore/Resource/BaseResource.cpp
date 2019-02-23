@@ -1,8 +1,5 @@
-#include "BaseResource.h"
+﻿#include "BaseResource.h"
 
 namespace cube
 {
-	namespace core
-	{
-	}
-}
+} // namespace cube

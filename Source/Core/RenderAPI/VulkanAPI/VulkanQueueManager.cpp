@@ -286,7 +286,7 @@ namespace cube
 			VkResult res;
 
 			{
-				core::Lock lock(mImmediateCompleteSemaphoresMutex);
+				Lock lock(mImmediateCompleteSemaphoresMutex);
 				
 				// Append
 				mWaitSemaphores.insert(mWaitSemaphores.cend(), mImmediateCompleteSemaphores.begin(), mImmediateCompleteSemaphores.end());
@@ -377,13 +377,13 @@ namespace cube
 
 			VkQueue queueToSubmit;
 			{
-				core::Lock lock(mTransferImmediateCurrentIndexMutex);
+				Lock lock(mTransferImmediateCurrentIndexMutex);
 
 				queueToSubmit = mTransferImmediateQueues[mTransferImmediateCurrentIndex++];
 				mTransferImmediateCurrentIndex %= mTransferImmediateQueues.size();
 			}
 			{
-				core::Lock lock(mImmediateCompleteSemaphoresMutex);
+				Lock lock(mImmediateCompleteSemaphoresMutex);
 
 				mImmediateCompleteSemaphores.push_back(completeSemaphore);
 			}
@@ -426,7 +426,7 @@ namespace cube
 
 			VkQueue queueToSubmit;
 			{
-				core::Lock lock(mTransferDeferredCurrentIndexMutex);
+				Lock lock(mTransferDeferredCurrentIndexMutex);
 				
 				queueToSubmit = mTransferDeferredQueues[mTransferDeferredCurrentIndex++];
 				mTransferDeferredCurrentIndex %= mTransferDeferredQueues.size();

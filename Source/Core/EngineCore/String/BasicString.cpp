@@ -1,15 +1,12 @@
-#include "BasicString.h"
+﻿#include "BasicString.h"
 
 namespace cube
 {
-	namespace core
+	BasicString::BasicString()
 	{
-		BasicString::BasicString()
-		{
-		}
-
-		BasicString::~BasicString()
-		{
-		}
 	}
-}
+
+	BasicString::~BasicString()
+	{
+	}
+} // namespace cube

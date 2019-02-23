@@ -2,14 +2,11 @@
 
 namespace cube
 {
-	namespace core
+	void StringManager::Initialize()
 	{
-		void StringManager::Initialize()
-		{
-		}
+	}
 
-		void StringManager::ShutDown()
-		{
-		}
-	} // namespace core
+	void StringManager::ShutDown()
+	{
+	}
 } // namespace cube

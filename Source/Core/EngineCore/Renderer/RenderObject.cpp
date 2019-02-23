@@ -2,19 +2,16 @@
 
 namespace cube
 {
-	namespace core
+	SPtr<RenderObject> RenderObject::Create()
 	{
-		SPtr<RenderObject> RenderObject::Create()
-		{
-			SPtr<RenderObject> ro(new RenderObject());
-			ro->Initialize();
+		SPtr<RenderObject> ro(new RenderObject());
+		ro->Initialize();
 
-			return ro;
-		}
+		return ro;
+	}
 
-		void RenderObject::Initialize()
-		{
-			mRenderObject = CreateRenderObject();
-		}
-	} // namespace core
+	void RenderObject::Initialize()
+	{
+		mRenderObject = CreateRenderObject();
+	}
 } // namespace cube

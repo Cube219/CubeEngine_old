@@ -9,49 +9,46 @@
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT RenderingThread
 	{
-		class ENGINE_CORE_EXPORT RenderingThread
+	public:
+		RenderingThread() = delete;
+		~RenderingThread() = delete;
+
+		static void Init(RendererManager* rendererManager);
+
+		static void Prepare();
+		static void PrepareDestroy();
+		static void Destroy();
+
+		static void Run(Async& gameThreadRunAsync);
+		static void ExecuteLastTaskBuffer();
+
+		static void QueueTask(std::function<void()> taskFunc)
 		{
-		public:
-			RenderingThread() = delete;
-			~RenderingThread() = delete;
+			Lock lock(mTaskBufferMutex);
 
-			static void Init(RendererManager* rendererManager);
+			mTaskBuffer.WriteTask(taskFunc);
+		}
 
-			static void Prepare();
-			static void PrepareDestroy();
-			static void Destroy();
+		static TaskBuffer& _GetTaskBuffer() { return mTaskBuffer; }
 
-			static void Run(Async& gameThreadRunAsync);
-			static void ExecuteLastTaskBuffer();
+	private:
+		friend class GameThread;
 
-			static void QueueTask(std::function<void()> taskFunc)
-			{
-				Lock lock(mTaskBufferMutex);
+		static void Loop();
+		static void ProcessTaskBuffers();
+		static void Rendering();
+		static void DestroyInternal();
 
-				mTaskBuffer.WriteTask(taskFunc);
-			}
+		static void OnResize(Uint32 width, Uint32 height);
 
-			static TaskBuffer& _GetTaskBuffer() { return mTaskBuffer; }
+		static RendererManager* mRendererManager;
 
-		private:
-			friend class GameThread;
+		static EventFunction<void()> mLoopEventFunc;
+		static EventFunction<void(Uint32, Uint32)> mResizeEventFunc;
 
-			static void Loop();
-			static void ProcessTaskBuffers();
-			static void Rendering();
-			static void DestroyInternal();
-
-			static void OnResize(uint32_t width, uint32_t height);
-
-			static RendererManager* mRendererManager;
-
-			static EventFunction<void()> mLoopEventFunc;
-			static EventFunction<void(uint32_t, uint32_t)> mResizeEventFunc;
-
-			static Mutex mTaskBufferMutex;
-			static TaskBuffer mTaskBuffer;
-		};
-	} // namespace core
+		static Mutex mTaskBufferMutex;
+		static TaskBuffer mTaskBuffer;
+	};
 } // namespace cube

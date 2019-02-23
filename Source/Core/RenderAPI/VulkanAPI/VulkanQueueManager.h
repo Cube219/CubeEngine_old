@@ -52,13 +52,13 @@ namespace cube
 
 			Vector<VkQueue> mTransferImmediateQueues;
 			Uint32 mTransferImmediateQueueFamilyIndex;
-			core::Mutex mTransferImmediateCurrentIndexMutex;
+			Mutex mTransferImmediateCurrentIndexMutex;
 			Uint64 mTransferImmediateCurrentIndex = 0;
-			core::Mutex mImmediateCompleteSemaphoresMutex;
+			Mutex mImmediateCompleteSemaphoresMutex;
 			Vector<VulkanSemaphore> mImmediateCompleteSemaphores;
 
 			Vector<VkQueue> mTransferDeferredQueues;
-			core::Mutex mTransferDeferredCurrentIndexMutex;
+			Mutex mTransferDeferredCurrentIndexMutex;
 			Uint32 mTransferDeferredQueueFamilyIndex;
 			Uint64 mTransferDeferredCurrentIndex = 0;
 

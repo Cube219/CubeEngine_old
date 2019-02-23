@@ -6,7 +6,7 @@
 
 namespace cube
 {
-	class CUBE_ENGINE_EXPORT Renderer3DComponent : public core::Component
+	class CUBE_ENGINE_EXPORT Renderer3DComponent : public Component
 	{
 	public:
 		static const String& GetName() { return mName; }
@@ -23,15 +23,15 @@ namespace cube
 		void OnDestroy() override;
 		void OnTransformChanged() override;
 
-		void SetMesh(core::RPtr<core::Mesh>& mesh);
-		void SetMaterialInstance(core::HMaterialInstance& materialIns, uint32_t index);
+		void SetMesh(RPtr<Mesh>& mesh);
+		void SetMaterialInstance(HMaterialInstance& materialIns, uint32_t index);
 
 	private:
-		SPtr<core::Renderer3D> mRenderer3D;
+		SPtr<Renderer3D> mRenderer3D;
 
-		core::RendererManager& mRendererManager;
+		RendererManager& mRendererManager;
 	};
 
-	using Renderer3DComponentData = core::BasicHandlerData<Renderer3DComponent>;
-	using HRenderer3DComponent = core::BasicHandler<Renderer3DComponent>;
+	using Renderer3DComponentData = BasicHandlerData<Renderer3DComponent>;
+	using HRenderer3DComponent = BasicHandler<Renderer3DComponent>;
 } // namespace cube

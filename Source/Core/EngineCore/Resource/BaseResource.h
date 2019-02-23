@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -8,34 +8,31 @@
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT ResourceImporter
 	{
-		class ENGINE_CORE_EXPORT ResourceImporter
-		{
-		public:
-			ResourceImporter(){ }
-			virtual ~ResourceImporter(){ }
+	public:
+		ResourceImporter(){ }
+		virtual ~ResourceImporter(){ }
 
-			virtual Resource* Import(SPtr<platform::File>& file, Json info) = 0;
+		virtual Resource* Import(SPtr<platform::File>& file, Json info) = 0;
 
-			const String& GetName() const { return mName; }
+		const String& GetName() const { return mName; }
 
-		protected:
-			String mName;
-		};
+	protected:
+		String mName;
+	};
 
-		class ENGINE_CORE_EXPORT Resource
-		{
-		public:
-			Resource(){ }
-			virtual ~Resource(){ }
+	class ENGINE_CORE_EXPORT Resource
+	{
+	public:
+		Resource(){ }
+		virtual ~Resource(){ }
 
-		protected:
-			friend class ResourceManager;
-			template <typename T>
-			friend class ResourcePointer;
+	protected:
+		friend class ResourceManager;
+		template <typename T>
+		friend class ResourcePointer;
 
-			Atomic<uint32_t> mRefCount;
-		};
-	} // namespace core
+		Atomic<Uint32> mRefCount;
+	};
 } // namespace cube

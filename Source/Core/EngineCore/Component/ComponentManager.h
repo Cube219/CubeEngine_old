@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -6,44 +6,41 @@
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT ComponentManager
 	{
-		class ENGINE_CORE_EXPORT ComponentManager
+	public:
+		ComponentManager() {}
+		~ComponentManager() {}
+
+		ComponentManager(const ComponentManager& other) = delete;
+		ComponentManager& operator=(const ComponentManager& rhs) = delete;
+		ComponentManager(ComponentManager&& other) = delete;
+		ComponentManager& operator=(ComponentManager&& rhs) = delete;
+
+		void Initialize();
+		void ShutDown();
+
+		template <typename T>
+		void RegisterComponent()
 		{
-		public:
-			ComponentManager() {}
-			~ComponentManager() {}
+			const String& name = T::GetName();
 
-			ComponentManager(const ComponentManager& other) = delete;
-			ComponentManager& operator=(const ComponentManager& rhs) = delete;
-			ComponentManager(ComponentManager&& other) = delete;
-			ComponentManager& operator=(ComponentManager&& rhs) = delete;
+			CheckIfComponentExisted(name);
 
-			void Initialize();
-			void ShutDown();
+			mComponentCreators[name] = []() {
+				auto comDataPtr = std::make_shared<BasicHandlerData<Component>>();
+				comDataPtr->data = std::make_shared<T>();
+				comDataPtr->data->mMyHandler = HComponent(comDataPtr);
 
-			template <typename T>
-			void RegisterComponent()
-			{
-				const String& name = T::GetName();
+				return HComponent(comDataPtr);
+			};
+		}
 
-				CheckIfComponentExisted(name);
+		HComponent CreateComponent(StringRef name);
 
-				mComponentCreators[name] = []() {
-					auto comDataPtr = std::make_shared<BasicHandlerData<Component>>();
-					comDataPtr->data = std::make_shared<T>();
-					comDataPtr->data->mMyHandler = HComponent(comDataPtr);
+	private:
+		void CheckIfComponentExisted(StringRef name);
 
-					return HComponent(comDataPtr);
-				};
-			}
-
-			HComponent CreateComponent(StringRef name);
-
-		private:
-			void CheckIfComponentExisted(StringRef name);
-
-			HashMap<String, std::function<HComponent()>> mComponentCreators;
-		};
-	} // namespace core
+		HashMap<String, std::function<HComponent()>> mComponentCreators;
+	};
 } // namespace cube
