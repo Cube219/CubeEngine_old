@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../../EngineCoreHeader.h"
 
@@ -16,8 +16,8 @@ namespace cube
 
 			static SPtr<BaseLight> Create();
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
-			SPtr<BaseLight_RT> GetRenderObject_RT() const { return DPCast(BaseLight_RT)(mRenderObject_RT); }
+			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+			SPtr<rt::BaseLight> GetRenderObject() const { return DPCast(rt::BaseLight)(mRenderObject); }
 
 			void SetColor(const Vector4& color);
 			void SetPosition(const Vector3& pos);
@@ -32,24 +32,27 @@ namespace cube
 			Vector3 mPosition;
 		};
 
-		class BaseLight_RT : public RenderObject_RT
+		namespace rt
 		{
-		public:
-			virtual ~BaseLight_RT(){ }
+			class BaseLight : public RenderObject
+			{
+			public:
+				virtual ~BaseLight() {}
 
-			Vector4 GetColor() const { return mColor; }
-			Vector3 GetPosition() const { return mPosition; }
+				Vector4 GetColor() const { return mColor; }
+				Vector3 GetPosition() const { return mPosition; }
 
-		protected:
-			friend class BaseLight;
-			friend class RendererManager;
+			protected:
+				friend class cube::core::BaseLight;
+				friend class RendererManager;
 
-			BaseLight_RT(){ }
+				BaseLight() {}
 
-			int mIndex = -1; // Used in RendererManager
+				int mIndex = -1; // Used in RendererManager
 
-			Vector4 mColor;
-			Vector3 mPosition;
-		};
+				Vector4 mColor;
+				Vector3 mPosition;
+			};
+		} // namespace rt
 	} // namespace core
 } // namespace cube

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -17,8 +17,8 @@ namespace cube
 		public:
 			virtual ~CameraRenderer3D();
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
-			SPtr<CameraRenderer3D_RT> GetRenderObject_RT() const { return DPCast(CameraRenderer3D_RT)(mRenderObject_RT); }
+			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+			SPtr<rt::CameraRenderer3D> GetRenderObject() const { return DPCast(rt::CameraRenderer3D)(mRenderObject); }
 
 			void SetViewMatrix(const Matrix& matrix);
 			void SetPosition(const Vector3& pos);
@@ -31,24 +31,27 @@ namespace cube
 			Vector3 mPosition;
 		};
 
-		class CameraRenderer3D_RT : public RenderObject_RT
+		namespace rt
 		{
-		public:
-			virtual ~CameraRenderer3D_RT(){ }
+			class CameraRenderer3D : public rt::RenderObject
+			{
+			public:
+				virtual ~CameraRenderer3D() {}
 
-			void SyncViewProjectionMatrix(const Matrix& view, const Matrix& projection);
-			void SyncPosition(const Vector3& position);
+				void SyncViewProjectionMatrix(const Matrix& view, const Matrix& projection);
+				void SyncPosition(const Vector3& position);
 
-			Matrix GetViewProjectionMatrix() const { return mViewProjectionMatrix; }
-			Vector3 GetPosition() const { return mPosition; }
+				Matrix GetViewProjectionMatrix() const { return mViewProjectionMatrix; }
+				Vector3 GetPosition() const { return mPosition; }
 
-		private:
-			friend class CameraRenderer3D;
+			private:
+				friend class cube::core::CameraRenderer3D;
 
-			CameraRenderer3D_RT(){ }
+				CameraRenderer3D() {}
 
-			Matrix mViewProjectionMatrix;
-			Vector3 mPosition;
-		};
+				Matrix mViewProjectionMatrix;
+				Vector3 mPosition;
+			};
+		} // namespace rt
 	} // namespace core
 } // namespace cube

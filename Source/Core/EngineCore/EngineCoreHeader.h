@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #pragma warning(disable:4251)
 
 #include "Base/BaseTypes.h"
@@ -32,9 +32,7 @@ namespace cube
 		class BasicHandler;
 
 		class Renderer3D;
-		class Renderer3D_RT;
 		class CameraRenderer3D;
-		class CameraRenderer3D_RT;
 		enum class RenderType;
 		class RendererManager;
 
@@ -49,20 +47,15 @@ namespace cube
 		class Material;
 		using MaterialData = BasicHandlerData<Material>;
 		using HMaterial = BasicHandler<Material>;
-		class Material_RT;
 		class MaterialInstance;
 		using MaterialInstanceData = BasicHandlerData<MaterialInstance>;
 		using HMaterialInstance = BasicHandler<MaterialInstance>;
-		class MaterialInstance_RT;
-
+		
 		class Shader;
 
 		class BaseLight;
-		class BaseLight_RT;
 		class DirectionalLight;
-		class DirectionalLight_RT;
 		class PointLight;
-		class PointLight_RT;
 		class SpotLight;
 
 		class Texture;
@@ -79,8 +72,21 @@ namespace cube
 		class Component;
 		using ComponentData = BasicHandlerData<Component>;
 		using HComponent = BasicHandler<Component>;
-	}
-}
+
+		namespace rt
+		{
+			class Renderer3D;
+			class CameraRenderer3D;
+
+			class Material;
+			class MaterialInstance;
+
+			class BaseLight;
+			class DirectionalLight;
+			class PointLight;
+		} // namespace rt
+	} // namespace core
+} // namespace cube
 
 
 #ifdef ENGINE_CORE_EXPORTS

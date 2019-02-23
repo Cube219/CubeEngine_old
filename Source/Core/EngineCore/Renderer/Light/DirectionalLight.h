@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../../EngineCoreHeader.h"
 
@@ -15,9 +15,9 @@ namespace cube
 
 			static SPtr<DirectionalLight> Create();
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
+			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
 
-			SPtr<DirectionalLight_RT> GetRenderObject_RT() const { return DPCast(DirectionalLight_RT)(mRenderObject_RT); }
+			SPtr<rt::DirectionalLight> GetRenderObject() const { return DPCast(rt::DirectionalLight)(mRenderObject); }
 
 			void SetDirection(const Vector3& direction);
 
@@ -29,19 +29,22 @@ namespace cube
 			Vector3 mDirection;
 		};
 
-		class DirectionalLight_RT : public BaseLight_RT
+		namespace rt
 		{
-		public:
-			virtual ~DirectionalLight_RT(){ }
+			class DirectionalLight : public BaseLight
+			{
+			public:
+				virtual ~DirectionalLight() {}
 
-			Vector3 GetDirection() const { return mDirection; }
+				Vector3 GetDirection() const { return mDirection; }
 
-		private:
-			friend class DirectionalLight;
+			private:
+				friend class cube::core::DirectionalLight;
 
-			DirectionalLight_RT(){ }
+				DirectionalLight() {}
 
-			Vector3 mDirection;
-		};
+				Vector3 mDirection;
+			};
+		} // namespace rt
 	} // namespace core
 } // namespace cube

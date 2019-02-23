@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -28,8 +28,8 @@ namespace cube
 
 			static SPtr<Renderer3D> Create();
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
-			SPtr<Renderer3D_RT> GetRenderObject_RT() const { return DPCast(Renderer3D_RT)(mRenderObject_RT); }
+			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+			SPtr<rt::Renderer3D> GetRenderObject() const { return DPCast(rt::Renderer3D)(mRenderObject); }
 
 			void SetMesh(RPtr<Mesh>& mesh);
 			void SetMaterialInstance(HMaterialInstance& materialIns, uint32_t index);
@@ -45,43 +45,46 @@ namespace cube
 			Matrix mModelMatrix;
 		};
 
-		class Renderer3D_RT : public RenderObject_RT
+		namespace rt
 		{
-		public:
-			virtual ~Renderer3D_RT(){ }
+			class Renderer3D : public RenderObject
+			{
+			public:
+				virtual ~Renderer3D() {}
 
-			void SyncMesh(RPtr<Mesh>& mesh);
-			void SyncMaterialInstance(HMaterialInstance materialIns, uint32_t index);
-			void SyncModelMatrix(const Matrix& modelMatrix);
+				void SyncMesh(RPtr<Mesh>& mesh);
+				void SyncMaterialInstance(HMaterialInstance materialIns, uint32_t index);
+				void SyncModelMatrix(const Matrix& modelMatrix);
 
-			SPtr<render::ShaderParameters> GetShaderParameters() const { return mShaderParameters; };
+				SPtr<render::ShaderParameters> GetShaderParameters() const { return mShaderParameters; };
 
-			void PrepareDraw(SPtr<render::CommandList>& commandList, SPtr<CameraRenderer3D_RT>& camera);
+				void PrepareDraw(SPtr<render::CommandList>& commandList, SPtr<rt::CameraRenderer3D>& camera);
 
-		private:
-			friend class Renderer3D;
-			friend class RendererManager;
+			private:
+				friend class cube::core::Renderer3D;
+				friend class RendererManager;
 
-			Renderer3D_RT();
+				Renderer3D();
 
-			void RecreateDataBuffer();
+				void RecreateDataBuffer();
 
-			int mIndex = -1; // Used in RendererManager
+				int mIndex = -1; // Used in RendererManager
 
-			bool mIsMeshUpdated = false;
-			RPtr<Mesh> mMesh;
+				bool mIsMeshUpdated = false;
+				RPtr<Mesh> mMesh;
 
-			Vector<SPtr<MaterialInstance_RT>> mMaterialInses;
+				Vector<SPtr<rt::MaterialInstance>> mMaterialInses;
 
-			UBOPerObject mUBOPerObject;
-			SPtr<render::ShaderParameters> mShaderParameters;
+				UBOPerObject mUBOPerObject;
+				SPtr<render::ShaderParameters> mShaderParameters;
 
-			SPtr<render::Buffer> mDataBuffer; // Combine vertex / index
-			void* mDataBufferMappedPtr;
-			Uint32 mVertexOffset;
-			Uint32 mIndexOffset;
+				SPtr<render::Buffer> mDataBuffer; // Combine vertex / index
+				void* mDataBufferMappedPtr;
+				Uint32 mVertexOffset;
+				Uint32 mIndexOffset;
 
-			SPtr<render::Device> mDevice;
-		};
+				SPtr<render::Device> mDevice;
+			};
+		} // namespace rt
 	} // namespace core
 } // namespace cube

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../../EngineCoreHeader.h"
 
@@ -15,23 +15,26 @@ namespace cube
 
 			static SPtr<PointLight> Create();
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
+			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
 
-			SPtr<PointLight_RT> GetRenderObject_RT() const { return DPCast(PointLight_RT)(mRenderObject_RT); }
+			SPtr<rt::PointLight> GetRenderObject() const { return DPCast(rt::PointLight)(mRenderObject); }
 
 		private:
 			PointLight();
 		};
 
-		class PointLight_RT : public BaseLight_RT
+		namespace rt
 		{
-		public:
-			virtual ~PointLight_RT(){ }
+			class PointLight : public BaseLight
+			{
+			public:
+				virtual ~PointLight() {}
 
-		private:
-			friend class PointLight;
+			private:
+				friend class cube::core::PointLight;
 
-			PointLight_RT(){ }
-		};
+				PointLight() {}
+			};
+		} // namespace rt
 	} // namespace core
 } // namespace cube

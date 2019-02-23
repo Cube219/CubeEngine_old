@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -9,8 +9,11 @@ namespace cube
 {
 	namespace core
 	{
-		class RenderObject_RT;
-
+		namespace rt
+		{
+			class RenderObject;
+		}
+		
 		class ENGINE_CORE_EXPORT RenderObject
 		{
 		public:
@@ -20,8 +23,8 @@ namespace cube
 
 			virtual void Initialize();
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const { return nullptr; }
-			SPtr<RenderObject_RT> GetRenderObject_RT() const { return mRenderObject_RT; }
+			virtual SPtr<rt::RenderObject> CreateRenderObject() const { return nullptr; }
+			SPtr<rt::RenderObject> GetRenderObject() const { return mRenderObject; }
 
 		protected:
 			RenderObject(){ }
@@ -39,32 +42,23 @@ namespace cube
 				GameThread::QueueTask(syncTaskFunc);
 			}
 
-			SPtr<RenderObject_RT> mRenderObject_RT;
+			SPtr<rt::RenderObject> mRenderObject;
 		};
 
-		class ENGINE_CORE_EXPORT RenderObject_RT
+		namespace rt
 		{
-		public:
-			virtual ~RenderObject_RT(){ }
+			class ENGINE_CORE_EXPORT RenderObject
+			{
+			public:
+				virtual ~RenderObject() {}
 
-			virtual void Initialize(){ }
+				virtual void Initialize() {}
 
-		protected:
-			friend class RenderObject;
+			protected:
+				friend class RenderObject;
 
-			RenderObject_RT(){ }
-		};
-
-		/*
-		// TODO: RenderObjectManager¸¦ ¸¸µé¾î¼­ »ý¼º?
-		template <typename T, typename ...Args>
-		SPtr<T> CreateRenderObject(Args&&... args)
-		{
-			SPtr<T> ptr = std::make_shared<T>(std::forward<Args>(args)...);
-			ptr->_ConstructRenderObject_RT();
-
-			return ptr;
-		}
-		*/
+				RenderObject() {}
+			};
+		} // namespace rt
 	} // namespace core
 } // namespace cube

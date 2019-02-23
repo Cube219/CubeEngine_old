@@ -81,27 +81,27 @@ namespace cube
 			void CreateRenderpass();
 
 			void RewriteCommandBuffer();
-			void DrawRenderer3D(Uint32 commandListIndex, SPtr<Renderer3D_RT>& renderer);
+			void DrawRenderer3D(Uint32 commandListIndex, SPtr<rt::Renderer3D>& renderer);
 
-			SPtr<render::GraphicsPipelineState> CreatePipeline(SPtr<Material_RT> material);
+			SPtr<render::GraphicsPipelineState> CreatePipeline(SPtr<rt::Material> material);
 
 			SPtr<platform::DLib> mRenderDLib;
 			SPtr<render::RenderAPI> mRenderAPI;
 			SPtr<render::Device> mDevice;
 
 			Mutex mRenderersMutex;
-			Vector<SPtr<Renderer3D_RT>> mRenderers;
-			SPtr<CameraRenderer3D_RT> mCameraRenderer;
+			Vector<SPtr<rt::Renderer3D>> mRenderers;
+			SPtr<rt::CameraRenderer3D> mCameraRenderer;
 			SPtr<CameraRenderer3D> mCameraRenderer_NotRT;
 
 			Mutex mMaterialsMutex;
-			Vector<SPtr<Material_RT>> mMaterials;
+			Vector<SPtr<rt::Material>> mMaterials;
 			Vector <SPtr<render::GraphicsPipelineState>> mMaterialPipelines;
 
-			SPtr<DirectionalLight_RT> mDirLight;
+			SPtr<rt::DirectionalLight> mDirLight;
 
 			Mutex mPointLightsMutex;
-			Vector<SPtr<PointLight_RT>> mPointLights;
+			Vector<SPtr<rt::PointLight>> mPointLights;
 
 			SPtr<render::ShaderParametersLayout> mGlobalShaderParametersLayout;
 			SPtr<render::ShaderParameters> mGlobalShaderParameters;

@@ -14,7 +14,7 @@ namespace cube
 		MaterialInstance::MaterialInstance(HMaterial mat) :
 			mMaterial(mat)
 		{
-			const Vector<MaterialParameterInfo> paramInfos = mat->GetRenderObject_RT()->GetParameterInfos();
+			const Vector<MaterialParameterInfo> paramInfos = mat->GetRenderObject()->GetParameterInfos();
 
 			uint64_t paramNum = paramInfos.size();
 			mParameters.resize(paramNum);
@@ -47,9 +47,9 @@ namespace cube
 			return matIns;
 		}
 
-		SPtr<RenderObject_RT> MaterialInstance::CreateRenderObject_RT() const
+		SPtr<rt::RenderObject> MaterialInstance::CreateRenderObject() const
 		{
-			SPtr<MaterialInstance_RT> matIns_rt(new MaterialInstance_RT(mMaterial->GetRenderObject_RT()));
+			SPtr<rt::MaterialInstance> matIns_rt(new rt::MaterialInstance(mMaterial->GetRenderObject()));
 			matIns_rt->Initialize();
 
 			return matIns_rt;
@@ -70,7 +70,7 @@ namespace cube
 			memcpy(mParameters[paramIndex].data, pData, dataSize);
 
 			QueueSyncTask([this, paramIndex]() {
-				GetRenderObject_RT()->SyncParameterData(paramIndex, mParameters[paramIndex]);
+				GetRenderObject()->SyncParameterData(paramIndex, mParameters[paramIndex]);
 			});
 		}
 
@@ -89,7 +89,7 @@ namespace cube
 			mParameters[paramIndex].texture = texture;
 
 			QueueSyncTask([this, paramIndex]() {
-				GetRenderObject_RT()->SyncParameterData(paramIndex, mParameters[paramIndex]);
+				GetRenderObject()->SyncParameterData(paramIndex, mParameters[paramIndex]);
 			});
 		}
 
@@ -98,22 +98,24 @@ namespace cube
 			mMyHandler.mData->data = nullptr;
 		}
 
-		MaterialInstance_RT::MaterialInstance_RT(SPtr<Material_RT>& mat)
+		namespace rt
 		{
-			using namespace render;
+			MaterialInstance::MaterialInstance(SPtr<rt::Material>& mat)
+			{
+				using namespace render;
 
-			SPtr<Device> device = ECore().GetRendererManager().GetDevice();
+				SPtr<Device> device = ECore().GetRendererManager().GetDevice();
 
-			mShaderParameters = mat->GetShaderParametersLayout()->CreateParameters();
-		}
+				mShaderParameters = mat->GetShaderParametersLayout()->CreateParameters();
+			}
 
-		MaterialInstance_RT::~MaterialInstance_RT()
-		{
-		}
+			MaterialInstance::~MaterialInstance()
+			{
+			}
 
-		void MaterialInstance_RT::SyncParameterData(uint64_t index, MaterialParameter& param)
-		{
-			switch(param.type) {
+			void MaterialInstance::SyncParameterData(uint64_t index, MaterialParameter& param)
+			{
+				switch(param.type) {
 				case MaterialParameterType::Data:
 					mShaderParameters->UpdateParameter(index, param.data, param.size);
 					break;
@@ -122,7 +124,8 @@ namespace cube
 					mShaderParameters->UpdateParameter(index,
 						param.texture->GetTextureView(), param.texture->GetSampler());
 					break;
+				}
 			}
-		}
+		} // namespace rt
 	} // namespace core
 } // namespace cube

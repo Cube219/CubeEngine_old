@@ -1,4 +1,4 @@
-#include "DirectionalLight.h"
+﻿#include "DirectionalLight.h"
 
 namespace cube
 {
@@ -20,9 +20,9 @@ namespace cube
 			return dirLight;
 		}
 
-		SPtr<RenderObject_RT> DirectionalLight::CreateRenderObject_RT() const
+		SPtr<rt::RenderObject> DirectionalLight::CreateRenderObject() const
 		{
-			SPtr<DirectionalLight_RT> dirLight_rt(new DirectionalLight_RT());
+			SPtr<rt::DirectionalLight> dirLight_rt(new rt::DirectionalLight());
 			dirLight_rt->Initialize();
 
 			return dirLight_rt;
@@ -31,7 +31,7 @@ namespace cube
 		void DirectionalLight::SetDirection(const Vector3& direction)
 		{
 			mDirection = direction;
-			SyncPrimaryData(mDirection, GetRenderObject_RT()->mDirection);
+			SyncPrimaryData(mDirection, GetRenderObject()->mDirection);
 		}
 	} // namespace core
 } // namespace cube

@@ -1,4 +1,4 @@
-#include "CameraRenderer3D.h"
+﻿#include "CameraRenderer3D.h"
 
 #include "Base/MatrixUtility.h"
 #include "Base/Math.h"
@@ -29,9 +29,9 @@ namespace cube
 		{
 		}
 
-		SPtr<RenderObject_RT> CameraRenderer3D::CreateRenderObject_RT() const
+		SPtr<rt::RenderObject> CameraRenderer3D::CreateRenderObject() const
 		{
-			SPtr<CameraRenderer3D_RT> cameraRenderer3d_rt(new CameraRenderer3D_RT());
+			SPtr<rt::CameraRenderer3D> cameraRenderer3d_rt(new rt::CameraRenderer3D());
 			cameraRenderer3d_rt->Initialize();
 
 			return cameraRenderer3d_rt;
@@ -41,7 +41,7 @@ namespace cube
 		{
 			mViewMatrix = matrix;
 			QueueSyncTask([this]() {
-				GetRenderObject_RT()->SyncViewProjectionMatrix(mViewMatrix, mProjectionMatrix);
+				GetRenderObject()->SyncViewProjectionMatrix(mViewMatrix, mProjectionMatrix);
 			});
 		}
 
@@ -49,18 +49,21 @@ namespace cube
 		{
 			mPosition = pos;
 			QueueSyncTask([this]() {
-				GetRenderObject_RT()->SyncPosition(mPosition);
+				GetRenderObject()->SyncPosition(mPosition);
 			});
 		}
 
-		void CameraRenderer3D_RT::SyncViewProjectionMatrix(const Matrix& view, const Matrix& projection)
+		namespace rt
 		{
-			mViewProjectionMatrix = view * projection;
-		}
+			void CameraRenderer3D::SyncViewProjectionMatrix(const Matrix& view, const Matrix& projection)
+			{
+				mViewProjectionMatrix = view * projection;
+			}
 
-		void CameraRenderer3D_RT::SyncPosition(const Vector3& position)
-		{
-			mPosition = position;
-		}
+			void CameraRenderer3D::SyncPosition(const Vector3& position)
+			{
+				mPosition = position;
+			}
+		} // namespace rt
 	} // namespace core	
 } // namespace cube

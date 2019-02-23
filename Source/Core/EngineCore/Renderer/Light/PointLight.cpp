@@ -1,4 +1,4 @@
-#include "PointLight.h"
+﻿#include "PointLight.h"
 
 namespace cube
 {
@@ -20,11 +20,10 @@ namespace cube
 			return pointLight;
 		}
 
-		SPtr<RenderObject_RT> PointLight::CreateRenderObject_RT() const
+		SPtr<rt::RenderObject> PointLight::CreateRenderObject() const
 		{
-			SPtr<PointLight_RT> pointLight_rt(new PointLight_RT());
+			SPtr<rt::PointLight> pointLight_rt(new rt::PointLight());
 			pointLight_rt->Initialize();
-
 
 			return pointLight_rt;
 		}

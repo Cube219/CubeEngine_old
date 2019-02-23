@@ -14,7 +14,7 @@ namespace cube
 
 		void RenderObject::Initialize()
 		{
-			mRenderObject_RT = CreateRenderObject_RT();
+			mRenderObject = CreateRenderObject();
 		}
 	} // namespace core
 } // namespace cube

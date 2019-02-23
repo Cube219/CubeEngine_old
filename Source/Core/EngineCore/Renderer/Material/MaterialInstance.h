@@ -26,8 +26,8 @@ namespace cube
 		public:
 			~MaterialInstance();
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
-			SPtr<MaterialInstance_RT> GetRenderObject_RT() const { return DPCast(MaterialInstance_RT)(mRenderObject_RT); }
+			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+			SPtr<rt::MaterialInstance> GetRenderObject() const { return DPCast(rt::MaterialInstance)(mRenderObject); }
 
 			HMaterial GetMaterial() const { return mMaterial; }
 
@@ -57,26 +57,29 @@ namespace cube
 			HMaterial mMaterial;
 		};
 
-		class MaterialInstance_RT : public RenderObject_RT
+		namespace rt
 		{
-		public:
-			virtual ~MaterialInstance_RT();
+			class MaterialInstance : public RenderObject
+			{
+			public:
+				virtual ~MaterialInstance();
 
-			void SyncParameterData(uint64_t index, MaterialParameter& param);
+				void SyncParameterData(uint64_t index, MaterialParameter& param);
 
-			SPtr<Material_RT> GetMaterial() const { return mMaterial; }
+				SPtr<rt::Material> GetMaterial() const { return mMaterial; }
 
-			SPtr<render::ShaderParameters> GetShaderParameters() const { return mShaderParameters; }
+				SPtr<render::ShaderParameters> GetShaderParameters() const { return mShaderParameters; }
 
-		private:
-			friend class MaterialInstance;
-			friend class Material;
+			private:
+				friend class cube::core::MaterialInstance;
+				friend class cube::core::Material;
 
-			MaterialInstance_RT(SPtr<Material_RT>& mat);
+				MaterialInstance(SPtr<rt::Material>& mat);
 
-			SPtr<Material_RT> mMaterial;
+				SPtr<rt::Material> mMaterial;
 
-			SPtr<render::ShaderParameters> mShaderParameters;
-		};
+				SPtr<render::ShaderParameters> mShaderParameters;
+			};
+		} // namespace rt
 	} // namespace core
 } // namespace cube

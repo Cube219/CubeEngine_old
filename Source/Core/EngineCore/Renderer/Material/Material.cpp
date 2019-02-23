@@ -28,9 +28,9 @@ namespace cube
 		{
 		}
 
-		SPtr<RenderObject_RT> Material::CreateRenderObject_RT() const
+		SPtr<rt::RenderObject> Material::CreateRenderObject() const
 		{
-			SPtr<Material_RT> mat_rt(new Material_RT(mMaterialInit));
+			SPtr<rt::Material> mat_rt(new rt::Material(mMaterialInit));
 			mat_rt->Initialize();
 
 			return mat_rt;
@@ -42,7 +42,7 @@ namespace cube
 			matInsDataPtr->data = MaterialInstance::Create(mMyHandler);
 			matInsDataPtr->data->mMyHandler = HMaterialInstance(matInsDataPtr);
 
-			matInsDataPtr->data->GetRenderObject_RT()->mMaterial = GetRenderObject_RT();
+			matInsDataPtr->data->GetRenderObject()->mMaterial = GetRenderObject();
 
 			return HMaterialInstance(matInsDataPtr);
 		}
@@ -52,19 +52,21 @@ namespace cube
 			ECore().GetRendererManager().UnregisterMaterial(mMyHandler);
 		}
 
-		Material_RT::Material_RT(const MaterialInitializer& init)
+		namespace rt
 		{
-			mDevice = ECore().GetRendererManager().GetDevice();
+			Material::Material(const MaterialInitializer& init)
+			{
+				mDevice = ECore().GetRendererManager().GetDevice();
 
-			using namespace render;
+				using namespace render;
 
-			mParamInfos = init.parameters;
-			mShaders = init.shaders;
+				mParamInfos = init.parameters;
+				mShaders = init.shaders;
 
-			ShaderParametersLayoutAttribute attr;
-			attr.paramInfos.resize(mParamInfos.size());
-			for(Uint64 i = 0; i < mParamInfos.size(); i++) {
-				switch(mParamInfos[i].type) {
+				ShaderParametersLayoutAttribute attr;
+				attr.paramInfos.resize(mParamInfos.size());
+				for(Uint64 i = 0; i < mParamInfos.size(); i++) {
+					switch(mParamInfos[i].type) {
 					case MaterialParameterType::Data:
 						attr.paramInfos[i].type = ShaderParameterType::ConstantBuffer;
 						break;
@@ -76,15 +78,16 @@ namespace cube
 					default:
 						ASSERTION_FAILED("Unknown MaterialParameterType ({0).", (int)mParamInfos[i].type);
 						break;
+					}
+					attr.paramInfos[i].size = mParamInfos[i].dataSize;
+					attr.paramInfos[i].count = 1;
+					attr.paramInfos[i].bindIndex = i;
+					attr.paramInfos[i].isChangedPerFrame = false;
+					attr.paramInfos[i].debugName = "Material shader parameter layout param info";
 				}
-				attr.paramInfos[i].size = mParamInfos[i].dataSize;
-				attr.paramInfos[i].count = 1;
-				attr.paramInfos[i].bindIndex = i;
-				attr.paramInfos[i].isChangedPerFrame = false;
-				attr.paramInfos[i].debugName = "Material shader parameter layout param info";
+				attr.debugName = "Material shader parameter layout";
+				mShaderParamsLayout = mDevice->CreateShaderParametersLayout(attr);
 			}
-			attr.debugName = "Material shader parameter layout";
-			mShaderParamsLayout = mDevice->CreateShaderParametersLayout(attr);
-		}
+		} // namespace rt
 	} // namespace core
 } // namespace cube

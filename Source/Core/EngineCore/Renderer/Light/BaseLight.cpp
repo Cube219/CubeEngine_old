@@ -1,4 +1,4 @@
-#include "BaseLight.h"
+﻿#include "BaseLight.h"
 
 namespace cube
 {
@@ -20,9 +20,9 @@ namespace cube
 			return baseLight;
 		}
 
-		SPtr<RenderObject_RT> BaseLight::CreateRenderObject_RT() const
+		SPtr<rt::RenderObject> BaseLight::CreateRenderObject() const
 		{
-			SPtr<BaseLight_RT> baseLight_rt(new BaseLight_RT());
+			SPtr<rt::BaseLight> baseLight_rt(new rt::BaseLight());
 			baseLight_rt->Initialize();
 
 			return baseLight_rt;
@@ -31,13 +31,13 @@ namespace cube
 		void BaseLight::SetColor(const Vector4& color)
 		{
 			mColor = color;
-			SyncPrimaryData(mColor, GetRenderObject_RT()->mColor);
+			SyncPrimaryData(mColor, GetRenderObject()->mColor);
 		}
 
 		void BaseLight::SetPosition(const Vector3& pos)
 		{
 			mPosition = pos;
-			SyncPrimaryData(mPosition, GetRenderObject_RT()->mPosition);
+			SyncPrimaryData(mPosition, GetRenderObject()->mPosition);
 		}
 	} // namespace core
 } // namespace cube

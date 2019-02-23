@@ -110,7 +110,7 @@ namespace cube
 			// Create camera renderer
 			// TODO: multiple camera
 			mCameraRenderer_NotRT = CameraRenderer3D::Create();
-			mCameraRenderer = mCameraRenderer_NotRT->GetRenderObject_RT();
+			mCameraRenderer = mCameraRenderer_NotRT->GetRenderObject();
 
 			// Create Global / mPerObjectDescriptorSetLayout
 			ShaderParametersLayoutAttribute paramsLayoutAttr;
@@ -193,7 +193,7 @@ namespace cube
 			matDataPtr->data = std::move(material);
 			matDataPtr->data->mMyHandler = HMaterial(matDataPtr);
 
-			SPtr<Material_RT> mat_rt = matDataPtr->data->GetRenderObject_RT();
+			SPtr<rt::Material> mat_rt = matDataPtr->data->GetRenderObject();
 			GameThread::QueueTask([this, mat_rt]() {
 				Lock(mMaterialsMutex);
 
@@ -208,7 +208,7 @@ namespace cube
 
 		void RendererManager::UnregisterMaterial(HMaterial& material)
 		{
-			SPtr<Material_RT> mat_rt = material->GetRenderObject_RT();
+			SPtr<rt::Material> mat_rt = material->GetRenderObject();
 			int index = mat_rt->mIndex;
 			CHECK(index != -1, "This material is not registed.");
 
@@ -233,7 +233,7 @@ namespace cube
 
 		void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
 		{
-			SPtr<Renderer3D_RT> renderer_rt = renderer->GetRenderObject_RT();
+			SPtr<rt::Renderer3D> renderer_rt = renderer->GetRenderObject();
 
 			if(renderer_rt->mIndex != -1)
 				return;
@@ -248,7 +248,7 @@ namespace cube
 
 		void RendererManager::UnregisterRenderer3D(SPtr<Renderer3D>& renderer)
 		{
-			SPtr<Renderer3D_RT> renderer_rt = renderer->GetRenderObject_RT();
+			SPtr<rt::Renderer3D> renderer_rt = renderer->GetRenderObject();
 
 			int index = renderer_rt->mIndex;
 			CHECK(index != -1, "This renderer is not registed.");
@@ -272,7 +272,7 @@ namespace cube
 		{
 			CHECK(mDirLight == nullptr, "DirectionalLight is already registed.");
 
-			SPtr<DirectionalLight_RT> dirLight_rt = dirLight->GetRenderObject_RT();
+			SPtr<rt::DirectionalLight> dirLight_rt = dirLight->GetRenderObject();
 			GameThread::QueueTask([this, dirLight_rt]() {
 				mDirLight = dirLight_rt;
 			});
@@ -280,7 +280,7 @@ namespace cube
 
 		void RendererManager::UnregisterLight(SPtr<DirectionalLight>& dirLight)
 		{
-			CHECK(mDirLight == dirLight->GetRenderObject_RT(), "This directional light is not registed.");
+			CHECK(mDirLight == dirLight->GetRenderObject(), "This directional light is not registed.");
 
 			GameThread::QueueTask([this]() {
 				mDirLight = nullptr;
@@ -295,7 +295,7 @@ namespace cube
 				CHECK(mPointLights.size() < maxPointLightNum, "PointLight cannot be registed more than 50.");
 			}
 
-			SPtr<PointLight_RT> pointLight_rt = pointLight->GetRenderObject_RT();
+			SPtr<rt::PointLight> pointLight_rt = pointLight->GetRenderObject();
 			GameThread::QueueTask([this, pointLight_rt]() {
 				Lock lock(mPointLightsMutex);
 
@@ -305,7 +305,7 @@ namespace cube
 
 		void RendererManager::UnregisterLight(SPtr<PointLight>& pointLight)
 		{
-			SPtr<PointLight_RT> pointLight_rt = pointLight->GetRenderObject_RT();
+			SPtr<rt::PointLight> pointLight_rt = pointLight->GetRenderObject();
 			GameThread::QueueTask([this, pointLight_rt]() {
 				Lock lock(mPointLightsMutex);
 
@@ -536,7 +536,7 @@ namespace cube
 			mMainCommandList->End();
 		}
 
-		void RendererManager::DrawRenderer3D(Uint32 commandListIndex, SPtr<Renderer3D_RT>& renderer)
+		void RendererManager::DrawRenderer3D(Uint32 commandListIndex, SPtr<rt::Renderer3D>& renderer)
 		{
 			using namespace render;
 
@@ -547,7 +547,7 @@ namespace cube
 
 			Vector<SubMesh>& subMeshes = renderer->mMesh->GetSubMeshes();
 			for(uint32_t i = 0; i < subMeshes.size(); i++) {
-				SPtr<MaterialInstance_RT> matIns = renderer->mMaterialInses[i];
+				SPtr<rt::MaterialInstance> matIns = renderer->mMaterialInses[i];
 				int matIndex = matIns->GetMaterial()->mIndex;
 
 				if(matIndex != currentMatIndex) {
@@ -569,7 +569,7 @@ namespace cube
 			}
 		}
 
-		SPtr<render::GraphicsPipelineState> RendererManager::CreatePipeline(SPtr<Material_RT> material)
+		SPtr<render::GraphicsPipelineState> RendererManager::CreatePipeline(SPtr<rt::Material> material)
 		{
 			using namespace render;
 

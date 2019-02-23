@@ -37,8 +37,8 @@ namespace cube
 		public:
 			virtual ~Material();
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
-			SPtr<Material_RT> GetRenderObject_RT() const { return DPCast(Material_RT)(mRenderObject_RT); }
+			virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+			SPtr<rt::Material> GetRenderObject() const { return DPCast(rt::Material)(mRenderObject); }
 
 			HMaterialInstance CreateInstance();
 
@@ -55,32 +55,34 @@ namespace cube
 			HMaterial mMyHandler;
 		};
 
-		class Material_RT : public RenderObject_RT
+		namespace rt
 		{
-		public:
-			virtual ~Material_RT(){ }
+			class Material : public RenderObject
+			{
+			public:
+				virtual ~Material() {}
 
-			const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mParamInfos; }
+				const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mParamInfos; }
 
-			const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
+				const Vector<RPtr<Shader>>& GetShaders() const { return mShaders; }
 
-			SPtr<render::ShaderParametersLayout> GetShaderParametersLayout() const { return mShaderParamsLayout; }
+				SPtr<render::ShaderParametersLayout> GetShaderParametersLayout() const { return mShaderParamsLayout; }
 
-		private:
-			friend class Material;
-			friend class RendererManager;
+			private:
+				friend class cube::core::Material;
+				friend class RendererManager;
 
-			Material_RT(const MaterialInitializer& init);
+				Material(const MaterialInitializer& init);
 
-			int mIndex = -1; // Used in RendererManager
+				int mIndex = -1; // Used in RendererManager
 
-			Vector<MaterialParameterInfo> mParamInfos;
+				Vector<MaterialParameterInfo> mParamInfos;
 
-			Vector<RPtr<Shader>> mShaders;
-			SPtr<render::ShaderParametersLayout> mShaderParamsLayout;
+				Vector<RPtr<Shader>> mShaders;
+				SPtr<render::ShaderParametersLayout> mShaderParamsLayout;
 
-			SPtr<render::Device> mDevice;
-		};
-
+				SPtr<render::Device> mDevice;
+			};
+		} // namespace rt
 	} // namespace core
 } // namespace cube
