@@ -9,15 +9,23 @@ namespace cube
 {
 	RendererManager* RenderingThread::mRendererManager = nullptr;
 
+	std::thread::id RenderingThread::mThreadId;
+
 	EventFunction<void()> RenderingThread::mLoopEventFunc;
 	EventFunction<void(Uint32, Uint32)> RenderingThread::mResizeEventFunc;
 
-	Mutex RenderingThread::mTaskBufferMutex;
-	TaskBuffer RenderingThread::mTaskBuffer;
+	Mutex RenderingThread::mSyncTaskQueueMutex;
+	TaskQueue RenderingThread::mSyncTaskQueue;
+
+	Mutex RenderingThread::mTaskQueueMutex;
+	TaskQueue RenderingThread::mTaskQueue;
+	TaskQueue RenderingThread::mLastTaskQueue;
 
 	void RenderingThread::Init(RendererManager* rendererManager)
 	{
 		mRendererManager = rendererManager;
+
+		mThreadId = std::this_thread::get_id();
 	}
 
 	void RenderingThread::Prepare()
@@ -33,7 +41,8 @@ namespace cube
 		platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
 		platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
 
-		mTaskBuffer.Flush();
+		mSyncTaskQueue.Flush();
+		mTaskQueue.Flush();
 	}
 
 	void RenderingThread::Destroy()
@@ -50,12 +59,12 @@ namespace cube
 
 		platform::Platform::StartLoop();
 	}
-
+	/*
 	void RenderingThread::ExecuteLastTaskBuffer()
 	{
 		ProcessTaskBuffers();
 	}
-
+	*/
 	void RenderingThread::Loop()
 	{
 		if(GameThread::mWillBeDestroyed == true) {
@@ -70,21 +79,24 @@ namespace cube
 			return;
 		}
 
-		ProcessTaskBuffers();
+		Sync();
 
-		Async async = GameThread::ProcessTaskBuffersAndSimulateAsync();
+		Async async = GameThread::ExecuteTaskQueueAndSimulateAsync();
+
+		mLastTaskQueue.ExecuteAll();
+		mLastTaskQueue.Flush();
 
 		Rendering();
 
 		async.WaitUntilFinished();
 	}
 
-	void RenderingThread::ProcessTaskBuffers()
+	void RenderingThread::Sync()
 	{
-		TaskBuffer& buf = GameThread::_GetTaskBuffer();
-		buf.ExecuteAll();
+		mSyncTaskQueue.ExecuteAll();
+		mSyncTaskQueue.Flush();
 
-		buf.Flush();
+		mTaskQueue.QueueAndFlush(mLastTaskQueue);
 	}
 
 	void RenderingThread::Rendering()
@@ -98,7 +110,9 @@ namespace cube
 	{
 		mRendererManager->ShutDown();
 
-		mTaskBuffer.Flush();
+		mSyncTaskQueue.Flush();
+		mTaskQueue.Flush();
+		mLastTaskQueue.Flush();
 	}
 
 	void RenderingThread::OnResize(Uint32 width, Uint32 height)

@@ -13,5 +13,9 @@ namespace cube
 	void RenderObject::Initialize()
 	{
 		mRenderObject = CreateRenderObject();
+
+		RenderingThread::QueueTask([this]() {
+			mRenderObject->Initialize();
+		});
 	}
 } // namespace cube

@@ -95,9 +95,6 @@
     <ClInclude Include="Renderer\RenderObject.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Thread\TaskBuffer.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
     <ClInclude Include="GameThread.h" />
     <ClInclude Include="Renderer\RenderingThread.h">
       <Filter>Renderer</Filter>
@@ -110,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="Module\ModuleManager.h">
       <Filter>Module</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\TaskQueue.h">
+      <Filter>Thread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

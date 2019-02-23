@@ -59,6 +59,7 @@ namespace cube
 		{
 		public:
 			virtual ~Material() {}
+			virtual void Initialize() override;
 
 			const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mParamInfos; }
 

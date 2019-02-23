@@ -86,5 +86,9 @@ namespace cube
 			attr.debugName = "Material shader parameter layout";
 			mShaderParamsLayout = mDevice->CreateShaderParametersLayout(attr);
 		}
+
+		void Material::Initialize()
+		{
+		}
 	} // namespace rt
 } // namespace cube

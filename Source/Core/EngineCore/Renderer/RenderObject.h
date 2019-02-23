@@ -3,7 +3,7 @@
 #include "../EngineCoreHeader.h"
 
 #include "../LogWriter.h"
-#include "../GameThread.h"
+#include "RenderingThread.h"
 
 namespace cube
 {
@@ -30,14 +30,14 @@ namespace cube
 		template <typename T>
 		void SyncPrimaryData(T& src, T&dst)
 		{
-			GameThread::QueueTask([&src, &dst]() {
+			RenderingThread::QueueSyncTask([&src, &dst]() {
 				memcpy(&dst, &src, sizeof(decltype(src)));
 			});
 		}
 
 		void QueueSyncTask(std::function<void()> syncTaskFunc)
 		{
-			GameThread::QueueTask(syncTaskFunc);
+			RenderingThread::QueueSyncTask(syncTaskFunc);
 		}
 
 		SPtr<rt::RenderObject> mRenderObject;
@@ -53,7 +53,7 @@ namespace cube
 			virtual void Initialize() {}
 
 		protected:
-			friend class RenderObject;
+			friend class cube::RenderObject;
 
 			RenderObject() {}
 		};

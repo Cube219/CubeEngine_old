@@ -8,6 +8,8 @@
 
 namespace cube
 {
+#define CUBE_CURRENT_THREAD_ID std::this_thread::get_id()
+
 	class ENGINE_CORE_EXPORT Thread
 	{
 	public:

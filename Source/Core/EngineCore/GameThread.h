@@ -4,7 +4,7 @@
 
 #include "Thread/MutexLock.h"
 #include "Thread/Async.h"
-#include "Thread/TaskBuffer.h"
+#include "Thread/TaskQueue.h"
 
 namespace cube
 {
@@ -19,7 +19,7 @@ namespace cube
 		static Async PrepareAsync();
 
 		static Async SimulateAsync();
-		static Async ProcessTaskBuffersAndSimulateAsync();
+		static Async ExecuteTaskQueueAndSimulateAsync();
 
 		static Async PrepareDestroyAsync();
 		static Async DestroyAsync();
@@ -32,10 +32,12 @@ namespace cube
 		{
 			Lock lock(mTaskBufferMutex);
 
-			mTaskBuffer.WriteTask(taskFunc);
+			mTaskQueue.QueueTask(taskFunc);
 		}
 
-		static TaskBuffer& _GetTaskBuffer(){ return mTaskBuffer; }
+		static std::thread::id GetThreadId() { return mThreadId; }
+
+		// static TaskBuffer& _GetTaskBuffer(){ return mTaskBuffer; }
 
 	private:
 		friend class RenderingThread;
@@ -44,7 +46,7 @@ namespace cube
 
 		static void PrepareInternal();
 
-		static void ProcessTaskBuffersAndSimulateInternal();
+		static void ExecuteTaskQueueAndSimulateInternal();
 		static void SimulateInternal();
 
 		static void PrepareDestroyInternal();
@@ -52,6 +54,7 @@ namespace cube
 
 		static EngineCore* mECore;
 		static std::thread mMyThread;
+		static std::thread::id mThreadId;
 		static std::function<void()> mRunFunction;
 
 		static bool mWillBeDestroyed;
@@ -61,6 +64,19 @@ namespace cube
 		static AsyncSignal mDestroySignal;
 
 		static Mutex mTaskBufferMutex;
-		static TaskBuffer mTaskBuffer;
+		static TaskQueue mTaskQueue;
 	};
+
+#ifdef _DEBUG
+
+#include "Assertion.h"
+#define CHECK_IF_GAME_THREAD CHECK(GameThread::GetThreadId() == std::this_thread::get_id(), "This function should be called in game thread.");
+#define CHECK_IF_NOT_GAME_THREAD CHECK(GameThread::GetThreadId() != std::this_thread::get_id(), "This function should not be called in game thread.");
+
+#else
+
+#define CHECK_IF_GAME_THREAD
+#define CHECK_IF_NOT_GAME_THREAD
+
+#endif // _DEBUG
 } // namespace cube

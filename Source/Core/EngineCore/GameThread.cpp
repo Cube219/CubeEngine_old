@@ -8,6 +8,7 @@
 namespace cube
 {
 	EngineCore* GameThread::mECore = nullptr;
+	std::thread::id GameThread::mThreadId;
 	std::thread GameThread::mMyThread;
 	std::function<void()> GameThread::mRunFunction = nullptr;
 
@@ -18,7 +19,7 @@ namespace cube
 	AsyncSignal GameThread::mDestroySignal;
 
 	Mutex GameThread::mTaskBufferMutex;
-	TaskBuffer GameThread::mTaskBuffer;
+	TaskQueue GameThread::mTaskQueue;
 
 	void GameThread::Init(EngineCore* eCore)
 	{
@@ -26,6 +27,7 @@ namespace cube
 		mFinishSignal.DispatchCompletion();
 
 		mMyThread = std::thread(&GameThread::RunInternal);
+		mThreadId = mMyThread.get_id();
 	}
 
 	Async GameThread::PrepareAsync()
@@ -56,12 +58,12 @@ namespace cube
 		return Async(mFinishSignal);
 	}
 
-	Async GameThread::ProcessTaskBuffersAndSimulateAsync()
+	Async GameThread::ExecuteTaskQueueAndSimulateAsync()
 	{
 		Async a = Async(mFinishSignal);
 		a.WaitUntilFinished();
 
-		mRunFunction = &GameThread::ProcessTaskBuffersAndSimulateInternal;
+		mRunFunction = &GameThread::ExecuteTaskQueueAndSimulateInternal;
 		mStartSignal.DispatchCompletion();
 
 		mFinishSignal.Reset();
@@ -129,12 +131,10 @@ namespace cube
 		mECore->Initialize();
 	}
 
-	void GameThread::ProcessTaskBuffersAndSimulateInternal()
+	void GameThread::ExecuteTaskQueueAndSimulateInternal()
 	{
-		TaskBuffer& buf = RenderingThread::_GetTaskBuffer();
-		buf.ExecuteAll();
-
-		buf.Flush();
+		mTaskQueue.ExecuteAll();
+		mTaskQueue.Flush();
 
 		SimulateInternal();
 	}
@@ -146,13 +146,13 @@ namespace cube
 
 	void GameThread::PrepareDestroyInternal()
 	{
-		mTaskBuffer.Flush();
+		mTaskQueue.Flush();
 	}
 
 	void GameThread::DestroyInternal()
 	{
 		mECore->ShutDown();
-		mTaskBuffer.Flush();
+		mTaskQueue.Flush();
 
 		mDestroySignal.DispatchCompletion();
 	}

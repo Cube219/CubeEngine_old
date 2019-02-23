@@ -4,7 +4,7 @@
 
 #include "../EngineCore.h"
 #include "../LogWriter.h"
-#include "../GameThread.h"
+#include "RenderingThread.h"
 #include "Mesh.h"
 #include "Renderer3D.h"
 #include "CameraRenderer3D.h"
@@ -192,7 +192,7 @@ namespace cube
 		matDataPtr->data->mMyHandler = HMaterial(matDataPtr);
 
 		SPtr<rt::Material> mat_rt = matDataPtr->data->GetRenderObject();
-		GameThread::QueueTask([this, mat_rt]() {
+		RenderingThread::QueueTask([this, mat_rt]() {
 			Lock(mMaterialsMutex);
 
 			mat_rt->mIndex = (int)mMaterials.size();
@@ -210,7 +210,7 @@ namespace cube
 		int index = mat_rt->mIndex;
 		CHECK(index != -1, "This material is not registed.");
 
-		GameThread::QueueTask([this, mat_rt]() {
+		RenderingThread::QueueTask([this, mat_rt]() {
 			Lock(mMaterialsMutex);
 
 			int index = mat_rt->mIndex;
@@ -236,7 +236,7 @@ namespace cube
 		if(renderer_rt->mIndex != -1)
 			return;
 
-		GameThread::QueueTask([this, renderer_rt]() {
+		RenderingThread::QueueTask([this, renderer_rt]() {
 			Lock(mRenderersMutex);
 
 			mRenderers.push_back(renderer_rt);
@@ -251,7 +251,7 @@ namespace cube
 		int index = renderer_rt->mIndex;
 		CHECK(index != -1, "This renderer is not registed.");
 
-		GameThread::QueueTask([this, renderer_rt]() {
+		RenderingThread::QueueTask([this, renderer_rt]() {
 			Lock(mRenderersMutex);
 
 			int index = renderer_rt->mIndex;
@@ -271,7 +271,7 @@ namespace cube
 		CHECK(mDirLight == nullptr, "DirectionalLight is already registed.");
 
 		SPtr<rt::DirectionalLight> dirLight_rt = dirLight->GetRenderObject();
-		GameThread::QueueTask([this, dirLight_rt]() {
+		RenderingThread::QueueTask([this, dirLight_rt]() {
 			mDirLight = dirLight_rt;
 		});
 	}
@@ -280,7 +280,7 @@ namespace cube
 	{
 		CHECK(mDirLight == dirLight->GetRenderObject(), "This directional light is not registed.");
 
-		GameThread::QueueTask([this]() {
+		RenderingThread::QueueTask([this]() {
 			mDirLight = nullptr;
 		});
 	}
@@ -294,7 +294,7 @@ namespace cube
 		}
 
 		SPtr<rt::PointLight> pointLight_rt = pointLight->GetRenderObject();
-		GameThread::QueueTask([this, pointLight_rt]() {
+		RenderingThread::QueueTask([this, pointLight_rt]() {
 			Lock lock(mPointLightsMutex);
 
 			mPointLights.push_back(pointLight_rt);
@@ -304,7 +304,7 @@ namespace cube
 	void RendererManager::UnregisterLight(SPtr<PointLight>& pointLight)
 	{
 		SPtr<rt::PointLight> pointLight_rt = pointLight->GetRenderObject();
-		GameThread::QueueTask([this, pointLight_rt]() {
+		RenderingThread::QueueTask([this, pointLight_rt]() {
 			Lock lock(mPointLightsMutex);
 
 			auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight_rt);
