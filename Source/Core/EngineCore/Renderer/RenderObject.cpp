@@ -18,4 +18,15 @@ namespace cube
 			mRenderObject->Initialize();
 		});
 	}
+
+	void RenderObject::Destroy()
+	{
+		SPtr<rt::RenderObject> ro = mRenderObject;
+
+		RenderingThread::QueueTask([ro]() {
+			ro->Destroy();
+		});
+
+		mRenderObject = nullptr;
+	}
 } // namespace cube

@@ -40,7 +40,9 @@ namespace cube
 
 		HMaterialInstance CreateInstance();
 
-		void Destroy();
+		virtual void Destroy();
+
+		const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mMaterialInit.parameters; }
 
 	private:
 		friend class RendererManager;
@@ -60,6 +62,9 @@ namespace cube
 		public:
 			virtual ~Material() {}
 			virtual void Initialize() override;
+			virtual void Destroy() override;
+
+			void SyncMaterial(const MaterialInitializer& init);
 
 			const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mParamInfos; }
 
@@ -71,7 +76,9 @@ namespace cube
 			friend class cube::Material;
 			friend class RendererManager;
 
-			Material(const MaterialInitializer& init);
+			Material();
+
+			MaterialInitializer mMaterialInit;
 
 			int mIndex = -1; // Used in RendererManager
 
@@ -79,8 +86,6 @@ namespace cube
 
 			Vector<RPtr<Shader>> mShaders;
 			SPtr<render::ShaderParametersLayout> mShaderParamsLayout;
-
-			SPtr<render::Device> mDevice;
 		};
 	} // namespace rt
 } // namespace cube

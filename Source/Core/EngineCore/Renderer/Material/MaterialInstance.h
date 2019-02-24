@@ -61,7 +61,10 @@ namespace cube
 		{
 		public:
 			virtual ~MaterialInstance();
+			virtual void Initialize() override;
+			virtual void Destroy() override;
 
+			void SyncMaterial(SPtr<rt::Material>& mat);
 			void SyncParameterData(Uint64 index, MaterialParameter& param);
 
 			SPtr<rt::Material> GetMaterial() const { return mMaterial; }
@@ -72,10 +75,14 @@ namespace cube
 			friend class cube::MaterialInstance;
 			friend class cube::Material;
 
-			MaterialInstance(SPtr<rt::Material>& mat);
+			MaterialInstance();
+
+			void ApplyParameters();
 
 			SPtr<rt::Material> mMaterial;
 
+			Vector<Uint32> mTempParametersIndex;
+			Vector<MaterialParameter> mTempParameters;
 			SPtr<render::ShaderParameters> mShaderParameters;
 		};
 	} // namespace rt

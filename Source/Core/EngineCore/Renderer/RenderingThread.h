@@ -66,12 +66,13 @@ namespace cube
 		static TaskQueue mTaskQueue;
 		static TaskQueue mLastTaskQueue;
 	};
+} // namespace cube
 
 #ifdef _DEBUG
 
 #include "../Assertion.h"
-#define CHECK_IF_RENDERING_THREAD CHECK(RenderingThread::GetThreadId() == std::this_thread::get_id(), "This function should be called in rendering thread.");
-#define CHECK_IF_NOT_RENDERING_THREAD CHECK(RenderingThread::GetThreadId() != std::this_thread::get_id(), "This function should not be called in rendering thread.");
+#define CHECK_IF_RENDERING_THREAD CHECK(cube::RenderingThread::GetThreadId() == std::this_thread::get_id(), "This function should be called in rendering thread.");
+#define CHECK_IF_NOT_RENDERING_THREAD CHECK(cube::RenderingThread::GetThreadId() != std::this_thread::get_id(), "This function should not be called in rendering thread.");
 
 #else
 
@@ -79,4 +80,3 @@ namespace cube
 #define CHECK_IF_NOT_RENDERING_THREAD
 
 #endif // _DEBUG
-} // namespace cube

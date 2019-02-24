@@ -32,7 +32,6 @@ namespace cube
 	SPtr<rt::RenderObject> Renderer3D::CreateRenderObject() const
 	{
 		SPtr<rt::Renderer3D> renderer3d_rt(new rt::Renderer3D());
-		renderer3d_rt->Initialize();
 
 		return renderer3d_rt;
 	}
@@ -66,11 +65,22 @@ namespace cube
 	{
 		Renderer3D::Renderer3D()
 		{
+		}
+
+		void Renderer3D::Initialize()
+		{
 			RendererManager& rm = ECore().GetRendererManager();
-			mDevice = rm.GetDevice();
 
 			SPtr<render::ShaderParametersLayout> perObjectShaderParametersLayout = rm._GetPerObjectShaderParametersLayout();
 			mShaderParameters = perObjectShaderParametersLayout->CreateParameters();
+		}
+
+		void Renderer3D::Destroy()
+		{
+			mMesh = nullptr;
+			mMaterialInses.clear();
+			mShaderParameters = nullptr;
+			mDataBuffer = nullptr;
 		}
 
 		void Renderer3D::SyncMesh(RPtr<Mesh>& mesh)
@@ -129,7 +139,7 @@ namespace cube
 			attr.isDedicated = false;
 			attr.debugName = "Renderer3D data buffer";
 
-			mDataBuffer = mDevice->CreateBuffer(attr);
+			mDataBuffer = ECore().GetRendererManager().GetDevice()->CreateBuffer(attr);
 			mDataBuffer->Map(mDataBufferMappedPtr);
 
 			mVertexOffset = 0;

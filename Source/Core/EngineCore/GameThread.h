@@ -66,12 +66,13 @@ namespace cube
 		static Mutex mTaskBufferMutex;
 		static TaskQueue mTaskQueue;
 	};
+} // namespace cube
 
 #ifdef _DEBUG
 
 #include "Assertion.h"
-#define CHECK_IF_GAME_THREAD CHECK(GameThread::GetThreadId() == std::this_thread::get_id(), "This function should be called in game thread.");
-#define CHECK_IF_NOT_GAME_THREAD CHECK(GameThread::GetThreadId() != std::this_thread::get_id(), "This function should not be called in game thread.");
+#define CHECK_IF_GAME_THREAD CHECK(cube::GameThread::GetThreadId() == std::this_thread::get_id(), "This function should be called in game thread.");
+#define CHECK_IF_NOT_GAME_THREAD CHECK(cube::GameThread::GetThreadId() != std::this_thread::get_id(), "This function should not be called in game thread.");
 
 #else
 
@@ -79,4 +80,3 @@ namespace cube
 #define CHECK_IF_NOT_GAME_THREAD
 
 #endif // _DEBUG
-} // namespace cube

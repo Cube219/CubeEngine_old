@@ -49,6 +49,8 @@ namespace cube
 		{
 		public:
 			virtual ~Renderer3D() {}
+			virtual void Initialize() override;
+			virtual void Destroy() override;
 
 			void SyncMesh(RPtr<Mesh>& mesh);
 			void SyncMaterialInstance(HMaterialInstance materialIns, Uint32 index);
@@ -80,8 +82,6 @@ namespace cube
 			void* mDataBufferMappedPtr;
 			Uint32 mVertexOffset;
 			Uint32 mIndexOffset;
-
-			SPtr<render::Device> mDevice;
 		};
 	} // namespace rt
 } // namespace cube

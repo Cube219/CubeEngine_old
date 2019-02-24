@@ -15,11 +15,12 @@ namespace cube
 	class ENGINE_CORE_EXPORT RenderObject
 	{
 	public:
-		virtual ~RenderObject(){ }
+		virtual ~RenderObject() {}
 
 		static SPtr<RenderObject> Create();
 
 		virtual void Initialize();
+		virtual void Destroy();
 
 		virtual SPtr<rt::RenderObject> CreateRenderObject() const { return nullptr; }
 		SPtr<rt::RenderObject> GetRenderObject() const { return mRenderObject; }
@@ -51,6 +52,7 @@ namespace cube
 			virtual ~RenderObject() {}
 
 			virtual void Initialize() {}
+			virtual void Destroy() {}
 
 		protected:
 			friend class cube::RenderObject;

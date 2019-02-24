@@ -28,8 +28,11 @@ namespace cube
 
 	SPtr<rt::RenderObject> Material::CreateRenderObject() const
 	{
-		SPtr<rt::Material> mat_rt(new rt::Material(mMaterialInit));
-		mat_rt->Initialize();
+		SPtr<rt::Material> mat_rt(new rt::Material());
+
+		RenderingThread::QueueSyncTask([this]() {
+			GetRenderObject()->SyncMaterial(mMaterialInit);
+		});
 
 		return mat_rt;
 	}
@@ -48,18 +51,24 @@ namespace cube
 	void Material::Destroy()
 	{
 		ECore().GetRendererManager().UnregisterMaterial(mMyHandler);
+
+		RenderObject::Destroy();
 	}
 
 	namespace rt
 	{
-		Material::Material(const MaterialInitializer& init)
+		Material::Material()
 		{
-			mDevice = ECore().GetRendererManager().GetDevice();
+		}
+
+		void Material::Initialize()
+		{
+			SPtr<render::Device> device = ECore().GetRendererManager().GetDevice();
 
 			using namespace render;
 
-			mParamInfos = init.parameters;
-			mShaders = init.shaders;
+			mParamInfos = mMaterialInit.parameters;
+			mShaders = mMaterialInit.shaders;
 
 			ShaderParametersLayoutAttribute attr;
 			attr.paramInfos.resize(mParamInfos.size());
@@ -84,11 +93,19 @@ namespace cube
 				attr.paramInfos[i].debugName = "Material shader parameter layout param info";
 			}
 			attr.debugName = "Material shader parameter layout";
-			mShaderParamsLayout = mDevice->CreateShaderParametersLayout(attr);
+			mShaderParamsLayout = device->CreateShaderParametersLayout(attr);
 		}
 
-		void Material::Initialize()
+		void Material::Destroy()
 		{
+			mParamInfos.clear();
+			mShaders.clear();
+			mShaderParamsLayout = nullptr;
+		}
+
+		void Material::SyncMaterial(const MaterialInitializer& init)
+		{
+			mMaterialInit = init;
 		}
 	} // namespace rt
 } // namespace cube
