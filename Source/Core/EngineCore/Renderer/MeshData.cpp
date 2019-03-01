@@ -14,6 +14,7 @@ namespace cube
 
 	MeshData::~MeshData()
 	{
+		free(mData);
 	}
 
 	void MeshData::SetVertices(Vertex* pVertices, Uint64 size)

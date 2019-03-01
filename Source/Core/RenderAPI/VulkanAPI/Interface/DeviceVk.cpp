@@ -120,6 +120,7 @@ namespace cube
 				func();
 			}
 			mReleaseFuncQueue.clear();
+			mReleaseVkObjectQueue.clear();
 
 			mShaderParameterManager.DiscardPerFrame();
 			mUploadHeap.DiscardAllocations();

@@ -166,6 +166,7 @@ namespace cube
 					queueManager.SubmitCommandList(*cmdBuf);
 
 					device.ReleaseAtNextFrame(cmdBuf);
+					device.ReleaseAtNextFrame(std::move(stagingAlloc));
 					device.ReleaseAtNextFrame(std::move(stagingBuffer));
 				}
 			}

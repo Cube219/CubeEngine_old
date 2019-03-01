@@ -60,6 +60,16 @@ namespace cube
 				mReleaseVkObjectQueue.push_back(VkObjectStorage::Create(std::move(vkObject)));
 			}
 
+			template <>
+			void ReleaseAtNextFrame(VulkanAllocation&& alloc)
+			{
+				Lock lock(mReleaseQueueMutex);
+
+				mReleaseFuncQueue.push_back([alloc]() mutable {
+					alloc.Free();
+				});
+			}
+
 			template <typename T>
 			void ReleaseAtNextFrame(SPtr<T> ptrObject)
 			{
