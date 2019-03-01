@@ -35,6 +35,8 @@ namespace cube
 			if(mTotalSize != rhs.mTotalSize) {
 				free(mData);
 				mData = malloc(rhs.mTotalSize);
+
+				mTotalSize = rhs.mTotalSize;
 			}
 
 			memcpy(mData, rhs.mData, mTotalSize);

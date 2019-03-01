@@ -50,7 +50,7 @@ namespace cube
 			virtual ~Mesh();
 			virtual void Initialize() override;
 
-			void SyncMesh(const SPtr<MeshData>& meshData);
+			void SyncMeshData(const SPtr<MeshData>& meshData);
 
 			const Vector<SubMesh>& GetSubMeshes() const { return mSubMeshes; }
 			SPtr<render::Buffer> GetMeshBuffer() const { return mMeshBuffer; }
@@ -60,7 +60,7 @@ namespace cube
 		private:
 			friend class cube::Mesh;
 
-			void FlushMeshToMeshBuffer();
+			void FlushToMeshBuffer();
 
 			SPtr<MeshData> mMeshData;
 

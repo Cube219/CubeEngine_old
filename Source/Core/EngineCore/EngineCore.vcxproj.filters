@@ -114,6 +114,9 @@
     <ClInclude Include="Renderer\MeshData.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\TextureData.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -212,6 +215,9 @@
       <Filter>Module</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\MeshData.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\TextureData.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>

@@ -19,6 +19,8 @@ namespace cube
 		Resource* Import(SPtr<platform::File>& file, Json info) final override;
 
 	private:
+		SPtr<TextureData> GetTextureData(void* pData, Uint32 width, Uint32 height, Uint32 depth);
+
 		SPtr<render::Device> mDevice;
 	};
 } // namespace cube

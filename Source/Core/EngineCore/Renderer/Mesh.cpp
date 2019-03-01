@@ -7,6 +7,14 @@
 
 namespace cube
 {
+	RPtr<Mesh> Mesh::Load(StringRef path)
+	{
+		auto mesh = ECore().GetResourceManager().LoadResource<Mesh>(path);
+		mesh->Initialize();
+
+		return mesh;
+	}
+
 	Mesh::Mesh() : 
 		mMeshData(nullptr)
 	{
@@ -22,23 +30,9 @@ namespace cube
 	{
 	}
 
-	RPtr<Mesh> Mesh::Load(StringRef path)
-	{
-		auto mesh = ECore().GetResourceManager().LoadResource<Mesh>(path);
-		mesh->Initialize();
-
-		return mesh;
-	}
-
 	SPtr<rt::RenderObject> Mesh::CreateRenderObject() const
 	{
 		SPtr<rt::Mesh> mesh_rt(new rt::Mesh(mMeshData));
-
-		if(mMeshData != nullptr) {
-			RenderingThread::QueueSyncTask([meshData = mMeshData, mesh_rt]() {
-				mesh_rt->SyncMesh(meshData);
-			});
-		}
 
 		mMeshData = nullptr;
 
@@ -48,7 +42,10 @@ namespace cube
 	namespace rt
 	{
 		Mesh::Mesh(const SPtr<MeshData>& initialiData) :
-			mMeshData(initialiData)
+			mMeshData(initialiData),
+			mVertexOffset(0),
+			mIndexOffset(mMeshData->GetVertexCount() * sizeof(Vertex)),
+			mSubMeshes(mMeshData->GetSubMeshes())
 		{
 		}
 
@@ -58,21 +55,22 @@ namespace cube
 
 		void Mesh::Initialize()
 		{
+			if(mMeshData != nullptr) {
+				FlushToMeshBuffer();
+			}
 		}
 
-		void Mesh::SyncMesh(const SPtr<MeshData>& meshData)
+		void Mesh::SyncMeshData(const SPtr<MeshData>& meshData)
 		{
 			mMeshData = meshData;
 
-			FlushMeshToMeshBuffer();
+			RenderingThread::QueueTask([this]() {
+				FlushToMeshBuffer();
+			});
 		}
 
-		void Mesh::FlushMeshToMeshBuffer()
+		void Mesh::FlushToMeshBuffer()
 		{
-			mVertexOffset = 0;
-			mIndexOffset = mMeshData->GetVertexCount() * sizeof(Vertex);
-			mSubMeshes = mMeshData->GetSubMeshes();
-
 			using namespace render;
 
 			BufferAttribute attr;

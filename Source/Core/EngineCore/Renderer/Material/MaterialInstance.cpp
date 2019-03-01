@@ -162,8 +162,10 @@ namespace cube
 						break;
 
 					case MaterialParameterType::Texture:
+						auto texture_rt = param.texture->GetRenderObject();
+
 						mShaderParameters->UpdateParameter(mTempParametersIndex[i],
-							param.texture->GetTextureView(), param.texture->GetSampler());
+							texture_rt->GetTextureView(), texture_rt->GetSampler());
 						break;
 				}
 			}

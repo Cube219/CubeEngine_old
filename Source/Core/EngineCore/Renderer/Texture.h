@@ -3,6 +3,7 @@
 #include "../EngineCoreHeader.h"
 
 #include "../Resource/BaseResource.h"
+#include "RenderObject.h"
 #include "RenderAPI/Interface/Texture.h"
 #include "RenderAPI/Interface/TextureView.h"
 #include "RenderAPI/Interface/Sampler.h"
@@ -10,32 +11,48 @@
 
 namespace cube
 {
-	class ENGINE_CORE_EXPORT Texture : public Resource
+	class ENGINE_CORE_EXPORT Texture : public Resource, public RenderObject
 	{
 	public:
 		static RPtr<Texture> Load(StringRef path);
 
 	public:
-		Texture(){ }
-		virtual ~Texture() { }
+		Texture();
+		Texture(const SPtr<TextureData>& initialData);
+		virtual ~Texture();
 
-		void WriteData(SPtr<render::Device>& device, void* data, Uint64 size, Uint32 width, Uint32 height);
-
-		SPtr<render::TextureView> GetTextureView() const { return mTextureView; }
-		SPtr<render::Sampler> GetSampler() const { return mSampler; }
+		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+		SPtr<rt::Texture> GetRenderObject() const { return DPCast(rt::Texture)(mRenderObject); }
 
 	private:
-		Uint64 mImageSize;
-
-		Uint32 mWidth;
-		Uint32 mHeight;
-
+		mutable SPtr<TextureData> mTextureData;
 		Uint32 mMipLevel;
-
-		SPtr<render::Texture> mTexture;
-		SPtr<render::TextureView> mTextureView;
-		SPtr<render::Sampler> mSampler;
-
-		SPtr<RendererManager> mManager_ref;
 	};
+
+	namespace rt
+	{
+		class Texture : public RenderObject
+		{
+		public:
+			Texture(const SPtr<TextureData>& initialData);
+			virtual ~Texture();
+			virtual void Initialize() override;
+
+			void SyncTextureData(const SPtr<TextureData>& textureData);
+
+			SPtr<render::TextureView> GetTextureView() const { return mTextureView; }
+			SPtr<render::Sampler> GetSampler() const { return mSampler; }
+
+		private:
+			friend class cube::Texture;
+
+			void FlushToRenderTexture();
+
+			SPtr<TextureData> mTextureData;
+
+			SPtr<render::Texture> mTexture;
+			SPtr<render::TextureView> mTextureView;
+			SPtr<render::Sampler> mSampler;
+		};
+	} // namespace rt
 } // namespace cube

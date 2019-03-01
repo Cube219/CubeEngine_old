@@ -166,6 +166,7 @@
     <ClInclude Include="Renderer\RenderingThread.h" />
     <ClInclude Include="Renderer\RenderObject.h" />
     <ClInclude Include="Renderer\Texture.h" />
+    <ClInclude Include="Renderer\TextureData.h" />
     <ClInclude Include="Renderer\Vertex.h" />
     <ClInclude Include="Resource\BaseResource.h" />
     <ClInclude Include="Resource\ResourceManager.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="Renderer\RenderingThread.cpp" />
     <ClCompile Include="Renderer\RenderObject.cpp" />
     <ClCompile Include="Renderer\Texture.cpp" />
+    <ClCompile Include="Renderer\TextureData.cpp" />
     <ClCompile Include="Resource\BaseResource.cpp" />
     <ClCompile Include="Resource\ResourceManager.cpp" />
     <ClCompile Include="String\ImmutableString.cpp" />

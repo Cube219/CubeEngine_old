@@ -57,6 +57,7 @@ namespace cube
 	class PointLight;
 	class SpotLight;
 
+	class TextureData;
 	class Texture;
 
 	class ModuleManager;
@@ -85,6 +86,8 @@ namespace cube
 		class PointLight;
 
 		class Mesh;
+
+		class Texture;
 	} // namespace rt
 } // namespace cube
 

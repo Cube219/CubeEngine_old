@@ -6,7 +6,6 @@
 #include "Mesh.h"
 #include "Material/Material.h"
 #include "Material/MaterialInstance.h"
-#include "Texture.h"
 #include "Material/Shader.h"
 #include "CameraRenderer3D.h"
 #include "RenderAPI/Interface/Device.h"
@@ -108,9 +107,9 @@ namespace cube
 
 			// Bind vertex / index data
 			auto meshBuf = mMesh->GetMeshBuffer();
-			Uint32 vertexOffset = mMesh->GetVertexOffset();
+			Uint32 vertexOffset = SCast(Uint32)(mMesh->GetVertexOffset());
 			commandList->BindVertexBuffers(0, 1, &meshBuf, &vertexOffset);
-			commandList->BindIndexBuffer(meshBuf, mMesh->GetIndexOffset());
+			commandList->BindIndexBuffer(meshBuf, SCast(Uint32)(mMesh->GetIndexOffset()));
 		}
 	} // namespace rt
 } // namespace cube
