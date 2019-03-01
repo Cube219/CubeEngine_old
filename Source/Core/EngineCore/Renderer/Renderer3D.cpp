@@ -41,7 +41,7 @@ namespace cube
 		mMesh = mesh;
 		mMaterialInses.resize(mMesh->GetSubMeshes().size());
 		QueueSyncTask([this]() {
-			GetRenderObject()->SyncMesh(mMesh);
+			GetRenderObject()->SyncMesh(mMesh->GetRenderObject());
 		});
 	}
 
@@ -49,7 +49,7 @@ namespace cube
 	{
 		mMaterialInses[index] = materialIns;
 		QueueSyncTask([this, materialIns, index]() {
-			GetRenderObject()->SyncMaterialInstance(materialIns, index);
+			GetRenderObject()->SyncMaterialInstance(materialIns->GetRenderObject(), index);
 		});
 	}
 
@@ -80,19 +80,18 @@ namespace cube
 			mMesh = nullptr;
 			mMaterialInses.clear();
 			mShaderParameters = nullptr;
-			mDataBuffer = nullptr;
 		}
 
-		void Renderer3D::SyncMesh(RPtr<Mesh>& mesh)
+		void Renderer3D::SyncMesh(SPtr<Mesh>& mesh)
 		{
 			mMesh = mesh;
 			mMaterialInses.resize(mMesh->GetSubMeshes().size());
 			mIsMeshUpdated = true;
 		}
 
-		void Renderer3D::SyncMaterialInstance(HMaterialInstance materialIns, Uint32 index)
+		void Renderer3D::SyncMaterialInstance(SPtr<MaterialInstance>& materialIns, Uint32 index)
 		{
-			mMaterialInses[index] = materialIns->GetRenderObject();
+			mMaterialInses[index] = materialIns;
 		}
 
 		void Renderer3D::SyncModelMatrix(const Matrix& modelMatrix)
@@ -102,48 +101,16 @@ namespace cube
 
 		void Renderer3D::PrepareDraw(SPtr<render::CommandList>& commandList, SPtr<rt::CameraRenderer3D>& camera)
 		{
-			if(mIsMeshUpdated == true) {
-				Vector<Vertex>& vertices = mMesh->GetVertex();
-				Vector<Index>& indices = mMesh->GetIndex();
-
-				RecreateDataBuffer();
-
-				memcpy((Uint8*)mDataBufferMappedPtr + mVertexOffset, vertices.data(), vertices.size() * sizeof(Vertex));
-				memcpy((Uint8*)mDataBufferMappedPtr + mIndexOffset, indices.data(), indices.size() * sizeof(Index));
-
-				mDataBuffer->Unmap();
-
-				mIsMeshUpdated = false;
-			}
-
 			// Update mvp matrix
 			mUBOPerObject.mvp = mUBOPerObject.modelMatrix * camera->GetViewProjectionMatrix();
 
 			mShaderParameters->UpdateParameter(0, &mUBOPerObject, sizeof(UBOPerObject));
 
 			// Bind vertex / index data
-			commandList->BindVertexBuffers(0, 1, &mDataBuffer, &mVertexOffset);
-			commandList->BindIndexBuffer(mDataBuffer, mIndexOffset);
-		}
-
-		void Renderer3D::RecreateDataBuffer()
-		{
-			using namespace render;
-
-			BufferAttribute attr;
-			attr.size = mMesh->GetVertex().size() * sizeof(Vertex) + mMesh->GetIndex().size() * sizeof(Index);
-			attr.cpuAccessible = true;
-			attr.usage = ResourceUsage::Dynamic;
-			attr.bindTypeFlags = BufferBindTypeFlagBits::Uniform_Bit | BufferBindTypeFlagBits::Vertex_Bit | BufferBindTypeFlagBits::Index_Bit;
-			attr.pData = nullptr;
-			attr.isDedicated = false;
-			attr.debugName = "Renderer3D data buffer";
-
-			mDataBuffer = ECore().GetRendererManager().GetDevice()->CreateBuffer(attr);
-			mDataBuffer->Map(mDataBufferMappedPtr);
-
-			mVertexOffset = 0;
-			mIndexOffset = mMesh->GetVertex().size() * sizeof(Vertex);
+			auto meshBuf = mMesh->GetMeshBuffer();
+			Uint32 vertexOffset = mMesh->GetVertexOffset();
+			commandList->BindVertexBuffers(0, 1, &meshBuf, &vertexOffset);
+			commandList->BindIndexBuffer(meshBuf, mMesh->GetIndexOffset());
 		}
 	} // namespace rt
 } // namespace cube

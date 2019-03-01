@@ -3,7 +3,9 @@
 #include "../EngineCoreHeader.h"
 
 #include "../Resource/BaseResource.h"
+#include "RenderObject.h"
 #include "Vertex.h"
+#include "RenderAPI/Interface/Buffer.h"
 
 namespace cube
 {
@@ -17,29 +19,55 @@ namespace cube
 		Uint64 indexCount;
 	};
 
-	class ENGINE_CORE_EXPORT Mesh : public Resource
+	class ENGINE_CORE_EXPORT Mesh : public Resource, public RenderObject
 	{
 	public:
 		static RPtr<Mesh> Load(StringRef path);
 
 	public:
-		Mesh(){ }
-		virtual ~Mesh(){ }
+		Mesh();
+		Mesh(const SPtr<MeshData>& initialiData);
+		virtual ~Mesh();
 
-		void SetVertex(const Vector<Vertex>& vertices);
-		void SetIndex(const Vector<Index>& indices);
-		void AddSubMesh(const SubMesh& subMesh);
+		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+		SPtr<rt::Mesh> GetRenderObject() const { return DPCast(rt::Mesh)(mRenderObject); }
 
-		Vector<Vertex>& GetVertex() { return mVertices; }
-		Vector<Index>& GetIndex() { return mIndices; }
-		Vector<SubMesh>& GetSubMeshes() { return mSubMeshes; }
+		const Vector<SubMesh>& GetSubMeshes() const { return mSubMeshes; }
 
 	private:
 		friend class BaseMeshGenerator;
 
-		Vector<Vertex> mVertices;
-		Vector<Index> mIndices;
-
+		mutable SPtr<MeshData> mMeshData;
 		Vector<SubMesh> mSubMeshes;
 	};
+
+	namespace rt
+	{
+		class Mesh : public RenderObject
+		{
+		public:
+			Mesh(const SPtr<MeshData>& initialiData);
+			virtual ~Mesh();
+			virtual void Initialize() override;
+
+			void SyncMesh(const SPtr<MeshData>& meshData);
+
+			const Vector<SubMesh>& GetSubMeshes() const { return mSubMeshes; }
+			SPtr<render::Buffer> GetMeshBuffer() const { return mMeshBuffer; }
+			Uint64 GetVertexOffset() const { return mVertexOffset; }
+			Uint64 GetIndexOffset() const { return mIndexOffset; }
+
+		private:
+			friend class cube::Mesh;
+
+			void FlushMeshToMeshBuffer();
+
+			SPtr<MeshData> mMeshData;
+
+			SPtr<render::Buffer> mMeshBuffer; // Combine vertex/index
+			Uint64 mVertexOffset;
+			Uint64 mIndexOffset;
+			Vector<SubMesh> mSubMeshes;
+		};
+	} // namespace rt
 } // namespace cube

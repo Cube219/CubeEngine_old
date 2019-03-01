@@ -1,10 +1,10 @@
 ﻿#include "BaseMeshGenerator.h"
 
-#include "Mesh.h"
 #include "Base/Math.h"
 #include "../EngineCore.h"
 #include "../Resource/ResourceManager.h"
 #include "../LogWriter.h"
+#include "MeshData.h"
 
 namespace cube
 {
@@ -12,8 +12,6 @@ namespace cube
 
 	RPtr<Mesh> BaseMeshGenerator::GetBoxMesh()
 	{
-		Mesh* meshPtr = new Mesh();
-
 		Vector<Vertex> vertices;
 		Vertex v;
 		v.pos = {-0.5f, -0.5f, -0.5f, 1};
@@ -53,25 +51,26 @@ namespace cube
 			0,1,2,  2,1,3 ,  2,3,4,  4,3,5,  4,5,6,  6,5,7,  6,7,0,  0,7,1,  6,0,2,  2,4,6,  3,1,5,  5,1,7
 		};
 
-		meshPtr->SetVertex(vertices);
-		meshPtr->SetIndex(indices);
-
-		SetNormalVector(meshPtr);
+		SetNormalVector(vertices, indices);
 
 		SubMesh subMesh;
 		subMesh.name = CUBE_T("Box");
 		subMesh.vertexOffset = 0;
 		subMesh.indexOffset = 0;
 		subMesh.indexCount = indices.size();
-		meshPtr->AddSubMesh(subMesh);
+
+		SPtr<MeshData> meshData = std::make_shared<MeshData>(vertices.size(), indices.size());
+		meshData->SetVertices(vertices.data(), vertices.size());
+		meshData->SetIndices(indices.data(), indices.size());
+		meshData->SetSubMeshes(&subMesh, 1);
+
+		Mesh* meshPtr = new Mesh(meshData);
 
 		return RegisterToResourceManager(meshPtr);
 	}
 
 	RPtr<Mesh> BaseMeshGenerator::GetCylinderMesh()
 	{
-		Mesh* meshPtr = new Mesh();
-
 		constexpr int sliceCount = 20;
 
 		Vector<Vertex> vertices;
@@ -142,17 +141,20 @@ namespace cube
 		indices.push_back(1);
 		indices.push_back((sliceCount - 1) * 2 + 1);
 
-		meshPtr->SetVertex(vertices);
-		meshPtr->SetIndex(indices);
-
-		SetNormalVector(meshPtr);
+		SetNormalVector(vertices, indices);
 
 		SubMesh subMesh;
 		subMesh.name = CUBE_T("Cylinder");
 		subMesh.vertexOffset = 0;
 		subMesh.indexOffset = 0;
 		subMesh.indexCount = indices.size();
-		meshPtr->AddSubMesh(subMesh);
+
+		SPtr<MeshData> meshData = std::make_shared<MeshData>(vertices.size(), indices.size());
+		meshData->SetVertices(vertices.data(), vertices.size());
+		meshData->SetIndices(indices.data(), indices.size());
+		meshData->SetSubMeshes(&subMesh, 1);
+
+		Mesh* meshPtr = new Mesh(meshData);
 
 		return RegisterToResourceManager(meshPtr);
 	}
@@ -167,8 +169,6 @@ namespace cube
 
 	RPtr<Mesh> BaseMeshGenerator::GetSphereMesh()
 	{
-		Mesh* meshPtr = new Mesh();
-
 		constexpr int divisionNum = 3;
 
 		// Create icosahedron
@@ -212,27 +212,23 @@ namespace cube
 			10,1,6, 11,0,9, 2,11,9, 5,2,9,  11,2,7
 		};
 
-		meshPtr->SetVertex(vertices);
-		meshPtr->SetIndex(indices);
-			
 		// Divide vertices from 1 to 4
 		for(int i = 0; i < divisionNum; i++) {
-			SubDivide(meshPtr);
+			SubDivide(vertices, indices);
 		}
 
 		// Project onto sphere
-		Vector<Vertex>& meshVertices = meshPtr->GetVertex();
-		for(Uint64 i = 0; i < meshVertices.size(); i++) {
+		for(Uint64 i = 0; i < vertices.size(); i++) {
 			Vector3 v;
-			v = meshVertices[i].pos;
+			v = vertices[i].pos;
 			v.Normalize();
 			v *= 0.5f;
 
 			Float3 vF = v.GetFloat3();
 
-			meshVertices[i].pos = Vector4(vF.x, vF.y, vF.z, 1.0f);
-			meshVertices[i].normal = Vector3(vF.x, vF.y, vF.z);
-			meshVertices[i].normal.Normalize();
+			vertices[i].pos = Vector4(vF.x, vF.y, vF.z, 1.0f);
+			vertices[i].normal = Vector3(vF.x, vF.y, vF.z);
+			vertices[i].normal.Normalize();
 		}
 
 		//SetNormalVector(meshPtr);
@@ -241,16 +237,20 @@ namespace cube
 		subMesh.name = CUBE_T("Sphere");
 		subMesh.vertexOffset = 0;
 		subMesh.indexOffset = 0;
-		subMesh.indexCount = meshPtr->GetIndex().size();
-		meshPtr->AddSubMesh(subMesh);
+		subMesh.indexCount = indices.size();
+
+		SPtr<MeshData> meshData = std::make_shared<MeshData>(vertices.size(), indices.size());
+		meshData->SetVertices(vertices.data(), vertices.size());
+		meshData->SetIndices(indices.data(), indices.size());
+		meshData->SetSubMeshes(&subMesh, 1);
+
+		Mesh* meshPtr = new Mesh(meshData);
 
 		return RegisterToResourceManager(meshPtr);
 	}
 
 	RPtr<Mesh> BaseMeshGenerator::GetPlaneMesh()
 	{
-		Mesh* meshPtr = new Mesh();
-
 		Vector<Vertex> vertices;
 		Vertex v;
 		v.color = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -269,25 +269,28 @@ namespace cube
 			0,1,2,  0,2,3
 		};
 
-		meshPtr->SetVertex(vertices);
-		meshPtr->SetIndex(indices);
-
-		SetNormalVector(meshPtr);
+		SetNormalVector(vertices, indices);
 
 		SubMesh subMesh;
 		subMesh.name = CUBE_T("Plane");
 		subMesh.vertexOffset = 0;
 		subMesh.indexOffset = 0;
 		subMesh.indexCount = indices.size();
-		meshPtr->AddSubMesh(subMesh);
+
+		SPtr<MeshData> meshData = std::make_shared<MeshData>(vertices.size(), indices.size());
+		meshData->SetVertices(vertices.data(), vertices.size());
+		meshData->SetIndices(indices.data(), indices.size());
+		meshData->SetSubMeshes(&subMesh, 1);
+
+		Mesh* meshPtr = new Mesh(meshData);
 
 		return RegisterToResourceManager(meshPtr);
 	}
 
-	void BaseMeshGenerator::SubDivide(Mesh* mesh)
+	void BaseMeshGenerator::SubDivide(Vector<Vertex>& vertices, Vector<Index>& indices)
 	{
-		Vector<Vertex>& oldVertices = mesh->GetVertex();
-		Vector<Index>& oldIndices = mesh->GetIndex();
+		Vector<Vertex>& oldVertices = vertices;
+		Vector<Index>& oldIndices = indices;
 		Vector<Vertex> newVertices;
 		Vector<Index> newIndices;
 
@@ -338,15 +341,12 @@ namespace cube
 			newIndices.push_back(i * 6 + 4);
 		}
 
-		mesh->SetVertex(newVertices);
-		mesh->SetIndex(newIndices);
+		vertices = newVertices;
+		indices = newIndices;
 	}
 
-	void BaseMeshGenerator::SetNormalVector(Mesh* mesh)
+	void BaseMeshGenerator::SetNormalVector(Vector<Vertex>& vertices, Vector<Index>& indices)
 	{
-		Vector<Vertex>& vertices = mesh->GetVertex();
-		Vector<Index>& indices = mesh->GetIndex();
-
 		for(auto& v : vertices) {
 			v.normal = {0.0f, 0.0f, 0.0f};
 		}
@@ -389,6 +389,8 @@ namespace cube
 
 			resManager.mLoadedResources[tempID] = mesh;
 		}
+
+		mesh->Initialize();
 
 		return RPtr<Mesh>(mesh);
 	}

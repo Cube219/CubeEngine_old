@@ -160,6 +160,7 @@
     <ClInclude Include="Renderer\Material\MaterialInstance.h" />
     <ClInclude Include="Renderer\Material\Shader.h" />
     <ClInclude Include="Renderer\Mesh.h" />
+    <ClInclude Include="Renderer\MeshData.h" />
     <ClInclude Include="Renderer\Renderer3D.h" />
     <ClInclude Include="Renderer\RendererManager.h" />
     <ClInclude Include="Renderer\RenderingThread.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="Renderer\Material\MaterialInstance.cpp" />
     <ClCompile Include="Renderer\Material\Shader.cpp" />
     <ClCompile Include="Renderer\Mesh.cpp" />
+    <ClCompile Include="Renderer\MeshData.cpp" />
     <ClCompile Include="Renderer\Renderer3D.cpp" />
     <ClCompile Include="Renderer\RendererManager.cpp" />
     <ClCompile Include="Renderer\RenderingThread.cpp" />

@@ -35,6 +35,7 @@ namespace cube
 	class RendererManager;
 
 	struct Vertex;
+	class MeshData;
 	class Mesh;
 
 	class BaseMeshGenerator;
@@ -82,6 +83,8 @@ namespace cube
 		class BaseLight;
 		class DirectionalLight;
 		class PointLight;
+
+		class Mesh;
 	} // namespace rt
 } // namespace cube
 

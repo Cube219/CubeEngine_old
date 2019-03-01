@@ -52,8 +52,8 @@ namespace cube
 			virtual void Initialize() override;
 			virtual void Destroy() override;
 
-			void SyncMesh(RPtr<Mesh>& mesh);
-			void SyncMaterialInstance(HMaterialInstance materialIns, Uint32 index);
+			void SyncMesh(SPtr<Mesh>& mesh);
+			void SyncMaterialInstance(SPtr<MaterialInstance>& materialIns, Uint32 index);
 			void SyncModelMatrix(const Matrix& modelMatrix);
 
 			SPtr<render::ShaderParameters> GetShaderParameters() const { return mShaderParameters; };
@@ -66,22 +66,15 @@ namespace cube
 
 			Renderer3D();
 
-			void RecreateDataBuffer();
-
 			int mIndex = -1; // Used in RendererManager
 
 			bool mIsMeshUpdated = false;
-			RPtr<Mesh> mMesh;
+			SPtr<Mesh> mMesh;
 
-			Vector<SPtr<rt::MaterialInstance>> mMaterialInses;
+			Vector<SPtr<MaterialInstance>> mMaterialInses;
 
 			UBOPerObject mUBOPerObject;
 			SPtr<render::ShaderParameters> mShaderParameters;
-
-			SPtr<render::Buffer> mDataBuffer; // Combine vertex / index
-			void* mDataBufferMappedPtr;
-			Uint32 mVertexOffset;
-			Uint32 mIndexOffset;
 		};
 	} // namespace rt
 } // namespace cube

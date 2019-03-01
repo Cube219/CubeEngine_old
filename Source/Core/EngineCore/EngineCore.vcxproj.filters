@@ -111,6 +111,9 @@
     <ClInclude Include="Thread\TaskQueue.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\MeshData.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -207,6 +210,9 @@
     </ClCompile>
     <ClCompile Include="Module\ModuleManager.cpp">
       <Filter>Module</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\MeshData.cpp">
+      <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

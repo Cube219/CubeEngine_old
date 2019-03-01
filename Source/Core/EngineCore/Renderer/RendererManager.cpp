@@ -543,7 +543,7 @@ namespace cube
 
 		renderer->PrepareDraw(cmd, mCameraRenderer);
 
-		Vector<SubMesh>& subMeshes = renderer->mMesh->GetSubMeshes();
+		const Vector<SubMesh>& subMeshes = renderer->mMesh->GetSubMeshes();
 		for(Uint32 i = 0; i < subMeshes.size(); i++) {
 			SPtr<rt::MaterialInstance> matIns = renderer->mMaterialInses[i];
 			int matIndex = matIns->GetMaterial()->mIndex;

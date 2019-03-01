@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../CubeEngineHeader.h"
 
@@ -21,7 +21,7 @@ namespace cube
 		Resource* Import(SPtr<platform::File>& file, Json info) final override;
 
 	private:
-		void InsertMeshData(const aiScene* scene, Mesh* mesh);
+		SPtr<MeshData> GetMeshData(const aiScene* scene);
 
 		Assimp::Importer mImporter;
 	};

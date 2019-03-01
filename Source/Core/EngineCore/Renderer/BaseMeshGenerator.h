@@ -2,6 +2,8 @@
 
 #include "../EngineCoreHeader.h"
 
+#include "Mesh.h"
+
 namespace cube
 {
 	class ENGINE_CORE_EXPORT BaseMeshGenerator
@@ -18,9 +20,9 @@ namespace cube
 		static RPtr<Mesh> GetPlaneMesh();
 
 	private:
-		static void SubDivide(Mesh* mesh);
+		static void SubDivide(Vector<Vertex>& vertices, Vector<Index>& indices);
 
-		static void SetNormalVector(Mesh* mesh);
+		static void SetNormalVector(Vector<Vertex>& vertices, Vector<Index>& indices);
 
 		static RPtr<Mesh> RegisterToResourceManager(Mesh* mesh);
 

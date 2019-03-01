@@ -55,6 +55,11 @@ namespace cube
 		gameThreadRunAsync.WaitUntilFinished();
 
 		// For fulshing initial resources
+		Sync();
+
+		mLastTaskQueue.ExecuteAll();
+		mLastTaskQueue.Flush();
+
 		mRendererManager->DrawAll();
 
 		platform::Platform::StartLoop();
