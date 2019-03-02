@@ -14,10 +14,9 @@ namespace cube
 		class BaseRenderObject
 		{
 		public:
-			BaseRenderObject(const char* debugName)
-			{
-				mDebugName = DebugStringHeap::Allocate(debugName);
-			}
+			BaseRenderObject(const char* debugName) :
+				mDebugName(debugName)
+			{}
 			virtual ~BaseRenderObject() {}
 
 			const char* GetDebugName() const { return mDebugName; }
