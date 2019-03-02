@@ -139,7 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Assertion.h" />
-    <ClInclude Include="BasicHandler.h" />
+    <ClInclude Include="Handler.h" />
     <ClInclude Include="Component\Component.h" />
     <ClInclude Include="Component\ComponentManager.h" />
     <ClInclude Include="EngineCore.h" />

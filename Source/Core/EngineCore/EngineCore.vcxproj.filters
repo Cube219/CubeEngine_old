@@ -91,7 +91,6 @@
       <Filter>Component</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectManager.h" />
-    <ClInclude Include="BasicHandler.h" />
     <ClInclude Include="Renderer\RenderObject.h">
       <Filter>Renderer</Filter>
     </ClInclude>
@@ -117,6 +116,7 @@
     <ClInclude Include="Renderer\TextureData.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Handler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />

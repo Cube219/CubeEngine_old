@@ -25,9 +25,9 @@ namespace cube
 	class StringManager;
 
 	template <typename T>
-	struct BasicHandlerData;
-	template <typename T>
-	class BasicHandler;
+	class Handler;
+	class Handlable;
+	class HandlerTable;
 
 	class Renderer3D;
 	class CameraRenderer3D;
@@ -44,11 +44,9 @@ namespace cube
 	struct MaterialParameterInfo;
 	struct MaterialInitializer;
 	class Material;
-	using MaterialData = BasicHandlerData<Material>;
-	using HMaterial = BasicHandler<Material>;
+	using HMaterial = Handler<Material>;
 	class MaterialInstance;
-	using MaterialInstanceData = BasicHandlerData<MaterialInstance>;
-	using HMaterialInstance = BasicHandler<MaterialInstance>;
+	using HMaterialInstance = Handler<MaterialInstance>;
 		
 	class Shader;
 
@@ -65,13 +63,11 @@ namespace cube
 
 	class GameObjectManager;
 	class GameObject;
-	using GameObjectData = BasicHandlerData<GameObject>;
-	using HGameObject = BasicHandler<GameObject>;
+	using HGameObject = Handler<GameObject>;
 
 	class ComponentManager;
 	class Component;
-	using ComponentData = BasicHandlerData<Component>;
-	using HComponent = BasicHandler<Component>;
+	using HComponent = Handler<Component>;
 
 	namespace rt
 	{
