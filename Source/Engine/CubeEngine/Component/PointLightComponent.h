@@ -7,7 +7,7 @@
 
 namespace cube
 {
-	class CUBE_ENGINE_EXPORT PointLightComponent : public core::Component
+	class CUBE_ENGINE_EXPORT PointLightComponent : public Component
 	{
 	public:
 		static const String& GetName() { return mName; }
@@ -27,9 +27,9 @@ namespace cube
 		void SetColor(const Vector4& color);
 
 	private:
-		SPtr<core::PointLight> mPointLight;
+		SPtr<PointLight> mPointLight;
 	};
 
-	using PointLightComponentData = core::BasicHandlerData<PointLightComponent>;
-	using HPointLightComponent = core::BasicHandler<PointLightComponent>;
+	using PointLightComponentData = BasicHandlerData<PointLightComponent>;
+	using HPointLightComponent = BasicHandler<PointLightComponent>;
 } // namespace cube

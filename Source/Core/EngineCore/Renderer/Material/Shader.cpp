@@ -1,25 +1,22 @@
-#include "Shader.h"
+﻿#include "Shader.h"
 
 #include "../../EngineCore.h"
 #include "../../Resource/ResourceManager.h"
 
 namespace cube
 {
-	namespace core
+	RPtr<Shader> Shader::Load(StringRef path)
 	{
-		RPtr<Shader> Shader::Load(StringRef path)
-		{
-			return ECore().GetResourceManager().LoadResource<Shader>(path);
-		}
+		return ECore().GetResourceManager().LoadResource<Shader>(path);
+	}
 
-		void Shader::_LoadShader(SPtr<render::Device>& device, render::ShaderAttribute& attr)
-		{
-			mLanguage = attr.language;
-			mType = attr.type;
+	void Shader::_LoadShader(SPtr<render::Device>& device, render::ShaderAttribute& attr)
+	{
+		mLanguage = attr.language;
+		mType = attr.type;
 
-			attr.debugName = "Shader";
+		attr.debugName = "Shader";
 
-			mRenderShader = device->CreateShader(attr);
-		}
-	} // namespace render
+		mRenderShader = device->CreateShader(attr);
+	}
 } // namespace cube

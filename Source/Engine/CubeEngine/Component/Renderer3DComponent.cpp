@@ -10,7 +10,7 @@ namespace cube
 	String Renderer3DComponent::mName = CUBE_T("Renderer3DComponent");
 
 	Renderer3DComponent::Renderer3DComponent() : 
-		mRendererManager(core::ECore().GetRendererManager())
+		mRendererManager(ECore().GetRendererManager())
 	{
 		mRenderer3D = mRendererManager.CreateRenderer3D();
 	}
@@ -41,12 +41,12 @@ namespace cube
 	{
 	}
 
-	void Renderer3DComponent::SetMesh(core::RPtr<core::Mesh>& mesh)
+	void Renderer3DComponent::SetMesh(RPtr<Mesh>& mesh)
 	{
 		mRenderer3D->SetMesh(mesh);
 	}
 
-	void Renderer3DComponent::SetMaterialInstance(core::HMaterialInstance& materialIns, uint32_t index)
+	void Renderer3DComponent::SetMaterialInstance(HMaterialInstance& materialIns, uint32_t index)
 	{
 		mRenderer3D->SetMaterialInstance(materialIns, index);
 	}

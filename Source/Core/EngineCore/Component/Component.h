@@ -1,41 +1,38 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 #include "../BasicHandler.h"
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT Component
 	{
-		class ENGINE_CORE_EXPORT Component
-		{
-		public:
-			static const String& GetName() { return mName; }
+	public:
+		static const String& GetName() { return mName; }
 
-		private:
-			static String mName;
+	private:
+		static String mName;
 
-		public:
-			Component();
-			virtual ~Component();
+	public:
+		Component();
+		virtual ~Component();
 
-			virtual void OnInit() = 0;
-			virtual void OnUpdate(float dt) = 0;
-			virtual void OnDestroy() = 0;
-			virtual void OnTransformChanged() = 0;
+		virtual void OnInit() = 0;
+		virtual void OnUpdate(float dt) = 0;
+		virtual void OnDestroy() = 0;
+		virtual void OnTransformChanged() = 0;
 
-			GameObject* GetGameObject() const { return mAttachedGameObject; }
+		GameObject* GetGameObject() const { return mAttachedGameObject; }
 
-		private:
-			friend class GameObject;
-			friend class ComponentManager;
+	private:
+		friend class GameObject;
+		friend class ComponentManager;
 
-			void AttachGameObject(GameObject* gameObject){ mAttachedGameObject = gameObject; }
-			void Destroy();
+		void AttachGameObject(GameObject* gameObject){ mAttachedGameObject = gameObject; }
+		void Destroy();
 
-			HComponent mMyHandler;
+		HComponent mMyHandler;
 
-			GameObject* mAttachedGameObject;
-		};
-	} // namespace core
+		GameObject* mAttachedGameObject;
+	};
 } // namespace cube

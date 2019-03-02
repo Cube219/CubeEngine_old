@@ -29,14 +29,14 @@ namespace cube
 		platform::Platform::ShowWindow();
 
 		
-		core::ECore().PreInitialize();
+		ECore().PreInitialize();
 
-		auto& rm = core::ECore().GetRendererManager();
-		core::RenderingThread::Init(&rm);
-		core::GameThread::Init(&core::ECore());
+		auto& rm = ECore().GetRendererManager();
+		RenderingThread::Init(&rm);
+		GameThread::Init(&ECore());
 
-		core::Async gameThreadInitAsync = core::GameThread::PrepareAsync();
-		core::RenderingThread::Prepare();
+		Async gameThreadInitAsync = GameThread::PrepareAsync();
+		RenderingThread::Prepare();
 
 		gameThreadInitAsync.WaitUntilFinished();
 
@@ -44,30 +44,30 @@ namespace cube
 		InitComponents();
 
 		closingEventFunc = platform::Platform::GetClosingEvent().AddListener(&CubeEngine::DefaultClosingFunction);
-		core::ECore().SetFPSLimit(60);
+		ECore().SetFPSLimit(60);
 	}
 
 	void CubeEngine::ShutDown()
 	{
 		platform::Platform::GetClosingEvent().RemoveListener(closingEventFunc);
 
-		core::Async async = core::GameThread::DestroyAsync();
+		Async async = GameThread::DestroyAsync();
 		async.WaitUntilFinished();
 
-		core::RenderingThread::Destroy();
+		RenderingThread::Destroy();
 
-		core::GameThread::Join();
+		GameThread::Join();
 	}
 
 	void CubeEngine::Run()
 	{
-		core::Async async = core::GameThread::SimulateAsync();
-		core::RenderingThread::Run(async);
+		Async async = GameThread::SimulateAsync();
+		RenderingThread::Run(async);
 	}
 
 	void CubeEngine::Close()
 	{
-		core::GameThread::SetDestroy();
+		GameThread::SetDestroy();
 	}
 
 	void CubeEngine::SetCustomClosingFunction(std::function<void()> func)
@@ -78,8 +78,8 @@ namespace cube
 
 	void CubeEngine::RegisterImporters()
 	{
-		core::ResourceManager& resManager = core::ECore().GetResourceManager();
-		SPtr<render::Device> device = core::ECore().GetRendererManager().GetDevice();
+		ResourceManager& resManager = ECore().GetResourceManager();
+		SPtr<render::Device> device = ECore().GetRendererManager().GetDevice();
 
 		resManager.RegisterImporter(
 			std::make_unique<TextureImporter>(device)
@@ -94,7 +94,7 @@ namespace cube
 
 	void CubeEngine::InitComponents()
 	{
-		core::ComponentManager& comManager = core::ECore().GetComponentManager();
+		ComponentManager& comManager = ECore().GetComponentManager();
 
 		comManager.RegisterComponent<Renderer3DComponent>();
 		comManager.RegisterComponent<CameraComponent>();

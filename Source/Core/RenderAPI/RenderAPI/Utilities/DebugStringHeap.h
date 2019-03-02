@@ -46,7 +46,7 @@ namespace cube
 
 			static Uint64 mPageSize;
 			
-			static core::Mutex mPagesMutex;
+			static Mutex mPagesMutex;
 			static Vector<DebugStringPage> mPages;
 		};
 	} // namespace render

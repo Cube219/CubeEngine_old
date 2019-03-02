@@ -6,45 +6,42 @@
 
 namespace cube
 {
-	namespace core
+	using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>;
+	using Duration = std::chrono::nanoseconds;
+
+	constexpr double systemTimeRatio = 1000000000.0;
+
+	class ENGINE_CORE_EXPORT TimeManager
 	{
-		using TimePoint = std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>;
-		using Duration = std::chrono::nanoseconds;
+	public:
+		TimeManager() {}
+		~TimeManager() {}
 
-		constexpr double systemTimeRatio = 1000000000.0;
+		TimeManager(const TimeManager& other) = delete;
+		TimeManager& operator=(const TimeManager& rhs) = delete;
+		TimeManager(TimeManager&& other) = delete;
+		TimeManager& operator=(TimeManager&& rhs) = delete;
 
-		class ENGINE_CORE_EXPORT TimeManager
-		{
-		public:
-			TimeManager() {}
-			~TimeManager() {}
+		void Initialize();
+		void ShutDown();
 
-			TimeManager(const TimeManager& other) = delete;
-			TimeManager& operator=(const TimeManager& rhs) = delete;
-			TimeManager(TimeManager&& other) = delete;
-			TimeManager& operator=(TimeManager&& rhs) = delete;
+		double GetSystemTime();
 
-			void Initialize();
-			void ShutDown();
+		SPtr<GameTime> GetGlobalGameTime() const { return mGlobalGameTime; };
 
-			double GetSystemTime();
+		SPtr<GameTime> CreateGameTime();
 
-			SPtr<GameTime> GetGlobalGameTime() const { return mGlobalGameTime; };
+		void Start();
 
-			SPtr<GameTime> CreateGameTime();
+		void Update();
 
-			void Start();
+	private:
+		Uint64 GetNow() const;
 
-			void Update();
+		Uint64 mPreviousSystemTimePoint;
+		Uint64 mCurrentSystemTimePoint;
 
-		private:
-			uint64_t GetNow() const;
-
-			uint64_t mPreviousSystemTimePoint;
-			uint64_t mCurrentSystemTimePoint;
-
-			SPtr<GameTime> mGlobalGameTime;
-			Vector<SPtr<GameTime>> mGameTimes;
-		};
-	} // namespace core
+		SPtr<GameTime> mGlobalGameTime;
+		Vector<SPtr<GameTime>> mGameTimes;
+	};
 } // namespace cube

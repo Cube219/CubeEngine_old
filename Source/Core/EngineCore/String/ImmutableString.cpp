@@ -1,15 +1,12 @@
-#include "ImmutableString.h"
+﻿#include "ImmutableString.h"
 
 namespace cube
 {
-	namespace core
+	ImmutableString::ImmutableString()
 	{
-		ImmutableString::ImmutableString()
-		{
-		}
-
-		ImmutableString::~ImmutableString()
-		{
-		}
 	}
-}
+
+	ImmutableString::~ImmutableString()
+	{
+	}
+} // namespace cube

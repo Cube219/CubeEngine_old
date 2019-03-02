@@ -37,7 +37,6 @@ namespace cube
 
 		DeviceVk::~DeviceVk()
 		{
-			CHECK(shared_from_this().use_count() <= 2, "Some VkObjects doesn't be released. All VkObjects must be release before destroy VkDevice.");
 		}
 
 		SPtr<Buffer> DeviceVk::CreateBuffer(const BufferAttribute& attr)
@@ -114,12 +113,13 @@ namespace cube
 
 		void DeviceVk::StartFrame()
 		{
-			core::Lock lock(mReleaseQueueMutex);
+			Lock lock(mReleaseQueueMutex);
 
 			for(auto& func : mReleaseFuncQueue) {
 				func();
 			}
 			mReleaseFuncQueue.clear();
+			mReleaseVkObjectQueue.clear();
 
 			mShaderParameterManager.DiscardPerFrame();
 			mUploadHeap.DiscardAllocations();

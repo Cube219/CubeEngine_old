@@ -1,32 +1,31 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../EngineCoreHeader.h"
 
+#include "Mesh.h"
+
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT BaseMeshGenerator
 	{
-		class ENGINE_CORE_EXPORT BaseMeshGenerator
-		{
-		public:
-			static RPtr<Mesh> GetBoxMesh();
+	public:
+		static RPtr<Mesh> GetBoxMesh();
 
-			static RPtr<Mesh> GetCylinderMesh();
+		static RPtr<Mesh> GetCylinderMesh();
 
-			static RPtr<Mesh> GetCapsuleMesh(); // TODO: Â÷ÈÄ ±¸Çö
+		static RPtr<Mesh> GetCapsuleMesh(); // TODO: ì°¨í›„ êµ¬í˜„
 
-			static RPtr<Mesh> GetSphereMesh();
+		static RPtr<Mesh> GetSphereMesh();
 
-			static RPtr<Mesh> GetPlaneMesh();
+		static RPtr<Mesh> GetPlaneMesh();
 
-		private:
-			static void SubDivide(Mesh* mesh);
+	private:
+		static void SubDivide(Vector<Vertex>& vertices, Vector<Index>& indices);
 
-			static void SetNormalVector(Mesh* mesh);
+		static void SetNormalVector(Vector<Vertex>& vertices, Vector<Index>& indices);
 
-			static RPtr<Mesh> RegisterToResourceManager(Mesh* mesh);
+		static RPtr<Mesh> RegisterToResourceManager(Mesh* mesh);
 
-			static uint32_t	nextTempID;
-		};
-	} // namespace core
+		static Uint32 nextTempID;
+	};
 } // namespace cube

@@ -100,7 +100,7 @@ namespace cube
 				{
 					info.commandPool = mGraphicsCommandPools[threadIndex];
 
-					core::Lock lock(mGraphicsCommandPoolMutexes[threadIndex]);
+					Lock lock(mGraphicsCommandPoolMutexes[threadIndex]);
 					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
 					lock.unlock();
 
@@ -113,7 +113,7 @@ namespace cube
 				{
 					info.commandPool = mTransferImmediateCommandPools[threadIndex];
 
-					core::Lock lock(mTransferImmediateCommandPoolMutexes[threadIndex]);
+					Lock lock(mTransferImmediateCommandPoolMutexes[threadIndex]);
 					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
 					lock.unlock();
 
@@ -126,7 +126,7 @@ namespace cube
 				{
 					info.commandPool = mTransferDeferredCommandPools[threadIndex];
 
-					core::Lock lock(mTransferDeferredCommandPoolMutexes[threadIndex]);
+					Lock lock(mTransferDeferredCommandPoolMutexes[threadIndex]);
 					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
 					lock.unlock();
 
@@ -139,7 +139,7 @@ namespace cube
 				{
 					info.commandPool = mComputeCommandPools[threadIndex];
 
-					core::Lock lock(mComputeCommandPoolMutexes[threadIndex]);
+					Lock lock(mComputeCommandPoolMutexes[threadIndex]);
 					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
 					lock.unlock();
 
@@ -163,28 +163,28 @@ namespace cube
 			switch(commandList.GetUsage()) {
 				case CommandListUsage::Graphics:
 				{
-					core::Lock lock(mGraphicsCommandPoolMutexes[index]);
+					Lock lock(mGraphicsCommandPoolMutexes[index]);
 					vkFreeCommandBuffers(mDevice->GetHandle(), mGraphicsCommandPools[index], 1, &cmdBuf);
 					break;
 				}
 
 				case CommandListUsage::TransferImmediate:
 				{
-					core::Lock lock(mTransferImmediateCommandPoolMutexes[index]);
+					Lock lock(mTransferImmediateCommandPoolMutexes[index]);
 					vkFreeCommandBuffers(mDevice->GetHandle(), mTransferImmediateCommandPools[index], 1, &cmdBuf);
 					break;
 				}
 
 				case CommandListUsage::TransferDeferred:
 				{
-					core::Lock lock(mTransferDeferredCommandPoolMutexes[index]);
+					Lock lock(mTransferDeferredCommandPoolMutexes[index]);
 					vkFreeCommandBuffers(mDevice->GetHandle(), mTransferDeferredCommandPools[index], 1, &cmdBuf);
 					break;
 				}
 
 				case CommandListUsage::Compute:
 				{
-					core::Lock lock(mComputeCommandPoolMutexes[index]);
+					Lock lock(mComputeCommandPoolMutexes[index]);
 					vkFreeCommandBuffers(mDevice->GetHandle(), mComputeCommandPools[index], 1, &cmdBuf);
 					break;
 				}

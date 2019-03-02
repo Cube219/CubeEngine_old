@@ -26,7 +26,7 @@ namespace cube
 		private:
 			SPtr<VulkanLogicalDevice> mDevice;
 
-			core::Mutex mSemaphoresMutex;
+			Mutex mSemaphoresMutex;
 			Vector<VkSemaphore> mSemaphores;
 			Vector<Uint32> mIdleSemaphoreIndices;
 		};

@@ -1,19 +1,73 @@
-#include "Texture.h"
+﻿#include "Texture.h"
 
 #include "../EngineCore.h"
 #include "../Resource/ResourceManager.h"
+#include "TextureData.h"
 
 namespace cube
 {
-	namespace core
+	RPtr<Texture> Texture::Load(StringRef path)
 	{
-		RPtr<Texture> Texture::Load(StringRef path)
+		auto texture = ECore().GetResourceManager().LoadResource<Texture>(path);
+		texture->Initialize();
+
+		return texture;
+	}
+
+	Texture::Texture() :
+		mTextureData(nullptr)
+	{
+	}
+
+	Texture::Texture(const SPtr<TextureData>& initialData) :
+		mTextureData(initialData)
+	{
+	}
+
+	Texture::~Texture()
+	{
+	}
+
+	SPtr<rt::RenderObject> Texture::CreateRenderObject() const
+	{
+		SPtr<rt::Texture> texture_rt(new rt::Texture(mTextureData));
+
+		mTextureData = nullptr;
+
+		return texture_rt;
+	}
+
+	namespace rt
+	{
+		Texture::Texture(const SPtr<TextureData>& initialData) :
+			mTextureData(initialData)
 		{
-			return ECore().GetResourceManager().LoadResource<Texture>(path);
 		}
 
-		void Texture::WriteData(SPtr<render::Device>& device, void* data, Uint64 size, Uint32 width, Uint32 height)
+		Texture::~Texture()
 		{
+		}
+
+		void Texture::Initialize()
+		{
+			if(mTextureData != nullptr) {
+				FlushToRenderTexture();
+			}
+		}
+
+		void Texture::SyncTextureData(const SPtr<TextureData>& textureData)
+		{
+			mTextureData = textureData;
+
+			RenderingThread::QueueTask([this]() {
+				FlushToRenderTexture();
+			});
+		}
+
+		void Texture::FlushToRenderTexture()
+		{
+			auto device = ECore().GetRendererManager().GetDevice();
+
 			using namespace render;
 
 			TextureAttribute attr;
@@ -21,11 +75,11 @@ namespace cube
 			attr.type = TextureType::Texture2D;
 			attr.format = TextureFormat::RGBA_8_UNorm;
 			attr.bindTypeFlags = TextureBindTypeFlagBits::ShaderResource_Bit;
-			attr.textureData.pData = data;
-			attr.textureData.size = size;
-			attr.width = width;
-			attr.height = height;
-			attr.depth = 1;
+			attr.textureData.pData = mTextureData->GetData();
+			attr.textureData.size = mTextureData->GetSize();
+			attr.width = mTextureData->GetWidth();
+			attr.height = mTextureData->GetHeight();
+			attr.depth = mTextureData->GetDepth();
 			attr.arraySize = 1;
 			attr.mipLevels = 1;
 			attr.isDedicated = false;
@@ -52,6 +106,8 @@ namespace cube
 			samplerAttr.debugName = "Sampler";
 
 			mSampler = device->CreateSampler(samplerAttr);
+
+			mTextureData = nullptr;
 		}
-	} // namespace core
+	} // namespace rt
 } // namespace cube

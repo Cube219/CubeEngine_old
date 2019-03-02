@@ -48,7 +48,7 @@ namespace cube
 			Uint32 index;
 
 			{
-				core::Lock lock(mFencesMutex);
+				Lock lock(mFencesMutex);
 
 				if(mIdleFenceIndices.empty()) {
 					VkFenceWrapper fence(VK_NULL_HANDLE, mDevice);
@@ -86,7 +86,7 @@ namespace cube
 
 			fence.Release();
 			{
-				core::Lock lock(mFencesMutex);
+				Lock lock(mFencesMutex);
 
 				mIdleFenceIndices.push_back(fence.mFencePoolIndex);
 			}

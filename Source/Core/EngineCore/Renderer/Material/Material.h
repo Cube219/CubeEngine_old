@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../../EngineCoreHeader.h"
 
@@ -8,57 +8,63 @@
 
 namespace cube
 {
-	namespace core
+	enum class MaterialParameterType
 	{
-		enum class MaterialParameterType
-		{
-			Data,
-			Texture
-		};
+		Data,
+		Texture
+	};
 
-		struct ENGINE_CORE_EXPORT MaterialParameterInfo
-		{
-			String name;
-			MaterialParameterType type;
-			size_t dataSize;
-		};
+	struct ENGINE_CORE_EXPORT MaterialParameterInfo
+	{
+		String name;
+		MaterialParameterType type;
+		size_t dataSize;
+	};
 
-		struct MaterialInitializer
-		{
-			Vector<RPtr<Shader>> shaders;
-			Vector<MaterialParameterInfo> parameters;
-		};
+	struct MaterialInitializer
+	{
+		Vector<RPtr<Shader>> shaders;
+		Vector<MaterialParameterInfo> parameters;
+	};
 
-		class ENGINE_CORE_EXPORT Material : public RenderObject
+	class ENGINE_CORE_EXPORT Material : public RenderObject
+	{
+	public:
+		static HMaterial Create(const MaterialInitializer& init);
+
+	public:
+		virtual ~Material();
+
+		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+		SPtr<rt::Material> GetRenderObject() const { return DPCast(rt::Material)(mRenderObject); }
+
+		HMaterialInstance CreateInstance();
+
+		virtual void Destroy();
+
+		const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mMaterialInit.parameters; }
+
+	private:
+		friend class RendererManager;
+		friend class MaterialInstance;
+
+		Material(const MaterialInitializer& init);
+
+		MaterialInitializer mMaterialInit;
+
+		HMaterial mMyHandler;
+	};
+
+	namespace rt
+	{
+		class Material : public RenderObject
 		{
 		public:
-			static HMaterial Create(const MaterialInitializer& init);
+			virtual ~Material() {}
+			virtual void Initialize() override;
+			virtual void Destroy() override;
 
-		public:
-			virtual ~Material();
-
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
-			SPtr<Material_RT> GetRenderObject_RT() const { return DPCast(Material_RT)(mRenderObject_RT); }
-
-			HMaterialInstance CreateInstance();
-
-			void Destroy();
-
-		private:
-			friend class RendererManager;
-			friend class MaterialInstance;
-
-			Material(const MaterialInitializer& init);
-
-			MaterialInitializer mMaterialInit;
-
-			HMaterial mMyHandler;
-		};
-
-		class Material_RT : public RenderObject_RT
-		{
-		public:
-			virtual ~Material_RT(){ }
+			void SyncMaterial(const MaterialInitializer& init);
 
 			const Vector<MaterialParameterInfo>& GetParameterInfos() const { return mParamInfos; }
 
@@ -67,10 +73,12 @@ namespace cube
 			SPtr<render::ShaderParametersLayout> GetShaderParametersLayout() const { return mShaderParamsLayout; }
 
 		private:
-			friend class Material;
+			friend class cube::Material;
 			friend class RendererManager;
 
-			Material_RT(const MaterialInitializer& init);
+			Material();
+
+			MaterialInitializer mMaterialInit;
 
 			int mIndex = -1; // Used in RendererManager
 
@@ -78,9 +86,6 @@ namespace cube
 
 			Vector<RPtr<Shader>> mShaders;
 			SPtr<render::ShaderParametersLayout> mShaderParamsLayout;
-
-			SPtr<render::Device> mDevice;
 		};
-
-	} // namespace core
+	} // namespace rt
 } // namespace cube

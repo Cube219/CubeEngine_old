@@ -1,4 +1,4 @@
-#include "MaterialInstance.h"
+﻿#include "MaterialInstance.h"
 
 #include "../../EngineCore.h"
 #include "../RendererManager.h"
@@ -9,120 +9,169 @@
 
 namespace cube
 {
-	namespace core
+	MaterialInstance::MaterialInstance(HMaterial mat) :
+		mMaterial(mat)
 	{
-		MaterialInstance::MaterialInstance(HMaterial mat) :
-			mMaterial(mat)
-		{
-			const Vector<MaterialParameterInfo> paramInfos = mat->GetRenderObject_RT()->GetParameterInfos();
+		const Vector<MaterialParameterInfo> paramInfos = mat->GetParameterInfos();
 
-			uint64_t paramNum = paramInfos.size();
-			mParameters.resize(paramNum);
+		Uint64 paramNum = paramInfos.size();
+		mParameters.resize(paramNum);
 
-			for(uint64_t i = 0; i < paramNum; i++) {
-				mParameterIndexLookupMap[paramInfos[i].name] = i;
+		for(Uint64 i = 0; i < paramNum; i++) {
+			mParameterIndexLookupMap[paramInfos[i].name] = i;
 
-				mParameters[i].type = paramInfos[i].type;
-				mParameters[i].size = paramInfos[i].dataSize;
-				if(mParameters[i].type == MaterialParameterType::Data) {
-					mParameters[i].data = (char*)malloc(paramInfos[i].dataSize);
-				}
+			mParameters[i].type = paramInfos[i].type;
+			mParameters[i].size = paramInfos[i].dataSize;
+			if(mParameters[i].type == MaterialParameterType::Data) {
+				mParameters[i].data = (char*)malloc(paramInfos[i].dataSize);
 			}
+		}
+	}
+
+	MaterialInstance::~MaterialInstance()
+	{
+		for(auto& param : mParameters) {
+			if(param.type == MaterialParameterType::Data) {
+				free(param.data);
+			}
+		}
+	}
+
+	SPtr<MaterialInstance> MaterialInstance::Create(HMaterial mat)
+	{
+		SPtr<MaterialInstance> matIns(new MaterialInstance(mat));
+		matIns->Initialize();
+
+		return matIns;
+	}
+
+	SPtr<rt::RenderObject> MaterialInstance::CreateRenderObject() const
+	{
+		SPtr<rt::MaterialInstance> matIns_rt(new rt::MaterialInstance());
+		
+		RenderingThread::QueueSyncTask([this]() {
+			GetRenderObject()->SyncMaterial(mMaterial->GetRenderObject());
+		});
+
+		return matIns_rt;
+	}
+
+	void MaterialInstance::SetParamData(StringRef name, void* pData, Uint64 dataSize)
+	{
+		auto res = mParameterIndexLookupMap.find(name.GetString());
+		CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name '{0}'.", name.GetString());
+
+		Uint64 paramIndex = res->second;
+
+		if(dataSize != mParameters[paramIndex].size) {
+			CUBE_LOG(LogType::Warning, "Wrong parameter size. (Expected: {0} / Actual: {1})",
+				mParameters[paramIndex].size, dataSize);
+		}
+
+		memcpy(mParameters[paramIndex].data, pData, dataSize);
+
+		QueueSyncTask([this, paramIndex]() {
+			GetRenderObject()->SyncParameterData(paramIndex, mParameters[paramIndex]);
+		});
+	}
+
+	template<>
+	void MaterialInstance::SetParameterData(StringRef name, RPtr<Texture>& texture)
+	{
+		auto res = mParameterIndexLookupMap.find(name.GetString());
+		CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name '{0}'.", name.GetString());
+
+		Uint64 paramIndex = res->second;
+
+
+		CHECK(mParameters[paramIndex].type == MaterialParameterType::Texture,
+			"The Parameter '{0}' is not a Texture parameter.", name.GetString());
+
+		mParameters[paramIndex].texture = texture;
+
+		QueueSyncTask([this, paramIndex]() {
+			GetRenderObject()->SyncParameterData(paramIndex, mParameters[paramIndex]);
+		});
+	}
+
+	void MaterialInstance::Destroy()
+	{
+		mMyHandler.mData->data = nullptr;
+	}
+
+	namespace rt
+	{
+		MaterialInstance::MaterialInstance()
+		{
 		}
 
 		MaterialInstance::~MaterialInstance()
 		{
-			for(auto& param : mParameters) {
-				if(param.type == MaterialParameterType::Data) {
-					free(param.data);
-				}
-			}
 		}
 
-		SPtr<MaterialInstance> MaterialInstance::Create(HMaterial mat)
+		void MaterialInstance::Initialize()
 		{
-			SPtr<MaterialInstance> matIns(new MaterialInstance(mat));
-			matIns->Initialize();
-
-			return matIns;
-		}
-
-		SPtr<RenderObject_RT> MaterialInstance::CreateRenderObject_RT() const
-		{
-			SPtr<MaterialInstance_RT> matIns_rt(new MaterialInstance_RT(mMaterial->GetRenderObject_RT()));
-			matIns_rt->Initialize();
-
-			return matIns_rt;
-		}
-
-		void MaterialInstance::SetParamData(StringRef name, void* pData, uint64_t dataSize)
-		{
-			auto res = mParameterIndexLookupMap.find(name.GetString());
-			CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name '{0}'.", name.GetString());
-
-			uint64_t paramIndex = res->second;
-
-			if(dataSize != mParameters[paramIndex].size) {
-				CUBE_LOG(LogType::Warning, "Wrong parameter size. (Expected: {0} / Actual: {1})",
-					mParameters[paramIndex].size, dataSize);
-			}
-
-			memcpy(mParameters[paramIndex].data, pData, dataSize);
-
-			QueueSyncTask([this, paramIndex]() {
-				GetRenderObject_RT()->SyncParameterData(paramIndex, mParameters[paramIndex]);
-			});
-		}
-
-		template<>
-		void MaterialInstance::SetParameterData(StringRef name, RPtr<Texture>& texture)
-		{
-			auto res = mParameterIndexLookupMap.find(name.GetString());
-			CHECK(res != mParameterIndexLookupMap.end(), "Cannot find parameter name '{0}'.", name.GetString());
-
-			uint64_t paramIndex = res->second;
-
-
-			CHECK(mParameters[paramIndex].type == MaterialParameterType::Texture,
-				"The Parameter '{0}' is not a Texture parameter.", name.GetString());
-
-			mParameters[paramIndex].texture = texture;
-
-			QueueSyncTask([this, paramIndex]() {
-				GetRenderObject_RT()->SyncParameterData(paramIndex, mParameters[paramIndex]);
-			});
+			mShaderParameters = mMaterial->GetShaderParametersLayout()->CreateParameters();
 		}
 
 		void MaterialInstance::Destroy()
 		{
-			mMyHandler.mData->data = nullptr;
+			mShaderParameters = nullptr;
+			mMaterial = nullptr;
 		}
 
-		MaterialInstance_RT::MaterialInstance_RT(SPtr<Material_RT>& mat)
+		void MaterialInstance::SyncMaterial(SPtr<rt::Material>& mat)
 		{
-			using namespace render;
-
-			SPtr<Device> device = ECore().GetRendererManager().GetDevice();
-
-			mShaderParameters = mat->GetShaderParametersLayout()->CreateParameters();
+			mMaterial = mat;
 		}
 
-		MaterialInstance_RT::~MaterialInstance_RT()
+		void MaterialInstance::SyncParameterData(Uint64 index, MaterialParameter& param)
 		{
-		}
+			MaterialParameter p;
+			p.type = param.type;
 
-		void MaterialInstance_RT::SyncParameterData(uint64_t index, MaterialParameter& param)
-		{
 			switch(param.type) {
-				case MaterialParameterType::Data:
-					mShaderParameters->UpdateParameter(index, param.data, param.size);
-					break;
+			case MaterialParameterType::Data:
+				p.size = param.size;
+				p.data = (char*)malloc(p.size);
+				memcpy(p.data, param.data, p.size);
+				break;
 
-				case MaterialParameterType::Texture:
-					mShaderParameters->UpdateParameter(index,
-						param.texture->GetTextureView(), param.texture->GetSampler());
-					break;
+			case MaterialParameterType::Texture:
+				p.texture = param.texture;
+				break;
 			}
+
+			mTempParameters.push_back(p);
+			mTempParametersIndex.push_back(index);
+
+			RenderingThread::QueueTask([this]() {
+				ApplyParameters();
+			});
 		}
-	} // namespace core
+
+		void MaterialInstance::ApplyParameters()
+		{
+			for(Uint64 i = 0; i < mTempParameters.size(); i++) {
+				auto& param = mTempParameters[i];
+
+				switch(param.type) {
+					case MaterialParameterType::Data:
+						mShaderParameters->UpdateParameter(mTempParametersIndex[i], param.data, param.size);
+						free(param.data);
+						break;
+
+					case MaterialParameterType::Texture:
+						auto texture_rt = param.texture->GetRenderObject();
+
+						mShaderParameters->UpdateParameter(mTempParametersIndex[i],
+							texture_rt->GetTextureView(), texture_rt->GetSampler());
+						break;
+				}
+			}
+
+			mTempParameters.clear();
+			mTempParametersIndex.clear();
+		}
+	} // namespace rt
 } // namespace cube

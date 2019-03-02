@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
@@ -8,42 +8,41 @@
 
 namespace cube
 {
-	namespace core
+#define CUBE_CURRENT_THREAD_ID std::this_thread::get_id()
+
+	class ENGINE_CORE_EXPORT Thread
 	{
-		class ENGINE_CORE_EXPORT Thread
-		{
-		public:
-			friend class ThreadManager;
+	public:
+		friend class ThreadManager;
 
-			~Thread();
+		~Thread();
 
-			void Start(std::function<void()> function);
+		void Start(std::function<void()> function);
 
-			void WaitUntilFinished();
+		void WaitUntilFinished();
 
-			void Destroy();
+		void Destroy();
 
-			bool IsRun();
+		bool IsRun();
 
-		private:
-			Thread(uint32_t poolIndex, std::function<void(uint32_t)> onFinishCallback);
+	private:
+		Thread(Uint32 poolIndex, std::function<void(Uint32)> onFinishCallback);
 
-			void Run();
+		void Run();
 
-			Mutex mMutex;
+		Mutex mMutex;
 
-			ThreadSignal mStartNotify;
-			ThreadSignal mIdleNotify;
+		ThreadSignal mStartNotify;
+		ThreadSignal mIdleNotify;
 
-			std::function<void(uint32_t)> mOnFinishCallback;
+		std::function<void(Uint32)> mOnFinishCallback;
 
-			std::thread mThread;
-			std::function<void()> mRunFunction;
+		std::thread mThread;
+		std::function<void()> mRunFunction;
 
-			uint32_t mPoolIndex; // Use in ThreadManger
+		Uint32 mPoolIndex; // Use in ThreadManger
 
-			bool mIsRun;
-			bool mIsDestroyed;
-		};
-	}
-}
+		bool mIsRun;
+		bool mIsDestroyed;
+	};
+} // namespace cube

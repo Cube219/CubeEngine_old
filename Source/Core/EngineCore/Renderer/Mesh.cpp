@@ -1,30 +1,93 @@
-#include "Mesh.h"
+﻿#include "Mesh.h"
 
 #include "../EngineCore.h"
 #include "../Resource/ResourceManager.h"
+#include "RendererManager.h"
+#include "MeshData.h"
 
 namespace cube
 {
-	namespace core
+	RPtr<Mesh> Mesh::Load(StringRef path)
 	{
-		RPtr<Mesh> Mesh::Load(StringRef path)
+		auto mesh = ECore().GetResourceManager().LoadResource<Mesh>(path);
+		mesh->Initialize();
+
+		return mesh;
+	}
+
+	Mesh::Mesh() : 
+		mMeshData(nullptr)
+	{
+	}
+
+	Mesh::Mesh(const SPtr<MeshData>& initialiData) :
+		mMeshData(initialiData),
+		mSubMeshes(initialiData->GetSubMeshes())
+	{
+	}
+
+	Mesh::~Mesh()
+	{
+	}
+
+	SPtr<rt::RenderObject> Mesh::CreateRenderObject() const
+	{
+		SPtr<rt::Mesh> mesh_rt(new rt::Mesh(mMeshData));
+
+		mMeshData = nullptr;
+
+		return mesh_rt;
+	}
+
+	namespace rt
+	{
+		Mesh::Mesh(const SPtr<MeshData>& initialiData) :
+			mMeshData(initialiData),
+			mVertexOffset(0),
+			mIndexOffset(mMeshData->GetVertexCount() * sizeof(Vertex)),
+			mSubMeshes(mMeshData->GetSubMeshes())
 		{
-			return ECore().GetResourceManager().LoadResource<Mesh>(path);
 		}
 
-		void Mesh::SetVertex(const Vector<Vertex>& vertices)
+		Mesh::~Mesh()
 		{
-			mVertices = vertices;
 		}
 
-		void Mesh::SetIndex(const Vector<Index>& indices)
+		void Mesh::Initialize()
 		{
-			mIndices = indices;
+			if(mMeshData != nullptr) {
+				FlushToMeshBuffer();
+			}
 		}
 
-		void Mesh::AddSubMesh(const SubMesh& subMesh)
+		void Mesh::Destroy()
 		{
-			mSubMeshes.push_back(subMesh);
 		}
-	} // namespace core
+
+		void Mesh::SyncMeshData(const SPtr<MeshData>& meshData)
+		{
+			mMeshData = meshData;
+
+			RenderingThread::QueueTask([this]() {
+				FlushToMeshBuffer();
+			});
+		}
+
+		void Mesh::FlushToMeshBuffer()
+		{
+			using namespace render;
+
+			BufferAttribute attr;
+			attr.pData = mMeshData->GetData();
+			attr.size = mMeshData->GetTotalSize();
+			attr.cpuAccessible = false;
+			attr.usage = ResourceUsage::Default;
+			attr.bindTypeFlags = BufferBindTypeFlagBits::Vertex_Bit | BufferBindTypeFlagBits::Index_Bit;
+			attr.debugName = "Mesh";
+
+			mMeshBuffer = ECore().GetRendererManager().GetDevice()->CreateBuffer(attr);
+
+			mMeshData = nullptr;
+		}
+	} // namespace rt
 } // namespace cube

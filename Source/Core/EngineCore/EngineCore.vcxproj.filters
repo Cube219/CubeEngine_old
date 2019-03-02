@@ -95,9 +95,6 @@
     <ClInclude Include="Renderer\RenderObject.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Thread\TaskBuffer.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
     <ClInclude Include="GameThread.h" />
     <ClInclude Include="Renderer\RenderingThread.h">
       <Filter>Renderer</Filter>
@@ -105,11 +102,20 @@
     <ClInclude Include="Thread\Async.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="Module\BaseModule.h">
+      <Filter>Module</Filter>
+    </ClInclude>
     <ClInclude Include="Module\ModuleManager.h">
       <Filter>Module</Filter>
     </ClInclude>
-    <ClInclude Include="Module\BaseModule.h">
-      <Filter>Module</Filter>
+    <ClInclude Include="Thread\TaskQueue.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\MeshData.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\TextureData.h">
+      <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -202,11 +208,17 @@
     <ClCompile Include="Thread\Async.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
+    <ClCompile Include="Module\BaseModule.cpp">
+      <Filter>Module</Filter>
+    </ClCompile>
     <ClCompile Include="Module\ModuleManager.cpp">
       <Filter>Module</Filter>
     </ClCompile>
-    <ClCompile Include="Module\BaseModule.cpp">
-      <Filter>Module</Filter>
+    <ClCompile Include="Renderer\MeshData.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\TextureData.cpp">
+      <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

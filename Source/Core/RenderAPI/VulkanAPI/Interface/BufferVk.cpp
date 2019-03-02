@@ -40,7 +40,7 @@ namespace cube
 			info.queueFamilyIndexCount = 0;
 			info.pQueueFamilyIndices = nullptr;
 			info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
+			
 			info.usage = 0;
 			if(attr.bindTypeFlags & BufferBindTypeFlagBits::Vertex_Bit)
 				info.usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
@@ -51,6 +51,9 @@ namespace cube
 			if(attr.bindTypeFlags & BufferBindTypeFlagBits::TransferSource_Bit)
 				info.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 			if(attr.bindTypeFlags & BufferBindTypeFlagBits::TransferDest_Bit)
+				info.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+			// If the usage is default or immutable, the buffer will be transferred from a staging buffer
+			if(attr.usage == ResourceUsage::Default || attr.usage == ResourceUsage::Immutable)
 				info.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
 			mBuffer = device.GetLogicalDevice()->CreateVkBufferWrapper(info, attr.debugName);
@@ -139,6 +142,20 @@ namespace cube
 					SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(CommandListUsage::TransferImmediate, 0, false);
 					cmdBuf->Begin();
 					VkCommandBuffer vkCmdBuf = cmdBuf->GetHandle();
+
+					VkBufferMemoryBarrier memBarrier;
+					memBarrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+					memBarrier.pNext = nullptr;
+					memBarrier.srcAccessMask = 0; // NONE
+					memBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+					memBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+					memBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+					memBarrier.buffer = mBuffer.mObject;
+					memBarrier.offset = 0;
+					memBarrier.size = attr.size;
+					vkCmdPipelineBarrier(vkCmdBuf, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+						0, nullptr, 1, &memBarrier, 0, nullptr);
+
 					VkBufferCopy bufCopy;
 					bufCopy.srcOffset = 0;
 					bufCopy.dstOffset = 0;
@@ -149,6 +166,7 @@ namespace cube
 					queueManager.SubmitCommandList(*cmdBuf);
 
 					device.ReleaseAtNextFrame(cmdBuf);
+					device.ReleaseAtNextFrame(std::move(stagingAlloc));
 					device.ReleaseAtNextFrame(std::move(stagingBuffer));
 				}
 			}

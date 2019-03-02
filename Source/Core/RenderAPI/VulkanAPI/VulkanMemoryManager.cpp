@@ -114,10 +114,10 @@ namespace cube
 		{
 			VulkanAllocation allocation;
 
-			core::Lock lock(mPagesMutex);
+			Lock lock(mPagesMutex);
 
 			for(auto& page : mPages) {
-				allocation = page.Allocate(size, alignment);
+				allocation = page->Allocate(size, alignment);
 				if(allocation.pPage != nullptr) {
 					return allocation;
 				}
@@ -128,8 +128,8 @@ namespace cube
 			while(pageSize < size + alignment)
 				pageSize *= 2;
 
-			mPages.emplace_back(*this, pageSize, mMemoryUsage, mMemoryTypeIndex);
-			allocation = mPages.back().Allocate(size, alignment);
+			mPages.push_back(std::make_unique<VulkanMemoryPage>(*this, pageSize, mMemoryUsage, mMemoryTypeIndex));
+			allocation = mPages.back()->Allocate(size, alignment);
 
 			return allocation;
 		}

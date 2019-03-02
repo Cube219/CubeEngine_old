@@ -8,106 +8,103 @@
 
 namespace cube
 {
-	namespace core
+	static EngineCore gEngineCore;
+
+	void EngineCore::PreInitialize()
 	{
-		static EngineCore gEngineCore;
+		LogWriter::Init();
+	}
 
-		void EngineCore::PreInitialize()
-		{
-			LogWriter::Init();
-		}
+	void EngineCore::Initialize()
+	{
+		// mRendererManager will be initialized in RenderingThread
 
-		void EngineCore::Initialize()
-		{
-			// mRendererManager will be initialized in RenderingThread
+		mTimeManager.Initialize();
+		mStringManager.Initialize();
 
-			mTimeManager.Initialize();
-			mStringManager.Initialize();
+		mResourceManager.Initialize();
 
-			mResourceManager.Initialize();
+		mModuleManager.Initialize();
+		mModuleManager.LoadModule(CUBE_T("InputModule"));
+		mModuleManager.InitModules();
 
-			mModuleManager.Initialize();
-			mModuleManager.LoadModule(CUBE_T("InputModule"));
-			mModuleManager.InitModules();
-
-			mGameObjectManager.Initialize();
-			mComponentManager.Initialize();
+		mGameObjectManager.Initialize();
+		mComponentManager.Initialize();
 		
-		}
+	}
 
-		void EngineCore::ShutDown()
-		{
-			// mRendererManager will be shutdown in RenderingThread
+	void EngineCore::ShutDown()
+	{
+		// mRendererManager will be shutdown in RenderingThread
 
-			mComponentManager.ShutDown();
-			mGameObjectManager.ShutDown();
+		mComponentManager.ShutDown();
+		mGameObjectManager.ShutDown();
 
-			mModuleManager.ShutDown();
+		mModuleManager.ShutDown();
 
-			mResourceManager.ShutDown();
+		mResourceManager.ShutDown();
 
-			mStringManager.ShutDown();
-			mTimeManager.ShutDown();
+		mStringManager.ShutDown();
+		mTimeManager.ShutDown();
 
-			mWillBeDestroyed = true;
-		}
+		mWillBeDestroyed = true;
+	}
 
-		void EngineCore::Start()
-		{
-			mTimeManager.Start();
+	void EngineCore::Start()
+	{
+		mTimeManager.Start();
 
-			mGameObjectManager.Start();
-		}
+		mGameObjectManager.Start();
+	}
 
-		float EngineCore::GetCurrentFPS()
-		{
-			// TODO: 더 좋은 방법으로 개선
-			return 1.0f / mTimeManager.GetGlobalGameTime()->GetDeltaTime();
-		}
+	float EngineCore::GetCurrentFPS()
+	{
+		// TODO: 더 좋은 방법으로 개선
+		return 1.0f / mTimeManager.GetGlobalGameTime()->GetDeltaTime();
+	}
 
-		void EngineCore::SetFPSLimit(int limit)
-		{
-			mFPSLimit = limit;
-		}
+	void EngineCore::SetFPSLimit(int limit)
+	{
+		mFPSLimit = limit;
+	}
 
-		void EngineCore::Update()
-		{
-			mTimeManager.Update();
+	void EngineCore::Update()
+	{
+		mTimeManager.Update();
 
-			double currentTime = mTimeManager.GetSystemTime(); // For limit FPS 
+		double currentTime = mTimeManager.GetSystemTime(); // For limit FPS 
 
-			float dt = mTimeManager.GetGlobalGameTime()->GetDeltaTime();
+		float dt = mTimeManager.GetGlobalGameTime()->GetDeltaTime();
 
-			mModuleManager.UpdateAllModules(dt);
+		mModuleManager.UpdateAllModules(dt);
 
-			mGameObjectManager.Update(dt);
+		mGameObjectManager.Update(dt);
 
-			// Limit FPS
-			if(mFPSLimit > 0) {
-				double nextTime = currentTime + (1.0 / mFPSLimit);
+		// Limit FPS
+		if(mFPSLimit > 0) {
+			double nextTime = currentTime + (1.0 / mFPSLimit);
 
-				currentTime = mTimeManager.GetSystemTime();
+			currentTime = mTimeManager.GetSystemTime();
 
-				double waitTime = nextTime - currentTime;
+			double waitTime = nextTime - currentTime;
 
-				if(waitTime > 0.1) { // TODO: 적절한 수치를 찾기
-					platform::Platform::Sleep(SCast(int)(waitTime * 1000));
-				} else if(waitTime > 0.0) {
-					while(nextTime > currentTime) {
-						currentTime = mTimeManager.GetSystemTime();
-					}
+			if(waitTime > 0.1) { // TODO: 적절한 수치를 찾기
+				platform::Platform::Sleep(SCast(int)(waitTime * 1000));
+			} else if(waitTime > 0.0) {
+				while(nextTime > currentTime) {
+					currentTime = mTimeManager.GetSystemTime();
 				}
 			}
 		}
+	}
 
-		void EngineCore::Resize(uint32_t width, uint32_t height)
-		{
-			mRendererManager.Resize(width, height);
-		}
+	void EngineCore::Resize(Uint32 width, Uint32 height)
+	{
+		mRendererManager.Resize(width, height);
+	}
 
-		EngineCore& ECore()
-		{
-			return gEngineCore;
-		}
-	} // namespace core
+	EngineCore& ECore()
+	{
+		return gEngineCore;
+	}
 } // namespace cube

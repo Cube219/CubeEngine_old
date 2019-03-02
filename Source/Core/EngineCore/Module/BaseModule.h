@@ -4,30 +4,27 @@
 
 namespace cube
 {
-	namespace core
+	struct ModuleInfo
 	{
-		struct ModuleInfo
-		{
-			const char* name;
-			Vector<const char*> dependencies;
-		};
+		const char* name;
+		Vector<const char*> dependencies;
+	};
 
-		class ENGINE_CORE_EXPORT BaseModule
-		{
-		public:
-			BaseModule() {}
-			virtual ~BaseModule() {}
+	class ENGINE_CORE_EXPORT BaseModule
+	{
+	public:
+		BaseModule() {}
+		virtual ~BaseModule() {}
 
-			ModuleInfo GetModuleInfo() const { return mInfo; }
+		ModuleInfo GetModuleInfo() const { return mInfo; }
 
-			virtual void Init(core::EngineCore* eCore, ...) = 0;
+		virtual void Init(EngineCore* eCore, ...) = 0;
 
-			virtual void Update(float dt) = 0;
+		virtual void Update(float dt) = 0;
 
-			virtual void Destroy() = 0;
+		virtual void Destroy() = 0;
 
-		protected:
-			ModuleInfo mInfo;
-		};
-	} // namespace core
+	protected:
+		ModuleInfo mInfo;
+	};
 } // namespace cube

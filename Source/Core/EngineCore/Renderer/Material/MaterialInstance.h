@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../../EngineCoreHeader.h"
 
@@ -8,75 +8,82 @@
 
 namespace cube
 {
-	namespace core
+	struct MaterialParameter
 	{
-		struct MaterialParameter
-		{
-			MaterialParameterType type;
-			char* data;
-			size_t size;
-			RPtr<Texture> texture; // Only use when the type is Texture
-		};
+		MaterialParameterType type;
+		char* data;
+		size_t size;
+		RPtr<Texture> texture; // Only use when the type is Texture
+	};
 
-		class ENGINE_CORE_EXPORT MaterialInstance : public RenderObject
+	class ENGINE_CORE_EXPORT MaterialInstance : public RenderObject
+	{
+	public:
+		static SPtr<MaterialInstance> Create(HMaterial mat);
+
+	public:
+		~MaterialInstance();
+
+		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+		SPtr<rt::MaterialInstance> GetRenderObject() const { return DPCast(rt::MaterialInstance)(mRenderObject); }
+
+		HMaterial GetMaterial() const { return mMaterial; }
+
+		template <typename T>
+		void SetParameterData(StringRef name, T& data)
+		{
+			T& t = data;
+			SetParamData(name, &data, sizeof(T));
+		}
+
+		template <>
+		void SetParameterData(StringRef name, RPtr<Texture>& texture);
+
+		void Destroy();
+
+	private:
+		friend class Material;
+		MaterialInstance(HMaterial mat);
+
+		void SetParamData(StringRef name, void* pData, Uint64 dataSize);
+
+		HMaterialInstance mMyHandler;
+
+		HashMap<String, Uint64> mParameterIndexLookupMap;
+		Vector<MaterialParameter> mParameters;
+
+		HMaterial mMaterial;
+	};
+
+	namespace rt
+	{
+		class MaterialInstance : public RenderObject
 		{
 		public:
-			static SPtr<MaterialInstance> Create(HMaterial mat);
+			virtual ~MaterialInstance();
+			virtual void Initialize() override;
+			virtual void Destroy() override;
 
-		public:
-			~MaterialInstance();
+			void SyncMaterial(SPtr<rt::Material>& mat);
+			void SyncParameterData(Uint64 index, MaterialParameter& param);
 
-			virtual SPtr<RenderObject_RT> CreateRenderObject_RT() const override;
-			SPtr<MaterialInstance_RT> GetRenderObject_RT() const { return DPCast(MaterialInstance_RT)(mRenderObject_RT); }
-
-			HMaterial GetMaterial() const { return mMaterial; }
-
-			template <typename T>
-			void SetParameterData(StringRef name, T& data)
-			{
-				T& t = data;
-				SetParamData(name, &data, sizeof(T));
-			}
-
-			template <>
-			void SetParameterData(StringRef name, RPtr<Texture>& texture);
-
-			void Destroy();
-
-		private:
-			friend class Material;
-			MaterialInstance(HMaterial mat);
-
-			void SetParamData(StringRef name, void* pData, uint64_t dataSize);
-
-			HMaterialInstance mMyHandler;
-
-			HashMap<String, uint64_t> mParameterIndexLookupMap;
-			Vector<MaterialParameter> mParameters;
-
-			HMaterial mMaterial;
-		};
-
-		class MaterialInstance_RT : public RenderObject_RT
-		{
-		public:
-			virtual ~MaterialInstance_RT();
-
-			void SyncParameterData(uint64_t index, MaterialParameter& param);
-
-			SPtr<Material_RT> GetMaterial() const { return mMaterial; }
+			SPtr<rt::Material> GetMaterial() const { return mMaterial; }
 
 			SPtr<render::ShaderParameters> GetShaderParameters() const { return mShaderParameters; }
 
 		private:
-			friend class MaterialInstance;
-			friend class Material;
+			friend class cube::MaterialInstance;
+			friend class cube::Material;
 
-			MaterialInstance_RT(SPtr<Material_RT>& mat);
+			MaterialInstance();
 
-			SPtr<Material_RT> mMaterial;
+			void ApplyParameters();
 
+			SPtr<rt::Material> mMaterial;
+
+			Vector<Uint32> mTempParametersIndex;
+			Vector<MaterialParameter> mTempParameters;
 			SPtr<render::ShaderParameters> mShaderParameters;
 		};
-	} // namespace core
+	} // namespace rt
 } // namespace cube

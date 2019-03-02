@@ -7,156 +7,153 @@
 
 namespace cube
 {
-	namespace core
+	EngineCore* GameThread::mECore = nullptr;
+	std::thread::id GameThread::mThreadId;
+	std::thread GameThread::mMyThread;
+	std::function<void()> GameThread::mRunFunction = nullptr;
+
+	bool GameThread::mWillBeDestroyed = false;
+
+	AsyncSignal GameThread::mStartSignal;
+	AsyncSignal GameThread::mFinishSignal;
+	AsyncSignal GameThread::mDestroySignal;
+
+	Mutex GameThread::mTaskBufferMutex;
+	TaskQueue GameThread::mTaskQueue;
+
+	void GameThread::Init(EngineCore* eCore)
 	{
-		EngineCore* GameThread::mECore = nullptr;
-		std::thread GameThread::mMyThread;
-		std::function<void()> GameThread::mRunFunction = nullptr;
+		mECore = eCore;
+		mFinishSignal.DispatchCompletion();
 
-		bool GameThread::mWillBeDestroyed = false;
+		mMyThread = std::thread(&GameThread::RunInternal);
+		mThreadId = mMyThread.get_id();
+	}
 
-		AsyncSignal GameThread::mStartSignal;
-		AsyncSignal GameThread::mFinishSignal;
-		AsyncSignal GameThread::mDestroySignal;
+	Async GameThread::PrepareAsync()
+	{
+		Async a = Async(mFinishSignal);
+		a.WaitUntilFinished();
 
-		Mutex GameThread::mTaskBufferMutex;
-		TaskBuffer GameThread::mTaskBuffer;
+		mRunFunction = &GameThread::PrepareInternal;
+		mStartSignal.DispatchCompletion();
 
-		void GameThread::Init(EngineCore* eCore)
-		{
-			mECore = eCore;
-			mFinishSignal.DispatchCompletion();
+		mFinishSignal.Reset();
 
-			mMyThread = std::thread(&GameThread::RunInternal);
-		}
+		return Async(mFinishSignal);
+	}
 
-		Async GameThread::PrepareAsync()
-		{
-			Async a = Async(mFinishSignal);
-			a.WaitUntilFinished();
+	Async GameThread::SimulateAsync()
+	{
+		mECore->Start();
 
-			mRunFunction = &GameThread::PrepareInternal;
-			mStartSignal.DispatchCompletion();
+		Async a = Async(mFinishSignal);
+		a.WaitUntilFinished();
 
-			mFinishSignal.Reset();
+		mRunFunction = &GameThread::SimulateInternal;
+		mStartSignal.DispatchCompletion();
 
-			return Async(mFinishSignal);
-		}
+		mFinishSignal.Reset();
 
-		Async GameThread::SimulateAsync()
-		{
-			mECore->Start();
+		return Async(mFinishSignal);
+	}
 
-			Async a = Async(mFinishSignal);
-			a.WaitUntilFinished();
+	Async GameThread::ExecuteTaskQueueAndSimulateAsync()
+	{
+		Async a = Async(mFinishSignal);
+		a.WaitUntilFinished();
 
-			mRunFunction = &GameThread::SimulateInternal;
-			mStartSignal.DispatchCompletion();
+		mRunFunction = &GameThread::ExecuteTaskQueueAndSimulateInternal;
+		mStartSignal.DispatchCompletion();
 
-			mFinishSignal.Reset();
+		mFinishSignal.Reset();
 
-			return Async(mFinishSignal);
-		}
+		return Async(mFinishSignal);
+	}
 
-		Async GameThread::ProcessTaskBuffersAndSimulateAsync()
-		{
-			Async a = Async(mFinishSignal);
-			a.WaitUntilFinished();
+	Async GameThread::PrepareDestroyAsync()
+	{
+		Async a = Async(mFinishSignal);
+		a.WaitUntilFinished();
 
-			mRunFunction = &GameThread::ProcessTaskBuffersAndSimulateInternal;
-			mStartSignal.DispatchCompletion();
+		mRunFunction = &GameThread::PrepareDestroyInternal;
+		mStartSignal.DispatchCompletion();
 
-			mFinishSignal.Reset();
+		mFinishSignal.Reset();
 
-			return Async(mFinishSignal);
-		}
+		return Async(mFinishSignal);
+	}
 
-		Async GameThread::PrepareDestroyAsync()
-		{
-			Async a = Async(mFinishSignal);
-			a.WaitUntilFinished();
+	Async GameThread::DestroyAsync()
+	{
+		Async a = Async(mFinishSignal);
+		a.WaitUntilFinished();
 
-			mRunFunction = &GameThread::PrepareDestroyInternal;
-			mStartSignal.DispatchCompletion();
+		mRunFunction = &GameThread::DestroyInternal;
+		mStartSignal.DispatchCompletion();
 
-			mFinishSignal.Reset();
+		mFinishSignal.Reset();
 
-			return Async(mFinishSignal);
-		}
+		return Async(mFinishSignal);
+	}
 
-		Async GameThread::DestroyAsync()
-		{
-			Async a = Async(mFinishSignal);
-			a.WaitUntilFinished();
+	void GameThread::RunInternal()
+	{
+		while(1) {
+			{ // Wait until start
+				Async a = Async(mStartSignal);
+				a.WaitUntilFinished();
 
-			mRunFunction = &GameThread::DestroyInternal;
-			mStartSignal.DispatchCompletion();
+				mFinishSignal.Reset();
+			}
 
-			mFinishSignal.Reset();
+			mRunFunction();
 
-			return Async(mFinishSignal);
-		}
-
-		void GameThread::RunInternal()
-		{
-			while(1) {
-				{ // Wait until start
-					Async a = Async(mStartSignal);
-					a.WaitUntilFinished();
-
-					mFinishSignal.Reset();
-				}
-
-				mRunFunction();
-
-				{ // Check destroy signal
-					Async a = Async(mDestroySignal);
-					if(a.IsDone()) {
-						break;
-					}
-				}
-
-				{ // Finish
-					mRunFunction = nullptr;
-					mStartSignal.Reset();
-					mFinishSignal.DispatchCompletion();
+			{ // Check destroy signal
+				Async a = Async(mDestroySignal);
+				if(a.IsDone()) {
+					break;
 				}
 			}
 
-			mFinishSignal.DispatchCompletion();
+			{ // Finish
+				mRunFunction = nullptr;
+				mStartSignal.Reset();
+				mFinishSignal.DispatchCompletion();
+			}
 		}
 
-		void GameThread::PrepareInternal()
-		{
-			mECore->Initialize();
-		}
+		mFinishSignal.DispatchCompletion();
+	}
 
-		void GameThread::ProcessTaskBuffersAndSimulateInternal()
-		{
-			TaskBuffer& buf = RenderingThread::_GetTaskBuffer();
-			buf.ExecuteAll();
+	void GameThread::PrepareInternal()
+	{
+		mECore->Initialize();
+	}
 
-			buf.Flush();
+	void GameThread::ExecuteTaskQueueAndSimulateInternal()
+	{
+		mTaskQueue.ExecuteAll();
+		mTaskQueue.Flush();
 
-			SimulateInternal();
-		}
+		SimulateInternal();
+	}
 
-		void GameThread::SimulateInternal()
-		{
-			mECore->Update();
-		}
+	void GameThread::SimulateInternal()
+	{
+		mECore->Update();
+	}
 
-		void GameThread::PrepareDestroyInternal()
-		{
-			mTaskBuffer.Flush();
-		}
+	void GameThread::PrepareDestroyInternal()
+	{
+		mTaskQueue.Flush();
+	}
 
-		void GameThread::DestroyInternal()
-		{
-			mECore->ShutDown();
-			mTaskBuffer.Flush();
+	void GameThread::DestroyInternal()
+	{
+		mECore->ShutDown();
+		mTaskQueue.Flush();
 
-			mDestroySignal.DispatchCompletion();
-		}
-	} // namespace core
+		mDestroySignal.DispatchCompletion();
+	}
 } // namespace cube

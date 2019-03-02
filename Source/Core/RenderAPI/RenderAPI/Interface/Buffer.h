@@ -8,19 +8,13 @@ namespace cube
 {
 	namespace render
 	{
-		struct BufferData
-		{
-			const void* pData;
-			Uint64 dataSize;
-		};
-
 		struct BufferAttribute : public BaseAttribute
 		{
+			const void* pData;
 			Uint64 size = 0;
 			bool cpuAccessible = false;
 			ResourceUsage usage;
 			BufferBindTypeFlags bindTypeFlags = 0;
-			const BufferData* pData = nullptr;
 			bool isDedicated = false;
 		};
 

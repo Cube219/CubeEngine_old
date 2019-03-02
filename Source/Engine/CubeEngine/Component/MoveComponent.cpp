@@ -21,7 +21,7 @@ namespace cube
 	void MoveComponent::OnInit()
 	{
 		String n = CUBE_T("InputModule");
-		mInputModule = DPCast(module::InputModule)(core::ECore().GetModuleManager().GetModule(n));
+		mInputModule = DPCast(module::InputModule)(ECore().GetModuleManager().GetModule(n));
 
 		mInputModule->LockCursor();
 	}

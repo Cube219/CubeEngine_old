@@ -9,7 +9,7 @@
 
 namespace cube
 {
-	class CUBE_ENGINE_EXPORT CameraComponent : public core::Component
+	class CUBE_ENGINE_EXPORT CameraComponent : public Component
 	{
 	public:
 		static const String& GetName() { return mName; }
@@ -29,9 +29,9 @@ namespace cube
 	private:
 		Matrix mViewMatrix;
 
-		SPtr<core::CameraRenderer3D> mCameraRenderer3D;
+		SPtr<CameraRenderer3D> mCameraRenderer3D;
 	};
 
-	using CameraComponentData = core::BasicHandlerData<CameraComponent>;
-	using HCameraComponent = core::BasicHandler<CameraComponent>;
+	using CameraComponentData = BasicHandlerData<CameraComponent>;
+	using HCameraComponent = BasicHandler<CameraComponent>;
 } // namespace cube

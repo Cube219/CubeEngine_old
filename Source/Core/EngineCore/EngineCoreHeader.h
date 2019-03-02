@@ -1,86 +1,95 @@
-#pragma once
+﻿#pragma once
 #pragma warning(disable:4251)
 
 #include "Base/BaseTypes.h"
 
 namespace cube
 {
-	namespace core
-	{
-		class EngineCore;
+	class EngineCore;
 		
-		class ThreadManager;
-		class Thread;
+	class ThreadManager;
+	class Thread;
 
-		class TimeManager;
-		class GameTime;
+	class TimeManager;
+	class GameTime;
 
-		class ResourceManager;
-		class ResourceImporter;
-		class Resource;
-		template <typename T>
-		class ResourcePointer;
+	class ResourceManager;
+	class ResourceImporter;
+	class Resource;
+	template <typename T>
+	class ResourcePointer;
 
-		class BasicString;
-		class PathString;
-		class ImmutableString;
-		class StringManager;
+	class BasicString;
+	class PathString;
+	class ImmutableString;
+	class StringManager;
 
-		template <typename T>
-		struct BasicHandlerData;
-		template <typename T>
-		class BasicHandler;
+	template <typename T>
+	struct BasicHandlerData;
+	template <typename T>
+	class BasicHandler;
 
+	class Renderer3D;
+	class CameraRenderer3D;
+	enum class RenderType;
+	class RendererManager;
+
+	struct Vertex;
+	class MeshData;
+	class Mesh;
+
+	class BaseMeshGenerator;
+
+	enum class MaterialParameterType;
+	struct MaterialParameterInfo;
+	struct MaterialInitializer;
+	class Material;
+	using MaterialData = BasicHandlerData<Material>;
+	using HMaterial = BasicHandler<Material>;
+	class MaterialInstance;
+	using MaterialInstanceData = BasicHandlerData<MaterialInstance>;
+	using HMaterialInstance = BasicHandler<MaterialInstance>;
+		
+	class Shader;
+
+	class BaseLight;
+	class DirectionalLight;
+	class PointLight;
+	class SpotLight;
+
+	class TextureData;
+	class Texture;
+
+	class ModuleManager;
+	class BaseModule;
+
+	class GameObjectManager;
+	class GameObject;
+	using GameObjectData = BasicHandlerData<GameObject>;
+	using HGameObject = BasicHandler<GameObject>;
+
+	class ComponentManager;
+	class Component;
+	using ComponentData = BasicHandlerData<Component>;
+	using HComponent = BasicHandler<Component>;
+
+	namespace rt
+	{
 		class Renderer3D;
-		class Renderer3D_RT;
 		class CameraRenderer3D;
-		class CameraRenderer3D_RT;
-		enum class RenderType;
-		class RendererManager;
 
-		struct Vertex;
-		class Mesh;
-
-		class BaseMeshGenerator;
-
-		enum class MaterialParameterType;
-		struct MaterialParameterInfo;
-		struct MaterialInitializer;
 		class Material;
-		using MaterialData = BasicHandlerData<Material>;
-		using HMaterial = BasicHandler<Material>;
-		class Material_RT;
 		class MaterialInstance;
-		using MaterialInstanceData = BasicHandlerData<MaterialInstance>;
-		using HMaterialInstance = BasicHandler<MaterialInstance>;
-		class MaterialInstance_RT;
-
-		class Shader;
 
 		class BaseLight;
-		class BaseLight_RT;
 		class DirectionalLight;
-		class DirectionalLight_RT;
 		class PointLight;
-		class PointLight_RT;
-		class SpotLight;
+
+		class Mesh;
 
 		class Texture;
-
-		class ModuleManager;
-		class BaseModule;
-
-		class GameObjectManager;
-		class GameObject;
-		using GameObjectData = BasicHandlerData<GameObject>;
-		using HGameObject = BasicHandler<GameObject>;
-
-		class ComponentManager;
-		class Component;
-		using ComponentData = BasicHandlerData<Component>;
-		using HComponent = BasicHandler<Component>;
-	}
-}
+	} // namespace rt
+} // namespace cube
 
 
 #ifdef ENGINE_CORE_EXPORTS

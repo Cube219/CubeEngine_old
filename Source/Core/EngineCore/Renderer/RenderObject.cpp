@@ -2,19 +2,29 @@
 
 namespace cube
 {
-	namespace core
+	SPtr<RenderObject> RenderObject::Create()
 	{
-		SPtr<RenderObject> RenderObject::Create()
-		{
-			SPtr<RenderObject> ro(new RenderObject());
-			ro->Initialize();
+		SPtr<RenderObject> ro(new RenderObject());
+		ro->Initialize();
 
-			return ro;
-		}
+		return ro;
+	}
 
-		void RenderObject::Initialize()
-		{
-			mRenderObject_RT = CreateRenderObject_RT();
-		}
-	} // namespace core
+	void RenderObject::Initialize()
+	{
+		mRenderObject = CreateRenderObject();
+
+		RenderingThread::QueueTask([this]() {
+			mRenderObject->Initialize();
+		});
+	}
+
+	void RenderObject::Destroy()
+	{
+		RenderingThread::QueueTask([ro = mRenderObject]() {
+			ro->Destroy();
+		});
+
+		mRenderObject = nullptr;
+	}
 } // namespace cube

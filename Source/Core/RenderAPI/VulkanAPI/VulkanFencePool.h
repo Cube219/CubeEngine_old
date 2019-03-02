@@ -21,7 +21,7 @@ namespace cube
 		private:
 			SPtr<VulkanLogicalDevice> mDevice;
 
-			core::Mutex mFencesMutex;
+			Mutex mFencesMutex;
 			Vector<VkFenceWrapper> mFences;
 			Vector<Uint32> mIdleFenceIndices;
 		};

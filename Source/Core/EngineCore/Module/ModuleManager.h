@@ -9,55 +9,52 @@
 
 namespace cube
 {
-	namespace core
+	// TODO: dependency에 따라서 Module들 병렬로 처리
+	//       지금은 그냥 넣은 순서대로 처리중
+	struct ModuleNode
 	{
-		// TODO: dependency에 따라서 Module들 병렬로 처리
-		//       지금은 그냥 넣은 순서대로 처리중
-		struct ModuleNode
+		enum class State
 		{
-			enum class State
-			{
-				NotRun, Running, Finished
-			};
-
-			SPtr<platform::DLib> moduleDLib;
-			SPtr<BaseModule> module;
-			Uint32 remainDependencyNum;
-			State state;
+			NotRun, Running, Finished
 		};
 
-		class ENGINE_CORE_EXPORT ModuleManager
-		{
-		public:
-			ModuleManager() {}
-			~ModuleManager() {}
+		SPtr<platform::DLib> moduleDLib;
+		SPtr<BaseModule> module;
+		Uint32 remainDependencyNum;
+		State state;
+	};
 
-			ModuleManager(const ModuleManager& other) = delete;
-			ModuleManager& operator=(const ModuleManager& rhs) = delete;
-			ModuleManager(ModuleManager&& other) = delete;
-			ModuleManager& operator=(ModuleManager&& rhs) = delete;
+	class ENGINE_CORE_EXPORT ModuleManager
+	{
+	public:
+		ModuleManager() {}
+		~ModuleManager() {}
 
-			void Initialize();
-			void ShutDown();
+		ModuleManager(const ModuleManager& other) = delete;
+		ModuleManager& operator=(const ModuleManager& rhs) = delete;
+		ModuleManager(ModuleManager&& other) = delete;
+		ModuleManager& operator=(ModuleManager&& rhs) = delete;
 
-			void LoadModule(StringRef moduleName);
+		void Initialize();
+		void ShutDown();
 
-			void InitModules();
+		void LoadModule(StringRef moduleName);
 
-			SPtr<BaseModule> GetModule(StringRef name);
+		void InitModules();
+
+		SPtr<BaseModule> GetModule(StringRef name);
 			
-			template <typename T>
-			SPtr<T> GetModule(StringRef name)
-			{
-				return DPCast(T)(GetModule(name));
-			}
+		template <typename T>
+		SPtr<T> GetModule(StringRef name)
+		{
+			return DPCast(T)(GetModule(name));
+		}
 
-			void UpdateAllModules(float dt);
+		void UpdateAllModules(float dt);
 
-		private:
-			HashMap<String, SPtr<BaseModule>> mModuleLookup;
+	private:
+		HashMap<String, SPtr<BaseModule>> mModuleLookup;
 
-			Vector<ModuleNode> mModules;
-		};
-	} // namespace core
+		Vector<ModuleNode> mModules;
+	};
 } // namespace cube

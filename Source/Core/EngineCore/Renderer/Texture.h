@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
 #include "../Resource/BaseResource.h"
+#include "RenderObject.h"
 #include "RenderAPI/Interface/Texture.h"
 #include "RenderAPI/Interface/TextureView.h"
 #include "RenderAPI/Interface/Sampler.h"
@@ -10,35 +11,48 @@
 
 namespace cube
 {
-	namespace core
+	class ENGINE_CORE_EXPORT Texture : public Resource, public RenderObject
 	{
-		class ENGINE_CORE_EXPORT Texture : public Resource
+	public:
+		static RPtr<Texture> Load(StringRef path);
+
+	public:
+		Texture();
+		Texture(const SPtr<TextureData>& initialData);
+		virtual ~Texture();
+
+		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
+		SPtr<rt::Texture> GetRenderObject() const { return DPCast(rt::Texture)(mRenderObject); }
+
+	private:
+		mutable SPtr<TextureData> mTextureData;
+		Uint32 mMipLevel;
+	};
+
+	namespace rt
+	{
+		class Texture : public RenderObject
 		{
 		public:
-			static RPtr<Texture> Load(StringRef path);
+			Texture(const SPtr<TextureData>& initialData);
+			virtual ~Texture();
+			virtual void Initialize() override;
 
-		public:
-			Texture(){ }
-			virtual ~Texture() { }
-
-			void WriteData(SPtr<render::Device>& device, void* data, Uint64 size, Uint32 width, Uint32 height);
+			void SyncTextureData(const SPtr<TextureData>& textureData);
 
 			SPtr<render::TextureView> GetTextureView() const { return mTextureView; }
 			SPtr<render::Sampler> GetSampler() const { return mSampler; }
 
 		private:
-			Uint64 mImageSize;
+			friend class cube::Texture;
 
-			Uint32 mWidth;
-			Uint32 mHeight;
+			void FlushToRenderTexture();
 
-			Uint32 mMipLevel;
+			SPtr<TextureData> mTextureData;
 
 			SPtr<render::Texture> mTexture;
 			SPtr<render::TextureView> mTextureView;
 			SPtr<render::Sampler> mSampler;
-
-			SPtr<RendererManager> mManager_ref;
 		};
-	} // namespace core
+	} // namespace rt
 } // namespace cube

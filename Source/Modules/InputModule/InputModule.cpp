@@ -11,7 +11,7 @@ namespace cube
 {
 	namespace module
 	{
-		core::BaseModule* CreateModule()
+		BaseModule* CreateModule()
 		{
 			return new InputModule();
 		}
@@ -25,7 +25,7 @@ namespace cube
 		{
 		}
 
-		void InputModule::Init(core::EngineCore* eCore, ...)
+		void InputModule::Init(EngineCore* eCore, ...)
 		{
 			for(int i = 0; i < 4; i++) {
 				mIsVibrated[i] = false;

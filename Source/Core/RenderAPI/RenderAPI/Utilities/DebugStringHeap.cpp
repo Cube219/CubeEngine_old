@@ -53,7 +53,7 @@ namespace cube
 
 		Uint64 DebugStringHeap::mPageSize;
 
-		core::Mutex DebugStringHeap::mPagesMutex;
+		Mutex DebugStringHeap::mPagesMutex;
 		Vector<DebugStringPage> DebugStringHeap::mPages;
 
 		void DebugStringHeap::Enable(Uint64 pageSize)
@@ -76,7 +76,7 @@ namespace cube
 			if(mIsEnabled == false)
 				return "";
 
-			core::Lock lock(mPagesMutex);
+			Lock lock(mPagesMutex);
 
 			for(auto& page : mPages) {
 				const char* res = page.Allocate(str);

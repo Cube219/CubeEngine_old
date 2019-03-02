@@ -7,7 +7,7 @@
 
 namespace cube
 {
-	class TextureImporter : public core::ResourceImporter
+	class TextureImporter : public ResourceImporter
 	{
 	public:
 		TextureImporter(SPtr<render::Device>& device) :
@@ -16,9 +16,11 @@ namespace cube
 			mName = CUBE_T("TextureImporter");
 		}
 
-		core::Resource* Import(SPtr<platform::File>& file, Json info) final override;
+		Resource* Import(SPtr<platform::File>& file, Json info) final override;
 
 	private:
+		SPtr<TextureData> GetTextureData(void* pData, Uint32 width, Uint32 height, Uint32 depth);
+
 		SPtr<render::Device> mDevice;
 	};
 } // namespace cube

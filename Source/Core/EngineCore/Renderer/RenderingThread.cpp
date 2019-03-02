@@ -7,105 +7,119 @@
 
 namespace cube
 {
-	namespace core
+	RendererManager* RenderingThread::mRendererManager = nullptr;
+
+	std::thread::id RenderingThread::mThreadId;
+
+	EventFunction<void()> RenderingThread::mLoopEventFunc;
+	EventFunction<void(Uint32, Uint32)> RenderingThread::mResizeEventFunc;
+
+	Mutex RenderingThread::mSyncTaskQueueMutex;
+	TaskQueue RenderingThread::mSyncTaskQueue;
+
+	Mutex RenderingThread::mTaskQueueMutex;
+	TaskQueue RenderingThread::mTaskQueue;
+	TaskQueue RenderingThread::mLastTaskQueue;
+
+	void RenderingThread::Init(RendererManager* rendererManager)
 	{
-		RendererManager* RenderingThread::mRendererManager = nullptr;
+		mRendererManager = rendererManager;
 
-		EventFunction<void()> RenderingThread::mLoopEventFunc;
-		EventFunction<void(uint32_t, uint32_t)> RenderingThread::mResizeEventFunc;
+		mThreadId = std::this_thread::get_id();
+	}
 
-		Mutex RenderingThread::mTaskBufferMutex;
-		TaskBuffer RenderingThread::mTaskBuffer;
+	void RenderingThread::Prepare()
+	{
+		mRendererManager->Initialize(RenderType::Vulkan);
 
-		void RenderingThread::Init(RendererManager* rendererManager)
-		{
-			mRendererManager = rendererManager;
-		}
+		mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(&RenderingThread::Loop);
+		mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(&RenderingThread::OnResize);
+	}
 
-		void RenderingThread::Prepare()
-		{
-			mRendererManager->Initialize(RenderType::Vulkan);
+	void RenderingThread::PrepareDestroy()
+	{
+		platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
+		platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
 
-			mLoopEventFunc = platform::Platform::GetLoopEvent().AddListener(&RenderingThread::Loop);
-			mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(&RenderingThread::OnResize);
-		}
+		mSyncTaskQueue.Flush();
+		mTaskQueue.Flush();
+	}
 
-		void RenderingThread::PrepareDestroy()
-		{
-			platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
-			platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
+	void RenderingThread::Destroy()
+	{
+		mTaskQueue.ExecuteAll();
+		mTaskQueue.Flush();
 
-			mTaskBuffer.Flush();
-		}
+		mRendererManager->ShutDown();
+	}
 
-		void RenderingThread::Destroy()
-		{
-			mRendererManager->ShutDown();
-		}
+	void RenderingThread::Run(Async& gameThreadRunAsync)
+	{
+		gameThreadRunAsync.WaitUntilFinished();
 
-		void RenderingThread::Run(Async& gameThreadRunAsync)
-		{
-			gameThreadRunAsync.WaitUntilFinished();
+		// For fulshing initial resources
+		Sync();
 
-			// For fulshing initial resources
-			mRendererManager->DrawAll();
+		mLastTaskQueue.ExecuteAll();
+		mLastTaskQueue.Flush();
 
-			platform::Platform::StartLoop();
-		}
+		mRendererManager->DrawAll();
 
-		void RenderingThread::ExecuteLastTaskBuffer()
-		{
-			ProcessTaskBuffers();
-		}
+		platform::Platform::StartLoop();
+	}
 
-		void RenderingThread::Loop()
-		{
-			if(GameThread::mWillBeDestroyed == true) {
-				Async async = GameThread::PrepareDestroyAsync();
+	void RenderingThread::Loop()
+	{
+		if(GameThread::mWillBeDestroyed == true) {
+			Async async = GameThread::PrepareDestroyAsync();
 
-				PrepareDestroy();
-
-				async.WaitUntilFinished();
-
-				platform::Platform::FinishLoop();
-
-				return;
-			}
-
-			ProcessTaskBuffers();
-
-			Async async = GameThread::ProcessTaskBuffersAndSimulateAsync();
-
-			Rendering();
+			PrepareDestroy();
 
 			async.WaitUntilFinished();
+
+			platform::Platform::FinishLoop();
+
+			return;
 		}
 
-		void RenderingThread::ProcessTaskBuffers()
-		{
-			TaskBuffer& buf = GameThread::_GetTaskBuffer();
-			buf.ExecuteAll();
+		Sync();
 
-			buf.Flush();
-		}
+		Async async = GameThread::ExecuteTaskQueueAndSimulateAsync();
 
-		void RenderingThread::Rendering()
-		{
-			mRendererManager->StartFrame();
+		mLastTaskQueue.ExecuteAll();
+		mLastTaskQueue.Flush();
 
-			mRendererManager->DrawAll();
-		}
+		Rendering();
 
-		void RenderingThread::DestroyInternal()
-		{
-			mRendererManager->ShutDown();
+		async.WaitUntilFinished();
+	}
 
-			mTaskBuffer.Flush();
-		}
+	void RenderingThread::Sync()
+	{
+		mSyncTaskQueue.ExecuteAll();
+		mSyncTaskQueue.Flush();
 
-		void RenderingThread::OnResize(uint32_t width, uint32_t height)
-		{
-			mRendererManager->Resize(width, height);
-		}
-	} // namespace core
+		mTaskQueue.QueueAndFlush(mLastTaskQueue);
+	}
+
+	void RenderingThread::Rendering()
+	{
+		mRendererManager->StartFrame();
+
+		mRendererManager->DrawAll();
+	}
+
+	void RenderingThread::DestroyInternal()
+	{
+		mRendererManager->ShutDown();
+
+		mSyncTaskQueue.Flush();
+		mTaskQueue.Flush();
+		mLastTaskQueue.Flush();
+	}
+
+	void RenderingThread::OnResize(Uint32 width, Uint32 height)
+	{
+		mRendererManager->Resize(width, height);
+	}
 } // namespace cube

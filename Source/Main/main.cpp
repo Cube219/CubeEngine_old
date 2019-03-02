@@ -23,41 +23,39 @@ namespace cube
 		float metallic;
 	};
 
-	core::RPtr<core::Mesh> boxMesh;
-	core::RPtr<core::Mesh> sphereMesh;
-	core::RPtr<core::Mesh> planeMesh;
-	core::RPtr<core::Mesh> nanosuitMesh;
-	core::RPtr<core::Texture> texture;
-	core::RPtr<core::Texture> texture2;
+	RPtr<Mesh> boxMesh;
+	RPtr<Mesh> sphereMesh;
+	RPtr<Mesh> planeMesh;
+	RPtr<Mesh> nanosuitMesh;
+	RPtr<Texture> texture;
+	RPtr<Texture> texture2;
 
-	core::RPtr<core::Shader> vertexShader;
-	core::RPtr<core::Shader> fragmentShader;
-	core::HMaterial material;
-	core::RPtr<core::Shader> fragmentTexturedShader;
-	core::HMaterial materialTextured;
-	Vector<core::HMaterialInstance> materialInses;
-	Vector<core::HGameObject> mGameObjects;
-	core::HGameObject cameraGameObject;
-	Vector<core::HGameObject> pointLightGameObjects;
+	RPtr<Shader> vertexShader;
+	RPtr<Shader> fragmentShader;
+	HMaterial material;
+	RPtr<Shader> fragmentTexturedShader;
+	HMaterial materialTextured;
+	Vector<HMaterialInstance> materialInses;
+	Vector<HGameObject> mGameObjects;
+	HGameObject cameraGameObject;
+	Vector<HGameObject> pointLightGameObjects;
 	
-	core::HGameObject nanosuitGameObject;
-	core::HMaterialInstance armMatIns;
-	core::RPtr<core::Texture> armTexture;
-	core::HMaterialInstance bodyMatIns;
-	core::RPtr<core::Texture> bodyTexture;
-	core::HMaterialInstance glassMatIns;
-	core::RPtr<core::Texture> glassTexture;
-	core::HMaterialInstance handMatIns;
-	core::RPtr<core::Texture> handTexture;
-	core::HMaterialInstance helmetMatIns;
-	core::RPtr<core::Texture> helmetTexture;
-	core::HMaterialInstance legMatIns;
-	core::RPtr<core::Texture> legTexture;
+	HGameObject nanosuitGameObject;
+	HMaterialInstance armMatIns;
+	RPtr<Texture> armTexture;
+	HMaterialInstance bodyMatIns;
+	RPtr<Texture> bodyTexture;
+	HMaterialInstance glassMatIns;
+	RPtr<Texture> glassTexture;
+	HMaterialInstance handMatIns;
+	RPtr<Texture> handTexture;
+	HMaterialInstance helmetMatIns;
+	RPtr<Texture> helmetTexture;
+	HMaterialInstance legMatIns;
+	RPtr<Texture> legTexture;
 
 	void PrepareResources()
 	{
-		using namespace core;
-
 		// Load mesh / texture
 		boxMesh = BaseMeshGenerator::GetBoxMesh();
 		sphereMesh = BaseMeshGenerator::GetSphereMesh();
@@ -170,8 +168,6 @@ namespace cube
 
 	void CreateGameObjects()
 	{
-		using namespace core;
-
 		HGameObject go;
 		Vector3 v;
 		HRenderer3DComponent renderer;
@@ -249,7 +245,6 @@ namespace cube
 
 	void DestroyAll()
 	{
-		using namespace core;
 		for(auto& go : mGameObjects) {
 			go->Destroy();
 		}

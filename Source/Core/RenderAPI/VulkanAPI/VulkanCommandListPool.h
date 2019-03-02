@@ -23,19 +23,19 @@ namespace cube
 
 			static constexpr Uint32 maxThreadNum = 8;
 
-			Array<core::Mutex, maxThreadNum> mGraphicsCommandPoolMutexes;
+			Array<Mutex, maxThreadNum> mGraphicsCommandPoolMutexes;
 			Array<VkCommandPool, maxThreadNum> mGraphicsCommandPools;
 			Uint32 mGraphicsQueueFamilyIndex;
 
-			Array<core::Mutex, maxThreadNum> mTransferImmediateCommandPoolMutexes;
+			Array<Mutex, maxThreadNum> mTransferImmediateCommandPoolMutexes;
 			Array<VkCommandPool, maxThreadNum> mTransferImmediateCommandPools;
 			Uint32 mTransferImmediateQueueFamilyIndex;
 
-			Array<core::Mutex, maxThreadNum> mTransferDeferredCommandPoolMutexes;
+			Array<Mutex, maxThreadNum> mTransferDeferredCommandPoolMutexes;
 			Array<VkCommandPool, maxThreadNum> mTransferDeferredCommandPools;
 			Uint32 mTransferDeferredQueueFamilyIndex;
 
-			Array<core::Mutex, maxThreadNum> mComputeCommandPoolMutexes;
+			Array<Mutex, maxThreadNum> mComputeCommandPoolMutexes;
 			Array<VkCommandPool, maxThreadNum> mComputeCommandPools;
 			Uint32 mComputeQueueFamilyIndex;
 		};

@@ -1,26 +1,26 @@
-#pragma once
+﻿#pragma once
 
 #include "../EngineCoreHeader.h"
 
 namespace cube
 {
-	class TaskBuffer
+	class TaskQueue
 	{
 	public:
-		TaskBuffer(){ }
-		~TaskBuffer()
+		TaskQueue(){ }
+		~TaskQueue()
 		{
 			mTasks.clear();
 		}
 
-		void WriteTask(std::function<void()> taskFunction)
+		void QueueTask(std::function<void()> taskFunction)
 		{
 			mTasks.push_back(taskFunction);
 		}
 
-		void QueueAndFlush(TaskBuffer& buf)
+		void QueueAndFlush(TaskQueue& dst)
 		{
-			buf.mTasks.insert(buf.mTasks.end(), mTasks.begin(), mTasks.end());
+			dst.mTasks.insert(dst.mTasks.end(), mTasks.begin(), mTasks.end());
 			mTasks.clear();
 		}
 

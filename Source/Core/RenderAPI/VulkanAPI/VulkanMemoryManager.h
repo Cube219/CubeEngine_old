@@ -128,8 +128,8 @@ namespace cube
 			Uint64 mHeapSize;
 			Uint64 mPageSize;
 
-			core::Mutex mPagesMutex;
-			Vector<VulkanMemoryPage> mPages;
+			Mutex mPagesMutex;
+			Vector<UPtr<VulkanMemoryPage>> mPages;
 		};
 
 		/////////////////////////
