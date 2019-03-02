@@ -47,6 +47,9 @@ namespace cube
 
 	void RenderingThread::Destroy()
 	{
+		mTaskQueue.ExecuteAll();
+		mTaskQueue.Flush();
+
 		mRendererManager->ShutDown();
 	}
 
@@ -64,12 +67,7 @@ namespace cube
 
 		platform::Platform::StartLoop();
 	}
-	/*
-	void RenderingThread::ExecuteLastTaskBuffer()
-	{
-		ProcessTaskBuffers();
-	}
-	*/
+
 	void RenderingThread::Loop()
 	{
 		if(GameThread::mWillBeDestroyed == true) {

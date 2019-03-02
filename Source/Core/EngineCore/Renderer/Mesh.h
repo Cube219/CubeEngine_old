@@ -49,6 +49,7 @@ namespace cube
 			Mesh(const SPtr<MeshData>& initialiData);
 			virtual ~Mesh();
 			virtual void Initialize() override;
+			virtual void Destroy() override;
 
 			void SyncMeshData(const SPtr<MeshData>& meshData);
 

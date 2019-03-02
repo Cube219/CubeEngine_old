@@ -15,9 +15,9 @@ namespace cube
 	class ENGINE_CORE_EXPORT RenderObject
 	{
 	public:
-		virtual ~RenderObject() {}
-
 		static SPtr<RenderObject> Create();
+
+		virtual ~RenderObject() {}
 
 		virtual void Initialize();
 		virtual void Destroy();

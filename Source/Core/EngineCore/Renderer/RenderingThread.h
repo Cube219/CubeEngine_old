@@ -22,7 +22,6 @@ namespace cube
 		static void Destroy();
 
 		static void Run(Async& gameThreadRunAsync);
-		// static void ExecuteLastTaskBuffer();
 
 		static void QueueSyncTask(std::function<void()> taskFunc)
 		{
@@ -39,8 +38,6 @@ namespace cube
 		}
 
 		static std::thread::id GetThreadId() { return mThreadId; }
-
-		// static TaskQueue& _GetTaskBuffer() { return mTaskQueue; }
 
 	private:
 		friend class GameThread;

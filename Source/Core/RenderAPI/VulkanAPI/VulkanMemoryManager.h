@@ -129,7 +129,7 @@ namespace cube
 			Uint64 mPageSize;
 
 			Mutex mPagesMutex;
-			Vector<VulkanMemoryPage> mPages;
+			Vector<UPtr<VulkanMemoryPage>> mPages;
 		};
 
 		/////////////////////////

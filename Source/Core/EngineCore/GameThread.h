@@ -37,8 +37,6 @@ namespace cube
 
 		static std::thread::id GetThreadId() { return mThreadId; }
 
-		// static TaskBuffer& _GetTaskBuffer(){ return mTaskBuffer; }
-
 	private:
 		friend class RenderingThread;
 

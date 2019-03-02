@@ -60,6 +60,10 @@ namespace cube
 			}
 		}
 
+		void Mesh::Destroy()
+		{
+		}
+
 		void Mesh::SyncMeshData(const SPtr<MeshData>& meshData)
 		{
 			mMeshData = meshData;

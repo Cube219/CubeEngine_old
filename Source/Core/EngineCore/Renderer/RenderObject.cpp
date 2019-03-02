@@ -21,9 +21,7 @@ namespace cube
 
 	void RenderObject::Destroy()
 	{
-		SPtr<rt::RenderObject> ro = mRenderObject;
-
-		RenderingThread::QueueTask([ro]() {
+		RenderingThread::QueueTask([ro = mRenderObject]() {
 			ro->Destroy();
 		});
 

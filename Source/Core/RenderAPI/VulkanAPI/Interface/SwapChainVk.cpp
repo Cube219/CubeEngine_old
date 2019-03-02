@@ -132,6 +132,10 @@ namespace cube
 
 		SwapChainVk::~SwapChainVk()
 		{
+			for(auto view : mBackImageViews) {
+				vkDestroyImageView(mSwapChain.GetVkDevice(), view, nullptr);
+			}
+
 			mSwapChain.Release();
 		}
 

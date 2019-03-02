@@ -13,6 +13,12 @@ namespace cube
 	void ResourceManager::ShutDown()
 	{
 		UnloadUnusedResources();
+
+		for(auto& res : mLoadedResources) {
+			delete res.second;
+		}
+		mLoadedResources.clear();
+		mImporters.clear();
 	}
 
 	void ResourceManager::RegisterImporter(UPtr<ResourceImporter> importer)
