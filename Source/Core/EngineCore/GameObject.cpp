@@ -17,12 +17,11 @@ namespace cube
 	{
 		GameObjectManager& manager = ECore().GetGameObjectManager();
 
-		SPtr<GameObject> go = std::make_shared<GameObject>();
-		return manager.RegisterGameObject(go);
+		return manager.RegisterGameObject(std::make_unique<GameObject>());
 	}
 
 	GameObject::GameObject() :
-		mID(0), mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
+		mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
 		mIsTransformChanged(true),
 		mForward(0.0f, 0.0f, 1.0f), mUp(0.0f, 1.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f)
 	{
@@ -126,6 +125,6 @@ namespace cube
 			c->Destroy();
 		}
 
-		ECore().GetGameObjectManager().UnregisterGameObject(mMyHandler);
+		ECore().GetGameObjectManager().UnregisterGameObject(GetHandler());
 	}
 } // namespace cube

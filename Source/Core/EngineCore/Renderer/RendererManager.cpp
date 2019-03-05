@@ -185,14 +185,11 @@ namespace cube
 		mRenderDLib = nullptr;
 	}
 
-	HMaterial RendererManager::RegisterMaterial(SPtr<Material>& material)
+	HMaterial RendererManager::RegisterMaterial(UPtr<Material>&& material)
 	{
-		SPtr<MaterialData> matDataPtr = std::make_shared<MaterialData>();
-		matDataPtr->data = std::move(material);
-		matDataPtr->data->mMyHandler = HMaterial(matDataPtr);
+		HMaterial mat = mRenderObjectTable.CreateNewHandler(std::move(material));
 
-		SPtr<rt::Material> mat_rt = matDataPtr->data->GetRenderObject();
-		RenderingThread::QueueTask([this, mat_rt]() {
+		RenderingThread::QueueTask([this, mat_rt = mat->GetRenderObject()]() {
 			Lock(mMaterialsMutex);
 
 			mat_rt->mIndex = (int)mMaterials.size();
@@ -200,11 +197,10 @@ namespace cube
 			mMaterialPipelines.push_back(CreatePipeline(mat_rt));
 		});
 
-		HMaterial hMat = HMaterial(matDataPtr);
-		return hMat;
+		return mat;
 	}
 
-	void RendererManager::UnregisterMaterial(HMaterial& material)
+	UPtr<Material> RendererManager::UnregisterMaterial(HMaterial& material)
 	{
 		SPtr<rt::Material> mat_rt = material->GetRenderObject();
 		int index = mat_rt->mIndex;
@@ -227,6 +223,8 @@ namespace cube
 
 			mat_rt->mIndex = -1;
 		});
+
+		return mRenderObjectTable.ReleaseHandler(material);
 	}
 
 	void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)

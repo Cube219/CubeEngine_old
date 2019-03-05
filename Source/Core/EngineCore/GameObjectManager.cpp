@@ -1,6 +1,5 @@
 ﻿#include "GameObjectManager.h"
 
-#include "BasicHandler.h"
 #include "GameObject.h"
 #include "LogWriter.h"
 
@@ -12,51 +11,47 @@ namespace cube
 
 	void GameObjectManager::ShutDown()
 	{
-		for(auto& go : mGameObjects) {
-			go.second->data = nullptr;
-		}
+		mGameObjects.clear();
+		mGameObjectTable.ReleaseAll();
 	}
 
-	HGameObject GameObjectManager::RegisterGameObject(SPtr<GameObject>& go)
+	HGameObject GameObjectManager::RegisterGameObject(UPtr<GameObject>&& go)
 	{
-		CHECK(go->mID == 0, "Failed to register GameObject. Only GameObject with id=0 can be registered (id: {0})", go->mID);
+		CHECK(go->GetID() == Uint64InvalidValue, "Failed to register GameObject. It is already registered. (id: {0})", go->GetID());
 
-		go->mID = mNextID;
-
-		SPtr<GameObjectData> goDataPtr = std::make_shared<GameObjectData>();
-		goDataPtr->data = std::move(go);
-
-		mGameObjects[mNextID] = goDataPtr;
-
+		Uint64 id = mNextID;
 		mNextID++;
 
-		goDataPtr->data->mMyHandler = HGameObject(goDataPtr);
+		go->SetID(id);
 
-		return HGameObject(goDataPtr);
+		HGameObject handler = mGameObjectTable.CreateNewHandler(std::move(go));
+		mGameObjects.push_back(handler);
+
+		return handler;
 	}
 
 	void GameObjectManager::UnregisterGameObject(HGameObject& go)
 	{
-		Uint32 id = go->mID;
+		Uint32 id = go->GetID();
 
-		auto goIter = mGameObjects.find(id);
-		CHECK(goIter != mGameObjects.end(), "Cannot unregister GameObject. It is not registered.");
+		auto findIter = std::find(mGameObjects.begin(), mGameObjects.end(), go);
+		CHECK(findIter != mGameObjects.end(), "Cannot unregister GameObject. It is not registered.");
+		mGameObjects.erase(findIter);
 
-		goIter->second->data = nullptr;
-		mGameObjects.erase(goIter);
+		mGameObjectTable.ReleaseHandler(go);
 	}
 
 	void GameObjectManager::Start()
 	{
 		for(auto& go : mGameObjects) {
-			go.second->data->Start();
+			go->Start();
 		}
 	}
 
 	void GameObjectManager::Update(float dt)
 	{
 		for(auto& go : mGameObjects) {
-			go.second->data->Update(dt);
+			go->Update(dt);
 		}
 	}
 } // namespace cube

@@ -2,13 +2,13 @@
 
 #include "EngineCoreHeader.h"
 
-#include "BasicHandler.h"
+#include "Handler.h"
 #include "Base/Vector.h"
 #include "Base/Matrix.h"
 
 namespace cube
 {
-	class ENGINE_CORE_EXPORT GameObject
+	class ENGINE_CORE_EXPORT GameObject : public Handlable
 	{
 	public:
 		static HGameObject Create();
@@ -16,6 +16,8 @@ namespace cube
 	public:
 		GameObject();
 		~GameObject();
+
+		HGameObject GetHandler() const { return mMyHandler; }
 
 		void SetPosition(Vector3 position);
 		void SetRotation(Vector3 rotation);
@@ -31,18 +33,18 @@ namespace cube
 
 		HComponent GetComponent(StringRef name);
 		template <typename T>
-		BasicHandler<T> GetComponent()
+		Handler<T> GetComponent()
 		{
 			const String& nameToGet = T::GetName();
-			return GetComponent(nameToGet).Cast<T>();
+			return GetComponent(nameToGet);
 		}
 
 		HComponent AddComponent(StringRef name);
 		template <typename T>
-		BasicHandler<T> AddComponent()
+		Handler<T> AddComponent()
 		{
 			const String& nameToAdd = T::GetName();
-			return AddComponent(nameToAdd).Cast<T>();
+			return AddComponent(nameToAdd);
 		}
 
 		void Start();
@@ -54,9 +56,6 @@ namespace cube
 	private:
 		friend class GameObjectManager;
 		friend class Renderer3DComponent;
-
-		Uint32 mID;
-		HGameObject mMyHandler;
 
 		SPtr<Renderer3D> mRenderer3D;
 

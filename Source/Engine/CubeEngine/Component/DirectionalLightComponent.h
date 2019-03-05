@@ -30,6 +30,5 @@ namespace cube
 		SPtr<DirectionalLight> mDirLight;
 	};
 
-	using DirectionalLightComponentData = BasicHandlerData<DirectionalLightComponent>;
-	using HDirectionalLightComponent = BasicHandler<DirectionalLightComponent>;
+	using HDirectionalLightComponent = Handler<DirectionalLightComponent>;
 } // namespace cube

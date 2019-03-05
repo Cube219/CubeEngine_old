@@ -30,6 +30,5 @@ namespace cube
 		SPtr<PointLight> mPointLight;
 	};
 
-	using PointLightComponentData = BasicHandlerData<PointLightComponent>;
-	using HPointLightComponent = BasicHandler<PointLightComponent>;
+	using HPointLightComponent = Handler<PointLightComponent>;
 } // namespace cube

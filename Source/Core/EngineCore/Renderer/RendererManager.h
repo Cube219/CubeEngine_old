@@ -18,6 +18,7 @@
 #include "RenderAPI/Interface/Fence.h"
 #include "RenderAPI/Interface/GraphicsPipelineState.h"
 
+#include "../Handler.h"
 #include "../Thread/MutexLock.h"
 
 namespace cube
@@ -34,7 +35,8 @@ namespace cube
 
 	public:
 		RendererManager() : 
-			mIsPrepared(false), mDirLight(nullptr)
+			mIsPrepared(false), mDirLight(nullptr),
+			mRenderObjectTable(50)
 		{}
 		~RendererManager() {}
 
@@ -46,8 +48,8 @@ namespace cube
 		void Initialize(RenderType type);
 		void ShutDown();
 
-		HMaterial RegisterMaterial(SPtr<Material>& material);
-		void UnregisterMaterial(HMaterial& material);
+		HMaterial RegisterMaterial(UPtr<Material>&& material);
+		UPtr<Material> UnregisterMaterial(HMaterial& material);
 
 		void RegisterRenderer3D(SPtr<Renderer3D>& renderer);
 		void UnregisterRenderer3D(SPtr<Renderer3D>& renderer);
@@ -72,6 +74,8 @@ namespace cube
 
 		SPtr<render::ShaderParametersLayout> _GetPerObjectShaderParametersLayout(){ return mPerObjectShaderParametersLayout; }
 
+		HandlerTable& _getRenderObjectTable() { return mRenderObjectTable; }
+
 	private:
 		friend class EngineCore;
 
@@ -82,6 +86,8 @@ namespace cube
 		void DrawRenderer3D(Uint32 commandListIndex, SPtr<rt::Renderer3D>& renderer);
 
 		SPtr<render::GraphicsPipelineState> CreatePipeline(SPtr<rt::Material> material);
+
+		HandlerTable mRenderObjectTable;
 
 		SPtr<platform::DLib> mRenderDLib;
 		SPtr<render::RenderAPI> mRenderAPI;

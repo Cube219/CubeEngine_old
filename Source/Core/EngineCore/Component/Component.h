@@ -1,11 +1,11 @@
 ﻿#pragma once
 
 #include "../EngineCoreHeader.h"
-#include "../BasicHandler.h"
+#include "../Handler.h"
 
 namespace cube
 {
-	class ENGINE_CORE_EXPORT Component
+	class ENGINE_CORE_EXPORT Component : public Handlable
 	{
 	public:
 		static const String& GetName() { return mName; }
@@ -30,8 +30,6 @@ namespace cube
 
 		void AttachGameObject(GameObject* gameObject){ mAttachedGameObject = gameObject; }
 		void Destroy();
-
-		HComponent mMyHandler;
 
 		GameObject* mAttachedGameObject;
 	};

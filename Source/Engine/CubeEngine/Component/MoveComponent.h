@@ -28,6 +28,5 @@ namespace cube
 		SPtr<module::InputModule> mInputModule;
 	};
 
-	using MoveComponentData = BasicHandlerData<MoveComponent>;
-	using HMoveComponent = BasicHandler<MoveComponent>;
+	using HMoveComponent = Handler<MoveComponent>;
 } // namespace cube

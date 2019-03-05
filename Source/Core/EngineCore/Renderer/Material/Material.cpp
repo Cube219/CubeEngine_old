@@ -11,10 +11,10 @@ namespace cube
 	{
 		auto& rendererManager = ECore().GetRendererManager();
 
-		SPtr<Material> mat(new Material(init));
+		UPtr<Material> mat(new Material(init));
 		mat->Initialize();
 
-		return rendererManager.RegisterMaterial(mat);
+		return rendererManager.RegisterMaterial(std::move(mat));
 	}
 
 	Material::Material(const MaterialInitializer& init) : 
@@ -39,18 +39,14 @@ namespace cube
 
 	HMaterialInstance Material::CreateInstance()
 	{
-		SPtr<MaterialInstanceData> matInsDataPtr = std::make_shared<MaterialInstanceData>();
-		matInsDataPtr->data = MaterialInstance::Create(mMyHandler);
-		matInsDataPtr->data->mMyHandler = HMaterialInstance(matInsDataPtr);
+		auto& table = ECore().GetRendererManager()._getRenderObjectTable();
 
-		matInsDataPtr->data->GetRenderObject()->mMaterial = GetRenderObject();
-
-		return HMaterialInstance(matInsDataPtr);
+		return table.CreateNewHandler(MaterialInstance::Create(GetHandler()));
 	}
 
 	void Material::Destroy()
 	{
-		ECore().GetRendererManager().UnregisterMaterial(mMyHandler);
+		UPtr<Material> ptr = ECore().GetRendererManager().UnregisterMaterial(GetHandler());
 
 		RenderObject::Destroy();
 	}

@@ -32,6 +32,5 @@ namespace cube
 		RendererManager& mRendererManager;
 	};
 
-	using Renderer3DComponentData = BasicHandlerData<Renderer3DComponent>;
-	using HRenderer3DComponent = BasicHandler<Renderer3DComponent>;
+	using HRenderer3DComponent = Handler<Renderer3DComponent>;
 } // namespace cube
