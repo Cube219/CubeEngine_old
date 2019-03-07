@@ -10,7 +10,6 @@ namespace cube
 	{
 	public:
 		GameObjectManager() :
-			mNextID(1),
 			mGameObjectTable(200)
 		{}
 		~GameObjectManager() {}
@@ -32,8 +31,6 @@ namespace cube
 
 	private:
 		friend class GameObject;
-
-		Uint32 mNextID;
 
 		HandlerTable mGameObjectTable;
 		Vector<HGameObject> mGameObjects;

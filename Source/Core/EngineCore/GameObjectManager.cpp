@@ -19,11 +19,6 @@ namespace cube
 	{
 		CHECK(go->GetID() == Uint64InvalidValue, "Failed to register GameObject. It is already registered. (id: {0})", go->GetID());
 
-		Uint64 id = mNextID;
-		mNextID++;
-
-		go->SetID(id);
-
 		HGameObject handler = mGameObjectTable.CreateNewHandler(std::move(go));
 		mGameObjects.push_back(handler);
 
@@ -32,8 +27,6 @@ namespace cube
 
 	void GameObjectManager::UnregisterGameObject(HGameObject& go)
 	{
-		Uint32 id = go->GetID();
-
 		auto findIter = std::find(mGameObjects.begin(), mGameObjects.end(), go);
 		CHECK(findIter != mGameObjects.end(), "Cannot unregister GameObject. It is not registered.");
 		mGameObjects.erase(findIter);

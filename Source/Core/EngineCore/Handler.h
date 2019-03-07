@@ -64,6 +64,11 @@ namespace cube
 			return GetData() == nullptr;
 		}
 
+		bool IsNull() const
+		{
+			return mTable == nullptr || mTableIndex == Uint64InvalidValue || mID == Uint64InvalidValue;
+		}
+
 	protected:
 		friend T;
 		template <typename T2>
@@ -72,7 +77,7 @@ namespace cube
 
 		T* GetData() const
 		{
-			CHECK(mTable != nullptr, "Cannot access the data from null handler.");
+			CHECK(!IsNull(), "Cannot access the data from null handler.");
 
 			T* data = mTable->GetData<T>(mTableIndex);
 
@@ -121,7 +126,8 @@ namespace cube
 	{
 	public:
 		HandlerTable(Uint64 initialSize) : 
-			mLastAllocatedIndex(initialSize - 1)
+			mLastAllocatedIndex(initialSize - 1),
+			mNextID(0)
 		{
 			mTable.resize(initialSize);
 		}
@@ -137,6 +143,9 @@ namespace cube
 			mTable[index] = std::move(data);
 			mLastAllocatedIndex = index;
 
+			mTable[index]->SetID(mNextID);
+			mNextID++;
+
 			auto h = Handler<T>(this, index, mTable[index]->GetID());
 			mTable[index]->SetHandler(h);
 
@@ -146,6 +155,11 @@ namespace cube
 		template <typename T>
 		UPtr<T> ReleaseHandler(Handler<T>& handler)
 		{
+			CHECK(handler.IsNull() == false, "You cannot release the null handler.");
+			CHECK(handler.mTable == this, "You try to release the handler from wrong handler table.");
+			// Check if it is a stale object
+			CHECK(handler.mID == handler->GetID(), "This handler was already released.");
+
 			UPtr<T> d(DCast(T*)(mTable[handler.mTableIndex].release()));
 			return d;
 		}
@@ -181,5 +195,6 @@ namespace cube
 
 		Vector<UPtr<Handlable>> mTable;
 		Uint64 mLastAllocatedIndex;
+		Uint64 mNextID;
 	};
 } // namespace cube
