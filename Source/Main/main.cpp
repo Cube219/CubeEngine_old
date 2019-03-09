@@ -254,7 +254,18 @@ namespace cube
 		}
 		nanosuitGameObject->Destroy();
 
+		handTexture = nullptr;
+		armTexture = nullptr;
+		bodyTexture = nullptr;
+		helmetTexture = nullptr;
+		legTexture = nullptr;
+		glassTexture = nullptr;
+
+		nanosuitMesh = nullptr;
+
 		boxMesh = nullptr;
+		sphereMesh = nullptr;
+		planeMesh = nullptr;
 		texture = nullptr;
 		texture2 = nullptr;
 		vertexShader = nullptr;

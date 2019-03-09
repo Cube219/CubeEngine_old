@@ -25,7 +25,9 @@ namespace cube
 	class ENGINE_CORE_EXPORT Resource
 	{
 	public:
-		Resource(){ }
+		Resource():
+			mRefCount(0)
+		{ }
 		virtual ~Resource(){ }
 
 	protected:
