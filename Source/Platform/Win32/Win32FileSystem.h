@@ -45,10 +45,10 @@ namespace cube
 			Win32FileSystem() = delete;
 			~Win32FileSystem() = delete;
 
-			static SPtr<File> OpenFileImpl(StringRef path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
+			static SPtr<File> OpenFileImpl(StringRef path, FileAccessModeFlags accessModeFlags, bool createIfNotExist = false);
 
 		private:
-			static DWORD GetDwDesiredAccess(FileAccessModeBits accessMode);
+			static DWORD GetDwDesiredAccess(FileAccessModeFlags accessModeFlags);
 		};
 		FILE_SYSTEM_DEFINITION(Win32FileSystem)
 	}

@@ -122,6 +122,7 @@
   <ItemGroup>
     <ClInclude Include="BaseTypes.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="Flags.h" />
     <ClInclude Include="format.h" />
     <ClInclude Include="Json.h" />
     <ClInclude Include="KeyCode.h" />

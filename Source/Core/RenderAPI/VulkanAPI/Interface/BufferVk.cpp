@@ -42,15 +42,15 @@ namespace cube
 			info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 			
 			info.usage = 0;
-			if(attr.bindTypeFlags & BufferBindTypeFlagBits::Vertex_Bit)
+			if(attr.bindTypeFlags.IsSet(BufferBindTypeFlag::Vertex))
 				info.usage |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-			if(attr.bindTypeFlags & BufferBindTypeFlagBits::Index_Bit)
+			if(attr.bindTypeFlags.IsSet(BufferBindTypeFlag::Index))
 				info.usage |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-			if(attr.bindTypeFlags & BufferBindTypeFlagBits::Uniform_Bit)
+			if(attr.bindTypeFlags.IsSet(BufferBindTypeFlag::Uniform))
 				info.usage |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-			if(attr.bindTypeFlags & BufferBindTypeFlagBits::TransferSource_Bit)
+			if(attr.bindTypeFlags.IsSet(BufferBindTypeFlag::TransferSource))
 				info.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-			if(attr.bindTypeFlags & BufferBindTypeFlagBits::TransferDest_Bit)
+			if(attr.bindTypeFlags.IsSet(BufferBindTypeFlag::TransferDest))
 				info.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 			// If the usage is default or immutable, the buffer will be transferred from a staging buffer
 			if(attr.usage == ResourceUsage::Default || attr.usage == ResourceUsage::Immutable)

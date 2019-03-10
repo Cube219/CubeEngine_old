@@ -44,7 +44,7 @@ namespace cube
 		// Get a metadata
 		String metaPath = path.GetString();
 		metaPath.append(CUBE_T(".cmeta"));
-		SPtr<File> metaFile = platform::FileSystem::OpenFile(metaPath, FileAccessModeBits::Read);
+		SPtr<File> metaFile = platform::FileSystem::OpenFile(metaPath, FileAccessModeFlag::Read);
 
 		Uint64 size = metaFile->GetFileSize();
 		char* metaString = (char*)malloc(size + 1);
@@ -64,7 +64,7 @@ namespace cube
 		bool isFindImporter = false;
 		for(auto& importer : mImporters) {
 			if(importer->GetName() == importerName) {
-				SPtr<File> resFile = platform::FileSystem::OpenFile(path.GetString(), FileAccessModeBits::Read);
+				SPtr<File> resFile = platform::FileSystem::OpenFile(path.GetString(), FileAccessModeFlag::Read);
 				Json info = metaJson["info"];
 
 				loadedRes = importer->Import(resFile, info);

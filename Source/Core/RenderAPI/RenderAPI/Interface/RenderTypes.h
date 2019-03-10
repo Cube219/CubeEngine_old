@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Base/BaseTypes.h"
+#include "Base/Flags.h"
 
 namespace cube
 {
@@ -161,15 +162,16 @@ namespace cube
 			Max
 		};
 
-		using ColorWriteMaskFlags = Uint32;
-		enum ColorWriteMaskBits : Uint32
+		enum class ColorWriteMaskFlag
 		{
-			Red_Bit = 1,
-			Green_Bit = 2,
-			Blue_Bit = 4,
-			Alpha_Bit = 8,
-			All_Bit = Red_Bit | Green_Bit | Blue_Bit | Alpha_Bit
+			Red = 1,
+			Green = 2,
+			Blue= 4,
+			Alpha = 8,
+			All = Red | Green | Blue | Alpha
 		};
+		using ColorWriteMaskFlags = Flags<ColorWriteMaskFlag>;
+		FLAGS_OPERATOR(ColorWriteMaskFlag);
 
 		// ----- Buffer / Texture -----
 		enum class ResourceUsage
@@ -180,15 +182,16 @@ namespace cube
 			Staging
 		};
 
-		using BufferBindTypeFlags = Uint32;
-		enum BufferBindTypeFlagBits : Uint32
+		enum class BufferBindTypeFlag
 		{
-			Vertex_Bit = 1,
-			Index_Bit = 2,
-			Uniform_Bit = 4,
-			TransferSource_Bit = 8, // RN: Usage로 자동으로 설정되게?
-			TransferDest_Bit = 16
+			Vertex = 1,
+			Index = 2,
+			Uniform = 4,
+			TransferSource = 8, // RN: Usage로 자동으로 설정되게?
+			TransferDest = 16
 		};
+		using BufferBindTypeFlags = Flags<BufferBindTypeFlag>;
+		FLAGS_OPERATOR(BufferBindTypeFlag);
 
 		enum class TextureType
 		{
@@ -421,13 +424,14 @@ namespace cube
 			TextureFormatCount
 		};
 
-		using TextureBindTypeFlags = Uint32;
-		enum TextureBindTypeFlagBits : Uint32
+		enum class TextureBindTypeFlag
 		{
-			RenderTarget_Bit = 1,
-			DepthStencil_Bit = 2,
-			ShaderResource_Bit = 4
+			RenderTarget = 1,
+			DepthStencil = 2,
+			ShaderResource = 4
 		};
+		using TextureBindTypeFlags = Flags<TextureBindTypeFlag>;
+		FLAGS_OPERATOR(TextureBindTypeFlag);
 
 		enum class TextureViewType
 		{
@@ -440,13 +444,14 @@ namespace cube
 			TextureCubeArray
 		};
 
-		using TextureViewComponentFlags = Uint32;
-		enum TextureViewComponentFlagBits : Uint32
+		enum class TextureViewComponentFlag
 		{
-			Color_Bit = 1,
-			Depth_Bit = 2,
-			Stencil_Bit = 4
+			Color = 1,
+			Depth = 2,
+			Stencil = 4
 		};
+		using TextureViewComponentFlags = Flags<TextureViewComponentFlag>;
+		FLAGS_OPERATOR(TextureViewComponentFlag);
 
 		// Sampler
 		enum class FilterType

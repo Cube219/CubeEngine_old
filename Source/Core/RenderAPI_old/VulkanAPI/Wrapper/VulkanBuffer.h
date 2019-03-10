@@ -8,7 +8,7 @@ namespace cube
 {	
 	namespace render
 	{
-		VkBufferUsageFlags GetVkBufferUsageFlags(BufferTypeBits typeBits);
+		VkBufferUsageFlags GetVkBufferUsageFlags(BufferTypeFlags typeBits);
 
 		class VULKAN_API_EXPORT VulkanBuffer : public Buffer, public std::enable_shared_from_this<VulkanBuffer>
 		{

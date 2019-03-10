@@ -68,9 +68,9 @@ namespace cube
 		// FileSystem //
 		////////////////
 
-		SPtr<File> Win32FileSystem::OpenFileImpl(StringRef path, FileAccessModeBits accessModeBits, bool createIfNotExist)
+		SPtr<File> Win32FileSystem::OpenFileImpl(StringRef path, FileAccessModeFlags accessModeFlags, bool createIfNotExist)
 		{
-			DWORD desiredAccess = GetDwDesiredAccess(accessModeBits);
+			DWORD desiredAccess = GetDwDesiredAccess(accessModeFlags);
 			PString pPath = ToPString(path.GetString());
 
 			HANDLE file = CreateFile(pPath.c_str(), desiredAccess, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -94,14 +94,14 @@ namespace cube
 			return nullptr;
 		}
 
-		DWORD Win32FileSystem::GetDwDesiredAccess(FileAccessModeBits accessMode)
+		DWORD Win32FileSystem::GetDwDesiredAccess(FileAccessModeFlags accessModeFlags)
 		{
 			DWORD d = 0;
 
-			if(static_cast<int>(accessMode & FileAccessModeBits::Read) > 0)
+			if(accessModeFlags.IsSet(FileAccessModeFlag::Read))
 				d |= GENERIC_READ;
 
-			if(static_cast<int>(accessMode & FileAccessModeBits::Write) > 0)
+			if(accessModeFlags.IsSet(FileAccessModeFlag::Write))
 				d |= GENERIC_WRITE;
 
 			return d;

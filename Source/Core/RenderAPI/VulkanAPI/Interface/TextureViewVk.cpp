@@ -47,13 +47,13 @@ namespace cube
 			}
 
 			info.subresourceRange.aspectMask = 0;
-			if((attr.componentFlags & TextureViewComponentFlagBits::Color_Bit) > 0) {
+			if(attr.componentFlags.IsSet(TextureViewComponentFlag::Color)) {
 				info.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_COLOR_BIT;
 			}
-			if((attr.componentFlags & TextureViewComponentFlagBits::Depth_Bit) > 0) {
+			if(attr.componentFlags.IsSet(TextureViewComponentFlag::Depth)) {
 				info.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_DEPTH_BIT;
 			}
-			if((attr.componentFlags & TextureViewComponentFlagBits::Stencil_Bit) > 0) {
+			if(attr.componentFlags.IsSet(TextureViewComponentFlag::Stencil)) {
 				info.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
 			}
 

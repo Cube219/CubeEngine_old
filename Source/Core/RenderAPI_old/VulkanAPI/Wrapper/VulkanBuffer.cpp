@@ -9,17 +9,17 @@ namespace cube
 {
 	namespace render
 	{
-		VkBufferUsageFlags GetVkBufferUsageFlags(BufferTypeBits typeBits)
+		VkBufferUsageFlags GetVkBufferUsageFlags(BufferTypeFlags typeBits)
 		{
 			VkBufferUsageFlags f = 0;
 
-			if(SCast(int)(typeBits | BufferTypeBits::Uniform) > 0)
+			if(typeBits.IsSet(BufferTypeFlag::Uniform))
 				f |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-			if(SCast(int)(typeBits | BufferTypeBits::Vertex) > 0)
+			if(typeBits.IsSet(BufferTypeFlag::Vertex))
 				f |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-			if(SCast(int)(typeBits | BufferTypeBits::Index) > 0)
+			if(typeBits.IsSet(BufferTypeFlag::Index))
 				f |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-			if(SCast(int)(typeBits | BufferTypeBits::TransferSource) > 0)
+			if(typeBits.IsSet(BufferTypeFlag::TransferSource))
 				f |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
 			return f;

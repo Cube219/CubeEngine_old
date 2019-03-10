@@ -82,7 +82,7 @@ namespace cube
 			attr.size = mMeshData->GetTotalSize();
 			attr.cpuAccessible = false;
 			attr.usage = ResourceUsage::Default;
-			attr.bindTypeFlags = BufferBindTypeFlagBits::Vertex_Bit | BufferBindTypeFlagBits::Index_Bit;
+			attr.bindTypeFlags = BufferBindTypeFlag::Vertex | BufferBindTypeFlag::Index;
 			attr.debugName = "Mesh";
 
 			mMeshBuffer = ECore().GetRendererManager().GetDevice()->CreateBuffer(attr);

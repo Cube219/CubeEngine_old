@@ -20,7 +20,7 @@ namespace cube
 			ResourceUsage usage;
 			TextureType type;
 			TextureFormat format;
-			TextureBindTypeFlags bindTypeFlags = 0;
+			TextureBindTypeFlags bindTypeFlags;
 
 			TextureData textureData;
 			Uint32 width;

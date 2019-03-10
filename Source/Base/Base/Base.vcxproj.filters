@@ -29,6 +29,7 @@
     <ClInclude Include="Matrix\MatrixUtilityArray.h">
       <Filter>Matrix</Filter>
     </ClInclude>
+    <ClInclude Include="Flags.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="format.cc" />

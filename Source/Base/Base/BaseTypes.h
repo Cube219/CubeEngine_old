@@ -76,6 +76,7 @@ using MultiMap = std::multimap<Key, Value>;
 template <typename Key, typename Value>
 using HashMap = std::unordered_map<Key, Value>;
 
+// Deprecated. Use Flags class in Flags.h
 #define SET_ENUM_AS_FLAGS(type) \
 	inline type operator |(type a, type b)\
 	{\

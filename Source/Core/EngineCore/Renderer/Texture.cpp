@@ -74,7 +74,7 @@ namespace cube
 			attr.usage = ResourceUsage::Default;
 			attr.type = TextureType::Texture2D;
 			attr.format = TextureFormat::RGBA_8_UNorm;
-			attr.bindTypeFlags = TextureBindTypeFlagBits::ShaderResource_Bit;
+			attr.bindTypeFlags = TextureBindTypeFlag::ShaderResource;
 			attr.textureData.pData = mTextureData->GetData();
 			attr.textureData.size = mTextureData->GetSize();
 			attr.width = mTextureData->GetWidth();

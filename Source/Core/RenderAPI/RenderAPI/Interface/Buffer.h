@@ -14,7 +14,7 @@ namespace cube
 			Uint64 size = 0;
 			bool cpuAccessible = false;
 			ResourceUsage usage;
-			BufferBindTypeFlags bindTypeFlags = 0;
+			BufferBindTypeFlags bindTypeFlags;
 			bool isDedicated = false;
 		};
 

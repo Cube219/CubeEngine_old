@@ -2,16 +2,19 @@
 
 #include "PlatformHeader.h"
 
+#include "Base/Flags.h"
+
 namespace cube
 {
 	namespace platform
 	{
-		enum class FileAccessModeBits
+		enum class FileAccessModeFlag
 		{
 			Read = 1,
 			Write = 2
 		};
-		SET_ENUM_AS_FLAGS(FileAccessModeBits);
+		using FileAccessModeFlags = Flags<FileAccessModeFlag>;
+		FLAGS_OPERATOR(FileAccessModeFlag);
 
 		//////////
 		// File //
@@ -67,13 +70,13 @@ namespace cube
 			FileSystem() = delete;
 			~FileSystem() = delete;
 
-			static SPtr<File> OpenFile(StringRef path, FileAccessModeBits accessModeBits, bool createIfNotExist = false);
+			static SPtr<File> OpenFile(StringRef path, FileAccessModeFlags accessModeFlags, bool createIfNotExist = false);
 		};
 
-#define FILE_SYSTEM_DEFINITION(Child)                                                        \
-		inline SPtr<File> FileSystem::OpenFile                                               \
-			(StringRef path, FileAccessModeBits accessModeBits, bool createIfNotExist) { \
-			return Child::OpenFileImpl(path, accessModeBits, createIfNotExist);              \
+#define FILE_SYSTEM_DEFINITION(Child)                                                      \
+		inline SPtr<File> FileSystem::OpenFile                                             \
+			(StringRef path, FileAccessModeFlags accessModeFlags, bool createIfNotExist) { \
+			return Child::OpenFileImpl(path, accessModeFlags, createIfNotExist);           \
 		}
 	} // namespace platform
 } // namespace cube

@@ -2,18 +2,20 @@
 
 #include "../RenderAPIHeader.h"
 
+#include "Base/Flags.h"
+
 namespace cube
 {
 	namespace render
 	{
-		enum class BufferTypeBits
+		enum class BufferTypeFlag
 		{
 			Uniform = 1,
 			Vertex = 2,
 			Index = 4,
 			TransferSource = 8
 		};
-		SET_ENUM_AS_FLAGS(BufferTypeBits)
+		using BufferTypeFlags = Flags<BufferTypeFlag>;
 
 		struct BufferInfo
 		{
@@ -24,7 +26,7 @@ namespace cube
 
 		struct BufferInitializer
 		{
-			BufferTypeBits type;
+			BufferTypeFlags type;
 
 			struct BufferData
 			{

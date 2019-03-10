@@ -156,13 +156,13 @@ namespace cube
 				attachment.dstAlphaBlendFactor = BlendFactorToVkBlendFactor(blendState.dstAlphaBlend);
 				attachment.alphaBlendOp = BlendOperatorToVkBlendOp(blendState.alphaBlendOp);
 				attachment.colorWriteMask = 0;
-				if((blendState.writeMask & ColorWriteMaskBits::Red_Bit) > 0)
+				if(blendState.writeMask.IsSet(ColorWriteMaskFlag::Red))
 					attachment.colorWriteMask |= VK_COLOR_COMPONENT_R_BIT;
-				if((blendState.writeMask & ColorWriteMaskBits::Green_Bit) > 0)
+				if(blendState.writeMask.IsSet(ColorWriteMaskFlag::Green))
 					attachment.colorWriteMask |= VK_COLOR_COMPONENT_G_BIT;
-				if((blendState.writeMask & ColorWriteMaskBits::Blue_Bit) > 0)
+				if(blendState.writeMask.IsSet(ColorWriteMaskFlag::Blue))
 					attachment.colorWriteMask |= VK_COLOR_COMPONENT_B_BIT;
-				if((blendState.writeMask & ColorWriteMaskBits::Alpha_Bit) > 0)
+				if(blendState.writeMask.IsSet(ColorWriteMaskFlag::Alpha))
 					attachment.colorWriteMask |= VK_COLOR_COMPONENT_A_BIT;
 			}
 

@@ -391,7 +391,7 @@ namespace cube
 		attr.usage = ResourceUsage::Default;
 		attr.type = TextureType::Texture2D;
 		attr.format = TextureFormat::D16_UNorm;
-		attr.bindTypeFlags = TextureBindTypeFlagBits::DepthStencil_Bit;
+		attr.bindTypeFlags = TextureBindTypeFlag::DepthStencil;
 		attr.width = mWidth;
 		attr.height = mHeight;
 		attr.depth = 1;
@@ -403,7 +403,7 @@ namespace cube
 		mDepthBufferTexture = mDevice->CreateTexture(attr);
 		// Disable stencil bit (Set only depth bit)
 		auto viewAttr = mDepthBufferTexture->GetDefaultViewAttr();
-		viewAttr.componentFlags = TextureViewComponentFlagBits::Depth_Bit;
+		viewAttr.componentFlags = TextureViewComponentFlag::Depth;
 		mDepthBufferTextureView = mDepthBufferTexture->CreateView(viewAttr);
 	}
 
@@ -632,7 +632,7 @@ namespace cube
 		attr.blendState.renderTargets[0].srcAlphaBlend = BlendFactor::Zero;
 		attr.blendState.renderTargets[0].dstAlphaBlend = BlendFactor::Zero;
 		attr.blendState.renderTargets[0].alphaBlendOp = BlendOperator::Add;
-		attr.blendState.renderTargets[0].writeMask = ColorWriteMaskBits::All_Bit;
+		attr.blendState.renderTargets[0].writeMask = ColorWriteMaskFlag::All;
 
 		attr.renderTargetFormats.resize(1);
 		attr.renderTargetFormats[0] = TextureFormat::RGBA_8_sRGB;
