@@ -39,9 +39,7 @@ namespace cube
 
 	HMaterialInstance Material::CreateInstance()
 	{
-		auto& table = ECore().GetRendererManager()._getRenderObjectTable();
-
-		return table.CreateNewHandler(MaterialInstance::Create(GetHandler()));
+		return ECore().GetRendererManager()._registerRenderObject(MaterialInstance::Create(GetHandler()));
 	}
 
 	void Material::Destroy()

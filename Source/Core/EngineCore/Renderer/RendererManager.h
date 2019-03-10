@@ -19,6 +19,7 @@
 #include "RenderAPI/Interface/GraphicsPipelineState.h"
 
 #include "../Handler.h"
+#include "RenderObject.h"
 #include "../Thread/MutexLock.h"
 
 namespace cube
@@ -74,7 +75,28 @@ namespace cube
 
 		SPtr<render::ShaderParametersLayout> _GetPerObjectShaderParametersLayout(){ return mPerObjectShaderParametersLayout; }
 
-		HandlerTable& _getRenderObjectTable() { return mRenderObjectTable; }
+		// HandlerTable& _getRenderObjectTable() { return mRenderObjectTable; }
+		template <typename T>
+		Handler<T> _registerRenderObject(UPtr<T>&& renderObject)
+		{
+			mRenderObjects.push_back(std::move(renderObject));
+			return mRenderObjectTable.CreateNewHandler(mRenderObjects.back().get());
+		}
+
+		template <typename T>
+		UPtr<T> _unregisterRenderObject(Handler<T>& hRenderObject)
+		{
+			T* pRenderObject = mRenderObjectTable.ReleaseHandler(hRenderObject);
+
+			auto findIter = std::find_if(mRenderObjects.begin(), mRenderObjects.end(), [pRenderObject](auto& element) {
+				return element.get() == pRenderObject;
+			});
+
+			UPtr<T> uptrRenderObject(DCast(T*)((*findIter).release()));
+			mRenderObjects.erase(findIter);
+
+			return uptrRenderObject;
+		}
 
 	private:
 		friend class EngineCore;
@@ -88,6 +110,7 @@ namespace cube
 		SPtr<render::GraphicsPipelineState> CreatePipeline(SPtr<rt::Material> material);
 
 		HandlerTable mRenderObjectTable;
+		Vector<UPtr<RenderObject>> mRenderObjects;
 
 		SPtr<platform::DLib> mRenderDLib;
 		SPtr<render::RenderAPI> mRenderAPI;

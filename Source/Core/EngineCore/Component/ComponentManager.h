@@ -29,7 +29,8 @@ namespace cube
 			CheckIfComponentExisted(name);
 
 			mComponentCreators[name] = [this]() {
-				return mComponentTable.CreateNewHandler<T>(std::make_unique<T>());
+				mComponents.push_back(std::make_unique<T>());
+				return mComponentTable.CreateNewHandler<T>(DCast(T*)(mComponents.back().get()));
 			};
 		}
 
@@ -40,5 +41,6 @@ namespace cube
 
 		HashMap<String, std::function<HComponent()>> mComponentCreators;
 		HandlerTable mComponentTable;
+		Vector<UPtr<Component>> mComponents;
 	};
 } // namespace cube

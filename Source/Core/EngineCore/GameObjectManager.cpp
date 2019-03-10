@@ -1,6 +1,5 @@
 ﻿#include "GameObjectManager.h"
 
-#include "GameObject.h"
 #include "LogWriter.h"
 
 namespace cube
@@ -11,27 +10,29 @@ namespace cube
 
 	void GameObjectManager::ShutDown()
 	{
-		mGameObjects.clear();
 		mGameObjectTable.ReleaseAll();
+		mGameObjects.clear();
 	}
 
 	HGameObject GameObjectManager::RegisterGameObject(UPtr<GameObject>&& go)
 	{
 		CHECK(go->GetID() == Uint64InvalidValue, "Failed to register GameObject. It is already registered. (id: {0})", go->GetID());
 
-		HGameObject handler = mGameObjectTable.CreateNewHandler(std::move(go));
-		mGameObjects.push_back(handler);
+		mGameObjects.push_back(std::move(go));
+		HGameObject handler = mGameObjectTable.CreateNewHandler(mGameObjects.back().get());
 
 		return handler;
 	}
 
 	void GameObjectManager::UnregisterGameObject(HGameObject& go)
 	{
-		auto findIter = std::find(mGameObjects.begin(), mGameObjects.end(), go);
+		GameObject* pData = mGameObjectTable.ReleaseHandler(go);
+
+		auto findIter = std::find_if(mGameObjects.cbegin(), mGameObjects.cend(), [pData](auto& element){
+			return element.get() == pData;
+		});
 		CHECK(findIter != mGameObjects.end(), "Cannot unregister GameObject. It is not registered.");
 		mGameObjects.erase(findIter);
-
-		mGameObjectTable.ReleaseHandler(go);
 	}
 
 	void GameObjectManager::Start()

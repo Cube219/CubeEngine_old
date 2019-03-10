@@ -2,6 +2,7 @@
 
 #include "EngineCoreHeader.h"
 
+#include "GameObject.h"
 #include "Handler.h"
 
 namespace cube
@@ -33,6 +34,6 @@ namespace cube
 		friend class GameObject;
 
 		HandlerTable mGameObjectTable;
-		Vector<HGameObject> mGameObjects;
+		Vector<UPtr<GameObject>> mGameObjects;
 	};
 } // namespace cube

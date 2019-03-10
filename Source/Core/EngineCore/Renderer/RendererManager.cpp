@@ -154,6 +154,9 @@ namespace cube
 
 	void RendererManager::ShutDown()
 	{
+		mRenderObjectTable.ReleaseAll();
+		mRenderObjects.clear();
+
 		mMaterialPipelines.clear();
 		mMaterials.clear();
 		mRenderers.clear();
@@ -187,7 +190,7 @@ namespace cube
 
 	HMaterial RendererManager::RegisterMaterial(UPtr<Material>&& material)
 	{
-		HMaterial mat = mRenderObjectTable.CreateNewHandler(std::move(material));
+		HMaterial mat = _registerRenderObject(std::move(material));
 
 		RenderingThread::QueueTask([this, mat_rt = mat->GetRenderObject()]() {
 			Lock(mMaterialsMutex);
@@ -224,7 +227,7 @@ namespace cube
 			mat_rt->mIndex = -1;
 		});
 
-		return mRenderObjectTable.ReleaseHandler(material);
+		return _unregisterRenderObject(material);
 	}
 
 	void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)

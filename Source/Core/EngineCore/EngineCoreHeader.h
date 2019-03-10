@@ -29,6 +29,8 @@ namespace cube
 	class Handlable;
 	class HandlerTable;
 
+	class RenderObject;
+
 	class Renderer3D;
 	class CameraRenderer3D;
 	enum class RenderType;
@@ -73,6 +75,8 @@ namespace cube
 	{
 		class Renderer3D;
 		class CameraRenderer3D;
+
+		class RenderObject;
 
 		class Material;
 		class MaterialInstance;

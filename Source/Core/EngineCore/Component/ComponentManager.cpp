@@ -21,6 +21,7 @@ namespace cube
 	void ComponentManager::ShutDown()
 	{
 		mComponentTable.ReleaseAll();
+		mComponents.clear();
 	}
 
 	HComponent ComponentManager::CreateComponent(StringRef name)

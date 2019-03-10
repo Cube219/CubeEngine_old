@@ -96,7 +96,7 @@ namespace cube
 
 	void MaterialInstance::Destroy()
 	{
-		UPtr<MaterialInstance> ptr = ECore().GetRendererManager()._getRenderObjectTable().ReleaseHandler(GetHandler());
+		UPtr<MaterialInstance> ptr = ECore().GetRendererManager()._unregisterRenderObject(GetHandler());
 
 		RenderObject::Destroy();
 	}

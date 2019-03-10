@@ -129,7 +129,7 @@ namespace cube
 			mLastAllocatedIndex(initialSize - 1),
 			mNextID(0)
 		{
-			mTable.resize(initialSize);
+			mTable.resize(initialSize, nullptr);
 		}
 		~HandlerTable() {}
 
@@ -137,31 +137,33 @@ namespace cube
 		HandlerTable& operator=(const HandlerTable& other) = delete;
 
 		template <typename T>
-		Handler<T> CreateNewHandler(UPtr<T>&& data)
+		Handler<T> CreateNewHandler(T* data)
 		{
 			Uint64 index = FindFreeSlot();
-			mTable[index] = std::move(data);
+			mTable[index] = data;
 			mLastAllocatedIndex = index;
 
-			mTable[index]->SetID(mNextID);
+			data->SetID(mNextID);
 			mNextID++;
 
-			auto h = Handler<T>(this, index, mTable[index]->GetID());
-			mTable[index]->SetHandler(h);
+			auto h = Handler<T>(this, index, data->GetID());
+			data->SetHandler(h);
 
 			return h;
 		}
 
 		template <typename T>
-		UPtr<T> ReleaseHandler(Handler<T>& handler)
+		T* ReleaseHandler(Handler<T>& handler)
 		{
 			CHECK(handler.IsNull() == false, "You cannot release the null handler.");
 			CHECK(handler.mTable == this, "You try to release the handler from wrong handler table.");
 			// Check if it is a stale object
 			CHECK(handler.mID == handler->GetID(), "This handler was already released.");
 
-			UPtr<T> d(DCast(T*)(mTable[handler.mTableIndex].release()));
-			return d;
+			T* data = DCast(T*)(mTable[handler.mTableIndex]);
+			mTable[handler.mTableIndex] = nullptr;
+
+			return data;
 		}
 
 		void ReleaseAll()
@@ -170,7 +172,7 @@ namespace cube
 		}
 
 		template <typename T>
-		T* GetData(Uint64 index) const { return DCast(T*)(&*mTable[index]); }
+		T* GetData(Uint64 index) const { return DCast(T*)(mTable[index]); }
 
 	private:
 		Uint64 FindFreeSlot()
@@ -193,7 +195,7 @@ namespace cube
 			return oldSize;
 		}
 
-		Vector<UPtr<Handlable>> mTable;
+		Vector<Handlable*> mTable;
 		Uint64 mLastAllocatedIndex;
 		Uint64 mNextID;
 	};
