@@ -31,6 +31,9 @@ namespace cube
 		Vector3 GetUp() const { return mUp; }
 		Vector3 GetRight() const { return mRight; }
 
+		bool IsModelMatrixChanged() const { return mIsModelMatrixChanged; }
+		const Matrix& GetModelMatrix() const { return mModelMatrix; }
+
 		HComponent GetComponent(StringRef name);
 		template <typename T>
 		Handler<T> GetComponent()
@@ -57,14 +60,13 @@ namespace cube
 		friend class GameObjectManager;
 		friend class Renderer3DComponent;
 
-		SPtr<Renderer3D> mRenderer3D;
-
 		// Variables related to transform
 		Vector3 mPosition;
 		Vector3 mRotation;
 		Vector3 mScale;
-		bool mIsTransformChanged;
+		bool mIsModelMatrixChanged;
 		Matrix mScaleMatrix;
+		bool mIsModelMatirxDirty;
 		Matrix mModelMatrix;
 
 		Vector3 mForward;

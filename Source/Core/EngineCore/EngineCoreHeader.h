@@ -32,6 +32,7 @@ namespace cube
 	class RenderObject;
 
 	class Renderer3D;
+	using HRenderer3D = Handler<Renderer3D>;
 	class CameraRenderer3D;
 	enum class RenderType;
 	class RendererManager;

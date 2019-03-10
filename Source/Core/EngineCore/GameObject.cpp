@@ -22,10 +22,9 @@ namespace cube
 
 	GameObject::GameObject() :
 		mPosition(0.0f, 0.0f, 0.0f), mRotation(0.0f, 0.0f, 0.0f), mScale(1.0f, 1.0f, 1.0f),
-		mIsTransformChanged(true),
+		mIsModelMatrixChanged(true), mIsModelMatirxDirty(true),
 		mForward(0.0f, 0.0f, 1.0f), mUp(0.0f, 1.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f)
 	{
-		mRenderer3D = nullptr;
 	}
 
 	GameObject::~GameObject()
@@ -35,19 +34,19 @@ namespace cube
 	void GameObject::SetPosition(Vector3 position)
 	{
 		mPosition = position;
-		mIsTransformChanged = true;
+		mIsModelMatirxDirty = true;
 	}
 
 	void GameObject::SetRotation(Vector3 rotation)
 	{
 		mRotation = rotation;
-		mIsTransformChanged = true;
+		mIsModelMatirxDirty = true;
 	}
 
 	void GameObject::SetScale(Vector3 scale)
 	{
 		mScale = scale;
-		mIsTransformChanged = true;
+		mIsModelMatirxDirty = true;
 	}
 
 	HComponent GameObject::GetComponent(StringRef name)
@@ -86,12 +85,14 @@ namespace cube
 
 	void GameObject::Update(float dt)
 	{
+		mIsModelMatrixChanged = false;
+
 		for(auto& com : mComponents) {
 			com->OnUpdate(dt);
 		}
 
 		// Update model matrix
-		if(mIsTransformChanged == true) {
+		if(mIsModelMatirxDirty == true) {
 			mModelMatrix = MatrixUtility::GetTranslation(mPosition);
 			mModelMatrix *= MatrixUtility::GetRotationXYZ(mRotation * (Math::Pi / 180.0f));
 
@@ -105,14 +106,12 @@ namespace cube
 
 			mModelMatrix *= MatrixUtility::GetScale(mScale);
 
-			if(mRenderer3D != nullptr)
-				mRenderer3D->SetModelMatrix(mModelMatrix);
-
 			for(auto& com : mComponents) {
 				com->OnTransformChanged();
 			}
 
-			mIsTransformChanged = false;
+			mIsModelMatirxDirty = false;
+			mIsModelMatrixChanged = true;
 		}
 	}
 

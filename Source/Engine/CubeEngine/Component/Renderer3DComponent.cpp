@@ -12,7 +12,7 @@ namespace cube
 	Renderer3DComponent::Renderer3DComponent() : 
 		mRendererManager(ECore().GetRendererManager())
 	{
-		mRenderer3D = mRendererManager.CreateRenderer3D();
+		mRenderer3D = mRendererManager.RegisterRenderer3D(Renderer3D::Create());
 	}
 
 	Renderer3DComponent::~Renderer3DComponent()
@@ -21,10 +21,7 @@ namespace cube
 
 	void Renderer3DComponent::OnInit()
 	{
-		GetGameObject()->mRenderer3D = mRenderer3D;
-		mRendererManager.RegisterRenderer3D(mRenderer3D);
-
-		GetGameObject()->mIsTransformChanged = true; // Update model matrix
+		mRenderer3D->SetModelMatrix(GetGameObject()->GetModelMatrix());
 	}
 
 	void Renderer3DComponent::OnUpdate(float dt)
@@ -33,12 +30,12 @@ namespace cube
 
 	void Renderer3DComponent::OnDestroy()
 	{
-		GetGameObject()->mRenderer3D = nullptr;
 		mRendererManager.UnregisterRenderer3D(mRenderer3D);
 	}
 
 	void Renderer3DComponent::OnTransformChanged()
 	{
+		mRenderer3D->SetModelMatrix(GetGameObject()->GetModelMatrix());
 	}
 
 	void Renderer3DComponent::SetMesh(RPtr<Mesh>& mesh)

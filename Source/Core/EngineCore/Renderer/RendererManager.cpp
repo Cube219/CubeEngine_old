@@ -230,22 +230,26 @@ namespace cube
 		return _unregisterRenderObject(material);
 	}
 
-	void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
+	HRenderer3D RendererManager::RegisterRenderer3D(UPtr<Renderer3D>&& renderer)
 	{
-		SPtr<rt::Renderer3D> renderer_rt = renderer->GetRenderObject();
+		HRenderer3D r3d = _registerRenderObject(std::move(renderer));
 
-		if(renderer_rt->mIndex != -1)
-			return;
+		SPtr<rt::Renderer3D> r3d_rt = r3d->GetRenderObject();
 
-		RenderingThread::QueueTask([this, renderer_rt]() {
+		if(r3d_rt->mIndex != -1)
+			return HRenderer3D();
+
+		RenderingThread::QueueTask([this, r3d_rt]() {
 			Lock(mRenderersMutex);
 
-			mRenderers.push_back(renderer_rt);
-			renderer_rt->mIndex = (int)mRenderers.size() - 1;
+			mRenderers.push_back(r3d_rt);
+			r3d_rt->mIndex = (int)mRenderers.size() - 1;
 		});
+
+		return r3d;
 	}
 
-	void RendererManager::UnregisterRenderer3D(SPtr<Renderer3D>& renderer)
+	UPtr<Renderer3D> RendererManager::UnregisterRenderer3D(HRenderer3D& renderer)
 	{
 		SPtr<rt::Renderer3D> renderer_rt = renderer->GetRenderObject();
 
@@ -265,6 +269,8 @@ namespace cube
 
 			renderer_rt->mIndex = -1;
 		});
+
+		return _unregisterRenderObject(renderer);
 	}
 
 	void RendererManager::RegisterLight(SPtr<DirectionalLight>& dirLight)
@@ -313,11 +319,6 @@ namespace cube
 
 			mPointLights.erase(findIter);
 		});
-	}
-
-	SPtr<Renderer3D> RendererManager::CreateRenderer3D()
-	{
-		return Renderer3D::Create();
 	}
 
 	SPtr<CameraRenderer3D> RendererManager::GetCameraRenderer3D()

@@ -27,7 +27,7 @@ namespace cube
 		void SetMaterialInstance(HMaterialInstance& materialIns, uint32_t index);
 
 	private:
-		SPtr<Renderer3D> mRenderer3D;
+		HRenderer3D mRenderer3D;
 
 		RendererManager& mRendererManager;
 	};

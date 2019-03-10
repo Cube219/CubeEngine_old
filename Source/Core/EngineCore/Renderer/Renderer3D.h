@@ -23,7 +23,7 @@ namespace cube
 	public:
 		virtual ~Renderer3D();
 
-		static SPtr<Renderer3D> Create();
+		static UPtr<Renderer3D> Create();
 
 		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
 		SPtr<rt::Renderer3D> GetRenderObject() const { return DPCast(rt::Renderer3D)(mRenderObject); }
