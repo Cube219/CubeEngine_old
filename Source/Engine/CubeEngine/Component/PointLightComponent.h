@@ -27,9 +27,8 @@ namespace cube
 		void SetColor(const Vector4& color);
 
 	private:
-		SPtr<PointLight> mPointLight;
+		HPointLight mPointLight;
 	};
 
-	using PointLightComponentData = BasicHandlerData<PointLightComponent>;
-	using HPointLightComponent = BasicHandler<PointLightComponent>;
+	using HPointLightComponent = Handler<PointLightComponent>;
 } // namespace cube

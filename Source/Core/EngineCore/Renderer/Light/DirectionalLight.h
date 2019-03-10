@@ -11,10 +11,9 @@ namespace cube
 	public:
 		virtual ~DirectionalLight();
 
-		static SPtr<DirectionalLight> Create();
+		static UPtr<DirectionalLight> Create();
 
 		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
-
 		SPtr<rt::DirectionalLight> GetRenderObject() const { return DPCast(rt::DirectionalLight)(mRenderObject); }
 
 		void SetDirection(const Vector3& direction);

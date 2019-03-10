@@ -18,6 +18,8 @@
 #include "RenderAPI/Interface/Fence.h"
 #include "RenderAPI/Interface/GraphicsPipelineState.h"
 
+#include "../Handler.h"
+#include "RenderObject.h"
 #include "../Thread/MutexLock.h"
 
 namespace cube
@@ -34,7 +36,8 @@ namespace cube
 
 	public:
 		RendererManager() : 
-			mIsPrepared(false), mDirLight(nullptr)
+			mIsPrepared(false), mDirLight(nullptr),
+			mRenderObjectTable(50)
 		{}
 		~RendererManager() {}
 
@@ -46,18 +49,17 @@ namespace cube
 		void Initialize(RenderType type);
 		void ShutDown();
 
-		HMaterial RegisterMaterial(SPtr<Material>& material);
-		void UnregisterMaterial(HMaterial& material);
+		HMaterial RegisterMaterial(UPtr<Material>&& material);
+		UPtr<Material> UnregisterMaterial(HMaterial& material);
 
-		void RegisterRenderer3D(SPtr<Renderer3D>& renderer);
-		void UnregisterRenderer3D(SPtr<Renderer3D>& renderer);
+		HRenderer3D RegisterRenderer3D(UPtr<Renderer3D>&& renderer);
+		UPtr<Renderer3D> UnregisterRenderer3D(HRenderer3D& renderer);
 
-		void RegisterLight(SPtr<DirectionalLight>& dirLight);
-		void UnregisterLight(SPtr<DirectionalLight>& dirLight);
-		void RegisterLight(SPtr<PointLight>& pointLight);
-		void UnregisterLight(SPtr<PointLight>& pointLight);
+		HDirectionalLight RegisterLight(UPtr<DirectionalLight>&& dirLight);
+		UPtr<DirectionalLight> UnregisterLight(HDirectionalLight& dirLight);
+		HPointLight RegisterLight(UPtr<PointLight>&& pointLight);
+		UPtr<PointLight> UnregisterLight(HPointLight& pointLight);
 
-		SPtr<Renderer3D> CreateRenderer3D();
 		SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: 차후 저렇게 바꾸기
 
 		SPtr<render::RenderAPI> GetRenderAPI() const { return mRenderAPI; }
@@ -72,6 +74,29 @@ namespace cube
 
 		SPtr<render::ShaderParametersLayout> _GetPerObjectShaderParametersLayout(){ return mPerObjectShaderParametersLayout; }
 
+		// HandlerTable& _getRenderObjectTable() { return mRenderObjectTable; }
+		template <typename T>
+		Handler<T> _registerRenderObject(UPtr<T>&& renderObject)
+		{
+			mRenderObjects.push_back(std::move(renderObject));
+			return mRenderObjectTable.CreateNewHandler(mRenderObjects.back().get());
+		}
+
+		template <typename T>
+		UPtr<T> _unregisterRenderObject(Handler<T>& hRenderObject)
+		{
+			T* pRenderObject = mRenderObjectTable.ReleaseHandler(hRenderObject);
+
+			auto findIter = std::find_if(mRenderObjects.begin(), mRenderObjects.end(), [pRenderObject](auto& element) {
+				return element.get() == pRenderObject;
+			});
+
+			UPtr<T> uptrRenderObject(DCast(T*)((*findIter).release()));
+			mRenderObjects.erase(findIter);
+
+			return uptrRenderObject;
+		}
+
 	private:
 		friend class EngineCore;
 
@@ -82,6 +107,9 @@ namespace cube
 		void DrawRenderer3D(Uint32 commandListIndex, SPtr<rt::Renderer3D>& renderer);
 
 		SPtr<render::GraphicsPipelineState> CreatePipeline(SPtr<rt::Material> material);
+
+		HandlerTable mRenderObjectTable;
+		Vector<UPtr<RenderObject>> mRenderObjects;
 
 		SPtr<platform::DLib> mRenderDLib;
 		SPtr<render::RenderAPI> mRenderAPI;

@@ -1,7 +1,5 @@
 ﻿#include "GameObjectManager.h"
 
-#include "BasicHandler.h"
-#include "GameObject.h"
 #include "LogWriter.h"
 
 namespace cube
@@ -12,51 +10,42 @@ namespace cube
 
 	void GameObjectManager::ShutDown()
 	{
-		for(auto& go : mGameObjects) {
-			go.second->data = nullptr;
-		}
+		mGameObjectTable.ReleaseAll();
+		mGameObjects.clear();
 	}
 
-	HGameObject GameObjectManager::RegisterGameObject(SPtr<GameObject>& go)
+	HGameObject GameObjectManager::RegisterGameObject(UPtr<GameObject>&& go)
 	{
-		CHECK(go->mID == 0, "Failed to register GameObject. Only GameObject with id=0 can be registered (id: {0})", go->mID);
+		CHECK(go->GetID() == Uint64InvalidValue, "Failed to register GameObject. It is already registered. (id: {0})", go->GetID());
 
-		go->mID = mNextID;
+		mGameObjects.push_back(std::move(go));
+		HGameObject handler = mGameObjectTable.CreateNewHandler(mGameObjects.back().get());
 
-		SPtr<GameObjectData> goDataPtr = std::make_shared<GameObjectData>();
-		goDataPtr->data = std::move(go);
-
-		mGameObjects[mNextID] = goDataPtr;
-
-		mNextID++;
-
-		goDataPtr->data->mMyHandler = HGameObject(goDataPtr);
-
-		return HGameObject(goDataPtr);
+		return handler;
 	}
 
 	void GameObjectManager::UnregisterGameObject(HGameObject& go)
 	{
-		Uint32 id = go->mID;
+		GameObject* pData = mGameObjectTable.ReleaseHandler(go);
 
-		auto goIter = mGameObjects.find(id);
-		CHECK(goIter != mGameObjects.end(), "Cannot unregister GameObject. It is not registered.");
-
-		goIter->second->data = nullptr;
-		mGameObjects.erase(goIter);
+		auto findIter = std::find_if(mGameObjects.cbegin(), mGameObjects.cend(), [pData](auto& element){
+			return element.get() == pData;
+		});
+		CHECK(findIter != mGameObjects.end(), "Cannot unregister GameObject. It is not registered.");
+		mGameObjects.erase(findIter);
 	}
 
 	void GameObjectManager::Start()
 	{
 		for(auto& go : mGameObjects) {
-			go.second->data->Start();
+			go->Start();
 		}
 	}
 
 	void GameObjectManager::Update(float dt)
 	{
 		for(auto& go : mGameObjects) {
-			go.second->data->Update(dt);
+			go->Update(dt);
 		}
 	}
 } // namespace cube

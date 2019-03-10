@@ -3,7 +3,7 @@
 #include "../../EngineCoreHeader.h"
 
 #include "../RenderObject.h"
-#include "../../BasicHandler.h"
+#include "../../Handler.h"
 #include "RenderAPI/Interface/ShaderParameters.h"
 
 namespace cube
@@ -19,13 +19,15 @@ namespace cube
 	class ENGINE_CORE_EXPORT MaterialInstance : public RenderObject
 	{
 	public:
-		static SPtr<MaterialInstance> Create(HMaterial mat);
+		static UPtr<MaterialInstance> Create(HMaterial mat);
 
 	public:
 		~MaterialInstance();
 
 		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
 		SPtr<rt::MaterialInstance> GetRenderObject() const { return DPCast(rt::MaterialInstance)(mRenderObject); }
+
+		HMaterialInstance GetHandler() const { return mMyHandler; }
 
 		HMaterial GetMaterial() const { return mMaterial; }
 
@@ -46,8 +48,6 @@ namespace cube
 		MaterialInstance(HMaterial mat);
 
 		void SetParamData(StringRef name, void* pData, Uint64 dataSize);
-
-		HMaterialInstance mMyHandler;
 
 		HashMap<String, Uint64> mParameterIndexLookupMap;
 		Vector<MaterialParameter> mParameters;
@@ -75,11 +75,11 @@ namespace cube
 			friend class cube::MaterialInstance;
 			friend class cube::Material;
 
-			MaterialInstance();
+			MaterialInstance(SPtr<Material>& mat);
 
 			void ApplyParameters();
 
-			SPtr<rt::Material> mMaterial;
+			SPtr<Material> mMaterial;
 
 			Vector<Uint32> mTempParametersIndex;
 			Vector<MaterialParameter> mTempParameters;

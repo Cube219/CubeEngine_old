@@ -3,14 +3,15 @@
 #include "../EngineCoreHeader.h"
 
 #include <functional>
+#include "../Handler.h"
 
 namespace cube
 {
 	class ENGINE_CORE_EXPORT ComponentManager
 	{
 	public:
-		ComponentManager() {}
-		~ComponentManager() {}
+		ComponentManager();
+		~ComponentManager();
 
 		ComponentManager(const ComponentManager& other) = delete;
 		ComponentManager& operator=(const ComponentManager& rhs) = delete;
@@ -27,12 +28,9 @@ namespace cube
 
 			CheckIfComponentExisted(name);
 
-			mComponentCreators[name] = []() {
-				auto comDataPtr = std::make_shared<BasicHandlerData<Component>>();
-				comDataPtr->data = std::make_shared<T>();
-				comDataPtr->data->mMyHandler = HComponent(comDataPtr);
-
-				return HComponent(comDataPtr);
+			mComponentCreators[name] = [this]() {
+				mComponents.push_back(std::make_unique<T>());
+				return mComponentTable.CreateNewHandler<T>(DCast(T*)(mComponents.back().get()));
 			};
 		}
 
@@ -42,5 +40,7 @@ namespace cube
 		void CheckIfComponentExisted(StringRef name);
 
 		HashMap<String, std::function<HComponent()>> mComponentCreators;
+		HandlerTable mComponentTable;
+		Vector<UPtr<Component>> mComponents;
 	};
 } // namespace cube

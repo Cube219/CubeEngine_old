@@ -27,11 +27,10 @@ namespace cube
 		void SetMaterialInstance(HMaterialInstance& materialIns, uint32_t index);
 
 	private:
-		SPtr<Renderer3D> mRenderer3D;
+		HRenderer3D mRenderer3D;
 
 		RendererManager& mRendererManager;
 	};
 
-	using Renderer3DComponentData = BasicHandlerData<Renderer3DComponent>;
-	using HRenderer3DComponent = BasicHandler<Renderer3DComponent>;
+	using HRenderer3DComponent = Handler<Renderer3DComponent>;
 } // namespace cube

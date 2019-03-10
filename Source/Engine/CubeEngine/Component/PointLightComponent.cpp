@@ -10,7 +10,7 @@ namespace cube
 
 	PointLightComponent::PointLightComponent()
 	{
-		mPointLight = PointLight::Create();
+		mPointLight = ECore().GetRendererManager().RegisterLight(PointLight::Create());
 	}
 
 	PointLightComponent::~PointLightComponent()
@@ -19,7 +19,6 @@ namespace cube
 
 	void PointLightComponent::OnInit()
 	{
-		ECore().GetRendererManager().RegisterLight(mPointLight);
 	}
 
 	void PointLightComponent::OnUpdate(float dt)

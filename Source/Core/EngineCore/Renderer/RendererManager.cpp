@@ -154,6 +154,9 @@ namespace cube
 
 	void RendererManager::ShutDown()
 	{
+		mRenderObjectTable.ReleaseAll();
+		mRenderObjects.clear();
+
 		mMaterialPipelines.clear();
 		mMaterials.clear();
 		mRenderers.clear();
@@ -185,14 +188,11 @@ namespace cube
 		mRenderDLib = nullptr;
 	}
 
-	HMaterial RendererManager::RegisterMaterial(SPtr<Material>& material)
+	HMaterial RendererManager::RegisterMaterial(UPtr<Material>&& material)
 	{
-		SPtr<MaterialData> matDataPtr = std::make_shared<MaterialData>();
-		matDataPtr->data = std::move(material);
-		matDataPtr->data->mMyHandler = HMaterial(matDataPtr);
+		HMaterial mat = _registerRenderObject(std::move(material));
 
-		SPtr<rt::Material> mat_rt = matDataPtr->data->GetRenderObject();
-		RenderingThread::QueueTask([this, mat_rt]() {
+		RenderingThread::QueueTask([this, mat_rt = mat->GetRenderObject()]() {
 			Lock(mMaterialsMutex);
 
 			mat_rt->mIndex = (int)mMaterials.size();
@@ -200,11 +200,10 @@ namespace cube
 			mMaterialPipelines.push_back(CreatePipeline(mat_rt));
 		});
 
-		HMaterial hMat = HMaterial(matDataPtr);
-		return hMat;
+		return mat;
 	}
 
-	void RendererManager::UnregisterMaterial(HMaterial& material)
+	UPtr<Material> RendererManager::UnregisterMaterial(HMaterial& material)
 	{
 		SPtr<rt::Material> mat_rt = material->GetRenderObject();
 		int index = mat_rt->mIndex;
@@ -227,24 +226,30 @@ namespace cube
 
 			mat_rt->mIndex = -1;
 		});
+
+		return _unregisterRenderObject(material);
 	}
 
-	void RendererManager::RegisterRenderer3D(SPtr<Renderer3D>& renderer)
+	HRenderer3D RendererManager::RegisterRenderer3D(UPtr<Renderer3D>&& renderer)
 	{
-		SPtr<rt::Renderer3D> renderer_rt = renderer->GetRenderObject();
+		HRenderer3D r3d = _registerRenderObject(std::move(renderer));
 
-		if(renderer_rt->mIndex != -1)
-			return;
+		SPtr<rt::Renderer3D> r3d_rt = r3d->GetRenderObject();
 
-		RenderingThread::QueueTask([this, renderer_rt]() {
+		if(r3d_rt->mIndex != -1)
+			return HRenderer3D();
+
+		RenderingThread::QueueTask([this, r3d_rt]() {
 			Lock(mRenderersMutex);
 
-			mRenderers.push_back(renderer_rt);
-			renderer_rt->mIndex = (int)mRenderers.size() - 1;
+			mRenderers.push_back(r3d_rt);
+			r3d_rt->mIndex = (int)mRenderers.size() - 1;
 		});
+
+		return r3d;
 	}
 
-	void RendererManager::UnregisterRenderer3D(SPtr<Renderer3D>& renderer)
+	UPtr<Renderer3D> RendererManager::UnregisterRenderer3D(HRenderer3D& renderer)
 	{
 		SPtr<rt::Renderer3D> renderer_rt = renderer->GetRenderObject();
 
@@ -264,47 +269,56 @@ namespace cube
 
 			renderer_rt->mIndex = -1;
 		});
+
+		return _unregisterRenderObject(renderer);
 	}
 
-	void RendererManager::RegisterLight(SPtr<DirectionalLight>& dirLight)
+	HDirectionalLight RendererManager::RegisterLight(UPtr<DirectionalLight>&& dirLight)
 	{
 		CHECK(mDirLight == nullptr, "DirectionalLight is already registed.");
 
-		SPtr<rt::DirectionalLight> dirLight_rt = dirLight->GetRenderObject();
-		RenderingThread::QueueTask([this, dirLight_rt]() {
+		HDirectionalLight hDir = _registerRenderObject(std::move(dirLight));
+
+		RenderingThread::QueueTask([this, dirLight_rt = hDir->GetRenderObject()]() {
 			mDirLight = dirLight_rt;
 		});
+
+		return hDir;
 	}
 
-	void RendererManager::UnregisterLight(SPtr<DirectionalLight>& dirLight)
+	UPtr<DirectionalLight> RendererManager::UnregisterLight(HDirectionalLight& dirLight)
 	{
 		CHECK(mDirLight == dirLight->GetRenderObject(), "This directional light is not registed.");
 
 		RenderingThread::QueueTask([this]() {
 			mDirLight = nullptr;
 		});
+
+		return _unregisterRenderObject(dirLight);
 	}
 
-	void RendererManager::RegisterLight(SPtr<PointLight>& pointLight)
+	HPointLight RendererManager::RegisterLight(UPtr<PointLight>&& pointLight)
 	{
 		{
 			Lock lock(mPointLightsMutex);
 
-			CHECK(mPointLights.size() < maxPointLightNum, "PointLight cannot be registed more than 50.");
+			CHECK(mPointLights.size() < maxPointLightNum, "PointLight cannot be registed more than {0}.", maxPointLightNum);
 		}
 
-		SPtr<rt::PointLight> pointLight_rt = pointLight->GetRenderObject();
-		RenderingThread::QueueTask([this, pointLight_rt]() {
+		HPointLight hPoint = _registerRenderObject(std::move(pointLight));
+
+		RenderingThread::QueueTask([this, pointLight_rt = hPoint->GetRenderObject()]() {
 			Lock lock(mPointLightsMutex);
 
 			mPointLights.push_back(pointLight_rt);
 		});
+
+		return hPoint;
 	}
 
-	void RendererManager::UnregisterLight(SPtr<PointLight>& pointLight)
+	UPtr<PointLight> RendererManager::UnregisterLight(HPointLight& pointLight)
 	{
-		SPtr<rt::PointLight> pointLight_rt = pointLight->GetRenderObject();
-		RenderingThread::QueueTask([this, pointLight_rt]() {
+		RenderingThread::QueueTask([this, pointLight_rt = pointLight->GetRenderObject()]() {
 			Lock lock(mPointLightsMutex);
 
 			auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight_rt);
@@ -312,11 +326,8 @@ namespace cube
 
 			mPointLights.erase(findIter);
 		});
-	}
 
-	SPtr<Renderer3D> RendererManager::CreateRenderer3D()
-	{
-		return Renderer3D::Create();
+		return _unregisterRenderObject(pointLight);
 	}
 
 	SPtr<CameraRenderer3D> RendererManager::GetCameraRenderer3D()

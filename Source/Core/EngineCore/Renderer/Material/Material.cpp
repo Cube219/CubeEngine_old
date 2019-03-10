@@ -11,10 +11,10 @@ namespace cube
 	{
 		auto& rendererManager = ECore().GetRendererManager();
 
-		SPtr<Material> mat(new Material(init));
+		UPtr<Material> mat(new Material(init));
 		mat->Initialize();
 
-		return rendererManager.RegisterMaterial(mat);
+		return rendererManager.RegisterMaterial(std::move(mat));
 	}
 
 	Material::Material(const MaterialInitializer& init) : 
@@ -39,18 +39,12 @@ namespace cube
 
 	HMaterialInstance Material::CreateInstance()
 	{
-		SPtr<MaterialInstanceData> matInsDataPtr = std::make_shared<MaterialInstanceData>();
-		matInsDataPtr->data = MaterialInstance::Create(mMyHandler);
-		matInsDataPtr->data->mMyHandler = HMaterialInstance(matInsDataPtr);
-
-		matInsDataPtr->data->GetRenderObject()->mMaterial = GetRenderObject();
-
-		return HMaterialInstance(matInsDataPtr);
+		return ECore().GetRendererManager()._registerRenderObject(MaterialInstance::Create(GetHandler()));
 	}
 
 	void Material::Destroy()
 	{
-		ECore().GetRendererManager().UnregisterMaterial(mMyHandler);
+		UPtr<Material> ptr = ECore().GetRendererManager().UnregisterMaterial(GetHandler());
 
 		RenderObject::Destroy();
 	}
@@ -86,9 +80,9 @@ namespace cube
 					ASSERTION_FAILED("Unknown MaterialParameterType ({0).", (int)mParamInfos[i].type);
 					break;
 				}
-				attr.paramInfos[i].size = mParamInfos[i].dataSize;
+				attr.paramInfos[i].size = SCast(Uint32)(mParamInfos[i].dataSize);
 				attr.paramInfos[i].count = 1;
-				attr.paramInfos[i].bindIndex = i;
+				attr.paramInfos[i].bindIndex = SCast(Uint32)(i);
 				attr.paramInfos[i].isChangedPerFrame = false;
 				attr.paramInfos[i].debugName = "Material shader parameter layout param info";
 			}

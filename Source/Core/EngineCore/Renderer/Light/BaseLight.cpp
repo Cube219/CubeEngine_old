@@ -10,9 +10,9 @@ namespace cube
 	{
 	}
 
-	SPtr<BaseLight> BaseLight::Create()
+	UPtr<BaseLight> BaseLight::Create()
 	{
-		SPtr<BaseLight> baseLight(new BaseLight());
+		UPtr<BaseLight> baseLight(new BaseLight());
 		baseLight->Initialize();
 
 		return baseLight;

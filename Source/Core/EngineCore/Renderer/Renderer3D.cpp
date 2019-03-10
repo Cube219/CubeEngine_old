@@ -20,9 +20,9 @@ namespace cube
 	{
 	}
 
-	SPtr<Renderer3D> Renderer3D::Create()
+	UPtr<Renderer3D> Renderer3D::Create()
 	{
-		SPtr<Renderer3D> renderer3d(new Renderer3D());
+		UPtr<Renderer3D> renderer3d(new Renderer3D());
 		renderer3d->Initialize();
 
 		return renderer3d;

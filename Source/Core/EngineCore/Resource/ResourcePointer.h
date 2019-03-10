@@ -38,6 +38,9 @@ namespace cube
 			if(this == &rhs)
 				return *this;
 
+			if(mRes != nullptr)
+				mRes->mRefCount--;
+
 			mRes = rhs.mRes;
 			if(mRes != nullptr)
 				mRes->mRefCount++;

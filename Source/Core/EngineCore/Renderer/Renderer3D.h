@@ -5,7 +5,6 @@
 #include "RenderObject.h"
 #include "Vertex.h"
 #include "Base/Matrix.h"
-#include "../BasicHandler.h"
 #include "RenderAPI/Interface/ShaderParameters.h"
 #include "RenderAPI/Interface/Device.h"
 #include "RenderAPI/Interface/Buffer.h"
@@ -24,7 +23,7 @@ namespace cube
 	public:
 		virtual ~Renderer3D();
 
-		static SPtr<Renderer3D> Create();
+		static UPtr<Renderer3D> Create();
 
 		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
 		SPtr<rt::Renderer3D> GetRenderObject() const { return DPCast(rt::Renderer3D)(mRenderObject); }

@@ -3,7 +3,7 @@
 #include "../../EngineCoreHeader.h"
 
 #include "../RenderObject.h"
-#include "../../BasicHandler.h"
+#include "../../Handler.h"
 #include "RenderAPI/Interface/ShaderParametersLayout.h"
 
 namespace cube
@@ -38,6 +38,8 @@ namespace cube
 		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
 		SPtr<rt::Material> GetRenderObject() const { return DPCast(rt::Material)(mRenderObject); }
 
+		HMaterial GetHandler() const { return mMyHandler; }
+
 		HMaterialInstance CreateInstance();
 
 		virtual void Destroy();
@@ -51,8 +53,6 @@ namespace cube
 		Material(const MaterialInitializer& init);
 
 		MaterialInitializer mMaterialInit;
-
-		HMaterial mMyHandler;
 	};
 
 	namespace rt

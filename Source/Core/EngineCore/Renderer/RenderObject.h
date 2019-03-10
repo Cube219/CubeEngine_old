@@ -4,6 +4,7 @@
 
 #include "../LogWriter.h"
 #include "RenderingThread.h"
+#include "../Handler.h"
 
 namespace cube
 {
@@ -12,12 +13,14 @@ namespace cube
 		class RenderObject;
 	}
 		
-	class ENGINE_CORE_EXPORT RenderObject
+	class ENGINE_CORE_EXPORT RenderObject : public Handlable
 	{
 	public:
 		static SPtr<RenderObject> Create();
 
 		virtual ~RenderObject() {}
+
+		Handler<RenderObject> GetHandler() const { return mMyHandler; }
 
 		virtual void Initialize();
 		virtual void Destroy();

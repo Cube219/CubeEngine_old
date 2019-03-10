@@ -37,9 +37,9 @@ namespace cube
 		}
 	}
 
-	SPtr<MaterialInstance> MaterialInstance::Create(HMaterial mat)
+	UPtr<MaterialInstance> MaterialInstance::Create(HMaterial mat)
 	{
-		SPtr<MaterialInstance> matIns(new MaterialInstance(mat));
+		UPtr<MaterialInstance> matIns(new MaterialInstance(mat));
 		matIns->Initialize();
 
 		return matIns;
@@ -47,7 +47,7 @@ namespace cube
 
 	SPtr<rt::RenderObject> MaterialInstance::CreateRenderObject() const
 	{
-		SPtr<rt::MaterialInstance> matIns_rt(new rt::MaterialInstance());
+		SPtr<rt::MaterialInstance> matIns_rt(new rt::MaterialInstance(mMaterial->GetRenderObject()));
 		
 		RenderingThread::QueueSyncTask([this]() {
 			GetRenderObject()->SyncMaterial(mMaterial->GetRenderObject());
@@ -96,12 +96,15 @@ namespace cube
 
 	void MaterialInstance::Destroy()
 	{
-		mMyHandler.mData->data = nullptr;
+		UPtr<MaterialInstance> ptr = ECore().GetRendererManager()._unregisterRenderObject(GetHandler());
+
+		RenderObject::Destroy();
 	}
 
 	namespace rt
 	{
-		MaterialInstance::MaterialInstance()
+		MaterialInstance::MaterialInstance(SPtr<Material>& mat) : 
+			mMaterial(mat)
 		{
 		}
 
@@ -143,7 +146,7 @@ namespace cube
 			}
 
 			mTempParameters.push_back(p);
-			mTempParametersIndex.push_back(index);
+			mTempParametersIndex.push_back(SCast(Uint32)(index));
 
 			RenderingThread::QueueTask([this]() {
 				ApplyParameters();
@@ -157,7 +160,7 @@ namespace cube
 
 				switch(param.type) {
 					case MaterialParameterType::Data:
-						mShaderParameters->UpdateParameter(mTempParametersIndex[i], param.data, param.size);
+						mShaderParameters->UpdateParameter(mTempParametersIndex[i], param.data, SCast(Uint32)(param.size));
 						free(param.data);
 						break;
 

@@ -10,9 +10,9 @@ namespace cube
 	{
 	}
 
-	SPtr<DirectionalLight> DirectionalLight::Create()
+	UPtr<DirectionalLight> DirectionalLight::Create()
 	{
-		SPtr<DirectionalLight> dirLight(new DirectionalLight());
+		UPtr<DirectionalLight> dirLight(new DirectionalLight());
 		dirLight->Initialize();
 
 		return dirLight;

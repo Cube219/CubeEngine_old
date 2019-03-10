@@ -5,12 +5,23 @@
 
 namespace cube
 {
+	ComponentManager::ComponentManager() : 
+		mComponentTable(30)
+	{
+	}
+
+	ComponentManager::~ComponentManager()
+	{
+	}
+
 	void ComponentManager::Initialize()
 	{
 	}
 
 	void ComponentManager::ShutDown()
 	{
+		mComponentTable.ReleaseAll();
+		mComponents.clear();
 	}
 
 	HComponent ComponentManager::CreateComponent(StringRef name)

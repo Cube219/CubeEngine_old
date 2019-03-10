@@ -2,12 +2,16 @@
 
 #include "EngineCoreHeader.h"
 
+#include "GameObject.h"
+#include "Handler.h"
+
 namespace cube
 {
 	class ENGINE_CORE_EXPORT GameObjectManager
 	{
 	public:
-		GameObjectManager() : mNextID(1)
+		GameObjectManager() :
+			mGameObjectTable(200)
 		{}
 		~GameObjectManager() {}
 
@@ -19,7 +23,7 @@ namespace cube
 		void Initialize();
 		void ShutDown();
 
-		HGameObject RegisterGameObject(SPtr<GameObject>& go);
+		HGameObject RegisterGameObject(UPtr<GameObject>&& go);
 		void UnregisterGameObject(HGameObject& go);
 
 		void Start();
@@ -29,8 +33,7 @@ namespace cube
 	private:
 		friend class GameObject;
 
-		Uint32 mNextID;
-
-		HashMap<Uint32, SPtr<GameObjectData>> mGameObjects;
+		HandlerTable mGameObjectTable;
+		Vector<UPtr<GameObject>> mGameObjects;
 	};
 } // namespace cube
