@@ -55,7 +55,9 @@ namespace cube
 
 	class BaseLight;
 	class DirectionalLight;
+	using HDirectionalLight = Handler<DirectionalLight>;
 	class PointLight;
+	using HPointLight = Handler<PointLight>;
 	class SpotLight;
 
 	class TextureData;

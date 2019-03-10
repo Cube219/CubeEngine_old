@@ -27,7 +27,7 @@ namespace cube
 		void SetColor(const Vector4& color);
 
 	private:
-		SPtr<DirectionalLight> mDirLight;
+		HDirectionalLight mDirLight;
 	};
 
 	using HDirectionalLightComponent = Handler<DirectionalLightComponent>;

@@ -146,7 +146,7 @@ namespace cube
 			}
 
 			mTempParameters.push_back(p);
-			mTempParametersIndex.push_back(index);
+			mTempParametersIndex.push_back(SCast(Uint32)(index));
 
 			RenderingThread::QueueTask([this]() {
 				ApplyParameters();
@@ -160,7 +160,7 @@ namespace cube
 
 				switch(param.type) {
 					case MaterialParameterType::Data:
-						mShaderParameters->UpdateParameter(mTempParametersIndex[i], param.data, param.size);
+						mShaderParameters->UpdateParameter(mTempParametersIndex[i], param.data, SCast(Uint32)(param.size));
 						free(param.data);
 						break;
 

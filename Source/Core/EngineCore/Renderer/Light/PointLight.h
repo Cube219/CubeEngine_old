@@ -11,7 +11,7 @@ namespace cube
 	public:
 		virtual ~PointLight();
 
-		static SPtr<PointLight> Create();
+		static UPtr<PointLight> Create();
 
 		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
 

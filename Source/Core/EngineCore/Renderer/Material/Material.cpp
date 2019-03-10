@@ -80,9 +80,9 @@ namespace cube
 					ASSERTION_FAILED("Unknown MaterialParameterType ({0).", (int)mParamInfos[i].type);
 					break;
 				}
-				attr.paramInfos[i].size = mParamInfos[i].dataSize;
+				attr.paramInfos[i].size = SCast(Uint32)(mParamInfos[i].dataSize);
 				attr.paramInfos[i].count = 1;
-				attr.paramInfos[i].bindIndex = i;
+				attr.paramInfos[i].bindIndex = SCast(Uint32)(i);
 				attr.paramInfos[i].isChangedPerFrame = false;
 				attr.paramInfos[i].debugName = "Material shader parameter layout param info";
 			}

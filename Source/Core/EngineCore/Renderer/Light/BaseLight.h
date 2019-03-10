@@ -12,7 +12,7 @@ namespace cube
 	public:
 		virtual ~BaseLight();
 
-		static SPtr<BaseLight> Create();
+		static UPtr<BaseLight> Create();
 
 		virtual SPtr<rt::RenderObject> CreateRenderObject() const override;
 		SPtr<rt::BaseLight> GetRenderObject() const { return DPCast(rt::BaseLight)(mRenderObject); }

@@ -55,10 +55,10 @@ namespace cube
 		HRenderer3D RegisterRenderer3D(UPtr<Renderer3D>&& renderer);
 		UPtr<Renderer3D> UnregisterRenderer3D(HRenderer3D& renderer);
 
-		void RegisterLight(SPtr<DirectionalLight>& dirLight);
-		void UnregisterLight(SPtr<DirectionalLight>& dirLight);
-		void RegisterLight(SPtr<PointLight>& pointLight);
-		void UnregisterLight(SPtr<PointLight>& pointLight);
+		HDirectionalLight RegisterLight(UPtr<DirectionalLight>&& dirLight);
+		UPtr<DirectionalLight> UnregisterLight(HDirectionalLight& dirLight);
+		HPointLight RegisterLight(UPtr<PointLight>&& pointLight);
+		UPtr<PointLight> UnregisterLight(HPointLight& pointLight);
 
 		SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: 차후 저렇게 바꾸기
 

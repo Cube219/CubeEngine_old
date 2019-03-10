@@ -10,9 +10,9 @@ namespace cube
 	{
 	}
 
-	SPtr<PointLight> PointLight::Create()
+	UPtr<PointLight> PointLight::Create()
 	{
-		SPtr<PointLight> pointLight(new PointLight());
+		UPtr<PointLight> pointLight(new PointLight());
 		pointLight->Initialize();
 
 		return pointLight;

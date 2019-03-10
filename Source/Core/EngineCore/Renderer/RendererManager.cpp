@@ -273,45 +273,52 @@ namespace cube
 		return _unregisterRenderObject(renderer);
 	}
 
-	void RendererManager::RegisterLight(SPtr<DirectionalLight>& dirLight)
+	HDirectionalLight RendererManager::RegisterLight(UPtr<DirectionalLight>&& dirLight)
 	{
 		CHECK(mDirLight == nullptr, "DirectionalLight is already registed.");
 
-		SPtr<rt::DirectionalLight> dirLight_rt = dirLight->GetRenderObject();
-		RenderingThread::QueueTask([this, dirLight_rt]() {
+		HDirectionalLight hDir = _registerRenderObject(std::move(dirLight));
+
+		RenderingThread::QueueTask([this, dirLight_rt = hDir->GetRenderObject()]() {
 			mDirLight = dirLight_rt;
 		});
+
+		return hDir;
 	}
 
-	void RendererManager::UnregisterLight(SPtr<DirectionalLight>& dirLight)
+	UPtr<DirectionalLight> RendererManager::UnregisterLight(HDirectionalLight& dirLight)
 	{
 		CHECK(mDirLight == dirLight->GetRenderObject(), "This directional light is not registed.");
 
 		RenderingThread::QueueTask([this]() {
 			mDirLight = nullptr;
 		});
+
+		return _unregisterRenderObject(dirLight);
 	}
 
-	void RendererManager::RegisterLight(SPtr<PointLight>& pointLight)
+	HPointLight RendererManager::RegisterLight(UPtr<PointLight>&& pointLight)
 	{
 		{
 			Lock lock(mPointLightsMutex);
 
-			CHECK(mPointLights.size() < maxPointLightNum, "PointLight cannot be registed more than 50.");
+			CHECK(mPointLights.size() < maxPointLightNum, "PointLight cannot be registed more than {0}.", maxPointLightNum);
 		}
 
-		SPtr<rt::PointLight> pointLight_rt = pointLight->GetRenderObject();
-		RenderingThread::QueueTask([this, pointLight_rt]() {
+		HPointLight hPoint = _registerRenderObject(std::move(pointLight));
+
+		RenderingThread::QueueTask([this, pointLight_rt = hPoint->GetRenderObject()]() {
 			Lock lock(mPointLightsMutex);
 
 			mPointLights.push_back(pointLight_rt);
 		});
+
+		return hPoint;
 	}
 
-	void RendererManager::UnregisterLight(SPtr<PointLight>& pointLight)
+	UPtr<PointLight> RendererManager::UnregisterLight(HPointLight& pointLight)
 	{
-		SPtr<rt::PointLight> pointLight_rt = pointLight->GetRenderObject();
-		RenderingThread::QueueTask([this, pointLight_rt]() {
+		RenderingThread::QueueTask([this, pointLight_rt = pointLight->GetRenderObject()]() {
 			Lock lock(mPointLightsMutex);
 
 			auto findIter = std::find(mPointLights.cbegin(), mPointLights.cend(), pointLight_rt);
@@ -319,6 +326,8 @@ namespace cube
 
 			mPointLights.erase(findIter);
 		});
+
+		return _unregisterRenderObject(pointLight);
 	}
 
 	SPtr<CameraRenderer3D> RendererManager::GetCameraRenderer3D()
