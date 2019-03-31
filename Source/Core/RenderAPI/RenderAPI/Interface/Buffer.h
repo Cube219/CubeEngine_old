@@ -21,8 +21,14 @@ namespace cube
 		class Buffer : public BaseRenderObject
 		{
 		public:
-			Buffer(const char* debugName) : BaseRenderObject(debugName) {}
+			Buffer(const BufferAttribute& attr) :
+				BaseRenderObject(attr.debugName),
+				mUsage(attr.usage), mBindTypeFlags(attr.bindTypeFlags)
+			{}
 			virtual ~Buffer() {}
+
+			ResourceUsage GetUsage() const { return mUsage; }
+			BufferBindTypeFlags GetBindTypeFlags() const { return mBindTypeFlags; }
 
 			virtual void UpdateData(CommandList& cmdList, Uint64 offset, Uint64 size, const void* pData) = 0;
 			virtual void CopyData(CommandList& cmdList, const Buffer& src, Uint64 srcOffset,
@@ -35,6 +41,7 @@ namespace cube
 
 		protected:
 			ResourceUsage mUsage;
+			BufferBindTypeFlags mBindTypeFlags;
 		};
 	} // namespace render
 } // namespace cube

@@ -10,7 +10,7 @@ namespace cube
 	namespace render
 	{
 		RenderTargetVk::RenderTargetVk(const RenderTargetAttribute& attr) : 
-			RenderTarget(attr.debugName)
+			RenderTarget(attr)
 		{
 			mAttachmentDesc.flags = 0;
 			mAttachmentDesc.format = VK_FORMAT_UNDEFINED;

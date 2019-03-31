@@ -28,7 +28,9 @@ namespace cube
 		class RenderTarget : public BaseRenderObject
 		{
 		public:
-			RenderTarget(const char* debugName) : BaseRenderObject(debugName) {}
+			RenderTarget(const RenderTargetAttribute& attr) :
+				BaseRenderObject(attr.debugName)
+			{}
 			virtual ~RenderTarget() {}
 		};
 	} // namespace render

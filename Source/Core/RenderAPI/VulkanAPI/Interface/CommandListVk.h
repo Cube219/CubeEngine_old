@@ -11,9 +11,8 @@ namespace cube
 		class CommandListVk final : public CommandList
 		{
 		public:
-			CommandListVk(VulkanCommandListPool& pool, VkCommandBuffer commandBuffer,
-				CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex, bool isSub,
-				const char* debugName);
+			CommandListVk(VulkanCommandListPool& pool, const CommandListAttribute& attr, VkCommandBuffer commandBuffer,
+				Uint32 submitQueueFamilyIndex);
 			virtual ~CommandListVk();
 
 			VkCommandBuffer GetHandle() const { return mCommandBuffer; }
@@ -56,7 +55,6 @@ namespace cube
 			Uint32 mSubmitQueueFamilyIndex;
 
 			VkCommandBuffer mCommandBuffer;
-			bool mIsSub;
 
 			SPtr<RenderPassVk> mBindedRenderPass = nullptr;
 			SPtr<GraphicsPipelineStateVk> mBindedGraphicsPipeline = nullptr;

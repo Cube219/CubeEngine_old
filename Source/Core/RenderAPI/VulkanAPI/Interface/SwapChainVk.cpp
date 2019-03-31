@@ -17,10 +17,8 @@ namespace cube
 	{
 		SwapChainVk::SwapChainVk(VkInstance ins, DeviceVk& device, const SwapChainAttribute& attr,
 			VulkanQueueManager& queueManager, VulkanSemaphorePool& semaphorePool) :
-			SwapChain(attr.debugName),
+			SwapChain(attr),
 			mSwapChain(VK_NULL_HANDLE, device.GetLogicalDevice()),
-			mAttribute(attr),
-			mWidth(attr.width), mHeight(attr.height), mImageCount(attr.bufferCount), mVsync(attr.vsync),
 			mSemaphorePool(semaphorePool),
 			mQueueManager(device.GetQueueManager())
 		{
@@ -222,18 +220,18 @@ namespace cube
 			if(mSurfaceCapabilities.minImageExtent.height > mHeight)
 				mHeight = mSurfaceCapabilities.minImageExtent.height;
 
-			// Clamp image count
-			if(mSurfaceCapabilities.maxImageCount < mImageCount)
-				mImageCount = mSurfaceCapabilities.maxImageCount;
-			if(mSurfaceCapabilities.minImageCount > mImageCount)
-				mImageCount = mSurfaceCapabilities.minImageCount;
+			// Clamp image(buffer) count
+			if(mSurfaceCapabilities.maxImageCount < mBufferCount)
+				mBufferCount = mSurfaceCapabilities.maxImageCount;
+			if(mSurfaceCapabilities.minImageCount > mBufferCount)
+				mBufferCount = mSurfaceCapabilities.minImageCount;
 
 			VkSwapchainCreateInfoKHR info = {};
 			info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 			info.pNext = nullptr;
 			info.flags = 0;
 			info.surface = mSurface;
-			info.minImageCount = mImageCount;
+			info.minImageCount = mBufferCount;
 			info.imageFormat = mColorFormat;
 			info.imageColorSpace = mColorSpace;
 			info.imageExtent = { mWidth, mHeight };
@@ -259,8 +257,8 @@ namespace cube
 			for(Uint32 i = 0; i < mImageCount; i++) {
 				mAcquiredSemaphores.push_back(mSemaphorePool.GetSemaphore());
 			}*/
-			mDrawCompleteSemaphores.resize(mImageCount);
-			for(Uint32 i = 0; i < mImageCount; i++) {
+			mDrawCompleteSemaphores.resize(mBufferCount);
+			for(Uint32 i = 0; i < mBufferCount; i++) {
 				mDrawCompleteSemaphores[i] = mSemaphorePool.GetSemaphore(fmt::format("DrawCompleteSemaphores[{0}]", i).c_str());
 			}
 		}

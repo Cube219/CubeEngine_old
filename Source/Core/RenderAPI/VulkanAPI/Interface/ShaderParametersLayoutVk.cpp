@@ -13,7 +13,7 @@ namespace cube
 	namespace render
 	{
 		ShaderParametersLayoutVk::ShaderParametersLayoutVk(DeviceVk& device, const ShaderParametersLayoutAttribute& attr) :
-			ShaderParametersLayout(attr.debugName),
+			ShaderParametersLayout(attr),
 			mShaderParameterManager(device.GetShaderParameterManager()),
 			mParameterList(attr.paramInfos)
 		{

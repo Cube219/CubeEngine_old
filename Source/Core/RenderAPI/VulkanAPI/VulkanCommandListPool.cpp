@@ -81,12 +81,12 @@ namespace cube
 			}
 		}
 
-		SPtr<CommandListVk> VulkanCommandListPool::Allocate(CommandListUsage usage, Uint32 threadIndex, bool isSub, const char* debugName)
+		SPtr<CommandListVk> VulkanCommandListPool::Allocate(const CommandListAttribute& attr)
 		{
 			VkCommandBufferAllocateInfo info;
 			info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 			info.pNext = nullptr;
-			if(isSub == false)
+			if(attr.isSub == false)
 				info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 			else
 				info.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
@@ -95,61 +95,57 @@ namespace cube
 			SPtr<CommandListVk> cmd;
 			VkCommandBuffer cmdBuf;
 
-			switch(usage) {
+			switch(attr.usage) {
 				case CommandListUsage::Graphics:
 				{
-					info.commandPool = mGraphicsCommandPools[threadIndex];
+					info.commandPool = mGraphicsCommandPools[attr.threadIndex];
 
-					Lock lock(mGraphicsCommandPoolMutexes[threadIndex]);
+					Lock lock(mGraphicsCommandPoolMutexes[attr.threadIndex]);
 					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
 					lock.unlock();
 
-					cmd = std::make_shared<CommandListVk>(*this, cmdBuf, usage, threadIndex, mGraphicsQueueFamilyIndex,
-						isSub, debugName);
+					cmd = std::make_shared<CommandListVk>(*this, attr, cmdBuf, mGraphicsQueueFamilyIndex);
 					break;
 				}
 
 				case CommandListUsage::TransferImmediate:
 				{
-					info.commandPool = mTransferImmediateCommandPools[threadIndex];
+					info.commandPool = mTransferImmediateCommandPools[attr.threadIndex];
 
-					Lock lock(mTransferImmediateCommandPoolMutexes[threadIndex]);
+					Lock lock(mTransferImmediateCommandPoolMutexes[attr.threadIndex]);
 					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
 					lock.unlock();
 
-					cmd = std::make_shared<CommandListVk>(*this, cmdBuf, usage, threadIndex, mTransferImmediateQueueFamilyIndex,
-						isSub, debugName);
+					cmd = std::make_shared<CommandListVk>(*this, attr, cmdBuf, mTransferImmediateQueueFamilyIndex);
 					break;
 				}
 
 				case CommandListUsage::TransferDeferred:
 				{
-					info.commandPool = mTransferDeferredCommandPools[threadIndex];
+					info.commandPool = mTransferDeferredCommandPools[attr.threadIndex];
 
-					Lock lock(mTransferDeferredCommandPoolMutexes[threadIndex]);
+					Lock lock(mTransferDeferredCommandPoolMutexes[attr.threadIndex]);
 					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
 					lock.unlock();
 
-					cmd = std::make_shared<CommandListVk>(*this, cmdBuf, usage, threadIndex, mTransferDeferredQueueFamilyIndex,
-						isSub, debugName);
+					cmd = std::make_shared<CommandListVk>(*this, attr, cmdBuf, mTransferDeferredQueueFamilyIndex);
 					break;
 				}
 
 				case CommandListUsage::Compute:
 				{
-					info.commandPool = mComputeCommandPools[threadIndex];
+					info.commandPool = mComputeCommandPools[attr.threadIndex];
 
-					Lock lock(mComputeCommandPoolMutexes[threadIndex]);
+					Lock lock(mComputeCommandPoolMutexes[attr.threadIndex]);
 					vkAllocateCommandBuffers(mDevice->GetHandle(), &info, &cmdBuf);
 					lock.unlock();
 
-					cmd = std::make_shared<CommandListVk>(*this, cmdBuf, usage, threadIndex, mComputeQueueFamilyIndex,
-						isSub, debugName);
+					cmd = std::make_shared<CommandListVk>(*this, attr, cmdBuf, mComputeQueueFamilyIndex);
 					break;
 				}
 
 				default:
-					ASSERTION_FAILED("Unknown CommandListUsage({0}).", (Uint32)usage);
+					ASSERTION_FAILED("Unknown CommandListUsage({0}).", (Uint32)attr.usage);
 			}
 
 			return cmd;

@@ -12,7 +12,7 @@ namespace cube
 	{
 		TextureVk::TextureVk(DeviceVk& device, const TextureAttribute& attr,
 			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool) : 
-			Texture(attr.debugName),
+			Texture(attr),
 			mDevice(device)
 		{
 			VkResult res;
@@ -158,7 +158,12 @@ namespace cube
 					stagingAlloc.pPage->GetVkDeviceMemory(), stagingAlloc.offset);
 				CHECK_VK(res, "Failed to bind staging buffer memory.");
 
-				SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(CommandListUsage::TransferImmediate, 0, false);
+				CommandListAttribute cmdListAttr;
+				cmdListAttr.usage = CommandListUsage::TransferImmediate;
+				cmdListAttr.threadIndex = 0;
+				cmdListAttr.isSub = false;
+				cmdListAttr.debugName = "Command List to transfer texture data";
+				SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(cmdListAttr);
 				cmdBuf->Begin();
 				VkCommandBuffer vkCmdBuf = cmdBuf->GetHandle();
 

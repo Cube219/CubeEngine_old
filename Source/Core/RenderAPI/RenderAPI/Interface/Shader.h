@@ -20,7 +20,10 @@ namespace cube
 		class Shader : public BaseRenderObject
 		{
 		public:
-			Shader(const char* debugName) : BaseRenderObject(debugName) {}
+			Shader(const ShaderAttribute& attr) :
+				BaseRenderObject(attr.debugName),
+				mType(attr.type)
+			{}
 			virtual ~Shader() {}
 
 			ShaderType GetType() const { return mType; }

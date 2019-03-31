@@ -18,7 +18,9 @@ namespace cube
 		class ComputePipelineState : public BaseRenderObject
 		{
 		public:
-			ComputePipelineState(const char* debugName) : BaseRenderObject(debugName) {}
+			ComputePipelineState(const ComputePipelineStateAttribute& attr) :
+				BaseRenderObject(attr.debugName)
+			{}
 			virtual ~ComputePipelineState() {}
 		};
 	} // namespace render

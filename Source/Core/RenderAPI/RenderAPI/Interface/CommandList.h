@@ -27,9 +27,15 @@ namespace cube
 		class CommandList : public BaseRenderObject
 		{
 		public:
-			CommandList(CommandListUsage usage, const char* debugName) : BaseRenderObject(debugName), mUsage(usage)
+			CommandList(const CommandListAttribute& attr) :
+				BaseRenderObject(attr.debugName),
+				mUsage(attr.usage), mThreadIndex(attr.threadIndex), mIsSub(attr.isSub)
 			{}
 			virtual ~CommandList() {}
+
+			CommandListUsage GetUsage() const { return mUsage; }
+			Uint32 GetThreadIndex() const { return mThreadIndex; }
+			bool IsSub() const { return mIsSub; }
 
 			virtual void Begin() = 0;
 			virtual void End() = 0;
@@ -58,10 +64,10 @@ namespace cube
 
 			virtual void ExecuteCommands(Uint32 numCommandLists, SPtr<CommandList>* cmdLists) = 0;
 
-			CommandListUsage GetUsage() const { return mUsage; }
-
 		protected:
 			CommandListUsage mUsage;
+			Uint32 mThreadIndex;
+			bool mIsSub;
 		};
 	} // namespace render
 } // namespace cube

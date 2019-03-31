@@ -30,7 +30,7 @@ namespace cube
 		class Sampler : public BaseRenderObject
 		{
 		public:
-			Sampler(const char* debugName) : BaseRenderObject(debugName) {}
+			Sampler(const SamplerAttribute& attr) : BaseRenderObject(attr.debugName) {}
 			virtual ~Sampler() {}
 		};
 	} // namespace render

@@ -13,7 +13,7 @@ namespace cube
 	namespace render
 	{
 		GraphicsPipelineStateVk::GraphicsPipelineStateVk(DeviceVk& device, const GraphicsPipelineStateAttribute& attr) :
-			GraphicsPipelineState(attr.debugName)
+			GraphicsPipelineState(attr)
 		{
 			// Vertex input (InputLayout)
 			// layout -> binding

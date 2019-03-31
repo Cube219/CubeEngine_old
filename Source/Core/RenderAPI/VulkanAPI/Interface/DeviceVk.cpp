@@ -21,8 +21,8 @@ namespace cube
 {
 	namespace render
 	{
-		DeviceVk::DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device, const char* debugName) :
-			Device(debugName),
+		DeviceVk::DeviceVk(VkInstance ins, SPtr<VulkanLogicalDevice>&& device, const DeviceAttribute& attr) :
+			Device(attr),
 			mInstance(ins),
 			mDevice(std::move(device)),
 			mMemoryManager(mDevice, 256*1024*1024, 32*1024*1024), // gpuPage: 256 MiB, hostVisiblePage: 32 MiB
@@ -46,7 +46,7 @@ namespace cube
 
 		SPtr<CommandList> DeviceVk::GetCommandList(const CommandListAttribute& attr)
 		{
-			return mCommandListPool.Allocate(attr.usage, attr.threadIndex, attr.isSub);
+			return mCommandListPool.Allocate(attr);
 		}
 
 		SPtr<Texture> DeviceVk::CreateTexture(const TextureAttribute& attr)
