@@ -27,7 +27,7 @@ namespace cube
 			Uint32 height;
 			Uint32 depth;
 			Uint32 arraySize;
-			
+
 			Uint32 mipLevels;
 
 			bool isDedicated = false;
@@ -55,6 +55,8 @@ namespace cube
 			Uint32 GetMipLevels() const { return mMipLevels; }
 
 			virtual void UpdateData(CommandList& cmdList, const void* pData, Uint64 size, Uint32 width, Uint32 height) = 0;
+			virtual void CopyFromTexture(CommandList& cmdList, Texture& src, Uint32 srcMipLevel, Uint32 srcArrayIndex, const Rect3D* pSrcArea,
+				Uint32 dstMipLevel, Uint32 dstArrayIndex, Uint32 dstX, Uint32 dstY, Uint32 dstZ) = 0;
 
 			virtual SPtr<TextureView> CreateView(const TextureViewAttribute& attr) = 0;
 
