@@ -13,6 +13,7 @@
 #include "Material/Shader.h"
 #include "Material/Material.h"
 #include "Material/MaterialInstance.h"
+#include "Skybox.h"
 
 namespace cube
 {
@@ -328,6 +329,30 @@ namespace cube
 		});
 
 		return _unregisterRenderObject(pointLight);
+	}
+
+	HSkybox cube::RendererManager::RegisterSkybox(UPtr<Skybox>&& skybox)
+	{
+		CHECK(mSkybox == nullptr, "Skybox is already registered.");
+
+		HSkybox hSkybox = _registerRenderObject(std::move(skybox));
+
+		RenderingThread::QueueTask([this, skybox_rt = hSkybox->GetRenderObject()]{
+			mSkybox = skybox_rt;
+		});
+
+		return hSkybox;
+	}
+
+	UPtr<Skybox> cube::RendererManager::UnregisterSkybox(HSkybox& skybox)
+	{
+		CHECK(mSkybox == skybox->GetRenderObject(), "This skybox is not registered.");
+
+		RenderingThread::QueueTask([this]() {
+			mSkybox = nullptr;
+		});
+
+		return _unregisterRenderObject(skybox);
 	}
 
 	SPtr<CameraRenderer3D> RendererManager::GetCameraRenderer3D()

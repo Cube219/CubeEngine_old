@@ -117,6 +117,9 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Handler.h" />
+    <ClInclude Include="Renderer\Skybox.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineCore.cpp" />
@@ -218,6 +221,9 @@
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\TextureData.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Skybox.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>

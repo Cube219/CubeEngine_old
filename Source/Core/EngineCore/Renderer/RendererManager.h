@@ -60,6 +60,9 @@ namespace cube
 		HPointLight RegisterLight(UPtr<PointLight>&& pointLight);
 		UPtr<PointLight> UnregisterLight(HPointLight& pointLight);
 
+		HSkybox RegisterSkybox(UPtr<Skybox>&& skybox);
+		UPtr<Skybox> UnregisterSkybox(HSkybox& skybox);
+
 		SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: 차후 저렇게 바꾸기
 
 		SPtr<render::RenderAPI> GetRenderAPI() const { return mRenderAPI; }
@@ -128,6 +131,8 @@ namespace cube
 
 		Mutex mPointLightsMutex;
 		Vector<SPtr<rt::PointLight>> mPointLights;
+
+		SPtr<rt::Skybox> mSkybox;
 
 		SPtr<render::ShaderParametersLayout> mGlobalShaderParametersLayout;
 		SPtr<render::ShaderParameters> mGlobalShaderParameters;
