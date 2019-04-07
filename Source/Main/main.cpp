@@ -190,7 +190,7 @@ namespace cube
 
 		// Camera
 		cameraGameObject = GameObject::Create();
-		cameraGameObject->SetPosition(Vector3(0, 0, 0));
+		cameraGameObject->SetPosition(Vector3(0, 0, -5));
 		cameraGameObject->AddComponent<CameraComponent>();
 		cameraGameObject->AddComponent<MoveComponent>();
 

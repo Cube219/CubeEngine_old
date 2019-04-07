@@ -21,5 +21,5 @@ layout (location = 0) out vec3 outTexCoord;
 void main(void) {
     outTexCoord = vec3(inPos.xyz);
 	
-	gl_Position = global.viewProj * inPos;
+	gl_Position = global.viewProj * (inPos + vec4(global.cameraPos, 0));
 }
