@@ -36,13 +36,20 @@ namespace cube
 		mResizeEventFunc = platform::Platform::GetResizeEvent().AddListener(&RenderingThread::OnResize);
 	}
 
-	void RenderingThread::PrepareDestroy()
+	void RenderingThread::PostPrepare()
+	{
+		mRendererManager->PostInitialize();
+	}
+
+	void RenderingThread::PreDestroy()
 	{
 		platform::Platform::GetResizeEvent().RemoveListener(mResizeEventFunc);
 		platform::Platform::GetLoopEvent().RemoveListener(mLoopEventFunc);
 
 		mSyncTaskQueue.Flush();
 		mTaskQueue.Flush();
+
+		mRendererManager->PreShutdown();
 	}
 
 	void RenderingThread::Destroy()
@@ -73,7 +80,7 @@ namespace cube
 		if(GameThread::mWillBeDestroyed == true) {
 			Async async = GameThread::PrepareDestroyAsync();
 
-			PrepareDestroy();
+			PreDestroy();
 
 			async.WaitUntilFinished();
 

@@ -5,6 +5,7 @@
 #include "EngineCore/Renderer/BaseMeshGenerator.h"
 #include "EngineCore/Renderer/Material/Material.h"
 #include "EngineCore/Renderer/Material/MaterialInstance.h"
+#include "EngineCore/Renderer/Skybox/Skybox.h"
 #include "EngineCore/GameObject.h"
 #include "CubeEngine/Component/CameraComponent.h"
 #include "CubeEngine/Component/MoveComponent.h"
@@ -54,29 +55,31 @@ namespace cube
 	HMaterialInstance legMatIns;
 	RPtr<Texture> legTexture;
 
+	HSkybox skybox;
+	RPtr<Texture> rightSkyboxTexture;
+	RPtr<Texture> leftSkyboxTexture;
+	RPtr<Texture> topSkyboxTexture;
+	RPtr<Texture> bottomSkyboxTexture;
+	RPtr<Texture> backSkyboxTexture;
+	RPtr<Texture> frontSkyboxTexture;
+
 	void PrepareResources()
 	{
 		// Load mesh / texture
 		boxMesh = BaseMeshGenerator::GetBoxMesh();
 		sphereMesh = BaseMeshGenerator::GetSphereMesh();
 		planeMesh = BaseMeshGenerator::GetPlaneMesh();
-		String meshPath = CUBE_T("../../../SampleResources/Models/nanosuit.obj");
-		nanosuitMesh = Mesh::Load(meshPath);
+		nanosuitMesh = Mesh::Load(CUBE_T("../../../SampleResources/Models/nanosuit.obj"));
 
-		String texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture.png");
-		texture = Texture::Load(texturePath);
-		texturePath = CUBE_T("../../../SampleResources/Textures/TestTexture2.png");
-		texture2 = Texture::Load(texturePath);
+		texture = Texture::Load(CUBE_T("../../../SampleResources/Textures/TestTexture.png"));
+		texture2 = Texture::Load(CUBE_T("../../../SampleResources/Textures/TestTexture2.png"));
 
 		// Load shader
-		String shaderPath = CUBE_T("../../../SampleResources/Shaders/Vertex.glsl");
-		vertexShader = Shader::Load(shaderPath);
+		vertexShader = Shader::Load(CUBE_T("../../../SampleResources/Shaders/Vertex.glsl"));
 
-		shaderPath = CUBE_T("../../../SampleResources/Shaders/Fragment.glsl");
-		fragmentShader = Shader::Load(shaderPath);
+		fragmentShader = Shader::Load(CUBE_T("../../../SampleResources/Shaders/Fragment.glsl"));
 
-		shaderPath = CUBE_T("../../../SampleResources/Shaders/Fragment-Textured.glsl");
-		fragmentTexturedShader = Shader::Load(shaderPath);
+		fragmentTexturedShader = Shader::Load(CUBE_T("../../../SampleResources/Shaders/Fragment-Textured.glsl"));
 
 		// Create material
 		MaterialInitializer matInit;
@@ -97,73 +100,69 @@ namespace cube
 		matUBO.metallic = 0.5f;
 		matUBO.roughness = 0.5f;
 		
-		String t;
 		for(int i = 0; i <= 5; i++) {
 			for(int j = 0; j <= 5; j++) {
 				HMaterialInstance ins = material->CreateInstance();
 				matUBO.metallic = 0.20f * j;
 				matUBO.roughness = 0.20f * i + 0.1f;
 
-				t = CUBE_T("UBO");
-				ins->SetParameterData(t, matUBO);
-				t = CUBE_T("Texture");
-				ins->SetParameterData(t, texture);
+				ins->SetParameterData(CUBE_T("UBO"), matUBO);
+				ins->SetParameterData(CUBE_T("Texture"), texture);
 
 				materialInses.push_back(ins);
 			}
 		}
 
-		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/arm_showroom_spec.png");
-		armTexture = Texture::Load(texturePath);
-		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/body_showroom_spec.png");
-		bodyTexture = Texture::Load(texturePath);
-		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/glass_dif.png");
-		glassTexture = Texture::Load(texturePath);
-		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/hand_showroom_spec.png");
-		handTexture = Texture::Load(texturePath);
-		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/helmet_showroom_spec.png");
-		helmetTexture = Texture::Load(texturePath);
-		texturePath = CUBE_T("../../../SampleResources/Textures/nanosuit/leg_showroom_spec.png");
-		legTexture = Texture::Load(texturePath);
+		armTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/nanosuit/arm_showroom_spec.png"));
+		bodyTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/nanosuit/body_showroom_spec.png"));
+		glassTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/nanosuit/glass_dif.png"));
+		handTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/nanosuit/hand_showroom_spec.png"));
+		helmetTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/nanosuit/helmet_showroom_spec.png"));
+		legTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/nanosuit/leg_showroom_spec.png"));
 
 		matUBO.metallic = 0.5f;
 		matUBO.roughness = 0.1f;
 
 		armMatIns = materialTextured->CreateInstance();
-		t = CUBE_T("UBO");
-		armMatIns->SetParameterData(t, matUBO);
-		t = CUBE_T("Texture");
-		armMatIns->SetParameterData(t, armTexture);
+		armMatIns->SetParameterData(CUBE_T("UBO"), matUBO);
+		armMatIns->SetParameterData(CUBE_T("Texture"), armTexture);
 
 		bodyMatIns = materialTextured->CreateInstance();
-		t = CUBE_T("UBO");
-		bodyMatIns->SetParameterData(t, matUBO);
-		t = CUBE_T("Texture");
-		bodyMatIns->SetParameterData(t, bodyTexture);
+		bodyMatIns->SetParameterData(CUBE_T("UBO"), matUBO);
+		bodyMatIns->SetParameterData(CUBE_T("Texture"), bodyTexture);
 
 		glassMatIns = materialTextured->CreateInstance();
-		t = CUBE_T("UBO");
-		glassMatIns->SetParameterData(t, matUBO);
-		t = CUBE_T("Texture");
-		glassMatIns->SetParameterData(t, glassTexture);
+		glassMatIns->SetParameterData(CUBE_T("UBO"), matUBO);
+		glassMatIns->SetParameterData(CUBE_T("Texture"), glassTexture);
 
 		handMatIns = materialTextured->CreateInstance();
-		t = CUBE_T("UBO");
-		handMatIns->SetParameterData(t, matUBO);
-		t = CUBE_T("Texture");
-		handMatIns->SetParameterData(t, handTexture);
+		handMatIns->SetParameterData(CUBE_T("UBO"), matUBO);
+		handMatIns->SetParameterData(CUBE_T("Texture"), handTexture);
 
 		helmetMatIns = materialTextured->CreateInstance();
-		t = CUBE_T("UBO");
-		helmetMatIns->SetParameterData(t, matUBO);
-		t = CUBE_T("Texture");
-		helmetMatIns->SetParameterData(t, helmetTexture);
+		helmetMatIns->SetParameterData(CUBE_T("UBO"), matUBO);
+		helmetMatIns->SetParameterData(CUBE_T("Texture"), helmetTexture);
 
 		legMatIns = materialTextured->CreateInstance();
-		t = CUBE_T("UBO");
-		legMatIns->SetParameterData(t, matUBO);
-		t = CUBE_T("Texture");
-		legMatIns->SetParameterData(t, legTexture);
+		legMatIns->SetParameterData(CUBE_T("UBO"), matUBO);
+		legMatIns->SetParameterData(CUBE_T("Texture"), legTexture);
+		
+		// Load skybox
+		rightSkyboxTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/cubemap/skybox/right.jpg"));
+		leftSkyboxTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/cubemap/skybox/left.jpg"));
+		topSkyboxTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/cubemap/skybox/top.jpg"));
+		bottomSkyboxTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/cubemap/skybox/bottom.jpg"));
+		backSkyboxTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/cubemap/skybox/back.jpg"));
+		frontSkyboxTexture = Texture::Load(CUBE_T("../../../SampleResources/Textures/cubemap/skybox/front.jpg"));
+
+		SkyboxInitializer skyboxInit;
+		skyboxInit.textureRight = rightSkyboxTexture;
+		skyboxInit.textureLeft = leftSkyboxTexture;
+		skyboxInit.textureTop = topSkyboxTexture;
+		skyboxInit.textureBottom = bottomSkyboxTexture;
+		skyboxInit.textureBack = backSkyboxTexture;
+		skyboxInit.textureFront = frontSkyboxTexture;
+		skybox = Skybox::Create(skyboxInit);
 	}
 
 	void CreateGameObjects()
@@ -191,7 +190,7 @@ namespace cube
 
 		// Camera
 		cameraGameObject = GameObject::Create();
-		cameraGameObject->SetPosition(Vector3(0, 0, -5));
+		cameraGameObject->SetPosition(Vector3(0, 0, 0));
 		cameraGameObject->AddComponent<CameraComponent>();
 		cameraGameObject->AddComponent<MoveComponent>();
 
@@ -253,6 +252,15 @@ namespace cube
 			go->Destroy();
 		}
 		nanosuitGameObject->Destroy();
+		
+		skybox->Destroy();
+
+		rightSkyboxTexture = nullptr;
+		leftSkyboxTexture = nullptr;
+		topSkyboxTexture = nullptr;
+		bottomSkyboxTexture = nullptr;
+		frontSkyboxTexture = nullptr;
+		backSkyboxTexture = nullptr;
 
 		handTexture = nullptr;
 		armTexture = nullptr;

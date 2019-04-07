@@ -5,6 +5,7 @@
 ////////////
 layout (set = 0, binding = 0) uniform _global {
 	vec3 cameraPos;
+	mat4 viewProj;
 } global;
 
 layout (set = 0, binding = 1) uniform _dirLight {

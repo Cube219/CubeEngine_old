@@ -23,10 +23,9 @@ namespace cube
 
 		void _LoadShader(SPtr<render::Device>& device, render::ShaderAttribute& attr);
 
-	private:
-		friend class RendererManager;
 		SPtr<render::Shader> GetRenderShader() const { return mRenderShader; }
 
+	private:
 		render::ShaderLanguage mLanguage;
 		render::ShaderType mType;
 

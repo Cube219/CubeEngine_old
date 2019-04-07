@@ -117,8 +117,11 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Handler.h" />
-    <ClInclude Include="Renderer\Skybox.h">
-      <Filter>Renderer</Filter>
+    <ClInclude Include="Renderer\Skybox\SkyboxSystem.h">
+      <Filter>Renderer\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Skybox\Skybox.h">
+      <Filter>Renderer\Skybox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -223,8 +226,11 @@
     <ClCompile Include="Renderer\TextureData.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\Skybox.cpp">
-      <Filter>Renderer</Filter>
+    <ClCompile Include="Renderer\Skybox\SkyboxSystem.cpp">
+      <Filter>Renderer\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Skybox\Skybox.cpp">
+      <Filter>Renderer\Skybox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +260,9 @@
     </Filter>
     <Filter Include="Module">
       <UniqueIdentifier>{6222080d-35f1-4a24-86c1-2f7c2fac36cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer\Skybox">
+      <UniqueIdentifier>{077f7db9-070e-433c-9406-199f98374c84}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

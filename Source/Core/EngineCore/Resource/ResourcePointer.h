@@ -48,6 +48,9 @@ namespace cube
 			return *this;
 		}
 
+		bool operator==(nullptr_t nul) const { return mRes == nullptr; }
+		bool operator!=(nullptr_t nul) const { return mRes != nullptr; }
+
 		template <typename T2>
 		ResourcePointer<T2> Cast()
 		{

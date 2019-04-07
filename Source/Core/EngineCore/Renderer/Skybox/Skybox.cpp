@@ -1,8 +1,8 @@
 ﻿#include "Skybox.h"
 
-#include "../EngineCore.h"
-#include "RendererManager.h"
-#include "Texture.h"
+#include "../../EngineCore.h"
+#include "../RendererManager.h"
+#include "../Texture.h"
 
 namespace cube
 {
@@ -16,7 +16,14 @@ namespace cube
 		return rendererManager.RegisterSkybox(std::move(skybox));
 	}
 
-	Skybox::Skybox(const SkyboxInitializer& init)
+	Skybox::Skybox(const SkyboxInitializer& init) : 
+		mTextureArray(init.textureArray),
+		mTextureRight(init.textureRight),
+		mTextureLeft(init.textureLeft),
+		mTextureTop(init.textureTop),
+		mTextureBottom(init.textureBottom),
+		mTextureBack(init.textureBack),
+		mTextureFront(init.textureFront)
 	{
 	}
 
@@ -28,7 +35,38 @@ namespace cube
 	{
 		SPtr<rt::Skybox> skybox_rt(new rt::Skybox());
 
+		RenderingThread::QueueSyncTask([this]() {
+			if(mTextureArray != nullptr) {
+				GetRenderObject()->SyncTexture(mTextureArray->GetRenderObject());
+
+				mTextureArray = nullptr;
+			} else {
+				SPtr<rt::Texture> right_rt = mTextureRight->GetRenderObject();
+				SPtr<rt::Texture> left_rt = mTextureLeft->GetRenderObject();
+				SPtr<rt::Texture> top_rt = mTextureTop->GetRenderObject();
+				SPtr<rt::Texture> bottom_rt = mTextureBottom->GetRenderObject();
+				SPtr<rt::Texture> back_rt = mTextureBack->GetRenderObject();
+				SPtr<rt::Texture> front_rt = mTextureFront->GetRenderObject();
+
+				GetRenderObject()->SyncTexture(*right_rt, *left_rt, *top_rt, *bottom_rt, *back_rt, *front_rt);
+
+				mTextureRight = nullptr;
+				mTextureLeft = nullptr;
+				mTextureTop = nullptr;
+				mTextureBottom = nullptr;
+				mTextureBack= nullptr;
+				mTextureFront= nullptr;
+			}
+		});
+
 		return skybox_rt;
+	}
+
+	void Skybox::Destroy()
+	{
+		UPtr<Skybox> ptr = ECore().GetRendererManager().UnregisterSkybox(GetHandler());
+
+		RenderObject::Destroy();
 	}
 
 	void Skybox::SetTexture(const RPtr<Texture>& array)
@@ -59,6 +97,28 @@ namespace cube
 
 		void Skybox::Initialize()
 		{
+			SPtr<render::Device> device = ECore().GetRendererManager().GetDevice();
+
+			using namespace render;
+
+			SamplerAttribute samplerAttr;
+			samplerAttr.minFilter = FilterType::Linear;
+			samplerAttr.magFilter = FilterType::Linear;
+			samplerAttr.mipMapFilter = FilterType::Linear;
+			samplerAttr.addressU = AddressMode::Clamp;
+			samplerAttr.addressV = AddressMode::Clamp;
+			samplerAttr.addressW = AddressMode::Clamp;
+			samplerAttr.maxAnisotropy = 16;
+			samplerAttr.mipLodBias = 0;
+			samplerAttr.minLod = 0;
+			samplerAttr.maxLod = 0;
+			samplerAttr.borderColor[0] = 0.0f;
+			samplerAttr.borderColor[1] = 0.0f;
+			samplerAttr.borderColor[2] = 0.0f;
+			samplerAttr.borderColor[3] = 1.0f;
+			samplerAttr.debugName = "Sampler";
+
+			mSkyboxSampler = device->CreateSampler(samplerAttr);
 		}
 
 		void Skybox::Destroy()
@@ -121,6 +181,7 @@ namespace cube
 			textureAttr.depth = 1;
 			textureAttr.arraySize = 6;
 			textureAttr.mipLevels = 1;
+			textureAttr.debugName = "skybox textures";
 
 			mCombinedTexture = device->CreateTexture(textureAttr);
 
@@ -135,16 +196,20 @@ namespace cube
 
 			cmdList->Begin();
 			
-			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureRight->GetTexture()), 1, 0, nullptr, 1, 0, 0, 0, 0);
-			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureRight->GetTexture()), 1, 0, nullptr, 1, 1, 0, 0, 0);
-			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureRight->GetTexture()), 1, 0, nullptr, 1, 2, 0, 0, 0);
-			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureRight->GetTexture()), 1, 0, nullptr, 1, 3, 0, 0, 0);
-			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureRight->GetTexture()), 1, 0, nullptr, 1, 4, 0, 0, 0);
-			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureRight->GetTexture()), 1, 0, nullptr, 1, 5, 0, 0, 0);
+			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureRight->GetTexture()), 0, 0, nullptr, 0, 0, 0, 0, 0);
+			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureLeft->GetTexture()), 0, 0, nullptr, 0, 1, 0, 0, 0);
+			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureTop->GetTexture()), 0, 0, nullptr, 0, 2, 0, 0, 0);
+			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureBottom->GetTexture()), 0, 0, nullptr, 0, 3, 0, 0, 0);
+			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureBack->GetTexture()), 0, 0, nullptr, 0, 4, 0, 0, 0);
+			mCombinedTexture->CopyFromTexture(*cmdList, *(mpTextureFront->GetTexture()), 0, 0, nullptr, 0, 5, 0, 0, 0);
 
 			cmdList->End();
 
 			device->SubmitCommandList(cmdList);
+
+			RenderingThread::QueueTask([cmdList]() mutable {
+				cmdList.reset();
+			});
 		}
 	}
 	// namespace rt

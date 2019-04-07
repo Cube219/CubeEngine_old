@@ -43,6 +43,8 @@ namespace cube
 		RegisterImporters();
 		InitComponents();
 
+		RenderingThread::PostPrepare();
+
 		closingEventFunc = platform::Platform::GetClosingEvent().AddListener(&CubeEngine::DefaultClosingFunction);
 		ECore().SetFPSLimit(60);
 	}
