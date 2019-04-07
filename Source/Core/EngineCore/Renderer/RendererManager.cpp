@@ -83,7 +83,7 @@ namespace cube
 		SwapChainAttribute swapChainAttr;
 		swapChainAttr.width = mWidth;
 		swapChainAttr.height = mHeight;
-		swapChainAttr.colorBufferFormat = TextureFormat::RGBA_8_sRGB;
+		swapChainAttr.colorBufferFormat = TextureFormat::RGBA_8_UNorm;
 		swapChainAttr.depthBufferFormat = TextureFormat::D16_UNorm;
 		swapChainAttr.vsync = false;
 		swapChainAttr.bufferCount = 2;
@@ -663,7 +663,7 @@ namespace cube
 		attr.blendState.renderTargets[0].writeMask = ColorWriteMaskFlag::All;
 
 		attr.renderTargetFormats.resize(1);
-		attr.renderTargetFormats[0] = TextureFormat::RGBA_8_sRGB;
+		attr.renderTargetFormats[0] = TextureFormat::RGBA_8_UNorm;
 
 		attr.depthStencilFormat = TextureFormat::D16_UNorm;
 

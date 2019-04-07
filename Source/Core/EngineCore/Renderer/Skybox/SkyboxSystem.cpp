@@ -160,7 +160,7 @@ namespace cube
 		attr.blendState.renderTargets[0].writeMask = ColorWriteMaskFlag::All;
 
 		attr.renderTargetFormats.resize(1);
-		attr.renderTargetFormats[0] = TextureFormat::RGBA_8_sRGB;
+		attr.renderTargetFormats[0] = TextureFormat::RGBA_8_UNorm;
 
 		attr.depthStencilFormat = TextureFormat::D16_UNorm;
 

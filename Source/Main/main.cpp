@@ -96,7 +96,7 @@ namespace cube
 
 		// Create materialInstances
 		MaterialUBO matUBO;
-		matUBO.albedo = Vector4(0.5f, 0, 0, 1);
+		matUBO.albedo = Vector4(1.0f, 0, 0, 1);
 		matUBO.metallic = 0.5f;
 		matUBO.roughness = 0.5f;
 		
@@ -203,25 +203,25 @@ namespace cube
 		HPointLightComponent pointLight;
 
 		go = GameObject::Create();
-		go->SetPosition(Vector3(10, 10, -2));
+		go->SetPosition(Vector3(10, 10, -1));
 		pointLight = go->AddComponent<PointLightComponent>();
 		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
 		pointLightGameObjects.push_back(go);
 		
 		go = GameObject::Create();
-		go->SetPosition(Vector3(-10, 10, -2));
+		go->SetPosition(Vector3(-10, 10, -1));
 		pointLight = go->AddComponent<PointLightComponent>();
 		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
 		pointLightGameObjects.push_back(go);
 
 		go = GameObject::Create();
-		go->SetPosition(Vector3(10, -10, -2));
+		go->SetPosition(Vector3(10, -10, -1));
 		pointLight = go->AddComponent<PointLightComponent>();
 		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
 		pointLightGameObjects.push_back(go);
 
 		go = GameObject::Create();
-		go->SetPosition(Vector3(-10, -10, -2));
+		go->SetPosition(Vector3(-10, -10, -1));
 		pointLight = go->AddComponent<PointLightComponent>();
 		pointLight->SetColor(Vector4(23.47f, 21.31f, 20.79f, 1));
 		pointLightGameObjects.push_back(go);
