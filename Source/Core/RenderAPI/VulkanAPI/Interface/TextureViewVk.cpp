@@ -10,7 +10,7 @@ namespace cube
 	namespace render
 	{
 		TextureViewVk::TextureViewVk(DeviceVk& device, const TextureViewAttribute& attr, const TextureVk& image) :
-			TextureView(attr.debugName),
+			TextureView(attr),
 			mParentImage(image)
 		{
 			VkImageViewCreateInfo info = {};

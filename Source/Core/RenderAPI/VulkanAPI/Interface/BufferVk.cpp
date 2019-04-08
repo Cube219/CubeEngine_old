@@ -16,10 +16,8 @@ namespace cube
 	{
 		BufferVk::BufferVk(DeviceVk& device, const BufferAttribute& attr,
 			VulkanQueueManager& queueManager, VulkanCommandListPool& cmdListPool) :
-			Buffer(attr.debugName)
+			Buffer(attr)
 		{
-			mUsage = attr.usage;
-
 			// Check buffer attr
 #ifdef _DEBUG
 			if(attr.cpuAccessible == true) {
@@ -139,7 +137,12 @@ namespace cube
 						stagingAlloc.pPage->GetVkDeviceMemory(), stagingAlloc.offset);
 					CHECK_VK(res, "Failed to bind staging buffer memory.");
 
-					SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(CommandListUsage::TransferImmediate, 0, false);
+					CommandListAttribute cmdListAttr;
+					cmdListAttr.usage = CommandListUsage::TransferImmediate;
+					cmdListAttr.threadIndex = 0;
+					cmdListAttr.isSub = false;
+					cmdListAttr.debugName = "Command List to transfer buffer data";
+					SPtr<CommandListVk> cmdBuf = cmdListPool.Allocate(cmdListAttr);
 					cmdBuf->Begin();
 					VkCommandBuffer vkCmdBuf = cmdBuf->GetHandle();
 

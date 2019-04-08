@@ -26,6 +26,16 @@ namespace cube
 			Uint32 height;
 		};
 
+		struct Rect3D
+		{
+			Int32 x;
+			Int32 y;
+			Int32 z;
+			Uint32 width;
+			Uint32 height;
+			Uint32 depth;
+		};
+
 		// ----- RenderTarget -----
 		enum class LoadOperator
 		{

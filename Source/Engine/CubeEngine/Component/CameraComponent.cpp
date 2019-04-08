@@ -31,16 +31,12 @@ namespace cube
 	void CameraComponent::OnDestroy()
 	{
 	}
-
+	
 	void CameraComponent::OnTransformChanged()
 	{
 		Vector3 pos = GetGameObject()->GetPosition();
-		Float3 posF;
-		posF = pos.GetFloat3();
 
 		Vector3 posForward = pos + GetGameObject()->GetForward();
-		Float3 posForwardF;
-		posForwardF = posForward.GetFloat3();
 
 		mViewMatrix = MatrixUtility::GetLookAt(
 			pos, posForward, Vector3(0, 1, 0)

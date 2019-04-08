@@ -40,6 +40,7 @@ namespace cube
 
 			void SyncTextureData(const SPtr<TextureData>& textureData);
 
+			SPtr<render::Texture> GetTexture() const { return mTexture; }
 			SPtr<render::TextureView> GetTextureView() const { return mTextureView; }
 			SPtr<render::Sampler> GetSampler() const { return mSampler; }
 

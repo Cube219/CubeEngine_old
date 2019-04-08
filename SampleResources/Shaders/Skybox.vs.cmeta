@@ -1,0 +1,9 @@
+{
+    "version": 0,
+	"importer_name": "ShaderImporter",
+	"info": {
+	    "language": "glsl",
+		"type": "vertex",
+		"entry_point": "main"
+	}
+}

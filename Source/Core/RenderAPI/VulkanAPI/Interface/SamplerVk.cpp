@@ -10,7 +10,7 @@ namespace cube
 	namespace render
 	{
 		SamplerVk::SamplerVk(DeviceVk& device, const SamplerAttribute& attr) :
-			Sampler(attr.debugName)
+			Sampler(attr)
 		{
 			VkSamplerCreateInfo info;
 			info.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;

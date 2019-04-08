@@ -18,7 +18,9 @@ namespace cube
 		class Device : public BaseRenderObject
 		{
 		public:
-			Device(const char* debugName) : BaseRenderObject(debugName) {}
+			Device(const DeviceAttribute& attr) :
+				BaseRenderObject(attr.debugName)
+			{}
 			virtual ~Device() {}
 
 			virtual SPtr<Buffer> CreateBuffer(const BufferAttribute& attr) = 0;

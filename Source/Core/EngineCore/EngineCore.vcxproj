@@ -165,6 +165,8 @@
     <ClInclude Include="Renderer\RendererManager.h" />
     <ClInclude Include="Renderer\RenderingThread.h" />
     <ClInclude Include="Renderer\RenderObject.h" />
+    <ClInclude Include="Renderer\Skybox\Skybox.h" />
+    <ClInclude Include="Renderer\Skybox\SkyboxSystem.h" />
     <ClInclude Include="Renderer\Texture.h" />
     <ClInclude Include="Renderer\TextureData.h" />
     <ClInclude Include="Renderer\Vertex.h" />
@@ -208,6 +210,8 @@
     <ClCompile Include="Renderer\RendererManager.cpp" />
     <ClCompile Include="Renderer\RenderingThread.cpp" />
     <ClCompile Include="Renderer\RenderObject.cpp" />
+    <ClCompile Include="Renderer\Skybox\Skybox.cpp" />
+    <ClCompile Include="Renderer\Skybox\SkyboxSystem.cpp" />
     <ClCompile Include="Renderer\Texture.cpp" />
     <ClCompile Include="Renderer\TextureData.cpp" />
     <ClCompile Include="Resource\BaseResource.cpp" />

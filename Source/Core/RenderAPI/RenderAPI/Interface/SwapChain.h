@@ -25,7 +25,11 @@ namespace cube
 		class SwapChain : public BaseRenderObject
 		{
 		public:
-			SwapChain(const char* debugName) : BaseRenderObject(debugName) {}
+			SwapChain(const SwapChainAttribute& attr) :
+				BaseRenderObject(attr.debugName),
+				mWidth(attr.width), mHeight(attr.height), mBufferCount(attr.bufferCount),
+				mVsync(attr.vsync)
+			{}
 			virtual ~SwapChain() {}
 
 			virtual void AcquireNextImage() = 0;
@@ -35,6 +39,12 @@ namespace cube
 
 			virtual void SetFullscreenMode() = 0;
 			virtual void SetWindowedMode() = 0;
+
+		protected:
+			Uint32 mWidth;
+			Uint32 mHeight;
+			Uint32 mBufferCount;
+			bool mVsync;
 		};
 	} // namespace render
 } // namespace cube

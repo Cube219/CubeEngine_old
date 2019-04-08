@@ -10,11 +10,9 @@ namespace cube
 	namespace render
 	{
 		ShaderVk::ShaderVk(DeviceVk& device, const ShaderAttribute& attr) :
-			Shader(attr.debugName),
+			Shader(attr),
 			mEntryPoint(attr.entryPoint)
 		{
-			mType = attr.type;
-
 			switch(attr.language) {
 				case ShaderLanguage::GLSL:  LoadFromGLSL(attr); break;
 				case ShaderLanguage::HLSL:  LoadFromHLSL(attr); break;

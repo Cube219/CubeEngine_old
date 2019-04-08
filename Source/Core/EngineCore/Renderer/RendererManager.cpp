@@ -13,12 +13,14 @@
 #include "Material/Shader.h"
 #include "Material/Material.h"
 #include "Material/MaterialInstance.h"
+#include "Skybox/Skybox.h"
 
 namespace cube
 {
 	struct UBOGlobal
 	{
 		Vector3 cameraPos;
+		Matrix viewProj;
 	};
 
 	struct UBODirLight
@@ -81,7 +83,7 @@ namespace cube
 		SwapChainAttribute swapChainAttr;
 		swapChainAttr.width = mWidth;
 		swapChainAttr.height = mHeight;
-		swapChainAttr.colorBufferFormat = TextureFormat::RGBA_8_sRGB;
+		swapChainAttr.colorBufferFormat = TextureFormat::RGBA_8_UNorm;
 		swapChainAttr.depthBufferFormat = TextureFormat::D16_UNorm;
 		swapChainAttr.vsync = false;
 		swapChainAttr.bufferCount = 2;
@@ -186,6 +188,16 @@ namespace cube
 
 		mRenderAPI = nullptr;
 		mRenderDLib = nullptr;
+	}
+
+	void RendererManager::PostInitialize()
+	{
+		mSkyboxSystem.Initialize();
+	}
+
+	void RendererManager::PreShutdown()
+	{
+		mSkyboxSystem.ShutDown();
 	}
 
 	HMaterial RendererManager::RegisterMaterial(UPtr<Material>&& material)
@@ -328,6 +340,16 @@ namespace cube
 		});
 
 		return _unregisterRenderObject(pointLight);
+	}
+
+	HSkybox cube::RendererManager::RegisterSkybox(UPtr<Skybox>&& skybox)
+	{
+		return mSkyboxSystem.RegisterSkybox(std::move(skybox));
+	}
+
+	UPtr<Skybox> cube::RendererManager::UnregisterSkybox(HSkybox& skybox)
+	{
+		return mSkyboxSystem.UnregisterSkybox(skybox);
 	}
 
 	SPtr<CameraRenderer3D> RendererManager::GetCameraRenderer3D()
@@ -489,6 +511,7 @@ namespace cube
 		// Update global
 		UBOGlobal uboGlobal;
 		uboGlobal.cameraPos = mCameraRenderer->GetPosition();
+		uboGlobal.viewProj = mCameraRenderer->GetViewProjectionMatrix();
 		mGlobalShaderParameters->UpdateParameter(0, &uboGlobal, sizeof(UBOGlobal));
 
 		// Update directional lights
@@ -533,12 +556,17 @@ namespace cube
 			cmd->End();
 		}
 
+		mSkyboxSystem.DrawSkybox(vp, scissor);
+
 		// Main command buffer
 		mMainCommandList->Reset();
 
 		mMainCommandList->Begin();
 
 		mMainCommandList->SetRenderPass(mRenderPass, 0);
+
+		SPtr<CommandList> skyboxCmdList = mSkyboxSystem.GetCommandList();
+		mMainCommandList->ExecuteCommands(1, &skyboxCmdList);
 
 		mMainCommandList->ExecuteCommands((Uint32)mCommandLists.size(), mCommandLists.data());
 
@@ -622,7 +650,7 @@ namespace cube
 		attr.depthStencilState.backFace = stencilState;
 
 		// TODO: 일단 colorRenderTArget만
-		//       왜냐하면 Vulkan에서는 color만 blend를 적용하기 땜누
+		//       왜냐하면 Vulkan에서는 color만 blend를 적용하기 때문
 		//       근데 그냥 depth에도 하면 안 되나?
 		attr.blendState.renderTargets.resize(1);
 		attr.blendState.renderTargets[0].enableBlend = false;
@@ -635,7 +663,7 @@ namespace cube
 		attr.blendState.renderTargets[0].writeMask = ColorWriteMaskFlag::All;
 
 		attr.renderTargetFormats.resize(1);
-		attr.renderTargetFormats[0] = TextureFormat::RGBA_8_sRGB;
+		attr.renderTargetFormats[0] = TextureFormat::RGBA_8_UNorm;
 
 		attr.depthStencilFormat = TextureFormat::D16_UNorm;
 

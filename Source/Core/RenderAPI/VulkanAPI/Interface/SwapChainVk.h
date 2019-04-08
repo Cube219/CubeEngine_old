@@ -31,7 +31,7 @@ namespace cube
 			const Vector<VkImageView>& GetBackImages() const { return mBackImageViews; }
 
 			VkFormat GetColorVkFormat() const { return mColorFormat; }
-			Uint32 GetImageCount() const { return mImageCount; }
+			Uint32 GetImageCount() const { return mBufferCount; }
 
 		private:
 			void CreateSwapChain();
@@ -41,12 +41,7 @@ namespace cube
 			VulkanQueueManager& mQueueManager;
 
 			VkSwapChainWrapper mSwapChain;
-			SwapChainAttribute mAttribute;
 
-			Uint32 mWidth;
-			Uint32 mHeight;
-			Uint32 mImageCount;
-			bool mVsync;
 			bool mIsSupportedVsync;
 
 			VkSurfaceKHR mSurface;

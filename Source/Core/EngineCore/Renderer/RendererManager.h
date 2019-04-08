@@ -21,6 +21,7 @@
 #include "../Handler.h"
 #include "RenderObject.h"
 #include "../Thread/MutexLock.h"
+#include "Skybox/SkyboxSystem.h"
 
 namespace cube
 {
@@ -37,7 +38,8 @@ namespace cube
 	public:
 		RendererManager() : 
 			mIsPrepared(false), mDirLight(nullptr),
-			mRenderObjectTable(50)
+			mRenderObjectTable(50),
+			mSkyboxSystem(*this)
 		{}
 		~RendererManager() {}
 
@@ -48,6 +50,9 @@ namespace cube
 
 		void Initialize(RenderType type);
 		void ShutDown();
+
+		void PostInitialize();
+		void PreShutdown();
 
 		HMaterial RegisterMaterial(UPtr<Material>&& material);
 		UPtr<Material> UnregisterMaterial(HMaterial& material);
@@ -60,10 +65,14 @@ namespace cube
 		HPointLight RegisterLight(UPtr<PointLight>&& pointLight);
 		UPtr<PointLight> UnregisterLight(HPointLight& pointLight);
 
+		HSkybox RegisterSkybox(UPtr<Skybox>&& skybox);
+		UPtr<Skybox> UnregisterSkybox(HSkybox& skybox);
+
 		SPtr<CameraRenderer3D> GetCameraRenderer3D(); // TODO: 차후 저렇게 바꾸기
 
 		SPtr<render::RenderAPI> GetRenderAPI() const { return mRenderAPI; }
 		SPtr<render::Device> GetDevice() const { return mDevice; }
+		SPtr<render::RenderPass> GetRenderPass() const { return mRenderPass; }
 
 		void StartFrame();
 		void DrawAll();
@@ -72,9 +81,11 @@ namespace cube
 
 		void SetVsync(bool vsync);
 
+		SPtr<render::ShaderParametersLayout> GetGlobalShaderParametersLayout() { return mGlobalShaderParametersLayout; }
+		SPtr<render::ShaderParameters> GetGlobalShaderParameters() { return mGlobalShaderParameters; }
 		SPtr<render::ShaderParametersLayout> _GetPerObjectShaderParametersLayout(){ return mPerObjectShaderParametersLayout; }
 
-		// HandlerTable& _getRenderObjectTable() { return mRenderObjectTable; }
+		HandlerTable& _getRenderObjectTable() { return mRenderObjectTable; }
 		template <typename T>
 		Handler<T> _registerRenderObject(UPtr<T>&& renderObject)
 		{
@@ -145,6 +156,8 @@ namespace cube
 		Vector<SPtr<render::CommandList>> mCommandLists;
 		Vector<int> mCommandListsCurrentMaterialIndex;
 		SPtr<render::CommandList> mMainCommandList;
+
+		SkyboxSystem mSkyboxSystem;
 
 		bool mIsPrepared;
 

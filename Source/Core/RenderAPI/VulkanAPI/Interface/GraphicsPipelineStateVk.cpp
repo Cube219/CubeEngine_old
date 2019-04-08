@@ -13,7 +13,7 @@ namespace cube
 	namespace render
 	{
 		GraphicsPipelineStateVk::GraphicsPipelineStateVk(DeviceVk& device, const GraphicsPipelineStateAttribute& attr) :
-			GraphicsPipelineState(attr.debugName)
+			GraphicsPipelineState(attr)
 		{
 			// Vertex input (InputLayout)
 			// layout -> binding
@@ -104,7 +104,7 @@ namespace cube
 			}
 			switch(attr.rasterizerState.frontFace) {
 			case TriangleFrontFace::Clockwise:        rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE; break;
-			case TriangleFrontFace::CounterClockwise: rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_CLOCKWISE; break;
+			case TriangleFrontFace::CounterClockwise: rasterizationStateCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; break;
 			default: ASSERTION_FAILED("Unknown TriangleFrontFace ({0})", (Uint32)attr.rasterizerState.frontFace);
 			}
 			rasterizationStateCreateInfo.depthClampEnable = VK_FALSE; // TODO: Rasterization 기능확장때 구현

@@ -63,7 +63,9 @@ namespace cube
 		class ShaderParametersLayout : public BaseRenderObject
 		{
 		public:
-			ShaderParametersLayout(const char* debugName) : BaseRenderObject(debugName) {}
+			ShaderParametersLayout(const ShaderParametersLayoutAttribute& attr) :
+				BaseRenderObject(attr.debugName)
+			{}
 			virtual ~ShaderParametersLayout() {}
 
 			virtual SPtr<ShaderParameters> CreateParameters() = 0;

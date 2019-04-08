@@ -45,7 +45,6 @@ namespace cube
 
 	enum class MaterialParameterType;
 	struct MaterialParameterInfo;
-	struct MaterialInitializer;
 	class Material;
 	using HMaterial = Handler<Material>;
 	class MaterialInstance;
@@ -62,6 +61,9 @@ namespace cube
 
 	class TextureData;
 	class Texture;
+
+	class Skybox;
+	using HSkybox = Handler<Skybox>;
 
 	class ModuleManager;
 	class BaseModule;
@@ -91,6 +93,8 @@ namespace cube
 		class Mesh;
 
 		class Texture;
+
+		class Skybox;
 	} // namespace rt
 } // namespace cube
 

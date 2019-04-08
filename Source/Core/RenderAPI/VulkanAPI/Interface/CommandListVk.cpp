@@ -14,14 +14,12 @@ namespace cube
 {
 	namespace render
 	{
-		CommandListVk::CommandListVk(VulkanCommandListPool& pool, VkCommandBuffer commandBuffer,
-			CommandListUsage usage, Uint32 commandPoolIndex, Uint32 submitQueueFamilyIndex,
-			bool isSub, const char* debugName) :
-			CommandList(usage, debugName),
+		CommandListVk::CommandListVk(VulkanCommandListPool& pool, const CommandListAttribute& attr, VkCommandBuffer commandBuffer,
+			Uint32 submitQueueFamilyIndex) :
+			CommandList(attr),
 			mPool(pool), mCommandBuffer(commandBuffer),
-			mCommandPoolIndex(commandPoolIndex),
-			mSubmitQueueFamilyIndex(submitQueueFamilyIndex),
-			mIsSub(isSub)
+			mCommandPoolIndex(attr.threadIndex),
+			mSubmitQueueFamilyIndex(submitQueueFamilyIndex)
 		{
 		}
 

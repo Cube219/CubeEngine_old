@@ -37,7 +37,7 @@ namespace cube
 		class RenderPass : public BaseRenderObject
 		{
 		public:
-			RenderPass(const char* debugName) : BaseRenderObject(debugName) {}
+			RenderPass(const RenderPassAttribute& attr) : BaseRenderObject(attr.debugName) {}
 			virtual ~RenderPass() {}
 
 			virtual void Resize(Uint32 width, Uint32 height) = 0;
