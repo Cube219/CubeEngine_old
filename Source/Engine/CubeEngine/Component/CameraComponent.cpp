@@ -31,7 +31,7 @@ namespace cube
 	void CameraComponent::OnDestroy()
 	{
 	}
-
+	
 	void CameraComponent::OnTransformChanged()
 	{
 		Vector3 pos = GetGameObject()->GetPosition();

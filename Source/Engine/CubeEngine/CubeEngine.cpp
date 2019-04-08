@@ -53,8 +53,14 @@ namespace cube
 	{
 		platform::Platform::GetClosingEvent().RemoveListener(closingEventFunc);
 
-		Async async = GameThread::DestroyAsync();
+		Async async = GameThread::PrepareDestroyAsync();
+
+		RenderingThread::PreDestroy();
+
 		async.WaitUntilFinished();
+
+		Async async2 = GameThread::DestroyAsync();
+		async2.WaitUntilFinished();
 
 		RenderingThread::Destroy();
 

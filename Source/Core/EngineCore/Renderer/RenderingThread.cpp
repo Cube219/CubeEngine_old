@@ -78,12 +78,6 @@ namespace cube
 	void RenderingThread::Loop()
 	{
 		if(GameThread::mWillBeDestroyed == true) {
-			Async async = GameThread::PrepareDestroyAsync();
-
-			PreDestroy();
-
-			async.WaitUntilFinished();
-
 			platform::Platform::FinishLoop();
 
 			return;
