@@ -1,0 +1,21 @@
+UnorderedAccessView -> 밖으로 빼기(StructuredBuffer, Texture, VertexBuffer, IndexBuffer)
+ShaderResourceView -> 밖으로 빼기(StructuredBuffer, Texture,  VertexBuffer, IndexBuffer)
+RenderTargetView -> 그냥 만드네?(텍스처, MipLevel, LoadAction, StoreAction)
+DepthRenderTargetView -> 위랑 같음
+
+
+
+
+UniformBufferLayout -> 그냥 만듬
+UniformBuffer -> 밖으로 빼기?
+IndexBuffer -> 밖으로 빼기O
+VertexBuffer -> 밖으로 빼기O
+StructuredBuffer -> 밖으로 빼기(StorageBuffer로 / Stride를 16byte 배수로)
+StagingBuffer - 컷
+
+
+UploadCommandBuffer - Semaphore로 pool에 execute안 된 buffer 가져옴 / 없으면 새로 만듬
+
+
+
+---------------------ViewPort == SwapChain

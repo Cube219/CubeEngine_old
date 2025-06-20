@@ -1,0 +1,69 @@
+VulkanObject 만들기
+- debugName
+
+StagingBuffer 매커니즘 바꾸기
+-> release에 넣으면 releasequeue에 넣음
+-> 그리고 draw콜하면 바로 queue에 있던 거 release
+  -> 아냐 그냥 다음프레임에 release
+
+-> StagingBuffer들을 가져올 때 해당 리소스 포인터 + 추가 정보를 해싱해서 가져오게 하기
+-> texture나 buffer에 정보가 안 남게 하기 위함
+
+
+각종 Free(StagingBuffer, commandbuffer)는 draw 후 release(commandbuffer는 조심히 / transfer command buffer만?)
+
+
+TextureFormat에 정보들 추가
+-> BlockSizeX, BlockSizeY, BlockSizeZ, BlockBytes, NumComponents..., AspectMask
+-> 지금은 4byte로 하드코딩되어있음
+-> GFormatData해서 전역변수로 넣기
+
+
+RenderPass == FVulkanRenderTargetLayout
+
+
+
+
+
+PipelineStateInitializer에 들어간 것
+- Shader (Vertex, Pixel, domain, hull, geometry)
+  - 여기에 VertexInputLayout있음
+- BlendState
+  - 각 RenterTarget별 Blend State(RenderTarget은 최대 8개?)
+  - colorSrcBlend / colorDstBlend / colorBlendOp
+  - alphaSrcBlend / alphaDstBlend / alphaBlendOp
+  - colorWriteMask
+  - BlendOp - Add, Subtract, ReverseSubtract, Min, Max
+  - BlendFactor - Zero, One, SourceColor, InverseSourceColor, SourceAlpha, InverseSourceAlpha,DestinationColor,InverseDestinationColor,DestinationAlpha,InverseDestinationAlpha,Constant,InverseConstant,Source1Color,InverseSource1Color,Source1Alpha,InverseSource1Alpha
+  - ColorWriteMask - Red, Green, Blue, Alpha, None, RGB, RGBA, RG, BA(Flags)
+- RasterizerState
+  - fillMode, cullMode, frontFace
+  - FillMode - Point, Wireframe, Solid
+  - CullMode - None, CW, CCW
+  - float DepthBias
+  - float SlopeScaleDepthBiad
+  - bool AllowMSAA
+  - bool EnableLineAA
+- DepthStencilState
+  - EnableDepthWrite가 (DepthTest + DepthWrite)인 듯
+  - StencilTest는 Back이랑 Front랑 나누어져 있음
+    - Read/WriteMask는 따로 빠져있음
+- ImmutableSamplerState?
+- PrimitiveType - TriangleList, TriangleStrip, LineList, PointList, PatchList
+- RenderTargetEnabled / RenderTargetFormats / RenderTargetFlags
+- DepthStencil관련
+  - DepthStenciTargetFormat(PixelFormat)
+  - DepthSencilTargetFlags
+  - DepthTargetLoadAction / StoreAction
+  - StencilTargetLoadAction / StoreAction
+  - DepthStencilAccess
+- NumSamples
+
+---------
+VertexInputLayout
+  - VertexElement
+    - VertexElementType
+      - 일단 Float1/2/3/4만
+    - offset
+    - attributeIndex
+    - stride
